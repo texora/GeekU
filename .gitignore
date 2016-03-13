@@ -1,0 +1,5 @@
+node_modules
+npm-debug.log*
+
+# for now do NOT publish my distribution
+dist
