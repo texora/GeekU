@@ -12,16 +12,46 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "npm run start:prod",
-    "start:prod": "webpack && node dist/server.js"
+    "NOTE1": "in all cases, use NODE_ENV=prod/dev to alter results [default: dev])",
+    "nodemon:help": "nodemon --help delay",
+
+    "start": "npm run dev",
+
+    "build:COMMENT": "build client/server bundles suitable for distribution",
+    "build": "webpack",
+
+    "watch:COMMENT": "build client/server bundles (re-building on change)",
+    "watch": "webpack --watch",
+
+    "server:run:COMMENT": "run rest server",
+    "server:run": "node dist/serverBundle.js",
+
+    "server:watch:COMMENT": "run rest server (re-starting on change)",
+    "server:watch": "nodemon --watch dist/serverBundle.js dist/serverBundle.js",
+
+    "run:COMMENT": "build client/server bundles -AND- run rest server",
+    "run": "npm run build && npm run server:run",
+
+    "dev:COMMENT": "build client/server bundles (re-building on change) -AND- run rest server (restarting on change)",
+    "dev": "parallelshell \"npm run watch\" \"npm run server:watch\"",
+
+    "TODO1": "Include Karma test and watch",
+    "TODO2": "Include style in module bundle (CSS/LESS/SAAS/etc)",
+    "TODO3": "Include lint checker",
+    "TODO4": "Integrate Webpack Dev Server to get browser auto-refresh",
+    "TODO5": "Further refine server build to use webpack hot module replacement (currently server is restarted when code changes - via nodemon) ... http://jlongster.com/Backend-Apps-with-Webpack--Part-III"
   },
-  "devDependencies": {},
-  "dependencies": {
+  "devDependencies": {
     "babel-core": "^6.7.2",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.6.0",
-    "express": "^4.13.4",
+    "deep-merge": "^1.0.0",
+    "nodemon": "^1.9.1",
+    "parallelshell": "^2.0.0",
     "source-map-support": "^0.4.0",
     "webpack": "^1.12.14"
+  },
+  "dependencies": {
+    "express": "^4.13.4"
   }
 }
