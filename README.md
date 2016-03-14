@@ -37,6 +37,16 @@ $ TODO           # load sample mongo data
 $ npm run build  # initial build of system
 ```
 
+### For Production
+
+For production, simply run our rest server.
+
+```
+$ cd {project-root}
+$ npm run server:run
+> browse localhost:8080
+```
+
 ### For Development
 
 For development, we build client/server bundles (re-building on
@@ -48,16 +58,6 @@ $ npm run dev
 > browse localhost:8080
 ```
 
-### For Production
-
-For production, simply run our rest server.
-
-```
-$ cd {project-root}
-$ npm run server:run
-> browse localhost:8080
-```
-
 ### NODE_ENV envirnment variable
 
 The The NODE_ENV envirnment variable is used as follows:
@@ -65,3 +65,11 @@ The The NODE_ENV envirnment variable is used as follows:
   * clientBundle is minified (currently clientBundle.js TODO: clientBundle.min.js)
 - NODE_ENV=anythingElse (i.e. when used in dev) (i.e. NOT prod)
   * source maps are generated
+
+Example: 
+
+```
+$ cd {project-root}
+$ NODE_ENV=production npm run build
+```
+
