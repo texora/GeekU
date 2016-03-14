@@ -2,6 +2,7 @@
 
 import express from 'express';
 import path    from 'path';
+import * as academicSubj from '../shared/model/academicSubj'; // ??? temp for testing
 
 const app = express();
 

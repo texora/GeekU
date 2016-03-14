@@ -43,7 +43,7 @@ For production, simply run our rest server.
 
 ```
 $ cd {project-root}
-$ npm run server:run
+$ npm run server-run
 > browse localhost:8080
 ```
 
