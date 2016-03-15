@@ -11,15 +11,15 @@
 The GeekU project is a sandbox University Transcript Application, with
 enough real-world requirements to make it interesting.
 
-- model M:M relationships of course/student using MongoDB
-- development of both client and server logic
-- managed through an npm build process
-- single page app (using React.js)
-  * employing routes
-  * employing redux (Flex architecture)
+- model M:M relationships of course/student using **MongoDB**
+- development of **both client and server** logic managed through an **npm
+  build process**
+- single page app (using **React.js**)
+  * employing **routes**
+  * employing **redux** (Flex architecture)
   * modern GUI
-- server-side rest implementation (using express.js)
-- ES6 JavaScript usage (both client and server)
+- server-side rest implementation (using **express.js**)
+- **ES6 JavaScript** usage (both client and server)
 - ?? more
 
 
@@ -30,8 +30,8 @@ the git repo (or zip it up), and follow these instructions.
 
 ### Prerequisite
 
-- Node.js installed
-- MongoDB installed
+- [Node.js](https://nodejs.org/) installed
+- [MongoDB](https://www.mongodb.org/) installed
 
 
 ### Setup
@@ -79,6 +79,6 @@ Example:
 
 ```
 $ cd {project-root}
-$ NODE_ENV=prod npm run build
+$ NODE_ENV=prod npm run build   # build a production distribution
 ```
 
