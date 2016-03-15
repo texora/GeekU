@@ -12,7 +12,8 @@ The GeekU project is a sandbox University Transcript Application, with
 enough real-world requirements to make it interesting.
 
 - model M:M relationships of course/student using MongoDB
-- development of both client and server logic, managed through an npm dev environment
+- development of both client and server logic
+- managed through an npm build process
 - single page app (using React.js)
   * employing routes
   * employing redux (Flex architecture)
@@ -27,19 +28,27 @@ enough real-world requirements to make it interesting.
 If you want to run this project on your local machine, simply clone
 the git repo (or zip it up), and follow these instructions.
 
-### Setup Steps
+### Prerequisite
+
+- Node.js installed
+- MongoDB installed
+
+
+### Setup
 
 ```
 $ cd {project-root}
+
 $ npm install    # install project dependencies
+$ npm run build  # initial build of system
+
 $ mongod         # launch MongoDB server
 $ TODO           # load sample mongo data
-$ npm run build  # initial build of system
 ```
 
 ### For Production
 
-For production, simply run our rest server.
+For production, simply run the rest server.
 
 ```
 $ cd {project-root}
@@ -49,8 +58,8 @@ $ npm run server-run
 
 ### For Development
 
-For development, we build client/server bundles (re-building on
-change) -AND- launch our rest server (restarting on change).
+For development, build (and re-build on change) the client/server
+bundles -AND- launch the rest server (which restarts on change).
 
 ```
 $ cd {project-root}
@@ -62,14 +71,14 @@ $ npm run dev
 
 The The NODE_ENV envirnment variable is used as follows:
 - NODE_ENV=prod
-  * clientBundle is minified (currently clientBundle.js TODO: clientBundle.min.js)
-- NODE_ENV=anythingElse (i.e. when used in dev) (i.e. NOT prod)
+  * clientBundle is minified (currently in clientBundle.js TODO: clientBundle.min.js)
+- NODE_ENV=dev [the default]
   * source maps are generated
 
 Example: 
 
 ```
 $ cd {project-root}
-$ NODE_ENV=production npm run build
+$ NODE_ENV=prod npm run build
 ```
 
