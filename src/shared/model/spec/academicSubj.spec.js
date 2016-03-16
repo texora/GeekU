@@ -1,26 +1,22 @@
 'use strict';
 
-// ??? import {expect} from 'expect';
-// ??? MUST IMPORT academicGroupExists
-var expect = require('expect'); // ??? OLD STYLE
+import                            '../../util/polyfill.js';
+import expect                from 'expect';
+import {academicGroupExists} from '../academicSubj';
+
 
 // ***
 // *** all academicSubj tests ...
 // ***
 
-// ? describe('academicSubj tests', () => {
-// ?   it('academicGroupExists(???)', () => {
-// ?     expect(academicGroupExists("Graduate Management")).toEqual(true);
-// ?   })
-// ? });
+describe('academicSubj tests', () => {
 
-describe('academicSubj tests', function () {
-  it('academicGroupExists(true)', function () {
-    var academicGroupExists = true;
-    expect(academicGroupExists).toEqual(true);
+  it('academicGroupExists("NON Existant Academic Group")', () => {
+    expect(academicGroupExists("NON Existant Academic Group")).toEqual(false);
   });
-  it('academicGroupExists(false)', function () {
-    var academicGroupExists = false;
-    expect(academicGroupExists).toEqual(false);
+
+  it('academicGroupExists("Graduate Management")', () => {
+    expect(academicGroupExists("Graduate Management")).toEqual(true);
   });
+
 });

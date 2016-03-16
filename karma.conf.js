@@ -7,11 +7,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    // ??? remove 'webpack' to see if this fixes problem:
-    // ??? Error: No provider for "framework:webpack"! (Resolving: framework:webpack)
-    frameworks: ['mocha', 'webpack', 'phantomjs-shim'],
-    // ??? without it ... we are NOT converting test code to ES6
-    // frameworks: ['mocha', 'phantomjs-shim'],
+    frameworks: ['mocha', 'phantomjs-shim'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -31,10 +27,21 @@ module.exports = function(config) {
     },
 
     webpack: {
-      debug: true,
-      // transform: ['babelify'], // ???? ORIGINALLY COMMENTED OUT, WITH babelify ... use package.json webpack field ??? look for browserfy in package.json
-      extensions: ['.js', '.jsx']
+      devtool: 'inline-source-map',
+      module: {
+        loaders: [
+          { test: /\.js$/,   exclude: /node_modules/, loader: 'babel' },
+          { test: /\.json$/, loader: 'json-loader' }
+        ]
+      },
+      resolve: {
+        extensions: ['', '.json', '.js', '.jsx']
+      }
     },
+
+    // ? webpackServer: {
+    // ?   noInfo: true
+    // ? },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
