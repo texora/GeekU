@@ -59,7 +59,8 @@ $ npm run server-run
 ### For Development
 
 For development, build (and re-build on change) the client/server
-bundles -AND- launch the rest server (which restarts on change).
+bundles -AND- launch the rest server (which restarts on change) -AND-
+run unit tests (triggered by changes).
 
 ```
 $ cd {project-root}

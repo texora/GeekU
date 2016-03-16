@@ -27,14 +27,12 @@
     "server-watch": "nodemon --watch dist/serverBundle.js dist/serverBundle.js",
     "run:COMMENT": "build client/server bundles -AND- run rest server",
     "run": "npm run build && npm run server-run",
-    "dev:COMMENT": "build client/server bundles (re-building on change) -AND- run rest server (restarting on change) ???DOC: -AND- run tests (re-run on change)",
-    "dev:TODO": "parallelshell \"npm run watch\" \"npm run server-watch\"  \"npm run test-watch\"",
-    "dev": "parallelshell \"npm run watch\" \"npm run server-watch\"",
-    "test:COMMENT": "one-time test run ???NEW",
+    "dev:COMMENT": "build client/server bundles (re-building on change) -AND- run rest server (restarting on change) -AND- run tests (re-run on change)",
+    "dev": "parallelshell \"npm run watch\" \"npm run server-watch\"  \"npm run test-watch\"",
+    "test:COMMENT": "one-time test run",
     "test": "karma start --single-run",
-    "test-watch:COMMENT": "continuous test runner (re-run on change) ???NEW",
+    "test-watch:COMMENT": "continuous test runner (re-run on change)",
     "test-watch": "karma start",
-    "TODO1": "Include Karma test and watch ??? DO IT",
     "TODO2": "Include style in module bundle (CSS/LESS/SAAS/etc)",
     "TODO3": "Include lint checker",
     "TODO4": "Integrate Webpack Dev Server to get browser auto-refresh",
@@ -62,6 +60,7 @@
     "webpack": "^1.12.14"
   },
   "dependencies": {
+    "core-js": "^2.2.0",
     "express": "^4.13.4"
   }
 }
