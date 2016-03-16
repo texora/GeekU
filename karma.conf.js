@@ -39,9 +39,9 @@ module.exports = function(config) {
       }
     },
 
-    // ? webpackServer: {
-    // ?   noInfo: true
-    // ? },
+    webpackServer: {
+      noInfo: true
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
