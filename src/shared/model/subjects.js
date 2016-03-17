@@ -28,41 +28,46 @@
 //*** Public API
 //***
 
-// promote all academicGroups <string[]>
-export function academicGroups() {
-  return _allAcademicGroups;
-}
+const subjects = {
 
-// does supplied academicGroup exist? <boolean>
-export function academicGroupExists(academicGroup) {
-  return _academicGroups[academicGroup] ? true : false;
-}
+  // promote all academicGroups <string[]>
+  allAcademicGroups() {
+    return _allAcademicGroups;
+  },
 
-// promote academicGroup for given subject <string>
-export function academicGroupForSubject(subject) {
-  const academicGroup = _subjects[subject];
-  if (!academicGroup)
-    throw new Error(`ERROR: academicGroupForSubject('${subject}') ... non-existent subject`);
-  return academicGroup;
-}
+  // does supplied academicGroup exist? <boolean>
+  academicGroupExists(academicGroup) {
+    return _academicGroups[academicGroup] ? true : false;
+  },
 
-// promote all subjects <string[]>
-export function subjects() {
-  return _allSubjects;
-}
+  // promote academicGroup for given subject <string>
+  academicGroupForSubject(subject) {
+    const academicGroup = _subjects[subject];
+    if (!academicGroup)
+      throw new Error(`ERROR: academicGroupForSubject('${subject}') ... non-existent subject`);
+    return academicGroup;
+  },
 
-// does supplied subject exist? <boolean>
-export function subjectExists(subject) {
-  return _subjects[subject] ? true : false;
-}
+  // promote all subjects <string[]>
+  allSubjects() {
+    return _allSubjects;
+  },
 
-// promote subjects for given academicGroup <string[]>
-export function subjectsForAcademicGroup(academicGroup) {
-  const subjects = _academicGroups[academicGroup];
-  if (!subjects)
-    throw new Error(`ERROR: subjectsForAcademicGroup('${academicGroup}') ... non-existent academicGroup`);
-  return subjects;
-}
+  // does supplied subject exist? <boolean>
+  subjectExists(subject) {
+    return _subjects[subject] ? true : false;
+  },
+
+  // promote subjects for given academicGroup <string[]>
+  subjectsForAcademicGroup(academicGroup) {
+    const subjects = _academicGroups[academicGroup];
+    if (!subjects)
+      throw new Error(`ERROR: subjectsForAcademicGroup('${academicGroup}') ... non-existent academicGroup`);
+    return subjects;
+  },
+
+};
+export default subjects;
 
 
 
