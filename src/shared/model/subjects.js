@@ -30,31 +30,13 @@
 
 const subjects = {
 
-  // promote all academicGroups <string[]>
-  allAcademicGroups() {
-    return _allAcademicGroups;
-  },
-
-  // does supplied academicGroup exist? <boolean>
-  academicGroupExists(academicGroup) {
-    return _academicGroups[academicGroup] ? true : false;
-  },
-
-  // promote academicGroup for given subject <string>
-  academicGroupForSubject(subject) {
-    const academicGroup = _subjects[subject];
-    if (!academicGroup)
-      throw new Error(`ERROR: academicGroupForSubject('${subject}') ... non-existent subject`);
-    return academicGroup;
-  },
-
-  // promote all subjects <string[]>
-  allSubjects() {
+  // promote all subjects <string[]> TODO: utilize optional filter
+  subjects() {
     return _allSubjects;
   },
 
   // does supplied subject exist? <boolean>
-  subjectExists(subject) {
+  subjectExist(subject) {
     return _subjects[subject] ? true : false;
   },
 
@@ -64,6 +46,26 @@ const subjects = {
     if (!subjects)
       throw new Error(`ERROR: subjectsForAcademicGroup('${academicGroup}') ... non-existent academicGroup`);
     return subjects;
+  },
+
+
+
+  // promote all academicGroups <string[]> TODO: utilize optional filter
+  academicGroups() {
+    return _allAcademicGroups;
+  },
+
+  // does supplied academicGroup exist? <boolean>
+  academicGroupExist(academicGroup) {
+    return _academicGroups[academicGroup] ? true : false;
+  },
+
+  // promote academicGroup for given subject <string>
+  academicGroupForSubject(subject) {
+    const academicGroup = _subjects[subject];
+    if (!academicGroup)
+      throw new Error(`ERROR: academicGroupForSubject('${subject}') ... non-existent subject`);
+    return academicGroup;
   },
 
 };

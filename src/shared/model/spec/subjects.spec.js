@@ -12,27 +12,27 @@ import subjects from '../subjects';
 describe('subject tests', () => {
 
 
-  describe('allAcademicGroups() tests', () => {
+  describe('academicGroups() tests', () => {
     it('Array Check', () => {
-      expect(subjects.allAcademicGroups())
+      expect(subjects.academicGroups())
         .toBeA('array');
     });
 
     it('Expected academicGroup: Engineering', () => {
-      expect(subjects.allAcademicGroups())
+      expect(subjects.academicGroups())
         .toInclude('Engineering');
     });
   });
 
 
-  describe('academicGroupExists() tests', () => {
+  describe('academicGroupExist() tests', () => {
     it('NON-EXIST-GROUP', () => {
-      expect(subjects.academicGroupExists('NON-EXIST-GROUP'))
+      expect(subjects.academicGroupExist('NON-EXIST-GROUP'))
         .toEqual(false);
     });
 
     it('Expected Group: Engineering', () => {
-      expect(subjects.academicGroupExists('Engineering'))
+      expect(subjects.academicGroupExist('Engineering'))
         .toEqual(true);
     });
   });
@@ -58,25 +58,25 @@ describe('subject tests', () => {
 
   describe('subjects() tests', () => {
     it('Array Check', () => {
-      expect(subjects.allSubjects())
+      expect(subjects.subjects())
         .toBeA('array');
     });
 
     it('Expected subject: CS', () => {
-      expect(subjects.allSubjects())
+      expect(subjects.subjects())
         .toInclude('CS');
     });
   });
 
 
-  describe('subjectExists() tests', () => {
+  describe('subjectExist() tests', () => {
     it('NON-EXIST-SUBJ', () => {
-      expect(subjects.subjectExists('NON-EXIST-SUBJ'))
+      expect(subjects.subjectExist('NON-EXIST-SUBJ'))
         .toEqual(false);
     });
 
     it('Expected Subject: CS', () => {
-      expect(subjects.subjectExists('CS'))
+      expect(subjects.subjectExist('CS'))
         .toEqual(true);
     });
   });
