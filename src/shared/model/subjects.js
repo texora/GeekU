@@ -1,16 +1,31 @@
 'use strict';
 
 /**
- * Promotes both AcademicGroups, Subjects, and the relationship between
- * them (AcademicGroups --1:M-- Subjects).
+ * Promotes GeekU Subjects, and AcademicGroups, along with the
+ * associative relationship between them:
  *
- * This utility is used for validation (client/server), and client-side 
- * GUI drivers for lists, etc.
+ *   AcademicGroups --1:M-- Subjects
+ *
+ * A subject is a consistent acronym used within one field of study,
+ * and is prefixed by each course of that subject.  For example, the
+ * subject "CS" represents Computer Science studies, and CS-1001 is
+ * one course within that curriculum.
+ *
+ * AcademicGroups is a classification of several study fields
+ * (i.e. Subjects).  For example, the AcademicGroup of "Engineering"
+ * contains several Subjects, including "CS".
+ * 
+ * This utility is used for validation (client/server), and
+ * client-side GUI drivers of lists, etc.
+ *
+ * Due to the static nature of these elements, a programmatic
+ * maintenance is utilized, rather than one modeled in our DB (refer
+ * to the "Internals" section below).
  */
 
 
 //***
-//*** public API
+//*** Public API
 //***
 
 // promote all academicGroups <string[]>
@@ -52,7 +67,7 @@ export function subjectsForAcademicGroup(academicGroup) {
 
 
 //***
-//*** internals
+//*** Internals
 //***
 
 // for each academicGroup <string>, an array of subjects <string[]>

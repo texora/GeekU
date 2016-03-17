@@ -2,14 +2,14 @@
 
 import '../../util/polyfill.js';
 import expect         from 'expect';
-import * as underTest from '../academicSubj';
+import * as underTest from '../subjects';
 
 
 // ***
-// *** all academicSubj tests ...
+// *** all subjects tests ...
 // ***
 
-describe('academicSubj tests', () => {
+describe('subject tests', () => {
 
 
   describe('academicGroups() tests', () => {
