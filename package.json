@@ -12,7 +12,9 @@
   },
   "license": "MIT",
   "webpack": {
-    "transform": ["babelify"]
+    "transform": [
+      "babelify"
+    ]
   },
   "scripts": {
     "NOTE1": "in all cases, use NODE_ENV=prod/dev to alter results [default: dev])",
@@ -33,17 +35,22 @@
     "test": "karma start --single-run",
     "test-watch:COMMENT": "continuous test runner (re-run on change)",
     "test-watch": "karma start",
+    "lint:COMMENT": "lint our source code",
+    "lint": "eslint --ext .js src",
+    "TODO1": "lint process broken due to bug in dependency hell",
     "TODO2": "Include style in module bundle (CSS/LESS/SAAS/etc)",
-    "TODO3": "Include lint checker",
-    "TODO4": "Integrate Webpack Dev Server to get browser auto-refresh",
-    "TODO5": "Further refine server build to use webpack hot module replacement (currently server is restarted when code changes - via nodemon) ... http://jlongster.com/Backend-Apps-with-Webpack--Part-III"
+    "TODO3": "Integrate Webpack Dev Server to get browser auto-refresh",
+    "TODO4": "Further refine server build to use webpack hot module replacement (currently server is restarted when code changes - via nodemon) ... http://jlongster.com/Backend-Apps-with-Webpack--Part-III"
   },
   "devDependencies": {
     "babel-core": "^6.7.2",
+    "babel-eslint": "^4.1.3",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.6.0",
     "babelify": "^7.2.0",
     "deep-merge": "^1.0.0",
+    "eslint": "^1.7.2",
+    "eslint-plugin-react": "^3.6.3",
     "expect": "^1.15.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^0.2.2",
