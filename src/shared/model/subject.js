@@ -28,7 +28,7 @@
 //*** Public API
 //***
 
-const subjects = {
+const subject = {
 
   // promote all subjects <string[]> TODO: utilize optional filter
   subjects() {
@@ -36,7 +36,7 @@ const subjects = {
   },
 
   // does supplied subject exist? <boolean>
-  subjectExist(subject) {
+  subjectExists(subject) {
     return _subjects[subject] ? true : false;
   },
 
@@ -56,7 +56,7 @@ const subjects = {
   },
 
   // does supplied academicGroup exist? <boolean>
-  academicGroupExist(academicGroup) {
+  academicGroupExists(academicGroup) {
     return _academicGroups[academicGroup] ? true : false;
   },
 
@@ -69,7 +69,7 @@ const subjects = {
   },
 
 };
-export default subjects;
+export default subject;
 
 
 
