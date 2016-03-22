@@ -1,6 +1,11 @@
 <!doctype html public "storage">
 <html>
   <head>
+    <!-- NOTE: Asset resources are absolute to allow react-router  to serve resources correctly.
+               Ex: http://localhost:8080/route1/route2 will re-direct to this index.html.
+                   HOWEVER, without absolute references, it would attempt to resolve 
+                     http://localhost:8080/route1/route2/img/GeekULogo.png
+      -->
     <meta charset=utf-8/>
     <title>GeekU</title>
     <!-- ???
