@@ -52,7 +52,7 @@ courses.get('/api/courses', (req, res, next) => {
   .catch( err => {
     // ... unsure if we ALWAYS want to cover up technical message
     // ... it may be due to bad interpretation of mongoQuery
-    throw err.setClientMsg("Issue encountered in DB processing.");
+    throw err.setClientMsg("Issue encountered in DB processing of /api/courses");
   });
 });
 
@@ -96,7 +96,7 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.setClientMsg("Issue encountered in DB processing.");
+    throw err.setClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
   });
 
 });
