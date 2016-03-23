@@ -50,12 +50,56 @@ courses.get('/api/courses', (req, res, next) => {
     res.send(courses);
   })
   .catch( err => {
-    // ... unsure if we ALWAYS want to conver up technical message
+    // ... unsure if we ALWAYS want to cover up technical message
     // ... it may be due to bad interpretation of mongoQuery
     throw err.setClientMsg("Issue encountered in DB processing.");
   });
 });
 
-// ??? retrieve course detail (with enrollment)
+
+
+//******************************************************************************
+//*** retrieve a course detail (with enrollment): /api/courses/:courseNum
+//***   - when courseNum is Not Found, a 404 status is returned (Not Found)
+//******************************************************************************
+
+courses.get('/api/courses/:courseNum', (req, res, next) => {
+  const courseNum = req.params.courseNum;
+
+  // perform retrieval
+  const coursesColl = req.db.collection('Courses');
+  coursesColl.aggregate([
+    { $match: {_id: courseNum} },
+    { $lookup: {
+        from:         "Enrollment",
+        localField:   "courseNum",
+        foreignField: "course.courseNum",
+        as:           "enrollment" } },
+    { $project: {
+      _id: false,
+      "courseNum":     true,
+      "courseTitle":   true,
+      "courseDesc":    true,
+      "academicGroup": true,
+      "subjDesc":      true,
+      "enrollment.term":    true,
+      "enrollment.grade":   true,
+      "enrollment.student": true } }
+  ])
+  .toArray()
+  .then( courses => {
+    if (courses.length === 0) {
+      res.sendStatus(404); // Not Found
+    }
+    else {
+      res.send(courses[0]);
+    }
+  })
+  .catch( err => {
+    throw err.setClientMsg("Issue encountered in DB processing.");
+  });
+
+});
+
 
 export default courses;
