@@ -4,17 +4,13 @@
  * Promotes various MongoDB utilities.
  */
 
-//***
-//*** Public API
-//***
-
 // return a Mongo projection object, defining the fields to promote.
 // PARAMS:
 // - validFields:    valid fields for the desired collection
 // - defaultFields:  the default fields to display (when NO reqQueryFields is supplied)
 // - reqQueryFields: an optional http request query string parameter enumerating the fields to display
 //                   ... ex: http://localhost:8080/api/courses?fields=a,b,c
-export function projectMongoFields(validFields, defaultFields, reqQueryFields) {
+export function mongoFields(validFields, defaultFields, reqQueryFields) {
 
   // when NO reqQueryFields have been supplied, simply use the supplied default
   if (!reqQueryFields) {
@@ -27,7 +23,8 @@ export function projectMongoFields(validFields, defaultFields, reqQueryFields) {
   for (let field of fields) {
     field = field.trim();
     if (!validFields[field]) {
-      throw Error(`ERROR: projectMongoFields() invalid field ('${field}') specified in req query field parameter: '${reqQueryFields}'`);
+      const msg = `Invalid field ('${field}') specified in request query field parameter: '${reqQueryFields}'`
+      throw Error(msg).setClientMsg(msg);
     }
     projection[field] = true;
   }
@@ -37,6 +34,31 @@ export function projectMongoFields(validFields, defaultFields, reqQueryFields) {
     projection._id = false;
   }
 
-  // that's all
+  // that's all folks
   return projection
+}
+
+
+// return a Mongo query object, defining the selection criteria for a collection.
+// PARAMS:
+// - reqQueryFilter: an optional http request query string parameter (a string) containing the json query object
+//                   ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
+export function mongoQuery(reqQueryFilter) {
+
+  // default to return all documents in collection
+  let mongoQuery = {};
+
+  // when supplied, refine with client-supplied query (a string)
+  if (reqQueryFilter) {
+    const filter = decodeURIComponent(reqQueryFilter);
+    try {
+      mongoQuery = JSON.parse(filter);
+    }
+    catch(e) {
+      throw e.setClientMsg(`Invalid request query filter: '${filter}' ... ${e.message}`);
+    }
+  }
+
+  // that's all folks
+  return mongoQuery;
 }

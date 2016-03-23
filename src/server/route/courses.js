@@ -1,8 +1,8 @@
 'use strict';
 
-import express     from 'express';
-import coursesMeta from '../../shared/model/coursesMeta';
-import {projectMongoFields} from '../util/MongoUtil';
+import express        from 'express';
+import coursesMeta    from '../../shared/model/coursesMeta';
+import * as MongoUtil from '../util/MongoUtil';
 
 const courses = express.Router();
 
@@ -27,37 +27,32 @@ const courses = express.Router();
 //***
 //***************************************************************************************************
 
-courses.get('/api/courses', (req, res) => {
+courses.get('/api/courses', (req, res, next) => {
   console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
 
-  // define the fields to display (a mongo projection) 
-  // tweaked from the optional "fields" query string
+  // define our fields to display (a mongo projection) 
+  // tweaked from the optional client-supplied "fields" query string
   // ... ex: /api/courses?fields=a,b,c
-  const displayFields = projectMongoFields(coursesMeta.validFields,
-                                           coursesMeta.defaultDisplayFields,
-                                           req.query.fields);
+  const displayFields = MongoUtil.mongoFields(coursesMeta.validFields,
+                                              coursesMeta.defaultDisplayFields,
+                                              req.query.fields);
 
-  // apply any user-supplied filter selection criteria (mongo query object)
-  let mongoQuery = {}; // default to return all
-  if (req.query.filter) {
-    const filter = decodeURIComponent(req.query.filter);
-    mongoQuery = JSON.parse(filter); // ??? should handle exceptions gracefully
-  }
+  // define our mongo query object
+  // tweaked from the optional client-supplied "query" query string
+  // ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
+  const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
   // perform retrieval
   const coursesColl = req.db.collection('Courses');
   coursesColl.find(mongoQuery, displayFields)
-  .toArray()  // ??? I think we have to try/catch for synchronous errors in the find() because we have NOT got to the promis yet
+  .toArray()
   .then( courses => {
     res.send(courses);
   })
   .catch( err => {
-    console.log('ERROR: ??? problem in /api/courses: ' + err.stack);
-    res.status(500).send(err); // ??? from Mark ??? TEST THIS OUT
-    // ??? have also seen this (from some git hub folks)
-    // ? let error = new Error('msg here');
-    // ? error.status = 400;
-    // ? next(error);
+    // ... unsure if we ALWAYS want to conver up technical message
+    // ... it may be due to bad interpretation of mongoQuery
+    throw err.setClientMsg("Issue encountered in DB processing.");
   });
 });
 
