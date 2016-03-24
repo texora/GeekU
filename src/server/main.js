@@ -6,6 +6,7 @@ import express    from 'express';
 import path       from 'path';
 import bodyParser from 'body-parser';
 import courses    from './route/courses';
+import students   from './route/students';
 import createRunningAppBoundToDb from './util/appDb';
 import commonErrorHandler        from './util/commonErrorHandler';
 
@@ -24,8 +25,9 @@ app.use(express.static(rootPath));
 
 // setup our various "API" modular routes
 app.use('/', courses);
+app.use('/', students);
 // ... catch-all for /api
-courses.get('/api/*', (req, res, next) => {
+app.get('/api/*', (req, res, next) => {
   const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;
   next(new Error(msg).setClientMsg(msg));
 });
