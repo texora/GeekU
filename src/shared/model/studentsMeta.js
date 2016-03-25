@@ -14,9 +14,9 @@ const studentsMeta = {
   validFields: {
     '_id':         '_id',
     'studentNum':  'studentNum',
+    'gender':      'gender',
     'firstName':   'firstName',
     'lastName':    'lastName',
-    'gender':      'gender',
     'birthday':    'birthday',
     'phone':       'phone',
     'email':       'email',
@@ -35,9 +35,9 @@ const studentsMeta = {
   defaultDisplayFields: {
     '_id':         false,
     'studentNum':  true,
+    'gender':      true,
     'firstName':   true,
     'lastName':    true,
-    'gender':      true,
     'birthday':    true,
     'gpa':         true,
     'graduation':  true,
