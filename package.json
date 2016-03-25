@@ -17,7 +17,7 @@
     ]
   },
   "scripts": {
-    "NOTE1": "in all cases, use NODE_ENV=prod/dev to alter results [default: dev])",
+    "NOTE1": "in all cases, use NODE_ENV=production/development to alter results [default: development])",
     "start": "npm run dev",
     "build:COMMENT": "build client/server bundles suitable for distribution",
     "build": "webpack",

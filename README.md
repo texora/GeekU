@@ -71,15 +71,15 @@ $ npm run dev
 ### NODE_ENV envirnment variable
 
 The The NODE_ENV envirnment variable is used as follows:
-- NODE_ENV=prod
+- NODE_ENV=production
   * clientBundle is minified (currently in clientBundle.js TODO: clientBundle.min.js)
-- NODE_ENV=dev [the default]
+- NODE_ENV=development [the default]
   * source maps are generated
 
 Example: 
 
 ```
 $ cd {project-root}
-$ NODE_ENV=prod npm run build   # build a production distribution
+$ NODE_ENV=production npm run build   # build a production distribution
 ```
 

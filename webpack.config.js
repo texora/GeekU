@@ -20,7 +20,7 @@ var sharedConfig = {
 };
 
 // apply development options (i.e. non-production)
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.NODE_ENV !== 'production') {
   // more efficient than 'source-map' for bigger projects
   // ... webpack will process source-maps individually for each module 
   //     by eval-ing each module at runtime with it's own sourcemap
@@ -64,7 +64,7 @@ var clientConfig = applySharedConfig({
 
   // code minify production builds
   // TODO: figure out how to target a *.min.js (e.g. clientBundle.min.js)
-  plugins: process.env.NODE_ENV === 'prod'
+  plugins: process.env.NODE_ENV === 'production'
     ? [ new webpack.optimize.DedupePlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.UglifyJsPlugin() ]
