@@ -47,11 +47,13 @@ courses.get('/api/courses', (req, res, next) => {
   coursesColl.find(mongoQuery, displayFields)
   .toArray()
   .then( courses => {
+    console.log('INFO: courses.js ??? server is sending out these courses: ', courses);
     res.send(courses);
   })
   .catch( err => {
     // ... unsure if we ALWAYS want to cover up technical message
     // ... it may be due to bad interpretation of mongoQuery
+    console.log('ERROR: courses.js ??? server is sending out err:', err);
     throw err.setClientMsg("Issue encountered in DB processing of /api/courses");
   });
 });
