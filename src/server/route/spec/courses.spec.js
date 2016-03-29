@@ -10,63 +10,21 @@ import axios  from 'axios';
 // *** all /api/courses tests ...
 // ***
 
+const httpClient = axios.create({
+  baseURL: 'http://localhost:8080/'
+});
 
-// TODO: either technique is legit ... using global axios, or crateing an instance, or specifing full url in request
-axios.defaults.baseURL = 'http://localhost:8080/';
-// const httpClient = axios.create({
-//   baseURL: 'http://localhost:8080/'
-// });
-
-// ? // NOTE: Coded this way, we do NOT seem to get the async semantics in place
-// ? describe('/api/courses tests', () => {
-// ? 
-// ?   // ? it('POOP', () => {
-// ?   // ?   expect(1).toEqual(2);
-// ?   // ? });
-// ? 
-// ? 
-// ?   console.log('??? hitting rest api service');
-// ?   // axios or httpClient
-// ?   // axios.get('/api/courses/?fields=courseNum,courseTitle&filter={"_id":{"$in":["CS-1110","CS-1112"]}}')
-// ?   axios.get('http://swapi.co/api/people')
-// ?     .then(resp => {
-// ?       const courses = resp.data;
-// ? 
-// ?       console.log(`??? received courses: ${courses}`);
-// ? 
-// ?       it('Should have multiple results', () => {
-// ?         expect(courses.length).toEqual(4);
-// ?       });
-// ? 
-// ?     })
-// ?     .catch(err => { // ??? is ALSO RESP
-// ?     
-// ?       console.log("??? err: ", err);
-// ?       console.log("??? err.data: ", err.data);
-// ?     
-// ?       it(`Unexpected err: ${err.status} ${err.data}`, () => {
-// ?         // ? expect().fail('POOP');
-// ?         expect().toExist('FAIL'); // ??? use a generic fail
-// ?       });
-// ?     
-// ?     });
-// ? 
-// ? });
-
-
-// NOTE: Coded this way, async promises seem to work (using mocha's done semantics)
-//       HOWEVER, WE DON'T WANT TO RUN THE ASYNC FUNCTION BEFORE EACH IT ... GRRRR
-describe('/api/courses tests', () => {
+describe('/api/courses tests', function() {
 
   let goodResp = null;
   let errResp  = null;
 
-  before( done => {
+  before( function(done) {
     console.log('??? hitting rest api service');
-    // axios or httpClient
-    axios.get('/api/courses/?fields=courseNum,courseTitle&filter={"_id":{"$in":["CS-1110","CS-1112"]}}')
-    // ? axios.get('http://swapi.co/api/people')
-      .then(resp => {
+    // ? httpClient.get('http://swapi.co/api/people') // KJB: axios handles a different rest service correctly
+    // ? httpClient.get('/api/courses?fields=courseNum,ouch,courseDesc') // KJB: this url sends back a client error: 500: Internal Server Error
+    httpClient.get('/api/courses') // KJB: this url sends back a good response
+    .then( function(resp) {
         goodResp = resp;
         const courses = resp.data;
         console.log('??? received courses: ', courses);
@@ -75,17 +33,21 @@ describe('/api/courses tests', () => {
         }
         done();
       })
-      .catch(resp => {
+    .catch( function(resp) {
         errResp = resp;
         console.log("??? err: ", resp);
+        console.log("??? err jsonized: " + JSON.stringify(resp));
         for (let prop in resp) {
           console.log(`   ? resp.${prop}: ${resp[prop]}`);
         }
-        done();
+        done(resp); // KJB: wow, this emits "Network Error"
       })
   });
 
-  it('Should succeed', () => {
+  after( function() {
+  });
+
+  it('Should succeed', function() {
     // ? // ??? FOR swapi
     // ? let people = goodResp.data.results;
     // ? console.log(`??? first person: name: : ${people[0].name}, hair_color: ${people[0].hair_color}`);
@@ -94,9 +56,4 @@ describe('/api/courses tests', () => {
     expect(errResp).toNotExist();
   });
 
-  // ? it('Should be good', () => {
-  // ?   expect(goodResp).toExist();
-  // ?   expect(errResp).toNotExist();
-  // ? });
-  
 });

@@ -83,6 +83,7 @@ class GeekURes {
       statusMsg: HTTPStatus[status],
       data:      payload
     });
+    console.log('DEBUG: ??? sending following payload: ', payload);
   }
 
   /**
@@ -99,6 +100,7 @@ class GeekURes {
       status:    status,
       statusMsg: HTTPStatus[status]
     });
+    console.log('DEBUG: ??? sending 404 (Not Found)');
   }
 
   /**
@@ -117,7 +119,7 @@ class GeekURes {
    * @api public
    */
   sendError(err, req) {
-  
+    
     err.log(req);
 
     err.summarize(req);
@@ -128,13 +130,14 @@ class GeekURes {
     if (err.logId) {
       errRes.logId = err.logId;
     }
-  
+    
     this.res.status(err.summary.httpStatus).send({
       success:   false,
       status:    err.summary.httpStatus,
       statusMsg: HTTPStatus[err.summary.httpStatus],
       error:     errRes
     });
+    console.log(`DEBUG: ??? sending ERROR: ${err.summary.clientMsg}`);
   }
 
 }
@@ -187,11 +190,17 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
       let clientMsg = "Could not connect to our MongoDB";
       if (err.name === 'MongoError' &&
           err.message.includes('ECONNREFUSED')) {
-        clientMsg += ' ... NOTE: Based on the internals of this error, we believe the MongoDB server is NOT running.'
+            clientMsg += ' ... NOTE: Based on the internals of this error, we believe the MongoDB server is NOT running.'
       }
       err.setClientMsg(clientMsg);
       err.log();
       console.error('ERROR: Server cannot start - NO MongoDB Connection');
+
+      // ??? temporarly keep going to run without DB
+      console.error('INFO: HOWEVER, we are temporarly going to go forward with starting the server');
+      app.listen(appPort, () => {
+        console.log('INFO: createRunningApp(): DB connection established, and app is listening on port: ' + appPort);
+      });
     }
     catch(e) {
       console.error('ERROR: Problem encountered in error processor of DIFFERENT problem (MongoDB connection issue):\n', e.stack);
