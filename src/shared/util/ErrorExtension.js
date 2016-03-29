@@ -31,3 +31,19 @@ if (!Error.prototype.setStatus) {
     return this;
   };
 }
+
+
+// set indicator that this error represents a client error that has
+// been handled.
+// ... return: self (i.e. receiving Error object)
+// ... usage:
+//      - re-throw existing err object, with clientError set
+//          throw e.setClientError();
+//      - throw new Error object, with clientError set
+//          throw new Error("Internal Msg").setClientError();
+if (!Error.prototype.setClientError) {
+  Error.prototype.setClientError = function() {
+    this.clientError = true;
+    return this;
+  };
+}

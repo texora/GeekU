@@ -43,17 +43,15 @@ courses.get('/api/courses', (req, res, next) => {
   const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
   // perform retrieval
-  const coursesColl = req.db.collection('Courses');
+  const coursesColl = req.geekU.db.collection('Courses');
   coursesColl.find(mongoQuery, displayFields)
   .toArray()
   .then( courses => {
-    console.log('INFO: courses.js ??? server is sending out these courses: ', courses);
-    res.send(courses);
+    res.geekU.send(courses);
   })
   .catch( err => {
-    // ... unsure if we ALWAYS want to cover up technical message
-    // ... it may be due to bad interpretation of mongoQuery
-    console.log('ERROR: courses.js ??? server is sending out err:', err);
+    // NOTE: unsure if we ALWAYS want to cover up technical message
+    //       ... it may be due to bad interpretation of mongoQuery
     throw err.setClientMsg("Issue encountered in DB processing of /api/courses");
   });
 });
@@ -66,10 +64,12 @@ courses.get('/api/courses', (req, res, next) => {
 //******************************************************************************
 
 courses.get('/api/courses/:courseNum', (req, res, next) => {
+  console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
+
   const courseNum = req.params.courseNum;
 
   // perform retrieval
-  const coursesColl = req.db.collection('Courses');
+  const coursesColl = req.geekU.db.collection('Courses');
   coursesColl.aggregate([
     { $match: {_id: courseNum} },
     { $lookup: {
@@ -91,10 +91,10 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
   .toArray()
   .then( courses => {
     if (courses.length === 0) {
-      res.sendStatus(404); // Not Found
+      res.geekU.sendNotFound();
     }
     else {
-      res.send(courses[0]);
+      res.geekU.send(courses[0]);
     }
   })
   .catch( err => {

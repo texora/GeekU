@@ -43,15 +43,15 @@ students.get('/api/students', (req, res, next) => {
   const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
   // perform retrieval
-  const studentsColl = req.db.collection('Students');
+  const studentsColl = req.geekU.db.collection('Students');
   studentsColl.find(mongoQuery, displayFields)
              .toArray()
              .then( students => {
-               res.send(students);
+               res.geekU.send(students);
              })
              .catch( err => {
-               // ... unsure if we ALWAYS want to cover up technical message
-               // ... it may be due to bad interpretation of mongoQuery
+               // NOTE: unsure if we ALWAYS want to cover up technical message
+               //       ... it may be due to bad interpretation of mongoQuery
                throw err.setClientMsg("Issue encountered in DB processing of /api/students");
              });
 });
@@ -64,10 +64,12 @@ students.get('/api/students', (req, res, next) => {
 //******************************************************************************
 
 students.get('/api/students/:studentNum', (req, res, next) => {
+  console.log(`INFO: students.js processing request: ${decodeURIComponent(req.originalUrl)}`);
+
   const studentNum = req.params.studentNum;
 
   // perform retrieval
-  const studentsColl = req.db.collection('Students');
+  const studentsColl = req.geekU.db.collection('Students');
   studentsColl.aggregate([
     { $match: {_id: studentNum} },
     { $lookup: {
@@ -95,10 +97,10 @@ students.get('/api/students/:studentNum', (req, res, next) => {
   .toArray()
   .then( students => {
     if (students.length === 0) {
-      res.sendStatus(404); // Not Found
+      res.geekU.sendNotFound();
     }
     else {
-      res.send(students[0]);
+      res.geekU.send(students[0]);
     }
   })
   .catch( err => {

@@ -2,15 +2,16 @@
 
 import '../shared/util/polyfill';
 import '../shared/util/ErrorExtension';
-import express    from 'express';
-import path       from 'path';
-import bodyParser from 'body-parser';
-import courses    from './route/courses';
-import students   from './route/students';
-import createRunningAppBoundToDb from './util/appDb';
-import commonErrorHandler        from './util/commonErrorHandler';
+import express      from 'express';
+import path         from 'path';
+import bodyParser   from 'body-parser';
+import courses      from './route/courses';
+import students     from './route/students';
+import * as GeekApp from './util/GeekApp';
 
-const app = createRunningAppBoundToDb('mongodb://localhost:27017/GeekU', 8080);
+console.log('INFO: Starting GeekU Server.');
+
+const app = GeekApp.createRunningApp('mongodb://localhost:27017/GeekU', 8080);
 
 // handle Content-Type 'application/json' and 'text/plain' requests
 app.use(bodyParser.json());
@@ -29,7 +30,8 @@ app.use('/', students);
 // ... catch-all for /api
 app.get('/api/*', (req, res, next) => {
   const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;
-  next(new Error(msg).setClientMsg(msg));
+  console.log(`WARN: main.js ${msg}`);
+  next(new Error(msg).setClientMsg(msg).setClientError());
 });
 
 
@@ -45,4 +47,4 @@ app.get('*', function (req, res) {
 // register our common error handler
 // ... handles BOTH "throw Error" and Express "next(err)"
 // ... this registration must be last
-app.use( commonErrorHandler );
+app.use( GeekApp.commonErrorHandler );
