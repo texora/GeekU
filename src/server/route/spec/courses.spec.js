@@ -61,7 +61,7 @@ describe('/api/courses tests', () => {
   let goodResp = null;
   let errResp  = null;
 
-  beforeEach( done => {
+  before( done => {
     console.log('??? hitting rest api service');
     // axios or httpClient
     axios.get('/api/courses/?fields=courseNum,courseTitle&filter={"_id":{"$in":["CS-1110","CS-1112"]}}')
