@@ -2,7 +2,8 @@
 
 import express       from 'express';
 import {MongoClient} from 'mongodb';
-import shortid       from 'shortid'
+import shortid       from 'shortid';
+import HTTPStatus    from 'http-status';
 
 /*--------------------------------------------------------------------------------
 
@@ -75,12 +76,13 @@ class GeekURes {
    *
    * @api public
    */
-  send(payload) { // uses status 200 OK
-    const status = 200;
+  send(payload) {
+    const status = HTTPStatus.OK;
     this.res.status(status).send({
-      success: true,
-      status:  status, // ??? add statusMsg once we have http-status
-      data:    payload
+      success:   true,
+      status:    status,
+      statusMsg: HTTPStatus[status],
+      data:      payload
     });
   }
 
@@ -92,17 +94,18 @@ class GeekURes {
    * @api public
    */
   sendNotFound() {
-    const status = 404;
+    const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
-      success: false,
-      status:  status // ??? add statusMsg once we have http-status
+      success:   false,
+      status:    status,
+      statusMsg: HTTPStatus[status]
     });
   }
 
   /**
    * Send the supplied error condition.
    *  - packaged in the standard GeekU structured json document
-   *  - using the optional http status defined in err (default to 500)
+   *  - using the optional http status defined in err (default to 500 - Internal Server Error)
    *
    * NOTE: This method can be invoked directly by client code, or
    *       handled through our commonErrorHandler() (i.e. an uncaught
@@ -129,9 +132,10 @@ class GeekURes {
     }
   
     this.res.status(errData.status).send({
-      success: false,
-      status:  errData.status, // ??? add statusMsg once we have http-status
-      error:   errRes
+      success:   false,
+      status:    errData.status,
+      statusMsg: HTTPStatus[errData.status],
+      error:     errRes
     });
   }
 
@@ -253,7 +257,7 @@ function interpretError(err, req) {
 
   let errData = {
     name:      err.name      || "Error",
-    status:    err.status    || 500,
+    status:    err.status    || HTTPStatus.INTERNAL_SERVER_ERROR,
     clientMsg: err.clientMsg || "Unexpected Condition",
     message:   err.message   || "Unknown Message"
   };
@@ -288,11 +292,11 @@ function logError(err, req) {
   err.logId = shortid.generate();
 
   // log problem in our server console
-  // ??? add statusMsg once we have http-status
   console.error(`
 Encountered Error (GeekU Common Error Handler) ...
   Name:       ${errData.name}
   Status:     ${errData.status}
+  StatusMsg:  ${HTTPStatus[errData.status]}
   Client Msg: ${errData.clientMsg}
   Message:    ${errData.message}
   URL:        ${errData.url}
