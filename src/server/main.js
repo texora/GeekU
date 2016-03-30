@@ -1,7 +1,6 @@
 'use strict';
 
 import '../shared/util/polyfill';
-import '../shared/util/ErrorExtension';
 import express      from 'express';
 import path         from 'path';
 import bodyParser   from 'body-parser';

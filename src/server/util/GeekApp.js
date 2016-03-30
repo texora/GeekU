@@ -13,25 +13,23 @@ import HTTPStatus    from 'http-status';
        * promoted via the Express App's req.geekU.db property
   
     - all output wrapped in the GeekU structured json document
-       * promoted via the Express App's res.geekU.sendXxx() methods:
-           + send(payload)
-           + sendNotFound()
-           + sendError(err, req)
-       * conforming to the following format:
+       * using the following format (error/payload are mutually exclusive)
          {
-           success:   <boolean>, // synopsis of success/failure
-           status:    <int>,     // same as response.status
-           statusMsg: <String>,  // human readable interpreation of status
-           error: {              // error communication, when applicable (i.e. !success)
-                                 // NOTE: GeekU considers a NOT Found (404) status as success=false with NO error object
+           error: {              // error communication with app-specific content
+                                 // NOTE: GeekU considers a NOT Found status (404) as an error WITH an error object
              name:    <string>,     // the name classification for this error, ex: Error, ParseError, TypeError, etc.
              message: <string>,     // message for client consumption
              logId:   <string>      // server log identifier, when applicable (i.e. logging of unexpected condition)
            },
-           data: { -or- [        // payload data structure, when applicable (can be an object or an array)
+           payload: { -or- [     // payload data structure (can be an object or an array)
              ... specific to operation
            } -or- ]
          }
+       * NOTE: Use your normal async web framework's promotion of http status and statusText and ok
+       * NOTE: This structure is promoted via the Express App's res.geekU.sendXxx() methods:
+           + send(payload)
+           + sendNotFound()
+           + sendError(err, req)
 
  --------------------------------------------------------------------------------*/
 
@@ -78,12 +76,9 @@ class GeekURes {
   send(payload) {
     const status = HTTPStatus.OK;
     this.res.status(status).send({
-      success:   true,
-      status:    status,
-      statusMsg: HTTPStatus[status],
-      data:      payload
+      payload: payload
     });
-    console.log('DEBUG: ??? sending following payload: ', payload);
+    // console.log('DEBUG: ??? sending following payload: ', payload);
   }
 
   /**
@@ -96,11 +91,12 @@ class GeekURes {
   sendNotFound() {
     const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
-      success:   false,
-      status:    status,
-      statusMsg: HTTPStatus[status]
+      error: {
+        name:    'NotFound',
+        message: 'Requested Resource was NOT Found',
+      }
     });
-    console.log('DEBUG: ??? sending 404 (Not Found)');
+    // console.log('DEBUG: ??? sending 404 (Not Found)');
   }
 
   /**
@@ -132,12 +128,9 @@ class GeekURes {
     }
     
     this.res.status(err.summary.httpStatus).send({
-      success:   false,
-      status:    err.summary.httpStatus,
-      statusMsg: HTTPStatus[err.summary.httpStatus],
       error:     errRes
     });
-    console.log(`DEBUG: ??? sending ERROR: ${err.summary.clientMsg}`);
+    // console.log(`DEBUG: ??? sending ERROR: ${err.summary.clientMsg}`);
   }
 
 }
