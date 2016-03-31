@@ -105,7 +105,7 @@ if (!Error.prototype.summarize) {
       name:       this.name       || "Error",
       httpStatus: this.httpStatus || HTTPStatus.INTERNAL_SERVER_ERROR,
       clientMsg:  this.clientMsg  || "Unexpected Condition",
-      message:    this.message    || "Unknown Message"
+      message:    this.message    || "Unknown"
     };
     
     if (req) {

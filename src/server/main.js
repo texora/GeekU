@@ -1,7 +1,6 @@
 'use strict';
 
 import '../shared/util/polyfill';
-import '../shared/util/ErrorExtension';
 import express      from 'express';
 import path         from 'path';
 import bodyParser   from 'body-parser';
@@ -17,12 +16,17 @@ const app = GeekApp.createRunningApp('mongodb://localhost:27017/GeekU', 8080);
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 
-
 // serve our static assets
 const rootPath = path.join(__dirname, "../../public"); // LOG: rootPath: 'public' (sidebar: main.js __dirname: 'src\server')
 app.use(express.static(rootPath));
 // console.log(`INFO: main.js: static resources serverd from rootPath: '${rootPath}' (sidebar: main.js __dirname: '${__dirname}')`);
 
+// allow cross site requests
+app.use( (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // setup our various "API" modular routes
 app.use('/', courses);
