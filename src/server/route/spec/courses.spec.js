@@ -68,8 +68,8 @@ describe('/api/courses tests', function() {
 
     let url = null;
     url = 'http://localhost:8080/route1/route2';                                // KJB: this returns html (currntly programatic doesn't handle very well ... obsecure exception in jsonizing it)
-    url = 'http://localhost:8080/api/students/ouch';                            // KJB: this url sends back a NOT Found
     url = 'http://localhost:8080/api/courses?fields=courseNum,ouch,courseDesc'; // KJB: this url sends back a client error: 500: Internal Server Error
+    url = 'http://localhost:8080/api/students/ouch';                            // KJB: this url sends back a NOT Found
     url = 'http://localhost:8080/api/courses';                                  // KJB: this url sends back a good response
 
     console.log('??? hitting rest api service: ' + url);
@@ -83,9 +83,16 @@ describe('/api/courses tests', function() {
         asyncComplete();
       })
       .catch( err => {
-        console.log('geekUFETCH: err: ', err);
         asyncErr = err;
-        asyncComplete(err); // ??? hmmm is coming back with Network request failed
+        // ? console.log('geekUFETCH: err: ', err);
+        // ? console.log(`geekUFETCH: err: '${err}'`);
+        err.log();
+        // ? for (let prop in err) {
+        // ?   const val = typeof(err[prop]) === "function" ? 'function' : err[prop];
+        // ?   console.log (`... err.${prop}: ${val}`);
+        // ? }
+        asyncComplete();
+        // asyncComplete(err); // ??? hmmm is coming back with Network request failed
       });
 
   });
@@ -95,46 +102,6 @@ describe('/api/courses tests', function() {
 
   it('Should succeed', function() {
     expect(courses).toExist();
-    expect(asyncErr).toNotExist();
-  });
-
-});
-
-
-
-describe('swapi tests', function() {
-
-  let people = null;
-  let asyncErr  = null;
-
-  before( function(asyncComplete) {
-
-    const url = 'http://swapi.co/api/people';
-
-    console.log('??? hitting SWAPI rest api service: ' + url);
-
-    fetch(url)
-      .then( res => {
-        return res.json();
-      })
-      .then( peopleRes => {
-        people = peopleRes.results;
-        console.log('SWAPI: received people: ', people);
-        asyncComplete();
-      })
-      .catch( err => {
-        console.log('SWAPI: err: ', err);
-        asyncErr = err;
-        asyncComplete(err);
-      });
-
-  });
-
-  after( function() {
-  });
-
-  it('Should succeed', function() {
-    expect(people).toExist();
     expect(asyncErr).toNotExist();
   });
 
