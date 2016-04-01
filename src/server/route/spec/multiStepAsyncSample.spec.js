@@ -19,7 +19,7 @@ _tests.push(() => {
   const url = 'http://swapi.co/api/people';
   const testName = 'SWAPI Test 1';
 
-  describe(testName, function() {
+  describe(testName, function() { // ??? unsure WHY this can't be an arrow function, which diss-allows access to curTest in the after fn below
 
     let people   = null;
     let asyncErr = null;
@@ -27,7 +27,7 @@ _tests.push(() => {
     let curTest = this; // ?? encapsolate this ... new class AsyncTestHelper(mochaCtx)
     let numTests = 0;   // ?? encapsolate this ... member of 
 
-    before( function(asyncComplete) {
+    before( asyncComplete => {
 
       console.log(`INFO: Starting ${testName}: ${url}'`);
 
@@ -48,25 +48,26 @@ _tests.push(() => {
 
     });
 
-    after( function() {
+    after( () => {
+      console.log(`??? curTest: ${curTest}`);
       if (numTests >= curTest.tests.length) { // ?? encapsolate this ... possibly through a wrapped after()
         runNextTest();
       }
     });
 
-    it('Should succeed', function() {
+    it('Should succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
       numTests++; // ?? encapsolate this ... possibly through a wrapped it()
     });
 
-    it('Really succeed', function() {
+    it('Really succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
       numTests++; // ?? encapsolate this ... possibly through a wrapped it()
     });
 
-    it('Really Really succeed', function() {
+    it('Really Really succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
       numTests++; // ?? encapsolate this ... possibly through a wrapped it()
@@ -81,12 +82,12 @@ _tests.push(() => {
   const url = 'http://swapi.co/api/people';
   const testName = 'SWAPI Test 2';
 
-  describe(testName, function() {
+  describe(testName, () => {
 
     let people   = null;
     let asyncErr = null;
 
-    before( function(asyncComplete) {
+    before( asyncComplete => {
 
       console.log(`INFO: Starting ${testName}: ${url}'`);
 
@@ -107,11 +108,11 @@ _tests.push(() => {
 
     });
 
-    after( function() {
+    after( () => {
       runNextTest();
     });
 
-    it('Should succeed', function() {
+    it('Should succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
     });
