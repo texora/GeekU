@@ -1,8 +1,39 @@
 'use strict';
 
+import Log            from '../../shared/util/Log';
 import express        from 'express';
 import coursesMeta    from '../../shared/model/coursesMeta';
 import * as MongoUtil from '../util/MongoUtil';
+
+
+
+
+// ??? initial log testing
+Log.applyFilter({
+  'courses.js':  Log.DEBUG,
+  'students.js': Log.ERROR
+});
+
+const logCourses = new Log('courses.js');
+logCourses.fatal( ()=>'Probe 1a');
+logCourses.error( ()=>'Probe 2a');
+logCourses.warn(  ()=>'Probe 3a');
+logCourses.info(  ()=>'Probe 4a');
+logCourses.debug( ()=>'Probe 5a');
+logCourses.trace( ()=>'Probe 6a');
+
+const logStudents = new Log('students.js');
+logStudents.fatal( ()=>'Probe 1a');
+logStudents.error( ()=>'Probe 2a');
+logStudents.warn(  ()=>'Probe 3a');
+logStudents.info(  ()=>'Probe 4a');
+logStudents.debug( ()=>'Probe 5a');
+logStudents.trace( ()=>'Probe 6a');
+
+
+
+
+
 
 const courses = express.Router();
 
