@@ -188,12 +188,6 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
       err.setClientMsg(clientMsg);
       err.log();
       console.error('ERROR: Server cannot start - NO MongoDB Connection');
-
-      // ??? temporarly keep going to run without DB
-      console.error('INFO: HOWEVER, we are temporarly going to go forward with starting the server');
-      app.listen(appPort, () => {
-        console.log('INFO: createRunningApp(): DB connection established, and app is listening on port: ' + appPort);
-      });
     }
     catch(e) {
       console.error('ERROR: Problem encountered in error processor of DIFFERENT problem (MongoDB connection issue):\n', e.stack);
