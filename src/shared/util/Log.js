@@ -3,26 +3,193 @@
 import pad    from 'pad';
 import moment from 'moment';
 
+// ??? consider putting this in Log.md
+
 /**
- * Log is a JavaScript logging utility that promotes filterable
- * logging probes, similar in nature to Log4J.  
+ * Log is a lightweight JavaScript logging utility that promotes
+ * filterable logging probes, similar to many frameworks (such as
+ * Log4J).
  *
- * All logging is based on functional callbacks, which means there is
- * virtually NO overhead in leaving debugging level logging probes in
- * production code (because any overhead in constructing a message is
- * ONLY incurred when the message will in fact be logged).  With the
- * advent of ES6 arrow functions, this callback function is very much
- * streamlined:
+ * By default, Log is a thin layer on top of console.log(), but is
+ * configurable (TODO).
  *
- *  log.debug(()=>`some complex stream with bunches of ${overhead}`);
+ * Log is an isomorphic JavaScript utility, which means it will
+ * operate BOTH in browser/node environments.
  *
- * Log is isomorphic JavaScript, meaning it operates BOTH in
- * browser/node.
  *
- * ??? more doc here, including
- *     - ?? filters
- *     - ?? usage
- *     - ?? configuration
+ * Logging Basics
+ * ==============
+ *
+ * Logging probes are emitted using instances of the Log class.  Each
+ * Log instance (e.g. log) is associated to a filter, via the Log
+ * constructor parameter (more on filtering later).
+ *
+ *   const log = new Log('MyLogFilter');
+ *
+ * Log levels define the severity of a probe.  By default the
+ * following levels exist (in order of severity).
+ *
+ *   Log.FATAL
+ *   Log.ERROR
+ *   Log.WARN
+ *   Log.INFO
+ *   Log.DEBUG
+ *   Log.TRACE
+ * 
+ * NOTE: Additional log levels may be created through configuration.
+ *
+ * A log emits a probe at a designated severity level.  The probe is
+ * conditionally emitted, depending on the filter setting (again, more
+ * on this later).
+ *
+ *  log.debug(()=>`some complex ${stream} with bunches of ${overhead}`);
+ *
+ *
+ * txtFn() callbacks
+ * =================
+ *
+ * As you can see from above, logging probes are based on functional
+ * callbacks.  Notice that the ES6 arrow functions are used.
+ *
+ * The reason behind this is to minimize the overhead in message
+ * construction when the probe is going to be thrown on the floor
+ * (through the filtering process).  By wrapping this process in a
+ * function, the message construction overhead is only incurred once
+ * we determine that the probe is in fact going to be emitted.
+ *
+ * This means that there is virtually NO overhead in leaving
+ * diagnostic level probes in production code.
+ *
+ * With the advent of the ES6 arrow functions, this callback function
+ * is very much streamlined (see example above).
+ * 
+ * 
+ * Filters:
+ * ========
+ * 
+ * Each Log instance (e.g. log) is associated to a filter (via the Log
+ * constructor parameter), and is dynamically created when first seen.
+ * Multiple Log instances may reference the same filter.  In this case
+ * the log merely attaches itself to the existing filter.
+ * 
+ * Filters have a level setting, which is a high-water mark, above which
+ * probes are either emitted, or thrown on the floor.
+ * 
+ * A log emits a probe at a designated level (INFO, ERROR, DEBUG, etc.).
+ * This level is compared to the filter level setting to determine if the
+ * probe is to be emitted.
+ * 
+ * Here is a simple example:
+ * 
+ *    module1.js
+ *    ==========
+ *    import Log from './util/Log';
+ * 
+ *    const log = new Log('EntryExit');
+ *    ... 
+ *    log.info(()=>'Enter processing.');
+ *    ... 
+ * 
+ *    module2.js
+ *    ==========
+ *    import Log from './util/Log';
+ * 
+ *    const log = new Log('EntryExit');
+ *    ... 
+ *    log.info(()=>'Exit processing.');
+ *    ... 
+ * 
+ * Notice that module1 and module2 share the same filter.
+ * 
+ * Filter names are completely up to you.  You may choose to use a number
+ * of different strategies.
+ * 
+ * 
+ * Filter Configuration
+ * ====================
+ * 
+ * Filters are configured through the Log.configure() method.  You merely
+ * specify a series of filterName/level settings.  These settings may be
+ * sparsely populated, as it merely applies the settings to the master
+ * filter.
+ * 
+ *   Log.config({
+ *     filter {
+ *       'root':      Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
+ *       'EntryExit': Log.INFO,
+ *       'Courses':   Log.DEBUG,
+ *       'Students':  Log.WARN,
+ *       ... etc
+ *     }
+ *   });
+ * 
+ * Notice that Log pre-defines a 'root' filter, which is referenced when
+ * a given filter has not been set.  This 'root' will always be defined
+ * (either through Log, or a client configuration), and cannot be un-set
+ * (null/undefined).
+ * 
+ * 
+ * Filter Hierarchy
+ * ================
+ * 
+ * You may choose to introduce a hierarchy in your filter names.  
+ * 
+ * Filter hierarchies provide more fine-grained control over the
+ * filtering process.  When defined, a hierarchy allows a child filter to
+ * reference it's parent, when the child setting is not defined.
+ * 
+ * We have actually seen this already through the pre-defined 'root'
+ * filter (the root parent of ALL filters).
+ * 
+ * Filter hierarchies are very easy to implement.  The filter string name
+ * merely contains the hierarchy delimited with a period (".")
+ * character.  As an example:
+ * 
+ *   Log.config({
+ *     filter {
+ *       'root': Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
+ * 
+ *       'entryExit.mongo':          Log.INFO,
+ *       'entryExit.mongo.setup':    null,
+ *       'entryExit.mongo.teardown': Log.DEBUG,
+ *     }
+ *   });
+ * 
+ * This example defines a three-tier filter hierarchy.  Because
+ * 'entryExit.mongo.setup' has NO level defined, it's parent
+ * ('entryExit.mongo') will be referenced to determine the active
+ * setting.
+ * 
+ * This allows you to turn on a broad category of probes, by simply
+ * adjusting a parent level filter.
+ * 
+ * Filter hierarchies introduce the concept of a filter being "unset".
+ * When a filter is NOT set, we merely defer to the setting of it's
+ * parent, grandparent, and so on (till we get to the top-level 'root').
+ * A filter may be unset either by NEVER setting it or re-setting it to a
+ * null or undefined value.
+ * 
+ * The structure of filter hierarchies are completely up to you.  You may
+ * choose to use a number of different strategies.
+ * 
+ * Filter hierarchies are completely optional, as you may choose to
+ * utilize a "flat" series of filters.  In many cases this is completely
+ * sufficient.
+ * 
+ * Filter hierarchies are very powerful indeed! 
+ * 
+ * 
+ * Probe Formatting
+ * ================
+ *
+ * ??? 
+ *
+ *
+ * Configuration
+ * =============
+ *
+ * ??? 
+ *
  *
  * @author Kevin Bridges
  */
@@ -78,7 +245,7 @@ class Log {
    * @api public
    */
   log(level, txtFn) {
-    // validate params
+    // validate params ... TODO: may want to turn validation off for performance
     const levelName = Log.levelName[level];
     if (!levelName) {
       throw new Error(`Invalid log level: ${level}`);
@@ -103,6 +270,7 @@ class Log {
    * @api public ... however only needed in rare conditions
    */
   isEnabled(level) {
+    // TODO: enhance to support filter hierarchies (with last resort to pre-defined 'root')
     const filterLevel = Log.filter[this.filterName];
     return filterLevel <= level;
   }
@@ -196,6 +364,7 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} (${log.filterName
  * Default Filter Level, for initial filter registration.
  * @api private (however can be re-set in initial Log configuration)
  */
+// TODO: eliminate DEFAULT_FILTER_LEVEL in favor of a run-time reference to pre-defined 'root' filter
 Log.DEFAULT_FILTER_LEVEL = Log.INFO;
 
 
