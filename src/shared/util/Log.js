@@ -44,7 +44,7 @@ import HTTPStatus from 'http-status';
  * conditionally emitted, depending on the filter setting (again, more
  * on this later).
  *
- *  log.debug(()=>`some complex ${stream} with bunches of ${overhead}`);
+ *  log.debug(()=>`some complex ${probe} with bunches of ${overhead}`);
  *
  *
  * txtFn() callbacks
@@ -203,14 +203,13 @@ import HTTPStatus from 'http-status';
  * 
  *   - The Error has already been logged, or
  *   - The Error is a recognized client issue
- *     ... see Error.cause of the Error Extension polyfill (ErrorExtension.js)
+ *     ... see Error.cause defined in ErrorExtensionPolyfill.js
  * 
  * The reason behind this heuristic is there is no need to burden the
  * service log with client-based errors, because they are NOT really
  * service errors, rather client errors.  Of course these errors must
- * be communicated to the client through the normal
- * return/throw/response mechanism, but this is a separate issue from
- * the service logs.
+ * be communicated to the client through the normal return/throw/response
+ * mechanism, but this is a separate issue from the service logs.
  * 
  * This Error veto ability is a configurable option and can be disabled
  * (see: allowErrorToVetoProbeEmission).
@@ -432,10 +431,14 @@ Log.allowErrorToVetoProbeEmission = true;
  */
 Log.formatMsg = function(filterName, levelName, txtFn, obj) {
   return `
-${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} (${filterName}):
+${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Log.extra()}:
       ${txtFn()}${Log.formatObj(obj)}`;
 };
 
+// ??? temp for now
+Log.extra = function() {
+  return '';
+};
 
 /**
  * Format the supplied object (when defined).

@@ -38,7 +38,7 @@ import HTTPStatus    from 'http-status';
  * GeekU Request Extension, promoted in the Express App's req.geekU
  * object.
  *
- * @param {ExpressRequest} req the Express Request object
+ * @param {ServerRequest} req the Express Request object
  * @param {MongoDb} db the Mongo DB connection pool
  *
  * @api private
@@ -55,7 +55,7 @@ class GeekUReq {
  * GeekU Response Extension, promoted in the Express App's res.geekU
  * object.
  *
- * @param {ExpressResponse} res the Express Response object
+ * @param {ServerResponse} res the Express Response object
  *
  * @api private
  */
@@ -109,7 +109,7 @@ class GeekURes {
    *       exception) ... there really is no difference.
    *
    * @param {Error} err the Error object to be sent.
-   * @param {ExpressRequest} req the optional Express request object (when
+   * @param {ServerRequest} req the optional Express request object (when
    * supplied, info is gleaned from this).
    *
    * @api public
@@ -214,8 +214,8 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
  *       ex: app.use( commonErrorHandler );
  *
  * @param {Error} err the Error object being handled
- * @param {ExpressRequest} req the Express request object
- * @param {ExpressResponse} res the Express response object
+ * @param {ServerRequest} req the Express request object
+ * @param {ServerResponse} res the Express response object
  * @param {ExpressNext} next the Express next function
  *
  * @api public
