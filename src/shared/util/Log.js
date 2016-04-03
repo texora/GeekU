@@ -412,7 +412,7 @@ Log.filter = {
  * Configuration that allows Error objects to veto the probe emission
  * @api private
  */
-Log.allowErrorToVetoProbeEmission = true;
+Log.allowErrorToVetoProbeEmission = false; // ??? temp should be true
 
 
 // ?? move these static functions into Log class definitions
@@ -490,24 +490,29 @@ Log.formatObj = function(obj) {
  */
 Log.formatError = function(err) {
 
-  err.summarize(); // ?? refactor this out (possible using real properties)
-
   // define a logId for this Error
   err.logId = shortid.generate();
   
-  // log problem in our console
-  return `
+  // return our formatted representation of the err
+  let txt =  `
       Error:
-        Name:       ${err.summary.name}
-        Status:     ${err.summary.httpStatus}
-        StatusMsg:  ${HTTPStatus[err.summary.httpStatus]}
-        Client Msg: ${err.summary.clientMsg}
-        Message:    ${err.summary.message}
-        URL:        ${err.summary.url}
+        Name:       ${err.name}`;
+  if (err.httpStatus)
+    txt += `
+        Status:     ${err.httpStatus}
+        StatusMsg:  ${HTTPStatus[err.httpStatus]}`;
+  txt += `
+        Client Msg: ${err.clientMsg}
+        Message:    ${err.message}`;
+  if (err.url)
+    txt += `
+        URL:        ${err.url}`;
+  txt += `
         LogId:      ${err.logId}
         Stack Trace:
          ${err.stack}
 `;
+  return txt;
 }
 
 /**

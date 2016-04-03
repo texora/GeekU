@@ -1,5 +1,6 @@
 'use strict';
 
+import Log           from '../../shared/util/Log';
 import express       from 'express';
 import {MongoClient} from 'mongodb';
 import HTTPStatus    from 'http-status';
@@ -32,6 +33,11 @@ import HTTPStatus    from 'http-status';
            + sendError(err, req)
 
  --------------------------------------------------------------------------------*/
+
+const log = new Log('GeekApp'); // ?? decide on correct filterName
+Log.applyFilter({  // ?? TEMP FOR NOW ... should NOT BE HERE
+  'GeekApp':  Log.INFO
+});
 
 
 /**
@@ -115,22 +121,21 @@ class GeekURes {
    * @api public
    */
   sendError(err, req) {
-    
-    err.log(req);
 
-    err.summarize(req);
+    prepAndLogForSendError(err, req);
+
     const errRes = {
-      name:    err.summary.name,
-      message: err.summary.clientMsg,
+      name:    err.name,
+      message: err.clientMsg,
     };
-    if (err.logId) {
+    if (err.logId) { // err may NOT be logged if client condition
       errRes.logId = err.logId;
     }
     
-    this.res.status(err.summary.httpStatus).send({
-      error:     errRes
-    });
-    // console.log(`DEBUG: ??? sending ERROR: ${err.summary.clientMsg}`);
+    this.res.status(err.httpStatus)
+            .send({
+              error: errRes
+            });
   }
 
 }
@@ -185,9 +190,8 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
           err.message.includes('ECONNREFUSED')) {
             clientMsg += ' ... NOTE: Based on the internals of this error, we believe the MongoDB server is NOT running.'
       }
-      err.setClientMsg(clientMsg);
-      err.log();
-      console.error('ERROR: Server cannot start - NO MongoDB Connection');
+      err.defineClientMsg(clientMsg);
+      log.error(()=>`Server cannot start - NO MongoDB Connection ...`, err);
     }
     catch(e) {
       console.error('ERROR: Problem encountered in error processor of DIFFERENT problem (MongoDB connection issue):\n', e.stack);
@@ -231,8 +235,34 @@ export function commonErrorHandler(err, req, res, next) {
   }
   // ... handle non-programatic clients
   else {
-    err.log(req);
-    err.summarize(req);
-    res.status(err.summary.httpStatus).send(clientMsg + (err.logId ? ` (LogId: ${err.logId})` : ''));
+    prepAndLogForSendError(err, req);
+    res.status(err.httpStatus)
+       .send(err.clientMsg + (err.logId ? ` (LogId: ${err.logId})` : ''));
   }
+}
+
+/**
+ * Common routine to prep and log the supplied error for 
+ * sending back to client.
+ * 
+ * @param {Error} err the Error object being handled
+ * @param {ServerRequest} req the Express request object
+ *
+ * @api private
+ */
+function prepAndLogForSendError(err, req) {
+
+  // insure err has httpStatus defined (default to INTERNAL_SERVER_ERROR)
+  if (!err.httpStatus) {
+    err.defineHttpStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  // insure err has the URL defined
+  if (!err.url) {
+    err.defineUrl(req);
+  }
+
+  // log our error (depending on cause [e.g. if client condition] may NOT LOG)
+  log.error(()=>`Sending exception back to client ...`, err);
+
 }

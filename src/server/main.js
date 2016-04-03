@@ -40,7 +40,8 @@ app.use('/', students);
 app.get('/api/*', (req, res, next) => {
   const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;
   console.log(`WARN: main.js ${msg}`);
-  next(new Error(msg).setClientMsg(msg).setCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
+  next(new Error(msg).defineClientMsg(msg)
+                     .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
 });
 
 

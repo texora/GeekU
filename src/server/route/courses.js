@@ -26,7 +26,7 @@ logCourses.trace( ()=>'Probe 6a');
 
 const logStudents = new Log('students.js');
 logStudents.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
-logStudents.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').setCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
+logStudents.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
 logStudents.warn(  ()=>'Probe 3a');
 logStudents.info(  ()=>'Probe 4a');
 logStudents.debug( ()=>'Probe 5a');
@@ -85,7 +85,7 @@ courses.get('/api/courses', (req, res, next) => {
   .catch( err => {
     // NOTE: unsure if we ALWAYS want to cover up technical message
     //       ... it may be due to bad interpretation of mongoQuery
-    throw err.setClientMsg("Issue encountered in DB processing of /api/courses");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
   });
 });
 
@@ -131,7 +131,7 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.setClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
   });
 
 });

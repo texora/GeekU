@@ -52,7 +52,7 @@ students.get('/api/students', (req, res, next) => {
              .catch( err => {
                // NOTE: unsure if we ALWAYS want to cover up technical message
                //       ... it may be due to bad interpretation of mongoQuery
-               throw err.setClientMsg("Issue encountered in DB processing of /api/students");
+               throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
              });
 });
 
@@ -104,7 +104,7 @@ students.get('/api/students/:studentNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.setClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
   });
 
 });

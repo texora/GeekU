@@ -34,7 +34,7 @@ describe('/api/courses tests', function() {
         asyncErr = err;
         // console.log('geekUFETCH: err: ', err);
         // console.log(`geekUFETCH: err: '${err}'`);
-        // err.log();
+        // log.error(()=>'',err);
         // for (let prop in err) {
         //   const val = typeof(err[prop]) === "function" ? 'function' : err[prop];
         //   console.log (`... err.${prop}: ${val}`);
