@@ -1,14 +1,16 @@
 'use strict'
 
-import pad    from 'pad';
-import moment from 'moment';
+import pad     from 'pad';
+import moment  from 'moment';
+import shortid from 'shortid';
+import HTTPStatus from 'http-status';
 
-// ??? consider putting this in Log.md
+// ?? consider putting this in Log.md
 
 /**
  * Log is a lightweight JavaScript logging utility that promotes
- * filterable logging probes, similar to many frameworks (such as
- * Log4J).
+ * filterable logging probes, similar to a number of frameworks such
+ * as Log4J.
  *
  * By default, Log is a thin layer on top of console.log(), but is
  * configurable (TODO).
@@ -29,12 +31,12 @@ import moment from 'moment';
  * Log levels define the severity of a probe.  By default the
  * following levels exist (in order of severity).
  *
- *   Log.FATAL
- *   Log.ERROR
- *   Log.WARN
- *   Log.INFO
- *   Log.DEBUG
  *   Log.TRACE
+ *   Log.DEBUG
+ *   Log.INFO
+ *   Log.WARN
+ *   Log.ERROR
+ *   Log.FATAL
  * 
  * NOTE: Additional log levels may be created through configuration.
  *
@@ -62,6 +64,19 @@ import moment from 'moment';
  *
  * With the advent of the ES6 arrow functions, this callback function
  * is very much streamlined (see example above).
+ * 
+ * 
+ * Object Detail
+ * =============
+ *
+ * In addition to the message defined from the txtFn() callback, an
+ * object can be optionally passed to the logging directive, which
+ * will be formatted and appended to the message probe.
+ * 
+ * This can be any type of object, including Error instances (which are
+ * appropriately formatted).
+ * 
+ *  log.error(()=>'An unexpected condition occurred.', err);
  * 
  * 
  * Filters:
@@ -177,18 +192,40 @@ import moment from 'moment';
  * sufficient.
  * 
  * Filter hierarchies are very powerful indeed! 
+ *
+ * 
+ * Error Vetos
+ * ===========
+ * 
+ * When an Error object is to be appended in the message probe, it is
+ * given an opportunity to veto the probe emission.  This is over and
+ * above the filtering process (defined above).  This can happen when:
+ * 
+ *   - The Error has already been logged, or
+ *   - The Error is a recognized client issue
+ *     ... see Error.cause of the Error Extension polyfill (ErrorExtension.js)
+ * 
+ * The reason behind this heuristic is there is no need to burden the
+ * service log with client-based errors, because they are NOT really
+ * service errors, rather client errors.  Of course these errors must
+ * be communicated to the client through the normal
+ * return/throw/response mechanism, but this is a separate issue from
+ * the service logs.
+ * 
+ * This Error veto ability is a configurable option and can be disabled
+ * (see: allowErrorToVetoProbeEmission).
  * 
  * 
  * Probe Formatting
  * ================
  *
- * ??? 
+ * ?? 
  *
  *
  * Configuration
  * =============
  *
- * ??? 
+ * ?? 
  *
  *
  * @author Kevin Bridges
@@ -231,20 +268,21 @@ class Log {
    * 
    * @api public
    */
-  // example (machine generated) ...
-//debug(txtFn) {
-//  this.log(Log.DEBUG, txtFn);
-//}
+// example (machine generated) ...
+// debug(txtFn, obj) {
+//   this.log(Log.DEBUG, txtFn, obj);
+// }
 
   /**
-   * Conditionally log a message, when enabled within our filter.
+   * Conditionally emit a message probe in our log, when enabled within our filter.
    *
    * @param {int} level the log level for this probe (e.g. Log.DEBUG).
-   * @param {function} txtFn a callback function returning the txt string to log. 
+   * @param {function} txtFn a callback function emitting the txt string to log. 
+   * @param {Object} obj an optional object (or Error) to detail in the logging probe.
    * 
    * @api public
    */
-  log(level, txtFn) {
+  log(level, txtFn, obj) {
     // validate params ... TODO: may want to turn validation off for performance
     const levelName = Log.levelName[level];
     if (!levelName) {
@@ -255,24 +293,46 @@ class Log {
     }
 
     // conditionally log this message when enabled within our filter
-    if ( this.isEnabled(level, this.filterName) ) {
-      console.log( Log.formatLog(this, levelName, txtFn) );
+    if ( this.shouldEmit(level, obj) ) {
+      console.log( Log.formatMsg(this.filterName, levelName, txtFn, obj) );
     }
   }
 
   /**
-   * Is the supplied level enabled in Log's filter (defined by self's filterName).
+   * Should a logging probe be emitted, based on the supplied probe
+   * level as compared to the Log filter (as defined through self's
+   * filterName).
    *
    * @param {int} level the log level for this probe (e.g. Log.DEBUG).
+   * @param {Object} obj an optional object that for Error instances,
+   * can veto the emission.
 
    * @return {boolean}
    * 
    * @api public ... however only needed in rare conditions
    */
-  isEnabled(level) {
+  shouldEmit(level, obj) {
     // TODO: enhance to support filter hierarchies (with last resort to pre-defined 'root')
     const filterLevel = Log.filter[this.filterName];
-    return filterLevel <= level;
+    let   enabled     = filterLevel <= level;
+
+    // allow supplied Error object to veto the probe emission
+    if (enabled &&                // we are preliminary enabled (as far as our filter is concerned)
+        Log.allowErrorToVetoProbeEmission && // our configuation allows Errors to veto the probe emission
+        obj &&                    // obj has been supplied
+        obj instanceof Error) {   // that is an Error
+      const err = obj;
+
+      // no logging is required when ...
+      if (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR || // the err is a recognized client condition, or
+          err.logId) {                                         // the err has already been logged
+        enabled = false;
+      }
+          
+    }
+        
+    // that's all folks :-)
+    return enabled;
   }
 
 
@@ -298,8 +358,8 @@ class Log {
     Log.levelName[level] = levelNameUpper;
 
     const levelNameLower = levelName.toLowerCase();
-    Log.prototype[levelNameLower] = function(txtFn) {
-      this.log(Log[levelNameUpper], txtFn);
+    Log.prototype[levelNameLower] = function(txtFn, obj) {
+      this.log(Log[levelNameUpper], txtFn, obj);
     };
   }
 
@@ -350,15 +410,102 @@ Log.filter = {
 };
 
 /**
+ * Configuration that allows Error objects to veto the probe emission
+ * @api private
+ */
+Log.allowErrorToVetoProbeEmission = true;
+
+
+// ?? move these static functions into Log class definitions
+
+/**
  * Format the log entry to emit.
+ *
+ * @param {String} filterName the log filter-name for this probe (e.g. 'appStartup').
+ * @param {String} levelName the log level-name for this probe (e.g. 'DEBUG').
+ * @param {function} txtFn a callback function emitting the txt string to log.
+ * @param {Object} obj an optional object (or Error) to detail in the logging probe.
+ *
+ * @return {String} the formatted message to log
+ *
  * @api private (however can be re-set in initial Log configuration)
  */
-Log.formatLog = function(log, levelName, txtFn) {
+Log.formatMsg = function(filterName, levelName, txtFn, obj) {
   return `
-${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} (${log.filterName}):
-      ${txtFn()}`;
+${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} (${filterName}):
+      ${txtFn()}${Log.formatObj(obj)}`;
 };
 
+
+/**
+ * Format the supplied object (when defined).
+ *
+ * @param {Object} obj an optional object (or Error) to detail in the logging probe.
+ *
+ * @return {String} a formatted representation of the supplied obj (empty string [''] when not supplied.
+ *
+ * @api private (however can be re-set in initial Log configuration)
+ */
+Log.formatObj = function(obj) {
+
+  if (!obj) {
+    return '';
+  }
+
+  // Errors are special
+  if (obj instanceof Error) {
+    return Log.formatError(obj);
+  }
+
+  // Date objects don't format much in subsequent Object algorithm
+  if (typeof obj.getMonth === 'function') {
+    return `
+      Date: ${obj}`;
+  }
+
+  // Object catch-all
+  let objStr = `
+      Object:`;
+  if (obj) {
+    for (let prop in obj) {
+      const val = typeof(obj[prop]) === 'function' ? 'function' : obj[prop];
+      objStr += `\n        ${prop}: ${val}`;
+    }
+  }
+  return objStr;
+}
+
+
+/**
+ * Format the supplied error object.
+ *
+ * @param {Error} err the error object to detail in the logging probe.
+ *
+ * @return {String} a formatted representation of the supplied error.
+ *
+ * @api private (however can be re-set in initial Log configuration)
+ */
+Log.formatError = function(err) {
+
+  err.summarize(); // ?? refactor this out (possible using real properties)
+
+  // define a logId for this Error
+  err.logId = shortid.generate();
+  
+  // log problem in our console
+  return `
+      Error:
+        Name:       ${err.summary.name}
+        Status:     ${err.summary.httpStatus}
+        StatusMsg:  ${HTTPStatus[err.summary.httpStatus]}
+        Client Msg: ${err.summary.clientMsg}
+        Message:    ${err.summary.message}
+        URL:        ${err.summary.url}
+        LogId:      ${err.logId}
+        Stack Trace:
+         ${err.stack}
+`;
+}
 
 /**
  * Default Filter Level, for initial filter registration.
@@ -369,13 +516,13 @@ Log.DEFAULT_FILTER_LEVEL = Log.INFO;
 
 
 // register our initial standard base levels
-Log.registerLevel('OFF',   999);
-Log.registerLevel('FATAL', 600);
-Log.registerLevel('ERROR', 500);
-Log.registerLevel('WARN',  400);
-Log.registerLevel('INFO',  300);
-Log.registerLevel('DEBUG', 200);
 Log.registerLevel('TRACE', 100);
+Log.registerLevel('DEBUG', 200);
+Log.registerLevel('INFO',  300);
+Log.registerLevel('WARN',  400);
+Log.registerLevel('ERROR', 500);
+Log.registerLevel('FATAL', 600);
+Log.registerLevel('OFF',   999);
 
 
 export default Log

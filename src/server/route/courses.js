@@ -15,16 +15,18 @@ Log.applyFilter({
 });
 
 const logCourses = new Log('courses.js');
-logCourses.fatal( ()=>'Probe 1a');
-logCourses.error( ()=>'Probe 2a');
+logCourses.fatal( ()=>'Probe 1a TEST Object', logCourses);
+logCourses.error( ()=>'Probe 2a TEST Date', new Date());
 logCourses.warn(  ()=>'Probe 3a');
 logCourses.info(  ()=>'Probe 4a');
 logCourses.debug( ()=>'Probe 5a');
 logCourses.trace( ()=>'Probe 6a');
 
+// Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
+
 const logStudents = new Log('students.js');
-logStudents.fatal( ()=>'Probe 1a');
-logStudents.error( ()=>'Probe 2a');
+logStudents.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
+logStudents.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').setCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
 logStudents.warn(  ()=>'Probe 3a');
 logStudents.info(  ()=>'Probe 4a');
 logStudents.debug( ()=>'Probe 5a');
