@@ -5,7 +5,7 @@ import shortid    from 'shortid';
 
 
 // ***
-// *** provide extension to Error object, supporting some app-level features
+// *** provide extension to Error object, supporting some added-value features.
 // ***
 
 

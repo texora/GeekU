@@ -60,7 +60,10 @@
  *     });
  *   });
  *   
- *   ... etc.
+ *  ... etc.
+ * 
+ *  // start the ball rolling
+ *  asyncHelper.startTesting();
  *
  */
 class MochaAsyncTestHelper {
