@@ -7,7 +7,7 @@ import bodyParser   from 'body-parser';
 import courses      from './route/courses';
 import students     from './route/students';
 import * as GeekApp from './util/GeekApp';
-// import correlateLogsToTransaction from './util/correlateLogsToTransaction';
+import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 
 console.log('INFO: Starting GeekU Server.');
 
@@ -15,7 +15,8 @@ const app = GeekApp.createRunningApp('mongodb://localhost:27017/GeekU', 8080);
 
 // correlates all log entries to a specific transication by including a unique transId in each log entry
 // ?? HMMMM ... can't get continuation-local-storage to work (come back to this (punt for now))
-// app.use(correlateLogsToTransaction);
+// ?? still have BASIC enter/exit logs
+app.use(correlateLogsToTransaction);
 
 // handle Content-Type 'application/json' and 'text/plain' requests
 app.use(bodyParser.json());

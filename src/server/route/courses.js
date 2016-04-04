@@ -10,27 +10,27 @@ import * as MongoUtil from '../util/MongoUtil';
 
 // ??? initial log testing
 Log.applyFilter({
-  'courses.js':  Log.DEBUG,
-  'students.js': Log.ERROR
+  'WowZee': Log.DEBUG,
+  'WooWoo': Log.ERROR
 });
 
-const logCourses = new Log('courses.js');
-logCourses.fatal( ()=>'Probe 1a TEST Object', logCourses);
-logCourses.error( ()=>'Probe 2a TEST Date', new Date());
-logCourses.warn(  ()=>'Probe 3a');
-logCourses.info(  ()=>'Probe 4a');
-logCourses.debug( ()=>'Probe 5a');
-logCourses.trace( ()=>'Probe 6a');
+const logWowZee = new Log('WowZee');
+logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
+logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
+logWowZee.warn(  ()=>'Probe 3a');
+logWowZee.info(  ()=>'Probe 4a');
+logWowZee.debug( ()=>'Probe 5a');
+logWowZee.trace( ()=>'Probe 6a');
 
 // Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
 
-const logStudents = new Log('students.js');
-logStudents.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
-logStudents.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
-logStudents.warn(  ()=>'Probe 3a');
-logStudents.info(  ()=>'Probe 4a');
-logStudents.debug( ()=>'Probe 5a');
-logStudents.trace( ()=>'Probe 6a');
+const logWooWoo = new Log('WooWoo');
+logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
+logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
+logWooWoo.warn(  ()=>'Probe 3a');
+logWooWoo.info(  ()=>'Probe 4a');
+logWooWoo.debug( ()=>'Probe 5a');
+logWooWoo.trace( ()=>'Probe 6a');
 
 
 
@@ -61,7 +61,7 @@ const courses = express.Router();
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {
-  console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
+  // console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   // define our fields to display (a mongo projection) 
   // tweaked from the optional client-supplied "fields" query string
@@ -97,7 +97,7 @@ courses.get('/api/courses', (req, res, next) => {
 //******************************************************************************
 
 courses.get('/api/courses/:courseNum', (req, res, next) => {
-  console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
+  // console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   const courseNum = req.params.courseNum;
 

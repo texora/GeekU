@@ -1,5 +1,6 @@
 'use strict';
 
+// STILL HAVE BASIC enter/exit logs
 // HMMMM ... can't get continuation-local-storage to work
 //  - based on AsyncListener API
 //  - continuation-local-storage
@@ -10,22 +11,16 @@
 //    http://www.slideshare.net/isharabash/cls-and-asynclistener
 
 
-
 import {createNamespace, getNamespace} from 'continuation-local-storage';
 import shortid           from 'shortid';
 import Log               from '../../shared/util/Log';
 
-const log = new Log('EnterExit');
+const logEnter = new Log('ProcessFlow.Enter');
+const logExit  = new Log('ProcessFlow.Exit');
 
-// ??? VERY TEMP ??? should NOT need this but I do
-Log.applyFilter({
-  'EnterExit':  Log.INFO
-});
-
-
-console.log('??? namespace creating');
-const namespace = createNamespace('GeekU');
-console.log('???  namespace created');
+//console.log('??? namespace creating');
+//const namespace = createNamespace('GeekU');
+//console.log('???  namespace created');
 
 /**
  * Express middleware that correlates all log entries to a specific request,
@@ -54,8 +49,8 @@ export default function correlateLogsToTransaction(req, res, next) {
 
       // log probe of exiting request
       // ?? log filter: EnterExit ... Request Exiting
-      console.log('??? correlateLogsToTransaction TEAR DOWN: ');
-      log.info(()=>'Exit Transaction');
+      // console.log('??? correlateLogsToTransaction TEAR DOWN: ');
+      logExit.info(()=>`Exit Transaction: ${decodeURIComponent(req.originalUrl)}`);
 
       // clear the transId entry
       // ? _transIds.delete(req)
@@ -75,33 +70,33 @@ export default function correlateLogsToTransaction(req, res, next) {
     // ??? GRRRR:  can't register log here, because it would be tied to the LAST req seen
     // ??? NO tid transId
 
-    const transId = shortid.generate();
-    console.log('??? here is my transId: ' + transId);
+    //const transId = shortid.generate();
+    //console.log('??? here is my transId: ' + transId);
 
     // wrap the events from this req/res
     // ... ensure's event listeners will be within the scope of the namespace
     // ... required because EventEmitter isn't patched into the node core (like the AsyncListener API is)
-    namespace.bindEmitter(req);
-    namespace.bindEmitter(res);
+    //namespace.bindEmitter(req);
+    //namespace.bindEmitter(res);
 
     // allow all asynchronous functions to run in the scope of our namespace
 //? namespace.bind( function() { // ??? try namespace.bind() of of outer function ... MESSES UP - NO exit msg
-    namespace.run( function() { // ??? tried namespace.bind() of inner function but NO luck
-      console.log('??? namespace.set(transId): ' + transId);
-      namespace.set('transId', transId); // store our transId on the namespace, making it available for all continuations
-      console.log('??? see if I can get the value immediatly after: ' + namespace.get(transId), namespace); // ??? transId appears in namespace.active, BUT still returns undefined ... grrrr
-      next(); // ??? is this a typo in the sample code?
-    });
+    //namespace.run( function() { // ??? tried namespace.bind() of inner function but NO luck
+    //  console.log('??? namespace.set(transId): ' + transId);
+    //  namespace.set('transId', transId); // store our transId on the namespace, making it available for all continuations
+    //  console.log('??? see if I can get the value immediatly after: ' + namespace.get(transId), namespace); // ??? transId appears in namespace.active, BUT still returns undefined ... grrrr
+    //  next(); // ??? is this a typo in the sample code?
+    //});
 
 
     // log probe of entering request
     // ?? log filter: EnterExit ... Request Entering
-    console.log('??? correlateLogsToTransaction SETUP: ');
-    console.log('??? see if I can get the value immediatly after2: ' + namespace.get(transId), namespace); // ??? transId DOES NOT EVEN appear in namespace.active, and returns undefined ... grrrr
-    log.info(()=>'Enter Transaction');
+    //console.log('??? correlateLogsToTransaction SETUP: ');
+    //console.log('??? see if I can get the value immediatly after2: ' + namespace.get(transId), namespace); // ??? transId DOES NOT EVEN appear in namespace.active, and returns undefined ... grrrr
+    logEnter.info(()=>`Enter Transaction: ${decodeURIComponent(req.originalUrl)}`);
 
     // continue express middleware
-    // next(); ??? soes NOT show this next()
+    next();
 }
 
 // ? /**
@@ -115,11 +110,11 @@ export default function correlateLogsToTransaction(req, res, next) {
 
 
 // configure our logs to emit the transId
-Log.extra = function() {  // ??? tried namespace.bind() of function but NO diff
-
-  // ? const namespace2 = getNamespace('GeekU');
-
-  console.log('??? Logging namespace: ', namespace);
-
-  return ` TransId(${namespace.get('transId')})`;
-}
+//Log.extra = function() {  // ??? tried namespace.bind() of function but NO diff
+//
+//  // ? const namespace2 = getNamespace('GeekU');
+//
+//  console.log('??? Logging namespace: ', namespace);
+//
+//  return ` TransId(${namespace.get('transId')})`;
+//}
