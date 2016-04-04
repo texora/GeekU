@@ -8,6 +8,7 @@ import courses      from './route/courses';
 import students     from './route/students';
 import * as GeekApp from './util/GeekApp';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
+import Log          from '../shared/util/Log';
 
 console.log('INFO: Starting GeekU Server.');
 
@@ -59,3 +60,34 @@ app.get('*', function (req, res) {
 // ... handles BOTH "throw Error" and Express "next(err)"
 // ... this registration must be last
 app.use( GeekApp.commonErrorHandler );
+
+
+
+// ??? initial log testing VERY TEMP
+Log.applyFilter({
+//'root':   Log.OFF,
+  'WowZee': Log.DEBUG,
+  'WooWoo': Log.ERROR
+});
+
+const logWowZee = new Log('WowZee');
+logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
+logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
+logWowZee.warn(  ()=>'Probe 3a');
+logWowZee.info(  ()=>'Probe 4a');
+logWowZee.debug( ()=>'Probe 5a');
+logWowZee.trace( ()=>'Probe 6a');
+
+// Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
+
+const logWooWoo = new Log('WooWoo');
+logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
+logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
+logWooWoo.warn(  ()=>'Probe 3a');
+logWooWoo.info(  ()=>'Probe 4a');
+logWooWoo.debug( ()=>'Probe 5a');
+logWooWoo.trace( ()=>'Probe 6a');
+
+
+console.log('??? at main end ...');
+Log.showFilter();

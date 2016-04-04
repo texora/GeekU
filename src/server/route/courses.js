@@ -5,38 +5,6 @@ import express        from 'express';
 import coursesMeta    from '../../shared/model/coursesMeta';
 import * as MongoUtil from '../util/MongoUtil';
 
-
-
-
-// ??? initial log testing
-Log.applyFilter({
-  'WowZee': Log.DEBUG,
-  'WooWoo': Log.ERROR
-});
-
-const logWowZee = new Log('WowZee');
-logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
-logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
-logWowZee.warn(  ()=>'Probe 3a');
-logWowZee.info(  ()=>'Probe 4a');
-logWowZee.debug( ()=>'Probe 5a');
-logWowZee.trace( ()=>'Probe 6a');
-
-// Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
-
-const logWooWoo = new Log('WooWoo');
-logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
-logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
-logWooWoo.warn(  ()=>'Probe 3a');
-logWooWoo.info(  ()=>'Probe 4a');
-logWooWoo.debug( ()=>'Probe 5a');
-logWooWoo.trace( ()=>'Probe 6a');
-
-
-
-
-
-
 const courses = express.Router();
 
 
