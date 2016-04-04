@@ -515,14 +515,6 @@ Log.formatError = function(err) {
   return txt;
 }
 
-/**
- * Default Filter Level, for initial filter registration.
- * @api private (however can be re-set in initial Log configuration)
- */
-// TODO: eliminate DEFAULT_FILTER_LEVEL in favor of a run-time reference to pre-defined 'root' filter
-Log.DEFAULT_FILTER_LEVEL = Log.INFO;
-
-
 // register our initial standard base levels
 Log.registerLevel('TRACE', 100);
 Log.registerLevel('DEBUG', 200);
@@ -531,6 +523,13 @@ Log.registerLevel('WARN',  400);
 Log.registerLevel('ERROR', 500);
 Log.registerLevel('FATAL', 600);
 Log.registerLevel('OFF',   999);
+
+/**
+ * Default Filter Level, for initial filter registration.
+ * @api private (however can be re-set in initial Log configuration)
+ */
+// TODO: eliminate DEFAULT_FILTER_LEVEL in favor of a run-time reference to pre-defined 'root' filter
+Log.DEFAULT_FILTER_LEVEL = Log.INFO;
 
 
 export default Log
