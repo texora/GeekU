@@ -64,10 +64,14 @@ app.use( GeekApp.commonErrorHandler );
 
 
 // ??? initial log testing VERY TEMP
-Log.applyFilter({
-//'root':   Log.OFF,
-  'WowZee': Log.DEBUG,
-  'WooWoo': Log.ERROR
+Log.config({
+  filter: {
+    root:   Log.INFO, // 32, 'none', Log.OFF, null, ... various error conditions
+    WowZee: Log.DEBUG,
+  //WooWoo: Log.ERROR,
+    WooWoo: 'DEBUG',
+//  GeekApp: Log.TRACE: // to see detailed payloads returned
+  }
 });
 
 const logWowZee = new Log('WowZee');
@@ -88,6 +92,5 @@ logWooWoo.info(  ()=>'Probe 4a');
 logWooWoo.debug( ()=>'Probe 5a');
 logWooWoo.trace( ()=>'Probe 6a');
 
-
 console.log('??? at main end ...');
-Log.showFilter();
+console.log(`??? current Log.config(): ${JSON.stringify(Log.config(), null, 2)}`);

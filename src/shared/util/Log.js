@@ -119,7 +119,7 @@ class Log {
 
     // allow supplied Error object to veto the probe emission
     if (enabled &&                // we are preliminary enabled (as far as our filter is concerned)
-        _allowErrorToVetoProbeEmission && // our configuation allows Errors to veto the probe emission
+        _allowClientErrorToVetoLogs && // our configuation allows client Errors to veto the log
         obj &&                    // obj has been supplied
         obj instanceof Error) {   // that is an Error
       const err = obj;
@@ -142,29 +142,83 @@ class Log {
   // *** Configuration Related ...
   // *** 
 
+
   /**
-   * Configure the Log filter by applying the supplied supplied filter.
+   * The config method is used to both retrieve and/or update Log
+   * configuration.  The most common usage is to maintain the filter,
+   * but many other options are supported.
    *
-   * @param {Object} filter the filter to apply ... example: 
-   *  {
-   *    'Initialization': Log.DEBUG,
-   *    'Foo Service':    Log.TRACE
-   *  }
+   * A configuration object is always returned, detailing the current
+   * configuration.  
+
+   * - When NO cfg param is supplied, config() it is used strictly as
+   *   a retrieval mechanism. 
+
+   * - If a cfg param is supplied, updates are applied, and the most
+   *   current configuration is returned.
+   * 
+   *   The cfg param drives the configuration updates.  The properties
+   *   of this object are consistent with what is retrieved, but can
+   *   be sparsly populated - setting only selected config.
+   *
+   * The configuration object is a JSON structure, with the following
+   * format:
+   *
+   * <pre>
+   *   {
+   *     more: ???hmmm,
+   *     filter: {
+   *       <filter-name>:       <log-level>
+   *       ... ex:
+   *       "root":              "INFO", ... notice you can set the root of all filters
+   *       "GeekApp":           "WARN",
+   *       "ProcessFlow":       "DEBUG",
+   *       "ProcessFlow.Enter": "none",
+   *       "ProcessFlow.Exit":  "none",
+   *     }
+   *   
+   *   }
+   * </pre>
+   *
+   * @param {Object} cfg the sparsely populated configuration to apply (see above).
+   *
+   * @return {Object} the current configuration, after updates (if any) are applied.
    *
    * @api public
    */
-  // ?? rename config(config) with OPTIONAL structure that can config anything, returns current config
-  static applyFilter(filter) {
-    for (let filterName in filter) {
-      const filterLevel = filter[filterName];
-      Log.setFilter(filterName, filterLevel); // ... performs appropriate validation
+  static config(cfg) {
+
+    // ***
+    // *** apply updates, cfg param supplied
+    // ***
+
+    if (cfg) {
+      // apply updates to each of the supplied configuration items
+      for (const cfgOpt in cfg) {
+        switch (cfgOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
+
+          // update filter
+          case 'filter':
+            for (const filterName in cfg.filter) {
+              const filterLevel = cfg.filter[filterName];
+              Log.setFilter(filterName, filterLevel); // ... performs appropriate validation
+            }
+            break;
+
+          // unrecognized option
+          default:
+            throw new Error(`Log.config() unrecognized configuration setting: ${cfgOpt}`);
+        }
+      }          
     }
-  }
 
-  // ??? roll into config()
-  static showFilter() {
 
-    // create a json structure that matches the user's filter setting
+    // ***
+    // *** return the current configuration
+    // ***
+
+    // define the filter json structure
+    // ... simplified for user consumption
     // ... sorted by filter name
     const filterNames = [];
     for (const filterName in _filter) {
@@ -179,12 +233,27 @@ class Log {
     for (const filterName of filterNames) {
       filter[filterName] = levelNum2Name(_filter[filterName].level);
     }
-    console.log(`??$$$ showFilter(): ${JSON.stringify(filter, null, 2)}`);
 
-    // this is a raw version showing internal structure (pretty kool how it works)
-    // console.log(`??$$$ showFilter(): ${JSON.stringify(_filter, null, 2)}`);
+    // package-up/return our configuration
+    const curCfg = {
+      // more
+      filter
+    };
+
+    return curCfg;
   }
 
+
+  /**
+   * Return an indicator as to whether client Errors will veto the log
+   * emission (see: allowClientErrorToVetoLogs configurable option).
+   *
+   * @return {boolean}
+   * @api public
+   */
+  static willClientErrorVetoLogs() {
+    return _allowClientErrorToVetoLogs;
+  }
 
   /**
    * Register a logging level.  This method is typically invoked
@@ -373,15 +442,18 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
     }
 
     // Object catch-all
-    let objStr = `
-      Object:`;
-    if (obj) {
-      for (let prop in obj) {
-        const val = typeof(obj[prop]) === 'function' ? 'function' : obj[prop];
-        objStr += `\n        ${prop}: ${val}`;
-      }
-    }
-    return objStr;
+    // ?? here is a one-level object property representaton 
+    // ? let objStr = `
+    // ?   Object:`;
+    // ? if (obj) {
+    // ?   for (let prop in obj) {
+    // ?     const val = typeof(obj[prop]) === 'function' ? 'function' : obj[prop];
+    // ?     objStr += `\n        ${prop}: ${val}`;
+    // ?   }
+    // ? }
+    // ? return objStr;
+    // ?? can I get by just treating it like a JSON object?
+    return JSON.stringify(obj, null, 2);
   }
 
 
@@ -485,10 +557,10 @@ function levelName2Num(levelName) {
   if (levelName !== 'none') { // 'none' is OK (meaining not-set)
     levelNum = Log[levelName];
     if (!levelNum) {
-      throw new Error(`Invalid levelName: '${levelName}' (non existent)`);
+      throw new Error(`Invalid Log levelName: '${levelName}' (non existent)`);
     }
   }
-  return level;
+  return levelNum;
 }
 
 /**
@@ -502,7 +574,7 @@ function levelNum2Name(levelNum) {
   if (levelNum) {         // null is OK (meaning not-set 'none')
     levelName = _levelName[levelNum];
     if (!levelName) {
-      throw new Error(`Invalid levelNum: ${levelNum} (non existent)`);
+      throw new Error(`Invalid Log levelNum: ${levelNum} (non existent)`);
     }
   }
   return levelName;
@@ -522,8 +594,8 @@ function levelNum2Name(levelNum) {
  *   Val: filterNode {FilterNode}
  *
  * This resource is programmatically set by one of the following:
- *   - Log() constructor               per Log.locateOrDefineFilter()
- *   - Log.applyFilter() configuration per Log.setFilter()
+ *   - Log() constructor          per Log.locateOrDefineFilter()
+ *   - Log.config() configuration per Log.setFilter()
  *
  * @api private
  */
@@ -536,10 +608,11 @@ const _filter = {
 };
 
 /**
- * Configuration that allows Error objects to veto the probe emission
+ * Configuration that allows client Error objects to veto the log emission
  * @api private
  */
-let _allowErrorToVetoProbeEmission = true;
+let _allowClientErrorToVetoLogs = true;
+
 
 
 // register our initial standard base levels

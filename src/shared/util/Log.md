@@ -54,8 +54,6 @@ following levels exist (in order of severity).
   Log.FATAL
 ```
 
-NOTE: Additional log levels may be created through configuration.
-
 A log emits a probe at a designated severity level.  The probe is
 conditionally emitted, depending on the filter setting (again, more
 on this later).
@@ -71,6 +69,10 @@ on this later).
 DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
 ```
+
+NOTE: Additional log levels may be created through ???.  This should
+be invoked very early in your app's startup process. ??? give example of real addition.
+
 
 ## msgFn() Callbacks
 
@@ -265,3 +267,6 @@ This Error veto ability is a configurable option and can be disabled
 ## Configuration
 
 ???
+
+
+??? registerLevel()
