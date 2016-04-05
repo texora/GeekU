@@ -64,11 +64,13 @@ on this later).
  log.debug(()=>`Some complex '${probe}' with bunches of '${overhead}'`);
 ```
 
-*outputs:*
+**sample output:**
+<span style='background-color: pink'>
 ```
-INFO  2016-04-04 18:07:50 MyLogFilter:
+DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
 ```
+</span>
 
 ## msgFn() Callbacks
 
@@ -100,6 +102,13 @@ appropriately formatted).
 ```javascript
  log.error(()=>'An unexpected condition occurred.', err);
 ```
+
+??? sample output
+
+Notice that a unique identifier is emitted and added to the Error
+object.  This information should communicated to the client, so as to
+be able to correlate the condition within the server logs.
+
 
 
 
@@ -142,7 +151,7 @@ Here is a simple example:
 Notice that module1 and module2 share the same filter.
 
 Filter names are completely up to you.  You may choose to use a number
-of different strategies.
+of different strategies (for example: module-based or functional-logic, etc.)
 
 
 
