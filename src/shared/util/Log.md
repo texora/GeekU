@@ -65,12 +65,12 @@ on this later).
 ```
 
 **sample output:**
-<span style='background-color: pink'>
 ```
+<span style='background-color: pink'>
 DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
-```
 </span>
+```
 
 ## msgFn() Callbacks
 
