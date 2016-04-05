@@ -4,7 +4,7 @@
 
 - [Overview](#overview)
 - [Logging Basics](#logging-basics)
-- [msgFn() Callbacks](#msgFn-callbacks)
+- [msgFn() Callbacks](#msgfn-callbacks)
 - [Object Detail](#object-detail)
 - [Filters](#filters)
   - [Filter Configuration](#filter-configuration)
@@ -14,6 +14,8 @@
 - [Configuration](#configuration)
 
 
+??? show samples
+??? beef up some of the examples a bit
 
 
 ## Overview
@@ -25,8 +27,8 @@ as Log4J.
 By default, Log is a thin layer on top of console.log(), but is
 configurable (??? TODO).
 
-Log is an isomorphic JavaScript utility, which means it will
-operate BOTH in browser/node environments.
+Log is an isomorphic JavaScript utility, as it will operate BOTH in
+browser/node environments.
 
 
 
@@ -59,10 +61,14 @@ conditionally emitted, depending on the filter setting (again, more
 on this later).
 
 ```javascript
- log.debug(()=>`some complex ${probe} with bunches of ${overhead}`);
+ log.debug(()=>`Some complex '${probe}' with bunches of '${overhead}'`);
 ```
 
-
+*outputs:*
+```
+INFO  2016-04-04 18:07:50 MyLogFilter:
+      Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
+```
 
 ## msgFn() Callbacks
 
@@ -73,7 +79,7 @@ The reason behind this is to minimize the overhead in message
 construction when the probe is going to be thrown on the floor
 (through the filtering process).  By wrapping this process in a
 function, the message construction overhead is only incurred once
-we determine that the probe is in fact going to be emitted.
+it is determined that the probe is in fact going to be emitted.
 
 This means that there is virtually NO overhead in leaving
 diagnostic level probes in production code.
@@ -143,7 +149,9 @@ of different strategies.
 
 ### Filter Configuration
 
-Filters are configured through the Log.configure() method.  You merely
+??? move this into the overall config section
+
+Filters are configured through the Log.config() method.  You merely
 specify a series of filterName/level settings.  These settings may be
 sparsely populated, as it merely applies the settings to the master
 filter.
@@ -221,12 +229,13 @@ Filter hierarchies are very powerful indeed!
 
 ### Error Vetos
 
-When an Error object is to be appended in the message probe, it is
-given an opportunity to veto the probe emission.  This is over and
-above the filtering process (defined above).  This can happen when:
+When an Error object is to be appended in the message probe, the Error
+object is given an opportunity to veto the probe emission.  This is
+over and above the filtering process (defined above).  This veto can
+happen when:
 
   - The Error has already been logged, or
-  - The Error is a recognized client issue
+  - The Error is a recognized as a client issue
     ... see Error.cause defined in ErrorExtensionPolyfill.js
 
 The reason behind this heuristic is there is no need to burden the
