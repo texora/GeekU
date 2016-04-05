@@ -151,13 +151,13 @@ class Log {
    * A configuration object is always returned, detailing the current
    * configuration.  
    *
-   * - When NO cfg param is supplied, config() it is used strictly as
+   * - When NO config param is supplied, config() it is used strictly as
    *   a retrieval mechanism. 
    *
-   * - If a cfg param is supplied, updates are applied, and the most
+   * - If a config param is supplied, updates are applied, and the most
    *   current configuration is returned.
    * 
-   *   The cfg param drives the configuration updates.  The properties
+   *   The config param drives the configuration updates.  The properties
    *   of this object are consistent with what is retrieved, but can
    *   be sparsly populated - setting only selected config.
    *
@@ -180,43 +180,43 @@ class Log {
    *   }
    * </pre>
    *
-   * @param {Object} cfg the sparsely populated configuration to apply (see above).
+   * @param {Object} config the sparsely populated configuration to apply (see above).
    *
    * @return {Object} the current configuration, after updates (if any) are applied.
    *
    * @api public
    */
-  static config(cfg) {
+  static config(config) {
 
     // ***
-    // *** apply updates from supplied cfg param
+    // *** apply updates from supplied config param
     // ***
 
-    if (cfg) {
+    if (config) {
       // apply updates to each of the supplied configuration items
-      for (const cfgOpt in cfg) {
-        let cfgVal = cfg[cfgOpt];
+      for (const configOpt in config) {
+        let configVal = config[configOpt];
 
-        switch (cfgOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
+        switch (configOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
 
           case 'allowClientErrorToVetoLogs':
-            if (typeof cfgVal === 'string')
-              cfgVal = cfgVal === 'true';
-            if (typeof cfgVal !== 'boolean')
-              throw new Error(`Log.config() invalid allowClientErrorToVetoLogs value (${cfgVal}), must be a boolean or String ('true'/'false')`);
-            _allowClientErrorToVetoLogs = cfgVal;
+            if (typeof configVal === 'string')
+              configVal = configVal === 'true';
+            if (typeof configVal !== 'boolean')
+              throw new Error(`Log.config() invalid allowClientErrorToVetoLogs value (${configVal}), must be a boolean or String ('true'/'false')`);
+            _allowClientErrorToVetoLogs = configVal;
             break;
 
           case 'filter':
-            for (const filterName in cfg.filter) {
-              const filterLevel = cfg.filter[filterName];
+            for (const filterName in config.filter) {
+              const filterLevel = config.filter[filterName];
               Log.setFilter(filterName, filterLevel); // ... performs appropriate validation
             }
             break;
 
           // unrecognized option
           default:
-            throw new Error(`Log.config() unrecognized configuration setting: ${cfgOpt}`);
+            throw new Error(`Log.config() unrecognized configuration setting: ${configOpt}`);
         }
       }          
     }
@@ -244,13 +244,13 @@ class Log {
     }
 
     // package-up/return our configuration
-    const curCfg = {
+    const curConfig = {
       allowClientErrorToVetoLogs: _allowClientErrorToVetoLogs,
       // ?? more
       filter
     };
 
-    return curCfg;
+    return curConfig;
   }
 
 
