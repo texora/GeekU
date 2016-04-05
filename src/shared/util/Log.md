@@ -62,9 +62,7 @@ on this later).
  log.debug(()=>`Some complex '${probe}' with bunches of '${overhead}'`);
 ```
 
-<span style='background-color: pink;'>
 **sample output:**
-</span>
 ```
 DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
@@ -77,7 +75,8 @@ be invoked very early in your app's startup process. ??? give example of real ad
 ## msgFn() Callbacks
 
 As you can see from above, logging probes are based on functional
-callbacks.  Notice that the ES6 arrow functions are used.
+callbacks.  Notice that the ES6 arrow functions are used with template
+string literals.
 
 The reason behind this is to minimize the overhead in message
 construction when the probe is going to be thrown on the floor
@@ -105,11 +104,35 @@ appropriately formatted).
  log.error(()=>'An unexpected condition occurred.', err);
 ```
 
-??? sample output
+**sample output:**
+```
+ERROR 2016-04-05 17:16:19 MyLogFilter:
+      An unexpected condition occurred.
+      Error:
+        Name:       TypeError
+        Status:     500
+        StatusMsg:  Internal Server Error
+        Client Msg: Unexpected Condition
+        Message:    Cannot read property 'collection' of null
+        URL:        /api/courses/CS-1132
+        LogId:      4kXU_XTCl
+        Stack Trace:
+         TypeError: Cannot read property 'collection' of null
+    at C:\data\devGitHub\GeekU\dist\webpack:\src\server\route\courses.js:73:23
+    at Layer.handle [as handle_request] (C:\data\devGitHub\GeekU\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\data\devGitHub\GeekU\node_modules\express\lib\router\route.js:131:13)
+    at Route.dispatch (C:\data\devGitHub\GeekU\node_modules\express\lib\router\route.js:112:3)
+    at Layer.handle [as handle_request] (C:\data\devGitHub\GeekU\node_modules\express\lib\router\layer.js:95:5)
+    at C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:277:22
+    at param (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:349:14)
+    at param (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:365:14)
+    at Function.process_params (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:410:3)
+    at next (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:271:10)
+```
 
-Notice that a unique identifier is emitted and added to the Error
-object.  This information should communicated to the client, so as to
-be able to correlate the condition within the server logs.
+Notice that a unique LogId is added to the Error object and shown in
+the logs.  This information should communicated to the client, so as
+to be able to correlate the condition within the server logs.
 
 
 
