@@ -70,8 +70,8 @@ class Log {
    * @api public
    */
   log(level, msgFn, obj) {
-    // validate params ... TODO: may want to turn validation off for performance
-    const levelName = Log.levelName[level];
+    // validate params
+    const levelName = _levelName[level];
     assert(levelName, `Log.log(...) ERROR: Invalid log level: ${level}`);
     assert(typeof msgFn === 'function', `Log.log(...) ERROR: Supplied msgFn was NOT a function, rather  a ${typeof msgFn} type`);
 
@@ -119,7 +119,7 @@ class Log {
 
     // allow supplied Error object to veto the probe emission
     if (enabled &&                // we are preliminary enabled (as far as our filter is concerned)
-        Log.allowErrorToVetoProbeEmission && // our configuation allows Errors to veto the probe emission
+        _allowErrorToVetoProbeEmission && // our configuation allows Errors to veto the probe emission
         obj &&                    // obj has been supplied
         obj instanceof Error) {   // that is an Error
       const err = obj;
@@ -153,6 +153,7 @@ class Log {
    *
    * @api public
    */
+  // ?? rename config(config) with OPTIONAL structure that can config anything, returns current config
   static applyFilter(filter) {
     for (let filterName in filter) {
       const filterLevel = filter[filterName];
@@ -160,9 +161,28 @@ class Log {
     }
   }
 
-  // ?? temp for now
+  // ??? roll into config()
   static showFilter() {
-    console.log(`??$$$ showFilter(): ${JSON.stringify(_filter, null, 2)}`);
+
+    // create a json structure that matches the user's filter setting
+    // ... sorted by filter name
+    const filterNames = [];
+    for (const filterName in _filter) {
+      if (filterName !== 'root') {
+        filterNames.push(filterName);
+      }
+    }
+    filterNames.sort();
+    const filter= {
+      'root': levelNum2Name(_filter['root'].level) // force 'root' at top
+    };
+    for (const filterName of filterNames) {
+      filter[filterName] = levelNum2Name(_filter[filterName].level);
+    }
+    console.log(`??$$$ showFilter(): ${JSON.stringify(filter, null, 2)}`);
+
+    // this is a raw version showing internal structure (pretty kool how it works)
+    // console.log(`??$$$ showFilter(): ${JSON.stringify(_filter, null, 2)}`);
   }
 
 
@@ -182,10 +202,10 @@ class Log {
 
     // inject static Log constants, for example:
     //   Log.DEBUG          = 200;
-    //   Log.levelName[200] = 'DEBUG';
+    //   _levelName[200] = 'DEBUG';
     const levelNameUpper = levelName.toUpperCase();
     Log[levelNameUpper]  = level;
-    Log.levelName[level] = levelNameUpper;
+    _levelName[level]    = levelNameUpper;
 
     // inject level-specific log() convenience method, for example:
     //   log.debug(msgFn, obj); ... alias to log.log(LEVEL, txFn, obj)
@@ -196,7 +216,7 @@ class Log {
 
     // inject level-specific isLevelEnabled() convenience method, 
     // for example:
-    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj) ?? test this
+    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj)
     const levelNameHumpback = levelNameLower.charAt(0).toUpperCase() + levelNameLower.slice(1);
     Log.prototype[levelNameHumpback] = function(obj) {
       this.isLevelEnabled(Log[levelNameUpper], obj);
@@ -267,8 +287,8 @@ class Log {
    *  - all parent hierarchy will be created (as needed)
    * 
    * @param {String} filterName the filter name to set.
-   * @param {int} level the log level (e.g. Log.DEBUG) to set in
-   * supplied filter.  Use null to undefine (defering to parentage).
+   * @param {int/String} level the log level (e.g. Log.DEBUG) to set in
+   * supplied filter.  Use null/'none' to undefine (defering to parentage).
    *
    * @return {FilterNode} the filterNode associated to the supplied filterName.
    *
@@ -276,13 +296,19 @@ class Log {
    */
   static setFilter(filterName, level) {
 
-    const filterNode = Log.locateOrDefineFilter(filterName);
+    // resolve/validate supplied level (int/String) to it's internal numeric representation
+    // ... null for none
+    // ... exception if invalid
+    level = resolveLevel(level);
+  //assert(level === null || _levelName[level], // ??? THINK obsolete
+  //       `setFilter('${filterName}', ${level}) ERROR: Invalid level: ${level}`);
 
-    assert(level === null || Log.levelName[level],
-           `setFilter('${filterName}', ${level}) ERROR: Invalid level: ${level}`);
-    assert(filterNode.filterName !== 'root' || level,
+    // cannot unset 'root' level filter
+    assert(filterName !== 'root' || level,
            `setFilter('${filterName}', ${level}) ERROR: 'root' filter cannot be unset (i.e. null)`);
 
+    // locate/define filter, and set it
+    const filterNode = Log.locateOrDefineFilter(filterName);
     filterNode.level = level;
 
     return filterNode;
@@ -306,6 +332,7 @@ class Log {
    *
    * @api private (however can be re-set in initial Log configuration)
    */
+  // ?? make private _formatMsg with ability to re-config
   static formatMsg(filterName, levelName, msgFn, obj) {
     return `
 ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Log.extra()}:
@@ -327,6 +354,7 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
    *
    * @api private (however can be re-set in initial Log configuration)
    */
+  // ?? make private _formatObj with with ability to re-config
   static formatObj(obj) {
 
     if (!obj) {
@@ -366,6 +394,7 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
    *
    * @api private (however can be re-set in initial Log configuration)
    */
+  // ?? make private _formatError with with ability to re-config
   static formatError(err) {
 
     // define a logId for this Error
@@ -395,7 +424,11 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
 
 } // end of ... class Log
 
-// ?? truely hide all private data as module level variables (using _prefix)
+
+
+// ***
+// *** Level Related internal/static
+// ***
 
 /**
  * Log Level defined constants - programmatically set via Log.registerLevel()
@@ -405,13 +438,83 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
 // Log.DEBUG = 200;
 
 /**
- * Log Level names - programmatically set via Log.registerLevel()
+ * Log Level names indexed by level num - programmatically set via Log.registerLevel()
  * @api private
  */
-Log.levelName = {
+let _levelName = {
   // ex ...
   // 200: 'DEBUG'
 };
+
+/**
+ * Resolve supplied level to it's internal numeric representation
+ * (null for none), supporting String/int/null/'none' semantics.
+
+ * @param {int/String} level the log level (e.g. Log.DEBUG) to
+ * resolve.  Use null/'none' for none (defering to parentage).
+ *
+ * @return {int} the internal level numeric representation (null for none).
+ * @throws {Error} if invalid
+
+ * @api private
+ */
+// ?? NEW
+function resolveLevel(level) {
+
+  let levelNum = level;
+
+  // validate/convert level
+  if (typeof level === 'string') {   // ex: 'DEBUG' -or- 'none'
+    levelNum = levelName2Num(level); // ... resolves null for 'none' ... throws error if invalid
+  }
+  else {                             // ex: 200 (Log.DEBUG) -or- null
+    levelNum2Name(level);            // ... strictly for validation ... throws error if invalid
+  }
+
+  return levelNum;
+}
+
+/**
+ * Convert Log Level name to number.  This is similar to
+ * Log[levelName] with added support of "'none' to null".
+ * @api private
+ */
+// ?? NEW
+function levelName2Num(levelName) {
+  let levelNum = null;        // 'none' translates to null
+  if (levelName !== 'none') { // 'none' is OK (meaining not-set)
+    levelNum = Log[levelName];
+    if (!levelNum) {
+      throw new Error(`Invalid levelName: '${levelName}' (non existent)`);
+    }
+  }
+  return level;
+}
+
+/**
+ * Convert Log Level number to name.  This is similar to
+ * _levelName[levelNum] with added support of "null to 'none'".
+ * @api private
+ */
+// ?? NEW
+function levelNum2Name(levelNum) {
+  let levelName = 'none'; // null translates to 'none'
+  if (levelNum) {         // null is OK (meaning not-set 'none')
+    levelName = _levelName[levelNum];
+    if (!levelName) {
+      throw new Error(`Invalid levelNum: ${levelNum} (non existent)`);
+    }
+  }
+  return levelName;
+}
+
+
+
+
+// ***
+// *** Filter Related internal/static
+// ***
+
 
 /**
  * Log filter map.
@@ -436,7 +539,7 @@ const _filter = {
  * Configuration that allows Error objects to veto the probe emission
  * @api private
  */
-Log.allowErrorToVetoProbeEmission = true;
+let _allowErrorToVetoProbeEmission = true;
 
 
 // register our initial standard base levels
