@@ -35,9 +35,6 @@ import HTTPStatus    from 'http-status';
  --------------------------------------------------------------------------------*/
 
 const log = new Log('GeekApp'); // ?? decide on correct filterName
-Log.applyFilter({  // ?? TEMP FOR NOW ... should NOT BE HERE
-  'GeekApp':  Log.INFO
-});
 
 
 /**
@@ -80,11 +77,12 @@ class GeekURes {
    * @api public
    */
   send(payload) {
+    log.info(()=>`success - sending payload ${log.isLevelEnabled(Log.TRACE) ? '' : '... to see payload enable TRACE log'}`);
+    log.trace(()=>'here is the payload:\n', payload);
     const status = HTTPStatus.OK;
     this.res.status(status).send({
       payload: payload
     });
-    // console.log('DEBUG: ??? sending following payload: ', payload);
   }
 
   /**
@@ -95,6 +93,7 @@ class GeekURes {
    * @api public
    */
   sendNotFound() {
+    log.info(()=>'Not Found condition - sending 404');
     const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
       error: {
@@ -102,7 +101,6 @@ class GeekURes {
         message: 'Requested Resource was NOT Found',
       }
     });
-    // console.log('DEBUG: ??? sending 404 (Not Found)');
   }
 
   /**
@@ -122,8 +120,19 @@ class GeekURes {
    */
   sendError(err, req) {
 
+    // log related
+    let clientQual    = '';
+    let clarification = '';
+    if (Log.willClientErrorVetoLogs() && 
+        err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR) {
+      clientQual = 'Client ';
+      clarification += "... NOTE: to see Error DETAIL, re-config Log 'allowClientErrorToVetoLogs' (because this is a 'client' Error)";
+    }
+    log.info(()=>`${clientQual}Error Condition: - sending error: ${err.message} ${clarification}`);
+
     prepAndLogForSendError(err, req);
 
+    // package up the error and send it
     const errRes = {
       name:    err.name,
       message: err.clientMsg,
@@ -171,7 +180,7 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
 
     // start our app, now that we have our db connection
     app.listen(appPort, () => {
-      console.log('INFO: createRunningApp(): DB connection established, and app is listening on port: ' + appPort);
+      log.info(()=>`createRunningApp(): DB connection established, and app is listening on port: ${appPort}`);
     });
     
   })
