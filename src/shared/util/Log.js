@@ -88,7 +88,7 @@ class Log {
 // * is enabled for self's filter.
 // *
 // * @param {Object} obj an optional object that for Error instances,
-// * can veto the enablement.
+// * can exclude client errors from the log
 // *
 // * @return {boolean}
 // * 
@@ -105,7 +105,7 @@ class Log {
    *
    * @param {int} level the log level for this probe (e.g. Log.DEBUG).
    * @param {Object} obj an optional object that for Error instances,
-   * can veto the enablement.
+   * can exclude client errors from the log
    *
    * @return {boolean}
    * 
@@ -117,11 +117,11 @@ class Log {
     const filterLevel = this.filterNode.activeLevel();
     let   enabled     = filterLevel <= level;
 
-    // allow supplied Error object to veto the probe emission
-    if (enabled &&                // we are preliminary enabled (as far as our filter is concerned)
-        _allowClientErrorToVetoLogs && // our configuation allows client Errors to veto the log
-        obj &&                    // obj has been supplied
-        obj instanceof Error) {   // that is an Error
+    // exclude client Errors from the log
+    if (enabled &&              // we are preliminary enabled (as far as our filter is concerned)
+        _excludeClientErrors && // Log configuration allows exclusion of Errors that are caused by client
+        obj &&                  // obj has been supplied
+        obj instanceof Error) { // that is an Error
       const err = obj;
 
       // no logging is required when ...
@@ -159,18 +159,19 @@ class Log {
    * 
    *   The config param drives the configuration updates.  The properties
    *   of this object are consistent with what is retrieved, but can
-   *   be sparsly populated - setting only selected config.
+   *   be sparsly populated - setting only selected configuration options.
    *
    * The configuration object is a JSON structure, with the following
    * format:
    *
    * <pre>
    *   {
+   *     excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
    *     more: ??$$,
-   *     filter: {
+   *     filter: {                      // ... update Log filters
    *       <filter-name>:       <log-level>
    *       ... ex:
-   *       "root":              "INFO", ... notice you can set the root of all filters
+   *       "root":              "INFO", // ... notice you can set the root of all filters
    *       "GeekApp":           "WARN",
    *       "ProcessFlow":       "DEBUG",
    *       "ProcessFlow.Enter": "none",
@@ -199,13 +200,15 @@ class Log {
 
         switch (configOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
 
-          case 'allowClientErrorToVetoLogs':
+          case 'excludeClientErrors':
             if (typeof configVal === 'string')
               configVal = configVal === 'true';
             if (typeof configVal !== 'boolean')
-              throw new Error(`Log.config() invalid allowClientErrorToVetoLogs value (${configVal}), must be a boolean or String ('true'/'false')`);
-            _allowClientErrorToVetoLogs = configVal;
+              throw new Error(`Log.config() invalid excludeClientErrors value (${configVal}), must be a boolean or String ('true'/'false')`);
+            _excludeClientErrors = configVal;
             break;
+
+          // case '??$$more':
 
           case 'filter':
             for (const filterName in config.filter) {
@@ -245,8 +248,8 @@ class Log {
 
     // package-up/return our configuration
     const curConfig = {
-      allowClientErrorToVetoLogs: _allowClientErrorToVetoLogs,
-      // ?? more
+      excludeClientErrors: _excludeClientErrors,
+      // ??$$ more
       filter
     };
 
@@ -255,14 +258,14 @@ class Log {
 
 
   /**
-   * Return an indicator as to whether client Errors will veto the log
-   * emission (see: allowClientErrorToVetoLogs configurable option).
+   * Return an indicator as to whether client Errors will be excluded
+   * from the logs (see: excludeClientErrors configurable option).
    *
    * @return {boolean}
    * @api public
    */
-  static willClientErrorVetoLogs() {
-    return _allowClientErrorToVetoLogs;
+  static areClientErrorsExcluded() {
+    return _excludeClientErrors;
   }
 
   /**
@@ -379,8 +382,6 @@ class Log {
     // ... null for none
     // ... exception if invalid
     level = resolveLevel(level);
-  //assert(level === null || _levelName[level], // ??? THINK obsolete
-  //       `setFilter('${filterName}', ${level}) ERROR: Invalid level: ${level}`);
 
     // cannot unset 'root' level filter
     assert(filterName !== 'root' || level,
@@ -452,7 +453,7 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
     }
 
     // Object catch-all
-    // ?? here is a one-level object property representaton 
+    // NOTE: here is a one-level object property representaton 
     // ? let objStr = `
     // ?   Object:`;
     // ? if (obj) {
@@ -462,7 +463,7 @@ ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Lo
     // ?   }
     // ? }
     // ? return objStr;
-    // ?? can I get by just treating it like a JSON object?
+    // NOTE: for now we simply treat is as aJSON object ... see if this works
     return JSON.stringify(obj, null, 2);
   }
 
@@ -540,7 +541,6 @@ let _levelName = {
 
  * @api private
  */
-// ?? NEW
 function resolveLevel(level) {
 
   let levelNum = level;
@@ -561,7 +561,6 @@ function resolveLevel(level) {
  * Log[levelName] with added support of "'none' to null".
  * @api private
  */
-// ?? NEW
 function levelName2Num(levelName) {
   let levelNum = null;        // 'none' translates to null
   if (levelName !== 'none') { // 'none' is OK (meaining not-set)
@@ -578,7 +577,6 @@ function levelName2Num(levelName) {
  * _levelName[levelNum] with added support of "null to 'none'".
  * @api private
  */
-// ?? NEW
 function levelNum2Name(levelNum) {
   let levelName = 'none'; // null translates to 'none'
   if (levelNum) {         // null is OK (meaning not-set 'none')
@@ -618,10 +616,11 @@ const _filter = {
 };
 
 /**
- * Configuration that allows client Error objects to veto the log emission
+ * Configuration that allows exclusion of logged Errors that are
+ * caused by client.
  * @api private
  */
-let _allowClientErrorToVetoLogs = true;
+let _excludeClientErrors = true;
 
 
 

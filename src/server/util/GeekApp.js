@@ -123,10 +123,10 @@ class GeekURes {
     // log related
     let clientQual    = '';
     let clarification = '';
-    if (Log.willClientErrorVetoLogs() && 
+    if (Log.areClientErrorsExcluded() && 
         err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR) {
       clientQual = 'Client ';
-      clarification += "... NOTE: to see Error DETAIL, re-config Log 'allowClientErrorToVetoLogs' (because this is a 'client' Error)";
+      clarification += "... NOTE: to see Error DETAIL, re-config Log 'excludeClientErrors' (because this is a 'client' Error)";
     }
     log.info(()=>`${clientQual}Error Condition: - sending error: ${err.message} ${clarification}`);
 

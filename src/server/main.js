@@ -12,7 +12,7 @@ import Log          from '../shared/util/Log';
 
 // configure our log filter settings
 Log.config({
-//allowClientErrorToVetoLogs: false, // to see all Errors in logs (even those highlighting client-specific errors)
+//excludeClientErrors: false, // false: log ALL Errors, even those caused by client
   filter: {
     root:    Log.INFO,
 //  GeekApp: Log.TRACE, // to see detailed payload content
@@ -91,8 +91,6 @@ app.use( GeekApp.commonErrorHandler );
 // ? logWowZee.info(  ()=>'Probe 4a');
 // ? logWowZee.debug( ()=>'Probe 5a');
 // ? logWowZee.trace( ()=>'Probe 6a');
-// ? 
-// ? // Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
 // ? 
 // ? const logWooWoo = new Log('WooWoo');
 // ? logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
