@@ -64,7 +64,7 @@ on this later).
  log.debug(()=>`Some complex '${probe}' with bunches of '${overhead}'`);
 ```
 
-<span style='background-color: pink'>
+<span style='background-color: pink;'>
 **sample output:**
 </span>
 ```
