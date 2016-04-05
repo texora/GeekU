@@ -1,33 +1,56 @@
-??? format
+# Log
+
+**Table of Contents**
+
+- [Overview](#overview)
+- [Logging Basics](#logging-basics)
+- [msgFn() Callbacks](#msgFn-callbacks)
+- [Object Detail](#object-detail)
+- [Filters](#filters)
+  - [Filter Configuration](#filter-configuration)
+  - [Filter Hierarchy](#filter-hierarchy)
+  - [Error Vetos](#error-vetos)
+- [Probe Formatting](#probe-formatting)
+- [Configuration](#configuration)
+
+
+
+
+## Overview
 
 Log is a lightweight JavaScript logging utility that promotes
 filterable logging probes, similar to a number of frameworks such
 as Log4J.
 
 By default, Log is a thin layer on top of console.log(), but is
-configurable (TODO).
+configurable (??? TODO).
 
 Log is an isomorphic JavaScript utility, which means it will
 operate BOTH in browser/node environments.
 
-Logging Basics
-==============
+
+
+## Logging Basics
 
 Logging probes are emitted using instances of the Log class.  Each
 Log instance (e.g. log) is associated to a filter, via the Log
 constructor parameter (more on filtering later).
 
+```javascript
   const log = new Log('MyLogFilter');
+```
 
 Log levels define the severity of a probe.  By default the
 following levels exist (in order of severity).
 
+```javascript
   Log.TRACE
   Log.DEBUG
   Log.INFO
   Log.WARN
   Log.ERROR
   Log.FATAL
+```
 
 NOTE: Additional log levels may be created through configuration.
 
@@ -35,11 +58,13 @@ A log emits a probe at a designated severity level.  The probe is
 conditionally emitted, depending on the filter setting (again, more
 on this later).
 
+```javascript
  log.debug(()=>`some complex ${probe} with bunches of ${overhead}`);
+```
 
 
-txtFn() callbacks
-=================
+
+## msgFn() Callbacks
 
 As you can see from above, logging probes are based on functional
 callbacks.  Notice that the ES6 arrow functions are used.
@@ -57,21 +82,22 @@ With the advent of the ES6 arrow functions, this callback function
 is very much streamlined (see example above).
 
 
-Object Detail
-=============
+## Object Detail
 
-In addition to the message defined from the txtFn() callback, an
+In addition to the message defined from the msgFn() callback, an
 object can be optionally passed to the logging directive, which
 will be formatted and appended to the message probe.
 
 This can be any type of object, including Error instances (which are
 appropriately formatted).
 
+```javascript
  log.error(()=>'An unexpected condition occurred.', err);
+```
 
 
-Filters:
-========
+
+## Filters
 
 Each Log instance (e.g. log) is associated to a filter (via the Log
 constructor parameter), and is dynamically created when first seen.
@@ -87,6 +113,7 @@ probe is to be emitted.
 
 Here is a simple example:
 
+```javascript
    module1.js
    ==========
    import Log from './util/Log';
@@ -104,6 +131,7 @@ Here is a simple example:
    ... 
    log.info(()=>'Exit processing.');
    ... 
+```
 
 Notice that module1 and module2 share the same filter.
 
@@ -111,14 +139,16 @@ Filter names are completely up to you.  You may choose to use a number
 of different strategies.
 
 
-Filter Configuration
-====================
+
+
+### Filter Configuration
 
 Filters are configured through the Log.configure() method.  You merely
 specify a series of filterName/level settings.  These settings may be
 sparsely populated, as it merely applies the settings to the master
 filter.
 
+```javascript
   Log.config({
     filter {
       'root':      Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
@@ -128,6 +158,7 @@ filter.
       ... etc
     }
   });
+```
 
 Notice that Log pre-defines a 'root' filter, which is referenced when
 a given filter has not been set.  This 'root' will always be defined
@@ -135,8 +166,8 @@ a given filter has not been set.  This 'root' will always be defined
 (null/undefined).
 
 
-Filter Hierarchy
-================
+
+### Filter Hierarchy
 
 You may choose to introduce a hierarchy in your filter names.  
 
@@ -151,6 +182,7 @@ Filter hierarchies are very easy to implement.  The filter string name
 merely contains the hierarchy delimited with a period (".")
 character.  As an example:
 
+```javascript
   Log.config({
     filter {
       'root': Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
@@ -160,6 +192,7 @@ character.  As an example:
       'entryExit.mongo.teardown': Log.DEBUG,
     }
   });
+```
 
 This example defines a three-tier filter hierarchy.  Because
 'entryExit.mongo.setup' has NO level defined, it's parent
@@ -185,8 +218,8 @@ sufficient.
 Filter hierarchies are very powerful indeed! 
 
 
-Error Vetos
-===========
+
+### Error Vetos
 
 When an Error object is to be appended in the message probe, it is
 given an opportunity to veto the probe emission.  This is over and
@@ -206,13 +239,11 @@ This Error veto ability is a configurable option and can be disabled
 (see: allowErrorToVetoProbeEmission).
 
 
-Probe Formatting
-================
+## Probe Formatting
 
-?? 
+???
 
 
-Configuration
-=============
+## Configuration
 
-?? 
+???
