@@ -10,7 +10,17 @@ import * as GeekApp from './util/GeekApp';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 import Log          from '../shared/util/Log';
 
-console.log('INFO: Starting GeekU Server.');
+// configure our log filter settings
+Log.config({
+//allowClientErrorToVetoLogs: false, // to see all Errors in logs (even those highlighting client-specific errors)
+  filter: {
+    root:    Log.INFO,
+//  GeekApp: Log.TRACE, // to see detailed payload content
+  }
+});
+const log = new Log('GeekApp'); // ?? decide on correct filterName
+
+log.info(()=>'Starting GeekU Server.');
 
 const app = GeekApp.createRunningApp('mongodb://localhost:27017/GeekU', 8080);
 
@@ -26,7 +36,7 @@ app.use(bodyParser.text());
 // serve our static assets
 const rootPath = path.join(__dirname, "../../public"); // LOG: rootPath: 'public' (sidebar: main.js __dirname: 'src\server')
 app.use(express.static(rootPath));
-// console.log(`INFO: main.js: static resources serverd from rootPath: '${rootPath}' (sidebar: main.js __dirname: '${__dirname}')`);
+log.debug(()=>`Static resources serverd from rootPath: '${rootPath}' (sidebar: main.js __dirname: '${__dirname}').`);
 
 // allow cross site requests
 app.use( (req, res, next) => {
@@ -41,7 +51,7 @@ app.use('/', students);
 // ... catch-all for /api
 app.get('/api/*', (req, res, next) => {
   const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;
-  console.log(`WARN: main.js ${msg}`);
+  log.warn(()=>msg); // ??? test this out
   next(new Error(msg).defineClientMsg(msg)
                      .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
 });
@@ -50,7 +60,7 @@ app.get('/api/*', (req, res, next) => {
 // send all other requests to index.html (so browserHistory in React Router works)
 // ... this catch-all route should be last
 app.get('*', function (req, res) {
-  console.log('INFO: main.js: servicing all other requests!');
+  log.info(()=>'Servicing all other requests (catch-all)!');
 //res.sendFile(path.join(rootPath, 'index.html')); // TRY 1 ... TypeError: path must be absolute or specify root to res.sendFile
   res.sendFile('index.html', {root: rootPath});    // TRY 2 ... works with absolute resources (in index.html)
 });
@@ -64,33 +74,33 @@ app.use( GeekApp.commonErrorHandler );
 
 
 // ??? initial log testing VERY TEMP
-Log.config({
-  filter: {
-    root:   Log.INFO, // 32, 'none', Log.OFF, null, ... various error conditions
-    WowZee: Log.DEBUG,
-  //WooWoo: Log.ERROR,
-    WooWoo: 'DEBUG',
-//  GeekApp: Log.TRACE: // to see detailed payloads returned
-  }
-});
+// ? Log.config({
+// ?   filter: {
+// ?     root:   Log.INFO, // 32, 'none', Log.OFF, null, ... various error conditions
+// ?     WowZee: Log.DEBUG,
+// ?   //WooWoo: Log.ERROR,
+// ?     WooWoo: 'DEBUG',
+// ? //  GeekApp: Log.TRACE: // to see detailed payloads returned
+// ?   }
+// ? });
+// ? 
+// ? const logWowZee = new Log('WowZee');
+// ? logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
+// ? logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
+// ? logWowZee.warn(  ()=>'Probe 3a');
+// ? logWowZee.info(  ()=>'Probe 4a');
+// ? logWowZee.debug( ()=>'Probe 5a');
+// ? logWowZee.trace( ()=>'Probe 6a');
+// ? 
+// ? // Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
+// ? 
+// ? const logWooWoo = new Log('WooWoo');
+// ? logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
+// ? logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
+// ? logWooWoo.warn(  ()=>'Probe 3a');
+// ? logWooWoo.info(  ()=>'Probe 4a');
+// ? logWooWoo.debug( ()=>'Probe 5a');
+// ? logWooWoo.trace( ()=>'Probe 6a');
 
-const logWowZee = new Log('WowZee');
-logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
-logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
-logWowZee.warn(  ()=>'Probe 3a');
-logWowZee.info(  ()=>'Probe 4a');
-logWowZee.debug( ()=>'Probe 5a');
-logWowZee.trace( ()=>'Probe 6a');
-
-// Log.allowErrorToVetoProbeEmission = false; // ??? VERY TEMP
-
-const logWooWoo = new Log('WooWoo');
-logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
-logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
-logWooWoo.warn(  ()=>'Probe 3a');
-logWooWoo.info(  ()=>'Probe 4a');
-logWooWoo.debug( ()=>'Probe 5a');
-logWooWoo.trace( ()=>'Probe 6a');
-
-console.log('??? at main end ...');
-console.log(`??? current Log.config(): ${JSON.stringify(Log.config(), null, 2)}`);
+log.info(()=>`Current Log.config():
+${JSON.stringify(Log.config(), null, 2)}`);

@@ -5,6 +5,8 @@ import express       from 'express';
 import {MongoClient} from 'mongodb';
 import HTTPStatus    from 'http-status';
 
+const log = new Log('GeekApp'); // ?? decide on correct filterName
+
 /*--------------------------------------------------------------------------------
 
   The GeekUApp module provides various Express App extension points
@@ -33,8 +35,6 @@ import HTTPStatus    from 'http-status';
            + sendError(err, req)
 
  --------------------------------------------------------------------------------*/
-
-const log = new Log('GeekApp'); // ?? decide on correct filterName
 
 
 /**

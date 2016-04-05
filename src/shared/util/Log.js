@@ -150,10 +150,10 @@ class Log {
    *
    * A configuration object is always returned, detailing the current
    * configuration.  
-
+   *
    * - When NO cfg param is supplied, config() it is used strictly as
    *   a retrieval mechanism. 
-
+   *
    * - If a cfg param is supplied, updates are applied, and the most
    *   current configuration is returned.
    * 
@@ -166,7 +166,7 @@ class Log {
    *
    * <pre>
    *   {
-   *     more: ???hmmm,
+   *     more: ??$$,
    *     filter: {
    *       <filter-name>:       <log-level>
    *       ... ex:
@@ -189,15 +189,24 @@ class Log {
   static config(cfg) {
 
     // ***
-    // *** apply updates, cfg param supplied
+    // *** apply updates from supplied cfg param
     // ***
 
     if (cfg) {
       // apply updates to each of the supplied configuration items
       for (const cfgOpt in cfg) {
+        let cfgVal = cfg[cfgOpt];
+
         switch (cfgOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
 
-          // update filter
+          case 'allowClientErrorToVetoLogs':
+            if (typeof cfgVal === 'string')
+              cfgVal = cfgVal === 'true';
+            if (typeof cfgVal !== 'boolean')
+              throw new Error(`Log.config() invalid allowClientErrorToVetoLogs value (${cfgVal}), must be a boolean or String ('true'/'false')`);
+            _allowClientErrorToVetoLogs = cfgVal;
+            break;
+
           case 'filter':
             for (const filterName in cfg.filter) {
               const filterLevel = cfg.filter[filterName];
@@ -236,7 +245,8 @@ class Log {
 
     // package-up/return our configuration
     const curCfg = {
-      // more
+      allowClientErrorToVetoLogs: _allowClientErrorToVetoLogs,
+      // ?? more
       filter
     };
 
