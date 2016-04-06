@@ -154,12 +154,12 @@ class Log {
    * - When NO config param is supplied, config() it is used strictly as
    *   a retrieval mechanism. 
    *
-   * - If a config param is supplied, updates are applied, and the most
-   *   current configuration is returned.
+   * - If a config param is supplied, updates are applied, and then
+   *   the most current configuration is returned.
    * 
    *   The config param drives the configuration updates.  The properties
    *   of this object are consistent with what is retrieved, but can
-   *   be sparsly populated - setting only selected configuration options.
+   *   be sparsely populated - setting only selected configuration options.
    *
    * The configuration object is a JSON structure, with the following
    * format:

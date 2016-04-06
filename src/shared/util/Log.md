@@ -190,8 +190,6 @@ of different strategies (for example: module-based or functional-logic, etc.)
 
 ### Filter Configuration
 
-??? move this into the overall config section
-
 Filters are configured through the Log.config() method.  You merely
 specify a series of filterName/level settings.  These settings may be
 sparsely populated, as it merely applies the settings to the master
@@ -204,10 +202,13 @@ filter.
       'EntryExit': Log.INFO,
       'Courses':   Log.DEBUG,
       'Students':  Log.WARN,
-      ... etc
     }
   });
 ```
+
+You may specify the filter values with either the Log defined
+constants (e.g. Log.DEBUG), or their cooresponding string
+representation (e.g. "DEBUG").
 
 Notice that Log pre-defines a 'root' filter, which is referenced when
 a given filter has not been set.  This 'root' will always be defined
@@ -259,7 +260,7 @@ null or undefined value.
 The structure of filter hierarchies are completely up to you.  You may
 choose to use a number of different strategies.
 
-Filter hierarchies are very powerful indeed!  However, they are
+**Filter hierarchies are very powerful indeed!**  However, they are
 completely optional, as you may choose to utilize a "flat" series of
 filters.  It's completely up to you.
 
@@ -293,13 +294,12 @@ appropriately.  This ability is provided by a light-weight extension to
 the Error object (see: ErrorExtensionPolyfill.js).
 
 This Error veto ability is a configurable Log option and can be
-disabled (see: Log Configuration: excludeClientErrors ).
+disabled (see: Log Configuration: excludeClientErrors).
 
 As an example, consider the following probes, taken from a
 Service transactional exit point:
 
 ```javascript
-... given err: Error
 log.info(()=> {
   const isClientErr   = (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR);
   const clientQual    = isClientErr ? 'Client ' : '';
@@ -383,7 +383,47 @@ ERROR 2016-04-06 08:59:41 GeekApp:
 
 ## Configuration
 
-???
+Log configuration is accomplished through the static Log.config() method:
+
+```javascript
+  + Log.config(config): config
+```
+
+The config method is used to both retrieve and/or update Log
+configuration.  The most common usage is to maintain the filter,
+but many other options are supported.
+
+A configuration object is always returned, detailing the current
+configuration.  
+
+- When NO config param is supplied, config() it is used strictly as
+  a retrieval mechanism. 
+
+- If a config param is supplied, updates are applied, and then the
+  most current configuration is returned.
+
+  The config param drives the configuration updates.  The properties
+  of this object are consistent with what is retrieved, but can be
+  sparsely populated - setting only selected configuration options.
+
+The configuration object is a JSON structure, with the following
+format:
+
+```javascript
+{
+  excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
+  more: ??$$,
+  filter: {                      // ... update Log filters
+    <filter-name>:       <log-level>
+    ... ex:
+    "root":              "INFO", // ... notice you can set the root of all filters
+    "GeekApp":           "WARN",
+    "ProcessFlow":       "DEBUG",
+    "ProcessFlow.Enter": "none",
+    "ProcessFlow.Exit":  "none",
+  }
+}
+```
 
 
-??? registerLevel()
+??? Log.registerLevel()
