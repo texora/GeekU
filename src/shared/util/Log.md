@@ -54,6 +54,9 @@ following levels exist (in order of severity).
   Log.FATAL
 ```
 
+NOTE: Additional log levels may be created through ???.  This should
+be invoked very early in your app's startup process. ??? give example of real addition.
+
 A log emits a probe at a designated severity level.  The probe is
 conditionally emitted, depending on the filter setting (again, more
 on this later).
@@ -68,15 +71,12 @@ DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
 ```
 
-NOTE: Additional log levels may be created through ???.  This should
-be invoked very early in your app's startup process. ??? give example of real addition.
-
 
 ## msgFn() Callbacks
 
-As you can see from above, logging probes are based on functional
-callbacks.  Notice that the ES6 arrow functions are used with template
-string literals.
+As you can see from the example above, logging probes are based on
+functional callbacks.  Notice that the example is using ES6 arrow
+functions with template string literals.
 
 The reason behind this is to minimize the overhead in message
 construction when the probe is going to be thrown on the floor
@@ -88,7 +88,7 @@ This means that there is virtually NO overhead in leaving
 diagnostic level probes in production code.
 
 With the advent of the ES6 arrow functions, this callback function
-is very much streamlined (see example above).
+is very much streamlined.
 
 
 ## Object Detail
@@ -132,9 +132,16 @@ ERROR 2016-04-05 17:16:19 MyLogFilter:
 
 Notice that a unique LogId is added to the Error object and shown in
 the logs.  This information should communicated to the client, so as
-to be able to correlate the condition within the server logs.
+to be able to correlate the condition within the service logs.
 
+**Sidebar**: Notice that the Error has a distinction between a
+`clientMsg` and the normal `message`.  This ability is provided
+through a light-weight Error object extension (see:
+ErrorExtensionPolyfill.js).  Client-specific messages are applicable
+for client consumption:
 
+- both in meaning, 
+- and is sanitized (so as to not reveal any internal architecture).
 
 
 ## Filters
@@ -220,9 +227,8 @@ reference it's parent, when the child setting is not defined.
 We have actually seen this already through the pre-defined 'root'
 filter (the root parent of ALL filters).
 
-Filter hierarchies are very easy to implement.  The filter string name
-merely contains the hierarchy delimited with a period (".")
-character.  As an example:
+Filter hierarchies are very easy to implement.  The filter name merely
+contains the hierarchy delimited with a dot (".").  As an example:
 
 ```javascript
   Log.config({
@@ -247,17 +253,15 @@ adjusting a parent level filter.
 Filter hierarchies introduce the concept of a filter being "unset".
 When a filter is NOT set, we merely defer to the setting of it's
 parent, grandparent, and so on (till we get to the top-level 'root').
-A filter may be unset either by NEVER setting it or re-setting it to a
+A filter may be unset either by never setting it or re-setting it to a
 null or undefined value.
 
 The structure of filter hierarchies are completely up to you.  You may
 choose to use a number of different strategies.
 
-Filter hierarchies are completely optional, as you may choose to
-utilize a "flat" series of filters.  In many cases this is completely
-sufficient.
-
-Filter hierarchies are very powerful indeed! 
+Filter hierarchies are very powerful indeed!  However, they are
+completely optional, as you may choose to utilize a "flat" series of
+filters.  It's completely up to you.
 
 
 
@@ -271,7 +275,7 @@ above).
 This veto can happen when:
 
 - The Error has already been logged, or
-- The Error is recognized to b a client issue
+- The Error is recognized to be a client issue
 
 The reason behind this heuristic is there is no need to burden the
 service logs with client-based errors.  These errors are NOT service
