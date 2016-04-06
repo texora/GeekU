@@ -141,7 +141,7 @@ ErrorExtensionPolyfill.js).  Client-specific messages are applicable
 for client consumption:
 
 - both in meaning, 
-- and is sanitized (so as to not reveal any internal architecture).
+- and in sanitization (so as to not reveal any internal architecture).
 
 
 ## Filters

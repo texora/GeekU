@@ -77,7 +77,7 @@ class GeekURes {
    * @api public
    */
   send(payload) {
-    log.info(()=>`success - sending payload ${log.isLevelEnabled(Log.TRACE) ? '' : '... to see payload enable TRACE log'}`);
+    log.info(()=>`Success - Sending Payload ${log.isLevelEnabled(Log.TRACE) ? '' : ' (NOTE: To see payload enable Log: TRACE)'}`);
     log.trace(()=>'here is the payload:\n', payload);
     const status = HTTPStatus.OK;
     this.res.status(status).send({
@@ -93,7 +93,7 @@ class GeekURes {
    * @api public
    */
   sendNotFound() {
-    log.info(()=>'Not Found condition - sending 404');
+    log.info(()=>'Not Found condition - Sending 404');
     const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
       error: {
@@ -121,14 +121,14 @@ class GeekURes {
   sendError(err, req) {
 
     // log related
-    let clientQual    = '';
-    let clarification = '';
-    if (Log.areClientErrorsExcluded() && 
-        err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR) {
-      clientQual = 'Client ';
-      clarification += "... NOTE: to see Error DETAIL, re-config Log 'excludeClientErrors' (because this is a 'client' Error)";
-    }
-    log.info(()=>`${clientQual}Error Condition: - sending error: ${err.message} ${clarification}`);
+    log.info(()=> {
+      const isClientErr   = (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      const clientQual    = isClientErr ? 'Client ' : '';
+      const clarification = (isClientErr && Log.areClientErrorsExcluded())
+              ? "\n      NOTE: To see Client Error details, re-configure Log: excludeClientErrors"
+              : "";
+      return `${clientQual}Error Condition: - Sending error: ${err.message}${clarification}`;
+    });
 
     prepAndLogForSendError(err, req);
 
@@ -272,6 +272,6 @@ function prepAndLogForSendError(err, req) {
   }
 
   // log our error (depending on cause [e.g. if client condition] may NOT LOG)
-  log.error(()=>`Sending exception back to client ...`, err);
+  log.error(()=>'Following exception encountered ...', err);
 
 }

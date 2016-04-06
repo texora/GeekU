@@ -11,7 +11,7 @@ if (!Error.prototype.defineClientMsg) { // key off of one of several extension p
    * Define a client-specific message, that is applicable for client
    * consumption:
    *  - both in meaning, 
-   *  - and is sanitized (so as to not reveal any internal architecture).
+   *  - and in sanitization (so as to not reveal any internal architecture).
    *
    * @param {String} clientMsg the client message to define
    *

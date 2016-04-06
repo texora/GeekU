@@ -412,12 +412,21 @@ class Log {
    *
    * @api private (however can be re-set in initial Log configuration)
    */
-  // ?? make private _formatMsg with ability to re-config
+  // ?? make private _formatMsg with ability to re-config ?? rename to _formatProbe
   static formatMsg(filterName, levelName, msgFn, obj) {
     return `
 ${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Log.extra()}:
       ${msgFn()}${Log.formatObj(obj)}`;
   };
+
+
+  // ??? need following hooks
+  // - ? levelStr:   both param and func: formatLevel(levelStr): String
+  // - ? timeStamp:  both param and func: formatTimeStamp(): String
+  // - ? filterName  both param and func: formatFilter(filterName): String
+  // - ? extra:      NO NO NO: simply add extra to any of the prior formatters
+  // - ? msg:        both param and formatPayload
+  // - KEY: formatProbe fn (from above)
 
   // ?? temp for now
   static extra() {
