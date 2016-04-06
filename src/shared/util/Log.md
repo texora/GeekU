@@ -264,23 +264,113 @@ Filter hierarchies are very powerful indeed!
 ### Error Vetos
 
 When an Error object is to be appended in the message probe, the Error
-object is given an opportunity to veto the probe emission.  This is
-over and above the filtering process (defined above).  This veto can
-happen when:
+object (in certain conditions) can actually cause the probe emission to
+be excluded.  This is over and above the filtering process (defined
+above).
 
-  - The Error has already been logged, or
-  - The Error is a recognized as a client issue
-    ... see Error.cause defined in ErrorExtensionPolyfill.js
+This veto can happen when:
+
+- The Error has already been logged, or
+- The Error is recognized to b a client issue
 
 The reason behind this heuristic is there is no need to burden the
-service log with client-based errors, because they are NOT really
-service errors, rather client errors.  Of course these errors must
-be communicated to the client through the normal return/throw/response
-mechanism, but this is a separate issue from the service logs.
+service logs with client-based errors.  These errors are NOT service
+errors, because the service successfully recognized and responded to
+the condition.  Rather they are client errors, that must be addressed
+by the client logic.  If we logged client errors, our service logs
+would be flooded with needless tracebacks.
 
-This Error veto ability is a configurable option and can be disabled
-(see: allowErrorToVetoProbeEmission).
+Of course these errors must be communicated to the client through the
+normal return/throw/response mechanism, but that is a separate issue
+from the service logs.
 
+This is predicated on the service logic marking the Error.cause
+appropriately.  This ability is provided by a light-weight extension to
+the Error object (see: ErrorExtensionPolyfill.js).
+
+This Error veto ability is a configurable Log option and can be
+disabled (see: Log Configuration: excludeClientErrors ).
+
+As an example, consider the following probes, taken from a
+Service transactional exit point:
+
+```javascript
+... given err: Error
+log.info(()=> {
+  const isClientErr   = (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  const clientQual    = isClientErr ? 'Client ' : '';
+  const clarification = (isClientErr && Log.areClientErrorsExcluded())
+          ? "\n      NOTE: To see Client Error details, re-configure Log: excludeClientErrors"
+          : "";
+  return `${clientQual}Error Condition: - Sending error: ${err.message}${clarification}`;
+});
+
+// log our error (depending on cause [e.g. if client condition] may NOT LOGGED)
+log.error(()=>'Following exception encountered ...', err);
+```
+
+This example shows two log probes:
+
+1. The first probe is an INFO level probe, stating that an exception
+   was encountered, and an error response was sent to the client.
+   This probe is merely a parallel INFO message that correlates with
+   all other exit points (not shown here ... i.e. success, not-found,
+   etc.).
+
+   **Sidebar**: Notice that this message probe has some complexity,
+   implemented in a number of conditional logic points.  Because this
+   logic is encapsulated directly in the msgFn() callback, the msg
+   construction overhead is ONLY incurred when the probe will in fact
+   be emitted (i.e. the INFO filter is active).
+
+2. The second probe is an ERROR level showing the details of the
+   exception (including the traceback).  Technicians would use this
+   information to diagnose a problem in the service.  By default this
+   probe will not be emitted when it is a client error - even if the
+   DEBUG filter is in effect.  In other words, the Error object has
+   "vetoed" the log emission.
+
+
+Initially, the following output would occur:
+
+**Output:**
+```
+INFO  2016-04-06 08:59:41 GeekApp:
+      Client Error Condition: - Sending error: Invalid field ('ouch') specified in request query field parameter: 'courseNum,ouch,courseDesc'
+      NOTE: To see Client Error details, re-configure Log: excludeClientErrors
+```
+
+If however, the excludeClientErrors Log configuration was disabled,
+the following output would take place:
+
+**Output:**
+```
+INFO  2016-04-06 09:00:16 GeekApp:
+      Client Error Condition: - Sending error: Invalid field ('ouch') specified in request query field parameter: 'courseNum,ouch,courseDesc'
+
+ERROR 2016-04-06 08:59:41 GeekApp:
+      Following exception encountered ...
+      Error:
+        Name:       Error
+        Status:     500
+        StatusMsg:  Internal Server Error
+        Client Msg: Invalid field ('ouch') specified in request query field parameter: 'courseNum,ouch,courseDesc'
+        Message:    Invalid field ('ouch') specified in request query field parameter: 'courseNum,ouch,courseDesc'
+        URL:        /api/courses?fields=courseNum,ouch,courseDesc
+        LogId:      E1RDHZRAl
+        Stack Trace:
+         Error: Invalid field ('ouch') specified in request query field parameter: 'courseNum,ouch,courseDesc'
+    at Object.mongoFields (C:\data\devGitHub\GeekU\dist\webpack:\src\server\util\MongoUtil.js:27:13)
+    at C:\data\devGitHub\GeekU\dist\webpack:\src\server\route\courses.js:37:35
+    at Layer.handle [as handle_request] (C:\data\devGitHub\GeekU\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\data\devGitHub\GeekU\node_modules\express\lib\router\route.js:131:13)
+    at Route.dispatch (C:\data\devGitHub\GeekU\node_modules\express\lib\router\route.js:112:3)
+    at Layer.handle [as handle_request] (C:\data\devGitHub\GeekU\node_modules\express\lib\router\layer.js:95:5)
+    at C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:277:22
+    at Function.process_params (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:330:12)
+    at next (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:271:10)
+    at Function.handle (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:176:3)
+```
 
 ## Probe Formatting
 
