@@ -63,7 +63,7 @@ on this later).
 
 **sample output:**
 
-<pre><code stle="background-color:pink;">DEBUG 2016-04-04 18:07:50 MyLogFilter:
+<pre><code style="background-color:pink;">DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
 </code></pre>
 
