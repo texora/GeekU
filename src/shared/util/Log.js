@@ -168,10 +168,10 @@ class Log {
    *   {
    *     excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
    *     more: ??$$,
-   *     filter: {                      // ... update Log filters
-   *       <filter-name>:       <log-level>
+   *     filter: {                      // update Log filters
+   *       <filter-name>:       <level> // ex: Log.DEBUG or "DEBUG"
    *       ... ex:
-   *       "root":              "INFO", // ... notice you can set the root of all filters
+   *       "root":              "INFO", // notice you can set the root of all filters
    *       "GeekApp":           "WARN",
    *       "ProcessFlow":       "DEBUG",
    *       "ProcessFlow.Enter": "none",

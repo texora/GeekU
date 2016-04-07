@@ -14,10 +14,6 @@
 - [Configuration](#configuration)
 
 
-??? show samples
-??? beef up some of the examples a bit
-
-
 ## Overview
 
 Log is a lightweight JavaScript logging utility that promotes
@@ -54,8 +50,8 @@ following levels exist (in order of severity).
   Log.FATAL
 ```
 
-NOTE: Additional log levels may be created through ???.  This should
-be invoked very early in your app's startup process. ??? give example of real addition.
+Additional log levels may be created through the Log.config() method
+(please refer to the [Configuration](#configuration) section).
 
 A log emits a probe at a designated severity level.  The probe is
 conditionally emitted, depending on the filter setting (again, more
@@ -66,6 +62,11 @@ on this later).
 ```
 
 **sample output:**
+
+<pre><code stle="background-color:pink;">DEBUG 2016-04-04 18:07:50 MyLogFilter:
+      Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
+</code></pre>
+
 ```
 DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
@@ -174,13 +175,36 @@ Here is a simple example:
    ==========
    import Log from './util/Log';
 
+   const log = new Log('Processor');
+   ... 
+   log.debug(()=>`Here are the details: ${details}`);
+   ... 
+
+   module3.js
+   ==========
+   import Log from './util/Log';
+
    const log = new Log('EntryExit');
    ... 
    log.info(()=>'Exit processing.');
    ... 
 ```
 
-Notice that module1 and module2 share the same filter.
+Assuming all the filter settings are at INFO, the following output
+would occur:
+
+**Output:**
+```
+INFO  2016-04-06 08:59:41 EntryExit:
+      Enter processing.
+
+INFO  2016-04-06 08:59:41 EntryExit:
+      Exit processing.
+```
+
+Notice that module1.js and module3.js share the same filter. Also
+notice that the DEBUG log from module2.js was not emitted, because it
+did not pass the filter's high-water mark of INFO.
 
 Filter names are completely up to you.  You may choose to use a number
 of different strategies (for example: module-based or functional-logic, etc.)
@@ -215,6 +239,8 @@ a given filter has not been set.  This 'root' will always be defined
 (either through Log, or a client configuration), and cannot be un-set
 (null/undefined).
 
+For more details on Log.config(), please refer to the
+[Configuration](#configuration) section.
 
 
 ### Filter Hierarchy
@@ -413,10 +439,10 @@ format:
 {
   excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
   more: ??$$,
-  filter: {                      // ... update Log filters
-    <filter-name>:       <log-level>
+  filter: {                      // update Log filters
+    <filter-name>:       <level> // ex: Log.DEBUG or "DEBUG"
     ... ex:
-    "root":              "INFO", // ... notice you can set the root of all filters
+    "root":              "INFO", // notice you can set the root of all filters
     "GeekApp":           "WARN",
     "ProcessFlow":       "DEBUG",
     "ProcessFlow.Enter": "none",
