@@ -7,7 +7,6 @@
 - [msgFn() Callbacks](#msgfn-callbacks)
 - [Object Detail](#object-detail)
 - [Filters](#filters)
-  - [Filter Configuration](#filter-configuration)
   - [Configuring Filters](#configuring-filters)
   - [Error Vetos](#error-vetos)
 - [Configuration](#configuration)
@@ -501,7 +500,7 @@ sparsely populated, as it merely applies the supplied settings.
 The various fmt functions (and their parameters) are enumerated in the
 [Configuration](#configuration) section.
 
-Here is an example to re-format all probes on a sinlge line:
+**Here is an example to re-format all probes on a sinlge line:**
 
 ```javascript
 Log.config({
@@ -527,7 +526,7 @@ INFO  2016-04-08 11:11:48 GeekApp: Starting GeekU Server.
 INFO  2016-04-08 11:11:49 GeekApp: createRunningApp(): DB connection established, and app is listening on port: 8080
 ```
 
-Here is an example that turns off all date/time stamps:
+**Here is an example that turns off all date/time stamps:**
 
 ```javascript
 Log.config({
