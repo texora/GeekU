@@ -10,18 +10,19 @@
   - [Filter Configuration](#filter-configuration)
   - [Filter Hierarchy](#filter-hierarchy)
   - [Error Vetos](#error-vetos)
-- [Probe Formatting](#probe-formatting)
 - [Configuration](#configuration)
+  - [Config Filters](#config-filters)
+  - [Config Formatting](#config-formatting)
 
 
 ## Overview
 
-Log is a lightweight JavaScript logging utility that promotes
+Log is a lightweight JavaScript logging utility that provides
 filterable logging probes, similar to a number of frameworks such
 as Log4J.
 
 By default, Log is a thin layer on top of console.log(), but is
-configurable (??? TODO).
+configurable.
 
 Log is an isomorphic JavaScript utility, as it will operate BOTH in
 browser/node environments.
@@ -38,8 +39,8 @@ constructor parameter (more on filtering later).
   const log = new Log('MyLogFilter');
 ```
 
-Log levels define the severity of a probe.  By default the
-following levels exist (in order of severity).
+Log levels define the severity of a probe.  By default the following
+levels exist in order of severity:
 
 ```javascript
   Log.TRACE
@@ -50,23 +51,18 @@ following levels exist (in order of severity).
   Log.FATAL
 ```
 
-Additional log levels may be created through the Log.config() method
-(please refer to the [Configuration](#configuration) section).
+The set of Log levels are configurable, so you can choose different
+levels to meet your needs.
 
 A log emits a probe at a designated severity level.  The probe is
-conditionally emitted, depending on the filter setting (again, more
-on this later).
+conditionally emitted, depending on the filter setting (again, we will
+discuss filters in just a bit).
 
 ```javascript
  log.debug(()=>`Some complex '${probe}' with bunches of '${overhead}'`);
 ```
 
 **sample output:**
-
-<pre><code style="background-color:pink;">DEBUG 2016-04-04 18:07:50 MyLogFilter:
-      Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
-</code></pre>
-
 ```
 DEBUG 2016-04-04 18:07:50 MyLogFilter:
       Some complex 'Kool Output' with bunches of 'Very Nice Pizzazz'
@@ -81,7 +77,7 @@ functions with template string literals.
 
 The reason behind this is to minimize the overhead in message
 construction when the probe is going to be thrown on the floor
-(through the filtering process).  By wrapping this process in a
+(by the filtering process).  By wrapping this process in a
 function, the message construction overhead is only incurred once
 it is determined that the probe is in fact going to be emitted.
 
@@ -152,7 +148,7 @@ constructor parameter), and is dynamically created when first seen.
 Multiple Log instances may reference the same filter.  In this case
 the log merely attaches itself to the existing filter.
 
-Filters have a level setting, which is a high-water mark, above which
+Filters have a level setting, which are high-water marks, above which
 probes are either emitted, or thrown on the floor.
 
 A log emits a probe at a designated level (INFO, ERROR, DEBUG, etc.).
@@ -216,12 +212,12 @@ of different strategies (for example: module-based or functional-logic, etc.)
 
 Filters are configured through the Log.config() method.  You merely
 specify a series of filterName/level settings.  These settings may be
-sparsely populated, as it merely applies the settings to the master
+sparsely populated, as it merely applies the supplied settings to the master
 filter.
 
 ```javascript
   Log.config({
-    filter {
+    filter: {
       'root':      Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
       'EntryExit': Log.INFO,
       'Courses':   Log.DEBUG,
@@ -234,10 +230,10 @@ You may specify the filter values with either the Log defined
 constants (e.g. Log.DEBUG), or their cooresponding string
 representation (e.g. "DEBUG").
 
-Notice that Log pre-defines a 'root' filter, which is referenced when
-a given filter has not been set.  This 'root' will always be defined
-(either through Log, or a client configuration), and cannot be un-set
-(null/undefined).
+**Notice that Log pre-defines a 'root' filter**, which is referenced
+when a given filter has not been set.  This 'root' will always be
+defined (either by Log heuristics, or a client configuration), and
+cannot be un-set (null/undefined).
 
 For more details on Log.config(), please refer to the
 [Configuration](#configuration) section.
@@ -254,8 +250,9 @@ reference it's parent, when the child setting is not defined.
 We have actually seen this already through the pre-defined 'root'
 filter (the root parent of ALL filters).
 
-Filter hierarchies are very easy to implement.  The filter name merely
-contains the hierarchy delimited with a dot (".").  As an example:
+Filter hierarchies are very easy to implement.  Simply place dots
+(".") in the filter name to delimit the parent/child relationship.
+For example:
 
 ```javascript
   Log.config({
@@ -281,7 +278,7 @@ Filter hierarchies introduce the concept of a filter being "unset".
 When a filter is NOT set, we merely defer to the setting of it's
 parent, grandparent, and so on (till we get to the top-level 'root').
 A filter may be unset either by never setting it or re-setting it to a
-null or undefined value.
+null (or undefined or 'none') value.
 
 The structure of filter hierarchies are completely up to you.  You may
 choose to use a number of different strategies.
@@ -402,9 +399,6 @@ ERROR 2016-04-06 08:59:41 GeekApp:
     at Function.handle (C:\data\devGitHub\GeekU\node_modules\express\lib\router\index.js:176:3)
 ```
 
-## Probe Formatting
-
-???
 
 
 ## Configuration
@@ -437,8 +431,6 @@ format:
 
 ```javascript
 {
-  excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
-  more: ??$$,
   filter: {                      // update Log filters
     <filter-name>:       <level> // ex: Log.DEBUG or "DEBUG"
     ... ex:
@@ -447,8 +439,115 @@ format:
     "ProcessFlow":       "DEBUG",
     "ProcessFlow.Enter": "none",
     "ProcessFlow.Exit":  "none",
-  }
+  },
+
+  excludeClientErrors: true, // exclude logged Errors that are caused by client
+
+  format: {         // various formatting options (currently all function hooks)
+    "fmtProbe":     function(filterName, levelName, msgFn, obj): String,
+    "fmtLevel":     function(levelName): String,
+    "fmtTimeStamp": function(): String,
+    "fmtFilter":    function(filterName): String,
+    "fmtMsg":       function(msgFn): String,
+    "fmtObj":       function(obj): String,
+    "fmtError":     function(err): String,
+  },
+
+  more: ??$$,
+
 }
+```
+
+### Config Filters
+
+Filters are configured by specifying a series of filterName/level
+settings within the filter node of the config parameter.  These
+settings may be sparsely populated, as it merely applies the supplied
+settings to the master filter.
+
+```javascript
+  Log.config({
+    filter {
+      'root': Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
+
+      'entryExit.mongo':          Log.INFO,
+      'entryExit.mongo.setup':    null,
+      'entryExit.mongo.teardown': Log.DEBUG,
+    }
+  });
+```
+
+You may specify the filter values with either the Log defined
+constants (e.g. Log.DEBUG), or their cooresponding string
+representation (e.g. "DEBUG").
+
+**Notice that Log pre-defines a 'root' filter**, which is referenced
+when a given filter has not been set.  This 'root' will always be
+defined (either by Log heuristics, or a client configuration), and
+cannot be un-set (null/undefined).
+
+This example defines a three-tier filter hierarchy.  Because
+'entryExit.mongo.setup' has NO level defined, it's parent
+('entryExit.mongo') will be referenced to determine the active
+setting.
+
+
+### Config Formating
+
+Formatting options are configured by specifying a series of functions
+within the format node of the config parameter.  These settings may be
+sparsely populated, as it merely applies the supplied settings to the
+master filter.
+
+The various fmt functions (and their parameters) are enumerated in the
+[Configuration](#configuration) section.
+
+Here is an example to re-format all probes on a sinlge line:
+
+```javascript
+Log.config({
+  format: {
+    // formats everything on one line:
+    fmtProbe: (filterName, levelName, msgFn, obj)=>`${curFmt.fmtLevel(levelName)} ${curFmt.fmtTimeStamp()} ${curFmt.fmtFilter(filterName)}: ${curFmt.fmtMsg(msgFn)}${curFmt.fmtObj(obj)}`
+  }
+});
+```
+
+**Before:**
+```
+INFO  2016-04-08 11:12:50 GeekApp:
+      Starting GeekU Server.
+
+INFO  2016-04-08 11:12:51 GeekApp:
+      createRunningApp(): DB connection established, and app is listening on port: 8080
+```
+
+**After:**
+```
+INFO  2016-04-08 11:11:48 GeekApp: Starting GeekU Server.
+INFO  2016-04-08 11:11:49 GeekApp: createRunningApp(): DB connection established, and app is listening on port: 8080
+```
+
+Here is an example that turns off all date/time stamps:
+
+```javascript
+Log.config({
+  format: {
+    fmtTimeStamp: () => '',
+  }
+});
+```
+
+**Before:**
+```
+INFO  2016-04-08 11:11:48 GeekApp: Starting GeekU Server.
+INFO  2016-04-08 11:11:49 GeekApp: createRunningApp(): DB connection established, and app is listening on port: 8080
+```
+
+**After:**
+```
+INFO  GeekApp: Starting GeekU Server.
+INFO  GeekApp: createRunningApp(): DB connection established, and app is listening on port: 8080
 ```
 
 

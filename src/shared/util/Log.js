@@ -77,7 +77,7 @@ class Log {
 
     // conditionally log this message when enabled within our filter
     if ( this.isLevelEnabled(level, obj) ) {
-      console.log( Log.formatMsg(this.filterName, levelName, msgFn, obj) );
+      console.log( _fmtProbe(this.filterName, levelName, msgFn, obj) );
     }
   }
 
@@ -166,8 +166,6 @@ class Log {
    *
    * <pre>
    *   {
-   *     excludeClientErrors: true,  // true: exclude logged Errors that are caused by client
-   *     more: ??$$,
    *     filter: {                      // update Log filters
    *       <filter-name>:       <level> // ex: Log.DEBUG or "DEBUG"
    *       ... ex:
@@ -176,8 +174,21 @@ class Log {
    *       "ProcessFlow":       "DEBUG",
    *       "ProcessFlow.Enter": "none",
    *       "ProcessFlow.Exit":  "none",
-   *     }
-   *   
+   *     },
+   *
+   *     excludeClientErrors:   true, // exclude logged Errors that are caused by client
+   *
+   *     format: {         // various formatting options (currently all function hooks)
+   *       "fmtProbe":     function(filterName, levelName, msgFn, obj): String,
+   *       "fmtLevel":     function(levelName): String,
+   *       "fmtTimeStamp": function(): String,
+   *       "fmtFilter":    function(filterName): String,
+   *       "fmtMsg":       function(msgFn): String,
+   *       "fmtObj":       function(obj): String,
+   *       "fmtError":     function(err): String,
+   *     },
+   *
+   *     more: ??$$,
    *   }
    * </pre>
    *
@@ -198,7 +209,14 @@ class Log {
       for (const configOpt in config) {
         let configVal = config[configOpt];
 
-        switch (configOpt) { // ??? change to new SwitchProcessor ... possibly externally defined
+        switch (configOpt) {
+
+          case 'filter':
+            for (const filterName in config.filter) {
+              const filterLevel = config.filter[filterName];
+              Log.setFilter(filterName, filterLevel); // ... performs appropriate validation
+            }
+            break;
 
           case 'excludeClientErrors':
             if (typeof configVal === 'string')
@@ -208,14 +226,44 @@ class Log {
             _excludeClientErrors = configVal;
             break;
 
-          // case '??$$more':
+          case 'format':
+            for (const fmtOpt in configVal) {
+              let fmtVal = configVal[fmtOpt];
 
-          case 'filter':
-            for (const filterName in config.filter) {
-              const filterLevel = config.filter[filterName];
-              Log.setFilter(filterName, filterLevel); // ... performs appropriate validation
+              // currently all format options are functions
+              assert(typeof fmtVal === 'function', `Log.config() format.${fmtOpt} must reference a function`);
+
+              switch (fmtOpt) {
+                case 'fmtProbe':
+                  _fmtProbe = fmtVal;
+                  break;
+                case 'fmtLevel':
+                  _fmtLevel = fmtVal;
+                  break;
+                case 'fmtTimeStamp':
+                  _fmtTimeStamp = fmtVal;
+                  break;
+                case 'fmtFilter':
+                  _fmtFilter = fmtVal;
+                  break;
+                case 'fmtMsg':
+                  _fmtMsg = fmtVal;
+                  break;
+                case 'fmtObj':
+                  _fmtObj = fmtVal;
+                  break;
+                case 'fmtError':
+                  _fmtError = fmtVal;
+                  break;
+
+                // unrecognized format option
+                default:
+                  throw new Error(`Log.config() unrecognized configuration format setting: ${fmtOpt}`);
+              }
             }
             break;
+
+          // case '??$$more':
 
           // unrecognized option
           default:
@@ -248,9 +296,18 @@ class Log {
 
     // package-up/return our configuration
     const curConfig = {
+      filter,
       excludeClientErrors: _excludeClientErrors,
+      format: {
+        fmtProbe:     _fmtProbe,
+        fmtLevel:     _fmtLevel,
+        fmtTimeStamp: _fmtTimeStamp,
+        fmtFilter:    _fmtFilter,
+        fmtMsg:       _fmtMsg,
+        fmtObj:       _fmtObj,
+        fmtError:     _fmtError,
+      },
       // ??$$ more
-      filter
     };
 
     return curConfig;
@@ -304,7 +361,6 @@ class Log {
       this.isLevelEnabled(Log[levelNameUpper], obj);
     };
   }
-
 
 
   /**
@@ -395,131 +451,13 @@ class Log {
   }
 
 
-
-  // *** 
-  // *** Utility Related ...
-  // *** 
-
-  /**
-   * Format the log entry to emit.
-   *
-   * @param {String} filterName the log filter-name for this probe (e.g. 'appStartup').
-   * @param {String} levelName the log level-name for this probe (e.g. 'DEBUG').
-   * @param {function} msgFn a callback function emitting the msg string to log.
-   * @param {Object} obj an optional object (or Error) to detail in the logging probe.
-   *
-   * @return {String} the formatted message to log
-   *
-   * @api private (however can be re-set in initial Log configuration)
-   */
-  // ?? make private _formatMsg with ability to re-config ?? rename to _formatProbe
-  static formatMsg(filterName, levelName, msgFn, obj) {
-    return `
-${pad(levelName, 5)} ${moment().format('YYYY-MM-DD HH:mm:ss')} ${filterName}${Log.extra()}:
-      ${msgFn()}${Log.formatObj(obj)}`;
-  };
-
-
-  // ??? need following hooks
-  // - ? levelStr:   both param and func: formatLevel(levelStr): String
-  // - ? timeStamp:  both param and func: formatTimeStamp(): String
-  // - ? filterName  both param and func: formatFilter(filterName): String
-  // - ? extra:      NO NO NO: simply add extra to any of the prior formatters
-  // - ? msg:        both param and formatPayload
-  // - KEY: formatProbe fn (from above)
-
-  // ?? temp for now
-  static extra() {
-    return '';
-  };
-
-
-  /**
-   * Format the supplied object (when defined).
-   *
-   * @param {Object} obj an optional object (or Error) to detail in the logging probe.
-   *
-   * @return {String} a formatted representation of the supplied obj (empty string [''] when not supplied.
-   *
-   * @api private (however can be re-set in initial Log configuration)
-   */
-  // ?? make private _formatObj with with ability to re-config
-  static formatObj(obj) {
-
-    if (!obj) {
-      return '';
-    }
-
-    // Errors are special
-    if (obj instanceof Error) {
-      return Log.formatError(obj);
-    }
-
-    // Date objects don't format much in subsequent Object algorithm
-    if (typeof obj.getMonth === 'function') {
-      return `
-      Date: ${obj}`;
-    }
-
-    // Object catch-all
-    // NOTE: here is a one-level object property representaton 
-    // ? let objStr = `
-    // ?   Object:`;
-    // ? if (obj) {
-    // ?   for (let prop in obj) {
-    // ?     const val = typeof(obj[prop]) === 'function' ? 'function' : obj[prop];
-    // ?     objStr += `\n        ${prop}: ${val}`;
-    // ?   }
-    // ? }
-    // ? return objStr;
-    // NOTE: for now we simply treat is as aJSON object ... see if this works
-    return JSON.stringify(obj, null, 2);
-  }
-
-
-  /**
-   * Format the supplied error object.
-   *
-   * @param {Error} err the error object to detail in the logging probe.
-   *
-   * @return {String} a formatted representation of the supplied error.
-   *
-   * @api private (however can be re-set in initial Log configuration)
-   */
-  // ?? make private _formatError with with ability to re-config
-  static formatError(err) {
-
-    // define a logId for this Error
-    err.logId = shortid.generate();
-    
-    // return our formatted representation of the err
-    let msg =  `
-      Error:
-        Name:       ${err.name}`;
-    if (err.httpStatus)
-      msg += `
-        Status:     ${err.httpStatus}
-        StatusMsg:  ${HTTPStatus[err.httpStatus]}`;
-    msg += `
-        Client Msg: ${err.clientMsg}
-        Message:    ${err.message}`;
-    if (err.url)
-      msg += `
-        URL:        ${err.url}`;
-    msg += `
-        LogId:      ${err.logId}
-        Stack Trace:
-         ${err.stack}
-`;
-    return msg;
-  }
-
 } // end of ... class Log
 
+export default Log
 
 
 // ***
-// *** Level Related internal/static
+// *** Level Related Internals
 // ***
 
 /**
@@ -537,6 +475,17 @@ let _levelName = {
   // ex ...
   // 200: 'DEBUG'
 };
+
+
+// register our out-of-the-box levels
+Log.registerLevel('TRACE', 100);
+Log.registerLevel('DEBUG', 200);
+Log.registerLevel('INFO',  300);
+Log.registerLevel('WARN',  400);
+Log.registerLevel('ERROR', 500);
+Log.registerLevel('FATAL', 600);
+Log.registerLevel('OFF',   999);
+
 
 /**
  * Resolve supplied level to it's internal numeric representation
@@ -601,7 +550,7 @@ function levelNum2Name(levelNum) {
 
 
 // ***
-// *** Filter Related internal/static
+// *** Filter Related Internals
 // ***
 
 
@@ -630,24 +579,6 @@ const _filter = {
  * @api private
  */
 let _excludeClientErrors = true;
-
-
-
-// register our initial standard base levels
-Log.registerLevel('TRACE', 100);
-Log.registerLevel('DEBUG', 200);
-Log.registerLevel('INFO',  300);
-Log.registerLevel('WARN',  400);
-Log.registerLevel('ERROR', 500);
-Log.registerLevel('FATAL', 600);
-Log.registerLevel('OFF',   999);
-
-
-
-export default Log
-
-
-
 
 /**
  * FilterNode is an internal structure representing a filter level and
@@ -698,3 +629,142 @@ class FilterNode {
   }
 
 } // end of ... class FilterNode
+
+
+
+// ***
+// *** Format Related Internals
+// ***
+
+/**
+ * Format the overall logging prope to emit.  This is the top-level
+ * entry point, formatting the entire message probe.
+ *
+ * @param {String} filterName the log filter-name for this probe (e.g. 'appStartup').
+ * @param {String} levelName the log level-name for this probe (e.g. 'DEBUG').
+ * @param {function} msgFn a callback function emitting the msg string to log.
+ * @param {Object} obj an optional object (or Error) to detail in the logging probe.
+ *
+ * @return {String}
+ * @api private
+ */
+function _fmtProbe(filterName, levelName, msgFn, obj) {
+  return `
+${_fmtLevel(levelName)} ${_fmtTimeStamp()} ${_fmtFilter(filterName)}:
+      ${_fmtMsg(msgFn)}${_fmtObj(obj)}`;
+}
+
+/**
+ * Format the supplied level.
+ * @param {String} levelName the log level-name for this probe (e.g. 'DEBUG').
+ * @return {String}
+ * @api private
+ */
+function _fmtLevel(levelName) {
+  return pad(levelName, 5);
+}
+
+/**
+ * Format a 'current time' timestamp
+ * @return {String}
+ * @api private
+ */
+function _fmtTimeStamp() {
+  return moment().format('YYYY-MM-DD HH:mm:ss');
+}
+
+/**
+ * Format the supplied filter.
+ * @param {String} filterName the log filter-name for this probe (e.g. 'appStartup').
+ * @return {String}
+ * @api private
+ */
+function _fmtFilter(filterName) {
+  return filterName;
+}
+
+/**
+ * Format the supplied msg.
+ * @param {function} msgFn a callback function emitting the msg string to log.
+ * @return {String}
+ * @api private
+ */
+function _fmtMsg(msgFn) {
+  return msgFn();
+}
+
+/**
+ * Format the supplied object (when defined).
+ *
+ * @param {Object} obj an optional object (or Error) to detail in the logging probe.
+ *
+ * @return {String} a formatted representation of the supplied obj (empty string [''] when not supplied.
+ * @api private
+ */
+function _fmtObj(obj) {
+
+  if (!obj) {
+    return '';
+  }
+
+  // Errors are special
+  if (obj instanceof Error) {
+    return _fmtError(obj);
+  }
+
+  // Date objects don't format much in subsequent Object algorithm
+  if (typeof obj.getMonth === 'function') {
+    return `
+    Date: ${obj}`;
+  }
+
+  // Object catch-all
+  // NOTE: here is a one-level object property representaton 
+  // ? let objStr = `
+  // ?   Object:`;
+  // ? if (obj) {
+  // ?   for (let prop in obj) {
+  // ?     const val = typeof(obj[prop]) === 'function' ? 'function' : obj[prop];
+  // ?     objStr += `\n        ${prop}: ${val}`;
+  // ?   }
+  // ? }
+  // ? return objStr;
+  // NOTE: for now we simply treat is as aJSON object ... see if this works
+  return JSON.stringify(obj, null, 2);
+}
+
+
+/**
+ * Format the supplied error object.
+ *
+ * @param {Error} err the error object to detail in the logging probe.
+ *
+ * @return {String} a formatted representation of the supplied error.
+ * @api private
+ */
+function _fmtError(err) {
+
+  // define a logId for this Error
+  err.logId = shortid.generate();
+  
+  // return our formatted representation of the err
+  let msg =  `
+    Error:
+      Name:       ${err.name}`;
+  if (err.httpStatus)
+    msg += `
+      Status:     ${err.httpStatus}
+      StatusMsg:  ${HTTPStatus[err.httpStatus]}`;
+  msg += `
+      Client Msg: ${err.clientMsg}
+      Message:    ${err.message}`;
+  if (err.url)
+    msg += `
+      URL:        ${err.url}`;
+  msg += `
+      LogId:      ${err.logId}
+      Stack Trace:
+       ${err.stack}
+`;
+  return msg;
+}

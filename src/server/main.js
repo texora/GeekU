@@ -100,5 +100,18 @@ app.use( GeekApp.commonErrorHandler );
 // ? logWooWoo.debug( ()=>'Probe 5a');
 // ? logWooWoo.trace( ()=>'Probe 6a');
 
+// ? const curFmt = Log.config().format;
+// ? Log.config({
+// ?   format: {
+// ?     // formats everything on one line:
+// ?     // fmtProbe:     (filterName, levelName, msgFn, obj)=>`${curFmt.fmtLevel(levelName)} ${curFmt.fmtTimeStamp()} ${curFmt.fmtFilter(filterName)}: ${curFmt.fmtMsg(msgFn)}${curFmt.fmtObj(obj)}`
+// ? 
+// ?     //fmtLevel:     (levelName) => levelName+'_poop',
+// ?     //fmtTimeStamp: () => 'poop_time',
+// ?     //fmtFilter:    (filterName) => filterName+'_poop',
+// ?     //fmtMsg:       (msgFn) => `poop_${msgFn()}`
+// ?   }
+// ? });
+
 log.info(()=>`Current Log.config():
 ${JSON.stringify(Log.config(), null, 2)}`);
