@@ -8,11 +8,11 @@
 - [Object Detail](#object-detail)
 - [Filters](#filters)
   - [Filter Configuration](#filter-configuration)
-  - [Filter Hierarchy](#filter-hierarchy)
+  - [Configuring Filters](#configuring-filters)
   - [Error Vetos](#error-vetos)
 - [Configuration](#configuration)
-  - [Config Filters](#config-filters)
-  - [Config Formatting](#config-formatting)
+  - [Filter Configuration](#filter-configuration)
+  - [Format Configuration](#format-configuration)
 
 
 ## Overview
@@ -208,7 +208,7 @@ of different strategies (for example: module-based or functional-logic, etc.)
 
 
 
-### Filter Configuration
+### Configuring Filters
 
 Filters are configured through the Log.config() method.  You merely
 specify a series of filterName/level settings.  These settings may be
@@ -458,7 +458,7 @@ format:
 }
 ```
 
-### Config Filters
+### Filter Configuration
 
 Filters are configured by specifying a series of filterName/level
 settings within the filter node of the config parameter.  These
@@ -492,12 +492,11 @@ This example defines a three-tier filter hierarchy.  Because
 setting.
 
 
-### Config Formating
+### Format Configuration
 
 Formatting options are configured by specifying a series of functions
 within the format node of the config parameter.  These settings may be
-sparsely populated, as it merely applies the supplied settings to the
-master filter.
+sparsely populated, as it merely applies the supplied settings.
 
 The various fmt functions (and their parameters) are enumerated in the
 [Configuration](#configuration) section.
