@@ -11,8 +11,8 @@ import HTTPStatus from 'http-status';
  * filterable logging probes, similar to a number of frameworks such
  * as Log4J.
  *
- * By default, Log is a thin layer on top of console.log(), simply 
- * adding filters.
+ * By default, Log is a thin layer on top of console.log(), but is
+ * configurable.
  *
  * Log is an isomorphic JavaScript utility (i.e. will operate BOTH
  * in browser/node environments.
@@ -76,7 +76,7 @@ class Log {
 
     // conditionally log this message when enabled within our filter
     if ( this.isLevelEnabled(level, obj) ) {
-      console.log( _fmtProbe(this.filterName, levelName, msgFn, obj) );
+      _outputHandler( _fmtProbe(this.filterName, levelName, msgFn, obj) );
     }
   }
 
@@ -192,7 +192,9 @@ class Log {
    *       'ERROR',
    *       'FATAL',
    *       'OFF'
-   *     ]
+   *     ],
+   *
+   *     outputHandler: function(msgProbe): void  // output handler of completed msg probe (defaults to console.log())
    *
    *   }
    * </pre>
@@ -257,6 +259,11 @@ class Log {
             _registerLevels(configVal);
             break;
 
+          case 'outputHandler':
+            assert(typeof configVal === 'function', `Log.config() outputHandler must reference a function`);
+            _outputHandler = configVal;
+            break;
+
           // unrecognized configuration option
           default:
             throw new Error(`Log.config() unrecognized configuration setting: ${configOpt}`);
@@ -308,7 +315,8 @@ class Log {
         fmtObj:       _fmtObj,
         fmtError:     _fmtError,
       },
-      logLevels: levelNames
+      logLevels:      levelNames,
+      outputHandler:  _outputHandler
     };
 
     return curConfig;
@@ -714,7 +722,6 @@ class FilterNode {
 } // end of ... class FilterNode
 
 
-
 // ***
 // *** Format Related Internals
 // ***
@@ -855,6 +862,22 @@ function _fmtError(err) {
        ${err.stack}
 `;
   return msg;
+}
+
+
+// ***
+// *** Output Handler
+// ***
+
+/**
+ * Output handler of completed msg probe (defaults to console.log()).
+ *
+ * @param {String} msgProbe the completed msg probe, ready to output.
+ *
+ * @api private
+ */
+function _outputHandler(msgProbe) {
+  console.log(msgProbe);
 }
 
 

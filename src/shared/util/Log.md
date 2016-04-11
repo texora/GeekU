@@ -13,6 +13,7 @@
   - [Filter Configuration](#filter-configuration)
   - [Format Configuration](#format-configuration)
   - [Level Configuration](#level-configuration)
+- [Output Handler](#output_handler)
 
 
 ## Overview
@@ -461,7 +462,9 @@ format:
     "ERROR",
     "FATAL",
     "OFF"
-  ]
+  ],
+
+  outputHandler: function(msgProbe): void  // output handler of completed msg probe (defaults to console.log())
 
 }
 ```
@@ -603,3 +606,19 @@ Log.config({
 
 Because this defines all the levels from scratch, any filters that
 were previously defined will be reset.
+
+
+### Output Handler
+
+By default, all Log output is funneled through console.log().  This is
+configurable through the config.outputHandler setting.
+
+This property must be a function with the following signature:
+
+```
+  outputHandler: function(msgProbe): void
+```
+
+This function is invoked only when it is determined that the msgProbe
+should be output, and the msgProbe is completely resolved as a simple
+string.

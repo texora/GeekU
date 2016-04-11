@@ -10,6 +10,12 @@ import * as GeekApp from './util/GeekApp';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 import Log          from '../shared/util/Log';
 
+// temp test of re-directing output
+// ? Log.config({
+// ?   outputHandler: (msgProbe) => {
+// ?     console.log('dropping probe\n'+msgProbe);
+// ?   }
+// ? });
 // configure our log filter settings
 // ? Log.config({
 // ? //excludeClientErrors: false, // false: log ALL Errors, even those caused by client
