@@ -35,7 +35,7 @@ class Log {
    */
   constructor(filterName) {
 
-    assert(filterName, 'Log() contructor requires a filterName.');
+    assert(typeof filterName === 'string', 'Log() contructor requires a filterName param of type string.');
 
     // retain filterName in self
     this.filterName = filterName;
