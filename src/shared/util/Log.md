@@ -572,8 +572,8 @@ mid-stream, because app logic has level knowledge embedded throughout.
 
 All level names must be specified in their entirety, in order of
 severity (e.g. 'DEBUG', 'WARN', etc).  One (and only one) of the
-levelNames MUST be prefixed with a temporal asterisk ('*') to indicate
-the initial setting for the root level filter (ex: '*INFO').
+levelNames MUST be prefixed with a temporal asterisk `('*')` to indicate
+the initial setting for the root level filter (ex: `'*INFO'`).
 
 Please note that this impacts various constants and methods of the Log
 class.  For example, if you define a "FOO" level, the following Log
