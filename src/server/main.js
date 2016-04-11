@@ -11,13 +11,13 @@ import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 import Log          from '../shared/util/Log';
 
 // configure our log filter settings
-Log.config({
-//excludeClientErrors: false, // false: log ALL Errors, even those caused by client
-  filter: {
-    root:    Log.INFO,
-//  GeekApp: Log.TRACE, // to see detailed payload content
-  }
-});
+// ? Log.config({
+// ? //excludeClientErrors: false, // false: log ALL Errors, even those caused by client
+// ?   filter: {
+// ?     root:    Log.INFO,
+// ? //  GeekApp: Log.TRACE, // to see detailed payload content
+// ?   }
+// ? });
 const log = new Log('GeekApp'); // ?? decide on correct filterName
 
 log.info(()=>'Starting GeekU Server.');

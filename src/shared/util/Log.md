@@ -12,6 +12,7 @@
 - [Configuration](#configuration)
   - [Filter Configuration](#filter-configuration)
   - [Format Configuration](#format-configuration)
+  - [Level Configuration](#level-configuration)
 
 
 ## Overview
@@ -452,13 +453,22 @@ format:
     "fmtError":     function(err): String,
   },
 
-  more: ??$$,
+  logLevels: [      // log levels (in order of severity) ... out-of-box levels shown
+    "TRACE",
+    "DEBUG",
+    "INFO",
+    "WARN",
+    "ERROR",
+    "FATAL",
+    "OFF"
+  ]
 
 }
 ```
 
 ### Filter Configuration
 
+The most common usage of Log.config() is to configure filter settings.
 Filters are configured by specifying a series of filterName/level
 settings within the filter node of the config parameter.  These
 settings may be sparsely populated, as it merely applies the supplied
@@ -549,4 +559,47 @@ INFO  GeekApp: createRunningApp(): DB connection established, and app is listeni
 ```
 
 
-??? Log.registerLevel()
+
+### Level Configuration
+
+Log levels may be re-defined by specifying the logLevels array.
+
+By default, the system comes configured with the levels shown above.
+Typically, this out-of-box default will suffice for most apps.  If
+however a re-definition is necessary, it should be made very early in
+the app's start-up process.  It doesn't make sense to redefine levels
+mid-stream, because app logic has level knowledge embedded throughout.
+
+All level names must be specified in their entirety, in order of
+severity (e.g. 'DEBUG', 'WARN', etc).  One (and only one) of the
+levelNames MUST be prefixed with a temporal asterisk ('*') to indicate
+the initial setting for the root level filter (ex: '*INFO').
+
+Please note that this impacts various constants and methods of the Log
+class.  For example, if you define a "FOO" level, the following Log
+aspects will be dynamically introduced:
+
+```
+  Log.FOO               ... the numeric representation of FOO
+  log.foo(msgFn, obj)   ... alias to log.log(Log.FOO, msgFn, obj)
+  log.isFooEnabled(obj) ... alias to log.isEnabled(Log.FOO, obj)
+```
+
+The following example basically defines the out-of-box levels, but
+replaces FATAL with VERBOSE:
+
+```javascript
+Log.config({ 
+  logLevels: [
+    'TRACE',
+    'DEBUG',
+    '*INFO',
+    'WARN',
+    'ERROR',
+    'VERBOSE'
+  ]
+});
+```
+
+Because this defines all the levels from scratch, any filters that
+were previously defined will be reset.
