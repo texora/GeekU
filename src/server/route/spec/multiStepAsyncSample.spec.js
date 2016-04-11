@@ -9,6 +9,8 @@ const asyncHelper = new MochaAsyncTestHelper();
 // Suite 1
 asyncHelper.testSuite(() => {
 
+  if (1===1) return; // ?? temporally disable IT tests until we can better govern their execution
+
   describe('SWAPI Suite 1', function() { // NOTE: To allow access to the mochaCtx (i.e. this), our callback CANNOT be an arrow function (per mocha doc)
 
     asyncHelper.suiteContext(this);

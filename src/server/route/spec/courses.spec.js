@@ -11,6 +11,8 @@ import expect from 'expect';
 
 describe('/api/courses tests', function() {
 
+  if (1===1) return; // ?? temporally disable IT tests until we can better govern their execution
+
   let courses  = null;
   let asyncErr = null;
 
