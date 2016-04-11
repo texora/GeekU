@@ -13,7 +13,7 @@
   - [Filter Configuration](#filter-configuration)
   - [Format Configuration](#format-configuration)
   - [Level Configuration](#level-configuration)
-- [Output Handler](#output_handler)
+- [Output Handler](#output-handler)
 
 
 ## Overview
