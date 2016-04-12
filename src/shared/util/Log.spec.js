@@ -110,8 +110,24 @@ describe('Log Tests', () => {
     testOutput(logParent, true,  'FATAL');
   });
 
+  // TODO: test Error veto of probe WITH excludeClientErrors
+  // TODO: test object output (plain obj, date, Error)
 
   // TODO: test various config settings (rather involved)
+  // ?? here is some fmt config changes
+  // ? const curFmt = Log.config().format;
+  // ? Log.config({
+  // ?   format: {
+  // ?     // formats everything on one line:
+  // ?     // fmtProbe:     (filterName, levelName, msgFn, obj)=>`${curFmt.fmtLevel(levelName)} ${curFmt.fmtTimeStamp()} ${curFmt.fmtFilter(filterName)}: ${curFmt.fmtMsg(msgFn)}${curFmt.fmtObj(obj)}`
+  // ? 
+  // ?     //fmtLevel:     (levelName) => levelName+'_poop',
+  // ?     //fmtTimeStamp: () => 'poop_time',
+  // ?     //fmtFilter:    (filterName) => filterName+'_poop',
+  // ?     //fmtMsg:       (msgFn) => `poop_${msgFn()}`
+  // ?   }
+  // ? });
+
 
 
   describe('Test Log exception conditions', () => {

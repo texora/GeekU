@@ -197,13 +197,13 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
       let clientMsg = "Could not connect to our MongoDB";
       if (err.name === 'MongoError' &&
           err.message.includes('ECONNREFUSED')) {
-            clientMsg += ' ... NOTE: Based on the internals of this error, we believe the MongoDB server is NOT running.'
+            clientMsg += '\n     NOTE: Based on the internals of this error, the MongoDB server may NOT be running.'
       }
       err.defineClientMsg(clientMsg);
-      log.error(()=>`Server cannot start - NO MongoDB Connection ...`, err);
+      log.error(()=>'Server cannot start - NO MongoDB Connection ...', err);
     }
     catch(e) {
-      console.error('ERROR: Problem encountered in error processor of DIFFERENT problem (MongoDB connection issue):\n', e.stack);
+      log.error('Problem encountered in error processor of DIFFERENT problem (MongoDB connection issue):\n', e);
     }
   });
 

@@ -10,20 +10,6 @@ import * as GeekApp from './util/GeekApp';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 import Log          from '../shared/util/Log';
 
-// temp test of re-directing output
-// ? Log.config({
-// ?   outputHandler: (msgProbe) => {
-// ?     console.log('dropping probe\n'+msgProbe);
-// ?   }
-// ? });
-// configure our log filter settings
-// ? Log.config({
-// ? //excludeClientErrors: false, // false: log ALL Errors, even those caused by client
-// ?   filter: {
-// ?     root:    Log.INFO,
-// ? //  GeekApp: Log.TRACE, // to see detailed payload content
-// ?   }
-// ? });
 const log = new Log('GeekApp'); // ?? decide on correct filterName
 
 log.info(()=>'Starting GeekU Server.');
@@ -77,47 +63,4 @@ app.get('*', function (req, res) {
 // ... this registration must be last
 app.use( GeekApp.commonErrorHandler );
 
-
-
-// ??? initial log testing VERY TEMP
-// ? Log.config({
-// ?   filter: {
-// ?     root:   Log.INFO, // 32, 'none', Log.OFF, null, ... various error conditions
-// ?     WowZee: Log.DEBUG,
-// ?   //WooWoo: Log.ERROR,
-// ?     WooWoo: 'DEBUG',
-// ? //  GeekApp: Log.TRACE: // to see detailed payloads returned
-// ?   }
-// ? });
-// ? 
-// ? const logWowZee = new Log('WowZee');
-// ? logWowZee.fatal( ()=>'Probe 1a TEST Object', logWowZee);
-// ? logWowZee.error( ()=>'Probe 2a TEST Date', new Date());
-// ? logWowZee.warn(  ()=>'Probe 3a');
-// ? logWowZee.info(  ()=>'Probe 4a');
-// ? logWowZee.debug( ()=>'Probe 5a');
-// ? logWowZee.trace( ()=>'Probe 6a');
-// ? 
-// ? const logWooWoo = new Log('WooWoo');
-// ? logWooWoo.fatal( ()=>'Probe 1a TEST Error', new Error('test error logging'));
-// ? logWooWoo.error( ()=>'Probe 2a TEST Error declining log', new Error('test error logging').defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
-// ? logWooWoo.warn(  ()=>'Probe 3a');
-// ? logWooWoo.info(  ()=>'Probe 4a');
-// ? logWooWoo.debug( ()=>'Probe 5a');
-// ? logWooWoo.trace( ()=>'Probe 6a');
-
-// ? const curFmt = Log.config().format;
-// ? Log.config({
-// ?   format: {
-// ?     // formats everything on one line:
-// ?     // fmtProbe:     (filterName, levelName, msgFn, obj)=>`${curFmt.fmtLevel(levelName)} ${curFmt.fmtTimeStamp()} ${curFmt.fmtFilter(filterName)}: ${curFmt.fmtMsg(msgFn)}${curFmt.fmtObj(obj)}`
-// ? 
-// ?     //fmtLevel:     (levelName) => levelName+'_poop',
-// ?     //fmtTimeStamp: () => 'poop_time',
-// ?     //fmtFilter:    (filterName) => filterName+'_poop',
-// ?     //fmtMsg:       (msgFn) => `poop_${msgFn()}`
-// ?   }
-// ? });
-
-log.info(()=>`Current Log.config():
-${JSON.stringify(Log.config(), null, 2)}`);
+log.info(()=>`Current Log Configuration:\n${JSON.stringify(Log.config(), null, 2)}`);
