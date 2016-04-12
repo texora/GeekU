@@ -1,6 +1,5 @@
 'use strict';
 
-import Log            from '../../shared/util/Log';
 import express        from 'express';
 import coursesMeta    from '../../shared/model/coursesMeta';
 import * as MongoUtil from '../util/MongoUtil';
@@ -29,7 +28,6 @@ const courses = express.Router();
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {
-  // console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   // define our fields to display (a mongo projection) 
   // tweaked from the optional client-supplied "fields" query string
@@ -65,7 +63,6 @@ courses.get('/api/courses', (req, res, next) => {
 //******************************************************************************
 
 courses.get('/api/courses/:courseNum', (req, res, next) => {
-  // console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   const courseNum = req.params.courseNum;
 

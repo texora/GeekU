@@ -50,7 +50,7 @@ export default function correlateLogsToTransaction(req, res, next) {
       // log probe of exiting request
       // ?? log filter: EnterExit ... Request Exiting
       // console.log('??? correlateLogsToTransaction TEAR DOWN: ');
-      logExit.info(()=>`Exit Transaction: ${decodeURIComponent(req.originalUrl)}`);
+      logExit.flow(()=>`Exit Transaction: ${decodeURIComponent(req.originalUrl)}`);
 
       // clear the transId entry
       // ? _transIds.delete(req)
@@ -93,7 +93,7 @@ export default function correlateLogsToTransaction(req, res, next) {
     // ?? log filter: EnterExit ... Request Entering
     //console.log('??? correlateLogsToTransaction SETUP: ');
     //console.log('??? see if I can get the value immediatly after2: ' + namespace.get(transId), namespace); // ??? transId DOES NOT EVEN appear in namespace.active, and returns undefined ... grrrr
-    logEnter.info(()=>`Enter Transaction: ${decodeURIComponent(req.originalUrl)}`);
+    logEnter.flow(()=>`Enter Transaction: ${decodeURIComponent(req.originalUrl)}`);
 
     // continue express middleware
     next();

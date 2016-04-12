@@ -28,7 +28,6 @@ const students = express.Router();
 //***************************************************************************************************
 
 students.get('/api/students', (req, res, next) => {
-  // console.log(`INFO: students.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   // define our fields to display (a mongo projection) 
   // tweaked from the optional client-supplied "fields" query string
@@ -64,7 +63,6 @@ students.get('/api/students', (req, res, next) => {
 //******************************************************************************
 
 students.get('/api/students/:studentNum', (req, res, next) => {
-  // console.log(`INFO: students.js processing request: ${decodeURIComponent(req.originalUrl)}`); // ??? now accomplished via central ProcessFlow
 
   const studentNum = req.params.studentNum;
 
