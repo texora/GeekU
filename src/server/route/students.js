@@ -28,7 +28,6 @@ const students = express.Router();
 //***************************************************************************************************
 
 students.get('/api/students', (req, res, next) => {
-  console.log(`INFO: students.js processing request: ${decodeURIComponent(req.originalUrl)}`);
 
   // define our fields to display (a mongo projection) 
   // tweaked from the optional client-supplied "fields" query string
@@ -52,7 +51,7 @@ students.get('/api/students', (req, res, next) => {
              .catch( err => {
                // NOTE: unsure if we ALWAYS want to cover up technical message
                //       ... it may be due to bad interpretation of mongoQuery
-               throw err.setClientMsg("Issue encountered in DB processing of /api/students");
+               throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
              });
 });
 
@@ -64,7 +63,6 @@ students.get('/api/students', (req, res, next) => {
 //******************************************************************************
 
 students.get('/api/students/:studentNum', (req, res, next) => {
-  console.log(`INFO: students.js processing request: ${decodeURIComponent(req.originalUrl)}`);
 
   const studentNum = req.params.studentNum;
 
@@ -104,7 +102,7 @@ students.get('/api/students/:studentNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.setClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
   });
 
 });

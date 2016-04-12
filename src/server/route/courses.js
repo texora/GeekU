@@ -28,7 +28,6 @@ const courses = express.Router();
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {
-  console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
 
   // define our fields to display (a mongo projection) 
   // tweaked from the optional client-supplied "fields" query string
@@ -42,21 +41,6 @@ courses.get('/api/courses', (req, res, next) => {
   // ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
   const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
-  // ??? temporarly bypass async mongo to see if I can get unit tests to work
-  const tempCourses = [
-    {
-      "courseNum": "CS-1110",
-      "courseTitle": "Introduction to Computing Using Python"
-    },
-    {
-      "courseNum": "CS-1112",
-      "courseTitle": "Introduction to Computing Using MATLAB"
-    }
-  ];
-  res.geekU.send(tempCourses);
-  return;
-
-
   // perform retrieval
   const coursesColl = req.geekU.db.collection('Courses');
   coursesColl.find(mongoQuery, displayFields)
@@ -67,7 +51,7 @@ courses.get('/api/courses', (req, res, next) => {
   .catch( err => {
     // NOTE: unsure if we ALWAYS want to cover up technical message
     //       ... it may be due to bad interpretation of mongoQuery
-    throw err.setClientMsg("Issue encountered in DB processing of /api/courses");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
   });
 });
 
@@ -79,7 +63,6 @@ courses.get('/api/courses', (req, res, next) => {
 //******************************************************************************
 
 courses.get('/api/courses/:courseNum', (req, res, next) => {
-  console.log(`INFO: courses.js processing request: ${decodeURIComponent(req.originalUrl)}`);
 
   const courseNum = req.params.courseNum;
 
@@ -113,7 +96,7 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.setClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
+    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
   });
 
 });

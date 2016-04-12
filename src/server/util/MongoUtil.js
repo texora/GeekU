@@ -24,8 +24,8 @@ export function mongoFields(validFields, defaultFields, reqQueryFields) {
     field = field.trim();
     if (!validFields[field]) {
       const msg = `Invalid field ('${field}') specified in request query field parameter: '${reqQueryFields}'`
-      throw new Error(msg).setClientMsg(msg)
-                          .setCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      throw new Error(msg).defineClientMsg(msg)
+                          .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
     }
     projection[field] = true;
   }
@@ -56,8 +56,8 @@ export function mongoQuery(reqQueryFilter) {
       mongoQuery = JSON.parse(filter);
     }
     catch(e) {
-      throw e.setClientMsg(`Invalid request query filter: '${filter}' ... ${e.message}`)
-             .setCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      throw e.defineClientMsg(`Invalid request query filter: '${filter}' ... ${e.message}`)
+             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
     }
   }
 

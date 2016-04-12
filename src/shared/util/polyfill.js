@@ -9,7 +9,7 @@
 import 'core-js/es6';
 
 // MY Error polyfill extension
-import './ErrorExtension'; // ??? rename to ErrorExtensionPolyfill.js
+import './ErrorExtensionPolyfill';
 
 
 // ??? modularize this in GeekUFetchPolyfill.js

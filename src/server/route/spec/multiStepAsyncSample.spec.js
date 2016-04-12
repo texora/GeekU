@@ -1,37 +1,26 @@
 'use strict';
 
 import '../../../shared/util/polyfill';
-import expect from 'expect';
+import expect               from 'expect';
+import MochaAsyncTestHelper from '../../../shared/util/MochaAsyncTestHelper';
 
+const asyncHelper = new MochaAsyncTestHelper();
 
-const _tests   = []; // ??? can this be in the new AsyncTestHelper() too?
-let   _testNum = 0;
-function runNextTest() {
-  const nextTest = _tests[_testNum++];
-  if (!nextTest)
-    return;
-  nextTest();
-}
+// Suite 1
+asyncHelper.testSuite(() => {
 
-// Test 1
-_tests.push(() => {
+  if (1===1) return; // ?? temporally disable IT tests until we can better govern their execution
 
-  const url = 'http://swapi.co/api/people';
-  const testName = 'SWAPI Test 1';
+  describe('SWAPI Suite 1', function() { // NOTE: To allow access to the mochaCtx (i.e. this), our callback CANNOT be an arrow function (per mocha doc)
 
-  describe(testName, function() {
+    asyncHelper.suiteContext(this);
 
     let people   = null;
     let asyncErr = null;
 
-    let curTest = this; // ?? encapsolate this ... new class AsyncTestHelper(mochaCtx)
-    let numTests = 0;   // ?? encapsolate this ... member of 
+    before( asyncComplete => {
 
-    before( function(asyncComplete) {
-
-      console.log(`INFO: Starting ${testName}: ${url}'`);
-
-      fetch(url)
+      fetch('http://swapi.co/api/people')
         .then( res => {
           return res.json();
         })
@@ -48,49 +37,38 @@ _tests.push(() => {
 
     });
 
-    after( function() {
-      if (numTests >= curTest.tests.length) { // ?? encapsolate this ... possibly through a wrapped after()
-        runNextTest();
-      }
-    });
-
-    it('Should succeed', function() {
+    it('Should succeed', () => {
+      // expect(1).toEqual(2); // ?? flip this to fail test
       expect(people).toExist();
       expect(asyncErr).toNotExist();
-      numTests++; // ?? encapsolate this ... possibly through a wrapped it()
     });
 
-    it('Really succeed', function() {
+    it('Really succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
-      numTests++; // ?? encapsolate this ... possibly through a wrapped it()
     });
 
-    it('Really Really succeed', function() {
+    it('Really Really succeed', () => {
       expect(people).toExist();
       expect(asyncErr).toNotExist();
-      numTests++; // ?? encapsolate this ... possibly through a wrapped it()
     });
   });
 });
 
 
-// Test 2
-_tests.push(() => {
+// Suite 2
+asyncHelper.testSuite(() => {
 
-  const url = 'http://swapi.co/api/people';
-  const testName = 'SWAPI Test 2';
+  describe('SWAPI Suite 2', function() { // NOTE: To allow access to the mochaCtx (i.e. this), our callback CANNOT be an arrow function (per mocha doc)
 
-  describe(testName, function() {
+    asyncHelper.suiteContext(this);
 
     let people   = null;
     let asyncErr = null;
 
-    before( function(asyncComplete) {
+    before( asyncComplete => {
 
-      console.log(`INFO: Starting ${testName}: ${url}'`);
-
-      fetch(url)
+      fetch('http://swapi.co/api/people')
         .then( res => {
           return res.json();
         })
@@ -107,17 +85,23 @@ _tests.push(() => {
 
     });
 
-    after( function() {
-      runNextTest();
-    });
-
-    it('Should succeed', function() {
+    it('Should succeed', () => {
+      // expect(1).toEqual(2); // ?? flip this to fail test
       expect(people).toExist();
       expect(asyncErr).toNotExist();
     });
 
+    it('Really succeed', () => {
+      expect(people).toExist();
+      expect(asyncErr).toNotExist();
+    });
+
+    it('Really Really succeed', () => {
+      expect(people).toExist();
+      expect(asyncErr).toNotExist();
+    });
   });
 });
 
 // start the ball rolling
-runNextTest();
+asyncHelper.startTesting();

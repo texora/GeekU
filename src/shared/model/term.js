@@ -1,5 +1,9 @@
 'use strict';
 
+import Log from '../util/Log';
+
+const log = new Log('term');
+
 /**
  * Promotes valid GeekU Terms: the enrollment time period (i.e. term) 
  * during which instruction is given at GeekU.
@@ -76,7 +80,7 @@ const term = {
       msg = `Too many elements supplied in "${term}", ${expectingPhrase}`;
 
     // that's all folks
-    // console.log(`term.validate('${term}'): year: '${year}', session: '${session}', unknown: '${unknown}' ... ${msg ? 'INVALID: ' + msg : 'VALID'}`);
+    log.debug(()=>`term.validate('${term}'): year: '${year}', session: '${session}', unknown: '${unknown}' ... ${msg ? 'INVALID: ' + msg : 'VALID'}`);
     return msg;
   },
 
