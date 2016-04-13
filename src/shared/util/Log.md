@@ -648,14 +648,18 @@ the Server Log filters, through a simple web page.
 To use it, simply register the middleware component to your Express
 app:
 
-  import logConfig from './shared/util/LogInteractiveConfigForServer';
-  ...
-  app.use('/', logConfig);
+```javascript
+import logConfig from './shared/util/LogInteractiveConfigForServer';
+...
+app.use('/', logConfig);
+```
 
 With this in place you may interactively maintain the server log filters
 through the following URL (use your domain/port):
 
-  http://localhost:8080/log/config
+```
+http://localhost:8080/log/config
+```
 
 ![LogInteractiveConfigForServer](./LogInteractiveConfigForServer.png "LogInteractiveConfigForServer")
 
