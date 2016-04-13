@@ -8,6 +8,7 @@ import HTTPStatus    from 'http-status';
 import {MongoClient} from 'mongodb';
 import courses       from './route/courses';
 import students      from './route/students';
+import logConfig     from '../shared/util/LogInteractiveConfigForServer';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 
 const log     = new Log('GeekUApp');
@@ -145,7 +146,11 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
     next(new Error(msg).defineClientMsg(msg)
                        .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
   });
-  
+
+
+  // allow our log filters to be interactivally configured
+  app.use('/', logConfig);
+
   
   // send all other requests to index.html (so browserHistory in React Router works)
   // ... this catch-all route should be last

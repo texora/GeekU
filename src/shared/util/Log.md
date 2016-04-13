@@ -13,7 +13,11 @@
   - [Filter Configuration](#filter-configuration)
   - [Format Configuration](#format-configuration)
   - [Level Configuration](#level-configuration)
-- [Output Handler](#output-handler)
+  - [Output Handler](#output-handler)
+- [Interactive Filter Configuration](#interactive-filter-configuration)
+  - [Server Filter Configuration](#server-filter-configuration)
+  - [Browser Filter Configuration](#browser-filter-configuration)
+
 
 
 ## Overview
@@ -622,3 +626,40 @@ This property must be a function with the following signature:
 This function is invoked only when it is determined that the msgProbe
 should be output, and the msgProbe is completely resolved as a simple
 string.
+
+
+## Interactive Filter Configuration
+
+Log provides a GUI-based configuration utility, that promotes an easy
+way to interactivally maintain your Log filter settings.
+
+Because Log is isomorphic, this utility manifests itself in two
+different ways:
+
+- a node.js service that maintains the Server Log Filters
+- a client-side service that maintains the Browser Log Filters
+
+### Server Filter Configuration
+
+The LogInteractiveConfigForServer.js module provides an Express
+middleware component that supports the interactive configuration of
+the Server Log filters, through a simple web page.
+
+To use it, simply register the middleware component to your Express
+app:
+
+  import logConfig from './shared/util/LogInteractiveConfigForServer';
+  ...
+  app.use('/', logConfig);
+
+With this in place you may interactively maintain the server log filters
+through the following URL (use your domain/port):
+
+  http://localhost:8080/log/config
+
+![LogInteractiveConfigForServer](./LogInteractiveConfigForServer.png "LogInteractiveConfigForServer")
+
+
+### Browser Filter Configuration
+
+??? doc once in place
