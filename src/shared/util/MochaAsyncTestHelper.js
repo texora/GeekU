@@ -32,6 +32,7 @@
  *
  * Here is a complete example: 
  *
+ * <pre>
  *   import MochaAsyncTestHelper from 'src/shared/util/MochaAsyncTestHelper';
  *   
  *   const asyncHelper = new MochaAsyncTestHelper();
@@ -60,11 +61,14 @@
  *     });
  *   });
  *   
- *  ... etc.
+ *   ... etc.
  * 
- *  // start the ball rolling
- *  asyncHelper.startTesting();
+ *   // start the ball rolling
+ *   asyncHelper.startTesting();
+ * </pre>
  *
+ * @api public
+ * @author Kevin Bridges
  */
 class MochaAsyncTestHelper {
 
