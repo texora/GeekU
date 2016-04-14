@@ -3,6 +3,7 @@
 import '../shared/util/polyfill';
 import Log     from '../shared/util/Log'; // TODO: create a Log4GeekU setup module for logs
 import subject from '../shared/model/subject';
+import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
 
 const log = new Log('GeekUApp');
 
@@ -27,3 +28,5 @@ geekUFetch(url)
   .catch( err => {
     log.error(()=>'geekUFETCH: err: ', err);
   });
+
+registerInteractiveLogConfig('LogConfig');
