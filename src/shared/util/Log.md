@@ -666,4 +666,22 @@ http://localhost:8080/log/config
 
 ### Browser Filter Configuration
 
-??? doc once in place
+The LogInteractiveConfigForBrowser.js module provides an
+interactive utility to configure the Browser Log filters, using a
+simple GUI in an external window.
+
+To use it, simply register it as follows:
+
+```javascript
+import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
+...
+registerInteractiveLogConfig('LogConfig'); 
+```
+
+With this in place, you may activate it through an Easter Egg
+... simply type the supplied keyCombination (in this example
+'LogConfig') anywhere within your browser window (including void
+space).  A new browser window will be activated with a GUI that
+interactively adjusts the client-side browser Log filters.
+
+![LogInteractiveConfigForBrowser](./LogInteractiveConfigForBrowser.png "LogInteractiveConfigForBrowser")

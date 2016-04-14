@@ -204,7 +204,7 @@ function changeExcludeClientErrors(checked) {
 // ***
 
 const myCss = `
-/* from: http://www.csstablegenerator.com/ */
+/* from: http://www.csstablegenerator.com/  ... BLUE TINT */
 .CSSTableGenerator {
   margin:0px;padding:0px;
   width:90%;
