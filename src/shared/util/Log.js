@@ -76,7 +76,12 @@ class Log {
 
     // conditionally log this message when enabled within our filter
     if ( this.isLevelEnabled(level, obj) ) {
-      _outputHandler( _fmtProbe(this.filterName, levelName, msgFn, obj) );
+      _outputHandler( _fmtProbe(this.filterName, levelName, msgFn, obj),
+                      { // logging context
+                        level,
+                        levelName,
+                        filterName: this.filterName
+                      });
     }
   }
 
@@ -873,11 +878,13 @@ function _fmtError(err) {
  * Output handler of completed msg probe (defaults to console.log()).
  *
  * @param {String} msgProbe the completed msg probe, ready to output.
- *
+ * @param {Object} context a log context object containing the level, levelName, and filterName.
  * @api private
  */
-function _outputHandler(msgProbe) {
-  console.log(msgProbe);
+function _outputHandler(msgProbe, context) {
+  let loggerFn = console[context.levelName.toLowerCase()] || console.log;
+  loggerFn = loggerFn.bind(console);
+  loggerFn(msgProbe);
 }
 
 

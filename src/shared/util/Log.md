@@ -261,7 +261,7 @@ For example:
 
 ```javascript
   Log.config({
-    filter {
+    filter: {
       'root': Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
 
       'entryExit.mongo':          Log.INFO,
@@ -468,7 +468,7 @@ format:
     "OFF"
   ],
 
-  outputHandler: function(msgProbe): void  // output handler of completed msg probe (defaults to console.log())
+  outputHandler: function(msgProbe, context): void  // output handler of completed msg probe (defaults to console.log())
 
 }
 ```
@@ -483,7 +483,7 @@ settings to the master filter.
 
 ```javascript
   Log.config({
-    filter {
+    filter: {
       'root': Log.INFO, // special root of all filters - pre-defined by Log (merely define level here)
 
       'entryExit.mongo':          Log.INFO,
@@ -620,12 +620,15 @@ configurable through the config.outputHandler setting.
 This property must be a function with the following signature:
 
 ```
-  outputHandler: function(msgProbe): void
+  outputHandler: function(msgProbe, context): void
 ```
 
 This function is invoked only when it is determined that the msgProbe
 should be output, and the msgProbe is completely resolved as a simple
 string.
+
+The context paramater is a log context object containing the level,
+levelName, and filterName.
 
 
 ## Interactive Filter Configuration
