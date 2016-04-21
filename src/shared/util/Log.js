@@ -511,6 +511,9 @@ function _registerLevels(levelNames) {
 
   }
 
+  // clear our default output logger functions
+  _defaultLoggerFn = {};
+
 
   // ***
   // *** define new definitions
@@ -533,6 +536,11 @@ function _registerLevels(levelNames) {
     Log.prototype[levelNameLower] = function(msgFn, obj) {
       this.log(Log[levelNameUpper], msgFn, obj);
     };
+
+    // inject our default output logger functions (a hash keyed by log level)
+    _defaultLoggerFn[levelNameUpper] = console[levelNameLower] || console.log;
+    _defaultLoggerFn[levelNameUpper] = _defaultLoggerFn[levelNameUpper].bind(console);
+
 
     // inject level-specific isLevelEnabled() convenience method, 
     // for example:
@@ -875,6 +883,22 @@ function _fmtError(err) {
 // ***
 
 /**
+ * A hash referencing the default output logger functions, 
+ * machine generated, keyed by levelName.
+ * 
+ * Ex: 
+ *    {
+ *      'TRACE': console.trace,
+ *      'DEBUG': console.debug,
+ *      'INFO':  console.info,
+ *      'WARN':  console.warn,
+ *      'ERROR': console.error,
+ *      'FATAL': console.log
+ *    }
+ */
+let _defaultLoggerFn = {};
+
+/**
  * Output handler of completed msg probe (defaults to console.log()).
  *
  * @param {String} msgProbe the completed msg probe, ready to output.
@@ -882,9 +906,7 @@ function _fmtError(err) {
  * @api private
  */
 function _outputHandler(msgProbe, context) {
-  let loggerFn = console[context.levelName.toLowerCase()] || console.log;
-  loggerFn = loggerFn.bind(console);
-  loggerFn(msgProbe);
+  _defaultLoggerFn[context.levelName](msgProbe);
 }
 
 
