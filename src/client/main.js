@@ -45,6 +45,11 @@ function showLogs() {
   log.warn (()=>'My warn  message.');
   log.error(()=>'My error message.');
   log.fatal(()=>'My fatal message.');
+
+  const someErr = new Error('Technical gobbely gook.');
+                       // .defineClientMsg('Client Messed Up')
+                       // .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  log.error(()=>'Here is an exception.', someErr);
 }
 
 document.getElementById('app').innerHTML = '<span id="showLogs" style="cursor: pointer; font-weight: bold">Show Logs</span>';
