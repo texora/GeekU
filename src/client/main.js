@@ -10,15 +10,9 @@ const log = new Log('GeekUApp');
 // show our log messages
 Log.config({
   filter: {
-    'root': Log.TRACE
+    'root': Log.INFO
   }
 });
-log.trace(()=>'My trace message.');
-log.debug(()=>'My debug message.');
-log.info (()=>'My info  message.');
-log.warn (()=>'My warn  message.');
-log.error(()=>'My error message.');
-log.fatal(()=>'My fatal message.');
 
 // show that we can interpret some shared components
 log.info(()=>`here we are in src/client/main.js: academicGroupExists("Graduate Management"): '${subject.academicGroupExists("Graduate Management")}' !!!`);
@@ -43,3 +37,15 @@ geekUFetch(url)
   });
 
 registerInteractiveLogConfig('LogConfig');
+
+function showLogs() {
+  log.trace(()=>'My trace message.');
+  log.debug(()=>'My debug message.');
+  log.info (()=>'My info  message.');
+  log.warn (()=>'My warn  message.');
+  log.error(()=>'My error message.');
+  log.fatal(()=>'My fatal message.');
+}
+
+document.getElementById('app').innerHTML = '<span id="showLogs" style="cursor: pointer; font-weight: bold">Show Logs</span>';
+document.getElementById('showLogs').onclick = showLogs;
