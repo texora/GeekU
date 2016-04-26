@@ -46,9 +46,10 @@ function showLogs() {
   log.error(()=>'My error message.');
   log.fatal(()=>'My fatal message.');
 
-  const someErr = new Error('Technical gobbely gook.');
-                       // .defineClientMsg('Client Messed Up')
-                       // .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  const someErr = new Error('Technical gobbely gook.')
+                       .defineClientMsg('Client Messed Up')
+                       .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  Log.print(()=>'To see an exception, enable ERROR level and disable excludeClientErrors (false).');
   log.error(()=>'Here is an exception.', someErr);
 }
 

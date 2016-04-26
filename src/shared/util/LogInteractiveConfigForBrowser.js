@@ -52,7 +52,7 @@ function activateLogConfig() {
 
   // allow communication between new window and original window (for which we are working)
   setTimeout( function() { // NOTE: timeout is needed for IE to operate
-    logWind.acceptCrossWindowParams(console, Log);
+    logWind.acceptCrossWindowParams(Log);
   }, 100);
 
   // dynamically create window content
@@ -131,20 +131,19 @@ function genSelect(filterName, filterLevel, logLevels) {
 
 const myScript = `
 
-function acceptCrossWindowParams(console, Log) {
-  parent_console = console;
-  parent_Log     = Log;
+function acceptCrossWindowParams(Log) {
+  parent_Log = Log;
 }
 
 function changeFilter(filterName, filterLevel) {
-  parent_console.log("Setting filter: '" + filterName + "': '" + filterLevel + "'");
+  parent_Log.print(function() { return "Setting filter: '" + filterName + "': '" + filterLevel + "'"; });
   try {
     var filter =  {};
     filter[filterName] = filterLevel;
     var curConfig = parent_Log.config({
       filter: filter
     });
-    parent_console.log("Current settings:" + JSON.stringify(curConfig, null, 2));
+    parent_Log.print(function() { return "Current settings:" + JSON.stringify(curConfig, null, 2); });
   }
   catch(e) {
     alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + e.message);
@@ -152,12 +151,12 @@ function changeFilter(filterName, filterLevel) {
 }
 
 function changeExcludeClientErrors(checked) {
-  parent_console.log('Setting excludeClientErrors: ' + checked);
+  parent_Log.print(function() { return 'Setting excludeClientErrors: ' + checked; });
   try {
     var curConfig = parent_Log.config({
       excludeClientErrors: checked
     });
-    parent_console.log("Current settings:" + JSON.stringify(curConfig, null, 2));
+    parent_Log.print(function() { return "Current settings:" + JSON.stringify(curConfig, null, 2); });
   }
   catch(e) {
     alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + e.message);
