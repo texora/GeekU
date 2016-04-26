@@ -566,6 +566,63 @@ INFO  GeekApp: createRunningApp(): DB connection established, and app is listeni
 ```
 
 
+**Here is an example that injects transaction information to all log entries:**
+
+Transaction information helps delineate multiple log entries related
+to a single transaction, and include things like transId, userId, url.
+
+You can store this information in a namespace, that is part of
+continuation-local-storage (cls) which is similar in concept Java's
+thread-local, but is based on chains of Node-style callbacks instead
+of threads.  Please refer to:
+ - https://datahero.com/blog/2014/05/22/node-js-preserving-data-across-async-callbacks/
+ - https://www.npmjs.com/package/continuation-local-storage
+
+Once we have this information, our Logging hook merely piggy backs
+onto the end of our filterName.
+
+```javascript
+import * as cls from 'continuation-local-storage';
+...
+const namespace = cls.getNamespace('GeekU');
+...
+Log.config({
+  format: {
+    fmtFilter: function(filterName) {
+      const transId   = namespace.get('transId');
+      const transInfo = transId ? `Trans(transId: ${transId}, userId: L8TR, url: ${namespace.get('url')})`
+                                : `Trans(none)`;
+      return `${filterName} ${transInfo})`;
+    }
+  }
+});
+```
+
+**Before:**
+```
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+      Enter Transaction
+
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+      Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
+
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+      Exit Transaction
+```
+
+**After:**
+```
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+      Enter Transaction
+
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+      Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
+
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+      Exit Transaction
+```
+
+
 
 ### Level Configuration
 
