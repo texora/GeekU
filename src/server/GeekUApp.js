@@ -12,7 +12,7 @@ import logConfig     from '../shared/util/LogInteractiveConfigForServer';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 
 const log     = new Log('GeekUApp');
-const logExit = new Log('ProcessFlow.Exit');
+const logFlow = new Log('GeekUProcessFlow');
 
 /*--------------------------------------------------------------------------------
 
@@ -115,9 +115,9 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
     next();
   });
 
-  // correlate all log entries to a specific transication by including a unique transId in each log entry
-  // ?? HMMMM ... can't get continuation-local-storage to work (come back to this (punt for now))
-  // ?? still have BASIC enter/exit logs
+  // provide transactional enter/exist log entries
+  // -AND- 
+  // correlate all log entries to a specific transaction (including things like transId, url, etc.)
   app.use(correlateLogsToTransaction);
 
   // handle Content-Type 'application/json' and 'text/plain' requests
@@ -267,8 +267,8 @@ class GeekURes {
    * @api public
    */
   send(payload) {
-    logExit.flow(()=>`Success - Sending Payload ${logExit.isLevelEnabled(Log.TRACE) ? '' : ' (NOTE: To see payload enable Log: TRACE)'}`);
-    logExit.trace(()=>'here is the payload:\n', payload);
+    logFlow.flow(()=>`Success - Sending Payload ${logFlow.isLevelEnabled(Log.TRACE) ? '' : ' (NOTE: To see payload enable Log: TRACE)'}`);
+    logFlow.trace(()=>'here is the payload:\n', payload);
     const status = HTTPStatus.OK;
     this.res.status(status).send({
       payload: payload
@@ -283,7 +283,7 @@ class GeekURes {
    * @api public
    */
   sendNotFound() {
-    logExit.flow(()=>'Not Found condition - Sending 404');
+    logFlow.flow(()=>'Not Found condition - Sending 404');
     const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
       error: {
@@ -312,7 +312,7 @@ class GeekURes {
 
     // log related ... either an INFO log (for client errors) -or- an ERROR log (for real problems)
     const isClientErr = (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR);
-    const logFn       = isClientErr ? logExit.flow.bind(logExit) : log.error.bind(log);
+    const logFn       = isClientErr ? logFlow.flow.bind(logFlow) : log.error.bind(log);
     logFn(()=> {
       const clientQual    = isClientErr ? 'Client ' : 'UNEXPECTED ';
       const clarification = (isClientErr && Log.areClientErrorsExcluded())

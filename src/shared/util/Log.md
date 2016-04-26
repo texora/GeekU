@@ -590,7 +590,7 @@ Log.config({
   format: {
     fmtFilter: function(filterName) {
       const transId   = namespace.get('transId');
-      const transInfo = transId ? `Trans(transId: ${transId}, userId: L8TR, url: ${namespace.get('url')})`
+      const transInfo = transId ? `Trans(transId: ${transId}, userId: ${namespace.get('userId')}, url: ${namespace.get('url')})`
                                 : `Trans(none)`;
       return `${filterName} ${transInfo})`;
     }
@@ -612,13 +612,13 @@ FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
 
 **After:**
 ```
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Enter Transaction
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: L8TR, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Exit Transaction
 ```
 
