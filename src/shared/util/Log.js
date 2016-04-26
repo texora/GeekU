@@ -538,7 +538,10 @@ function _registerLevels(levelNames) {
     };
 
     // inject our default output logger functions (a hash keyed by log level)
-    _defaultLoggerFn[levelNameUpper] = console[levelNameLower] || console.log;
+    if (levelNameUpper === 'TRACE') // trace has a different connotation in some browsers (e.g. log a stack trace) ... just use console.log
+      _defaultLoggerFn[levelNameUpper] = console.log;
+    else
+      _defaultLoggerFn[levelNameUpper] = console[levelNameLower] || console.log;
     _defaultLoggerFn[levelNameUpper] = _defaultLoggerFn[levelNameUpper].bind(console);
 
 

@@ -3,8 +3,6 @@
 import Log       from './Log';
 import HiddenCmd from '../../client/util/HiddenCmd';
 
-const log = new Log('LogConfigBrowser');
-
 /**
  * The LogInteractiveConfigForBrowser.js module provides an
  * interactive utility to configure the Browser Log filters, using a
@@ -53,10 +51,9 @@ function activateLogConfig() {
   logWind.focus(); // REQUIRED FOR IE - insure the window is activated (when behind currend window or iconized)
 
   // allow communication between new window and original window (for which we are working)
-  // TODO: ??? IE doesn't latch onto the my_log
-  logWind.my_Log = Log;
-  logWind.my_log = log;
-
+  setTimeout( function() { // NOTE: timeout is needed for IE to operate
+    logWind.acceptCrossWindowParams(console, Log);
+  }, 100);
 
   // dynamically create window content
   // ... if already there, then we are just re-activating the window
@@ -129,20 +126,25 @@ function genSelect(filterName, filterLevel, logLevels) {
 // *** client-side script to update a given filter
 // ***
 
-// NOTE: IE does NOT support ES6 syntxs in this in-line code!
+// NOTE: IE does NOT support ES6 syntax in this in-line code!
 //       EX: no arrow functions, etc.
 
 const myScript = `
 
+function acceptCrossWindowParams(console, Log) {
+  parent_console = console;
+  parent_Log     = Log;
+}
+
 function changeFilter(filterName, filterLevel) {
-  my_log.info(function(){ return "Setting filter: '" + filterName + "': '" + filterLevel + "'"});
+  parent_console.log("Setting filter: '" + filterName + "': '" + filterLevel + "'");
   try {
     var filter =  {};
     filter[filterName] = filterLevel;
-    my_Log.config({
+    var curConfig = parent_Log.config({
       filter: filter
     });
-    my_log.debug(function() { return "Current settings:" + JSON.stringify(my_Log.config(), null, 2) });
+    parent_console.log("Current settings:" + JSON.stringify(curConfig, null, 2));
   }
   catch(e) {
     alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + e.message);
@@ -150,12 +152,12 @@ function changeFilter(filterName, filterLevel) {
 }
 
 function changeExcludeClientErrors(checked) {
-  my_log.info(function() { return 'Setting excludeClientErrors: ' + checked });
+  parent_console.log('Setting excludeClientErrors: ' + checked);
   try {
-    my_Log.config({
+    var curConfig = parent_Log.config({
       excludeClientErrors: checked
     });
-    my_log.debug(function() { return "Current settings:" + JSON.stringify(my_Log.config(), null, 2) });
+    parent_console.log("Current settings:" + JSON.stringify(curConfig, null, 2));
   }
   catch(e) {
     alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + e.message);

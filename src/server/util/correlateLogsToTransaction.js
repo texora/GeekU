@@ -1,31 +1,31 @@
 'use strict';
 
-// STILL HAVE BASIC enter/exit logs
-// HMMMM ... can't get continuation-local-storage to work
-//  - based on AsyncListener API
-//  - continuation-local-storage
-//  - come back to this (punt for now)
-//    https://datahero.com/blog/2014/05/22/node-js-preserving-data-across-async-callbacks/
-//    https://www.npmjs.com/package/continuation-local-storage
-//    https://github.com/othiym23/node-continuation-local-storage
-//    http://www.slideshare.net/isharabash/cls-and-asynclistener
+/**
+ * Provide transactional enter/exist log entries
+ *   -AND- 
+ * Correlate all log entries to a specific transaction (including
+ * things like transId, userId, url, etc.)
+ *
+ * Based on continuation-local-storage (cls) which is similar in concept
+ * Java's thread-local, but is based on chains of Node-style callbacks
+ * instead of threads.
+ * see: 
+ *  https://datahero.com/blog/2014/05/22/node-js-preserving-data-across-async-callbacks/
+ *  https://www.npmjs.com/package/continuation-local-storage
+ */
 
+import * as cls from 'continuation-local-storage';
+import shortid  from 'shortid';
+import Log      from '../../shared/util/Log';
 
-import {createNamespace, getNamespace} from 'continuation-local-storage';
-import shortid           from 'shortid';
-import Log               from '../../shared/util/Log';
+const logFlow = new Log('GeekUProcessFlow');
 
-const logEnter = new Log('ProcessFlow.Enter');
-const logExit  = new Log('ProcessFlow.Exit');
-
-//console.log('??? namespace creating');
-//const namespace = createNamespace('GeekU');
-//console.log('???  namespace created');
+const namespace = cls.getNamespace('GeekU');
 
 /**
- * Express middleware that correlates all log entries to a specific request,
- * by including a unique transId in the log entry.
- *
+ * Express middleware that captures enter/exit points ...
+ *  - logging ProcessFlow
+ *  - and establishing transactional information (transId, userId, url, etc.)
  * NOTE: This middleware must be registered as early as possible in the process.
  *       ...
  *       app.use(correlateLogsToTransaction);
@@ -38,83 +38,71 @@ const logExit  = new Log('ProcessFlow.Exit');
  */
 export default function correlateLogsToTransaction(req, res, next) {
 
-    // cleanup when req/res is complete
-    function afterResponse() {
-      res.removeListener('finish', afterResponse);
-      res.removeListener('close',  afterResponse);
-
-      //***
-      //*** TEAR-DOWN Logic
-      //***
-
-      // log probe of exiting request
-      // ?? log filter: EnterExit ... Request Exiting
-      // console.log('??? correlateLogsToTransaction TEAR DOWN: ');
-      logExit.flow(()=>`Exit Transaction: ${decodeURIComponent(req.originalUrl)}`);
-
-      // clear the transId entry
-      // ? _transIds.delete(req)
-    }
-
-    // register our tear-down event using ServerResponse native events
-    res.on('finish', afterResponse);
-    res.on('close', afterResponse);
-
+  // cleanup when req/res is complete
+  function afterResponse() {
+    res.removeListener('finish', afterResponse);
+    res.removeListener('close',  afterResponse);
 
     //***
-    //*** SETUP Logic
+    //*** TEAR-DOWN Logic
     //***
 
-    // define our unique transId for this req/res
-    // ? _transIds.set(req, shortid.generate());
-    // ??? GRRRR:  can't register log here, because it would be tied to the LAST req seen
-    // ??? NO tid transId
+    // log probe of exiting request
+    logFlow.flow(()=>'Exit Transaction');
+  }
 
-    //const transId = shortid.generate();
-    //console.log('??? here is my transId: ' + transId);
+  // register our tear-down event using ServerResponse native events
+  res.on('finish', afterResponse);
+  res.on('close', afterResponse);
 
-    // wrap the events from this req/res
-    // ... ensure's event listeners will be within the scope of the namespace
-    // ... required because EventEmitter isn't patched into the node core (like the AsyncListener API is)
-    //namespace.bindEmitter(req);
-    //namespace.bindEmitter(res);
 
-    // allow all asynchronous functions to run in the scope of our namespace
-//? namespace.bind( function() { // ??? try namespace.bind() of of outer function ... MESSES UP - NO exit msg
-    //namespace.run( function() { // ??? tried namespace.bind() of inner function but NO luck
-    //  console.log('??? namespace.set(transId): ' + transId);
-    //  namespace.set('transId', transId); // store our transId on the namespace, making it available for all continuations
-    //  console.log('??? see if I can get the value immediatly after: ' + namespace.get(transId), namespace); // ??? transId appears in namespace.active, BUT still returns undefined ... grrrr
-    //  next(); // ??? is this a typo in the sample code?
-    //});
+  //***
+  //*** SETUP Logic
+  //***
 
+  const transId = shortid.generate();
+  const userId  = 'L8TR';
+  const url     = decodeURIComponent(req.originalUrl);
+
+  // wrap the events from this req/res
+  // ... ensure's event listeners will be within the scope of the namespace
+  // ... required because EventEmitter isn't patched into the node core (like the AsyncListener API is)
+  namespace.bindEmitter(req);
+  namespace.bindEmitter(res);
+
+  // allow all asynchronous functions to run in the scope of our namespace
+  namespace.run( function() {
+
+    // store our transaction information our namespace, making it available for all continuations
+    namespace.set('transId', transId);
+    namespace.set('userId',  userId);
+    namespace.set('url',     url);
 
     // log probe of entering request
-    // ?? log filter: EnterExit ... Request Entering
-    //console.log('??? correlateLogsToTransaction SETUP: ');
-    //console.log('??? see if I can get the value immediatly after2: ' + namespace.get(transId), namespace); // ??? transId DOES NOT EVEN appear in namespace.active, and returns undefined ... grrrr
-    logEnter.flow(()=>`Enter Transaction: ${decodeURIComponent(req.originalUrl)}`);
+    logFlow.flow(()=>'Enter Transaction');
 
     // continue express middleware
     next();
+  });
 }
 
-// ? /**
-// ?  * Our unique transIds, keyed by the req.
-// ?  *
-// ?  * @api private
-// ?  */
-// ? const _transIds = new WeakMap() // KEY: req {object}, VAL: transId {String}
-// ?? USAGE: const transId = _transIds.get(req)
-// ??? GRRRR:  can't register log here, because we have NOT req to anchor on
 
-
-// configure our logs to emit the transId
-//Log.extra = function() {  // ??? tried namespace.bind() of function but NO diff
-//
-//  // ? const namespace2 = getNamespace('GeekU');
-//
-//  console.log('??? Logging namespace: ', namespace);
-//
-//  return ` TransId(${namespace.get('transId')})`;
-//}
+/**
+ * Inject transaction information (e.g. transId, userId, url, etc.) to all log entries.
+ * 
+ * Simply piggy back on the end of our filterName.
+ * ... ex: 
+ *     FLOW  2016-04-26 13:02:44 GeekUProcessFlow Trans(transId: EyrPhqOgZ, userId: L8TR, url: /api/courses/CS-1132)):
+ *           Enter Transaction
+ *
+ */
+Log.config({
+  format: {
+    fmtFilter: function(filterName) {
+      const transId   = namespace.get('transId');
+      const transInfo = transId ? `Trans(transId: ${transId}, userId: ${namespace.get('userId')}, url: ${namespace.get('url')})`
+                                : `Trans(none)`;
+      return `${filterName} ${transInfo})`;
+    }
+  }
+});

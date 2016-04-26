@@ -25,12 +25,10 @@ const logConfig = Log.config({
   filter: {
     'root':              'INFO',
     'GeekUApp':          'none',
-    'ProcessFlow':       'FLOW', // 'none' for virtually NO probes, 'FLOW' for mild enter/exit points, 'TRACE' to see returned payload
-    'ProcessFlow.Enter': 'none',
-    'ProcessFlow.Exit':  'none',
+    'GeekUProcessFlow':  'FLOW', // 'none' for virtually NO probes, 'FLOW' for mild enter/exit points, 'TRACE' to see returned payload
   },
 
-  //excludeClientErrors: false,  // to see client Errors in log
+  excludeClientErrors: true,  // false: to see client Errors in log
   
 });
 
