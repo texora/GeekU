@@ -18,7 +18,7 @@ import * as cls from 'continuation-local-storage';
 import shortid  from 'shortid';
 import Log      from '../../shared/util/Log';
 
-const logFlow = new Log('GeekUProcessFlow');
+const logFlow = new Log('GeekU.ProcessFlow');
 
 const namespace = cls.getNamespace('GeekU');
 
@@ -48,7 +48,7 @@ export default function correlateLogsToTransaction(req, res, next) {
     //***
 
     // log probe of exiting request
-    logFlow.flow(()=>'Exit Transaction');
+    logFlow.info(()=>'Exit Transaction');
   }
 
   // register our tear-down event using ServerResponse native events
@@ -79,7 +79,7 @@ export default function correlateLogsToTransaction(req, res, next) {
     namespace.set('url',     url);
 
     // log probe of entering request
-    logFlow.flow(()=>'Enter Transaction');
+    logFlow.info(()=>'Enter Transaction');
 
     // continue express middleware
     next();
@@ -92,7 +92,7 @@ export default function correlateLogsToTransaction(req, res, next) {
  * 
  * Simply piggy back on the end of our filterName.
  * ... ex: 
- *     FLOW  2016-04-26 13:02:44 GeekUProcessFlow Trans(transId: EyrPhqOgZ, userId: L8TR, url: /api/courses/CS-1132)):
+ *     FLOW  2016-04-26 13:02:44 GeekU.ProcessFlow Trans(transId: EyrPhqOgZ, userId: L8TR, url: /api/courses/CS-1132)):
  *           Enter Transaction
  *
  */

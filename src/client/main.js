@@ -5,7 +5,7 @@ import Log     from '../shared/util/Log'; // TODO: create a Log4GeekU setup modu
 import subject from '../shared/model/subject';
 import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
 
-const log = new Log('GeekUApp');
+const log = new Log('GeekU');
 
 // show our log messages
 Log.config({

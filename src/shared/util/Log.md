@@ -600,25 +600,25 @@ Log.config({
 
 **Before:**
 ```
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
       Enter Transaction
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
       Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow:
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
       Exit Transaction
 ```
 
 **After:**
 ```
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Enter Transaction
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
 
-FLOW  2016-04-26 13:42:10 GeekUProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
       Exit Transaction
 ```
 
