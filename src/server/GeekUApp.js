@@ -6,6 +6,7 @@ import bodyParser    from 'body-parser';
 import path          from 'path';
 import HTTPStatus    from 'http-status';
 import {MongoClient} from 'mongodb';
+import cors          from 'cors';
 import courses       from './route/courses';
 import students      from './route/students';
 import logConfig     from '../shared/util/LogInteractiveConfigForServer';
@@ -129,12 +130,8 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
   app.use(express.static(rootPath));
   log.debug(()=>`Static resources serverd from rootPath: '${rootPath}' (sidebar: __dirname: '${__dirname}').`);
   
-  // allow cross site requests
-  app.use( (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+  // allow cross site requests (CORS)
+  app.use(cors());
   
   // setup our various "API" modular routes
   app.use('/', courses);
