@@ -126,8 +126,10 @@ function genSelect(filterName, filterLevel, logLevels) {
 // *** client-side script to update a given filter
 // ***
 
-// NOTE: IE does NOT support ES6 syntax in this in-line code!
-//       EX: no arrow functions, etc.
+// NOTE: Because we encapsulate this simple utility in-line, no transpiler is applied.
+//       Therefore, we must code to the browser's least common denominator.
+//       For example, IE's JavaScript interpreter does NOT support some ES6 syntax
+//       (arrow functions, etc.) ... SO KEEP IT SIMPLE!
 
 const myScript = `
 
@@ -136,14 +138,14 @@ function acceptCrossWindowParams(Log) {
 }
 
 function changeFilter(filterName, filterLevel) {
-  parent_Log.print(function() { return "Setting filter: '" + filterName + "': '" + filterLevel + "'"; });
+  parent_Log.post("Setting filter: '" + filterName + "': '" + filterLevel + "'");
   try {
     var filter =  {};
     filter[filterName] = filterLevel;
     var curConfig = parent_Log.config({
       filter: filter
     });
-    parent_Log.print(function() { return "Current settings:" + JSON.stringify(curConfig, null, 2); });
+    parent_Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
   }
   catch(e) {
     alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + e.message);
@@ -151,12 +153,12 @@ function changeFilter(filterName, filterLevel) {
 }
 
 function changeExcludeClientErrors(checked) {
-  parent_Log.print(function() { return 'Setting excludeClientErrors: ' + checked; });
+  parent_Log.post('Setting excludeClientErrors: ' + checked);
   try {
     var curConfig = parent_Log.config({
       excludeClientErrors: checked
     });
-    parent_Log.print(function() { return "Current settings:" + JSON.stringify(curConfig, null, 2); });
+    parent_Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
   }
   catch(e) {
     alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + e.message);

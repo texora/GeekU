@@ -143,21 +143,21 @@ class Log {
   /**
    * Unconditionally emit a message probe in our log.
    *
-   * @param {function} msgFn a callback function emitting the msg string to log. 
+   * @param {String} msg the a message string to log (i.e. post).
    * @param {Object} obj an optional object (or Error) to detail in the logging probe.
    * 
    * @api public
    */
-  static print(msgFn, obj) {
+  static post(msg, obj) {
     const level     = 999;
-    const levelName = 'PRINT';
-    const filterName = 'Filter-N/A';
+    const levelName = 'POST';
+    const filterName = '';
 
     // validate params
-    assert(typeof msgFn === 'function', `Log.print(...) ERROR: Supplied msgFn was NOT a function, rather  a ${typeof msgFn} type`);
+    assert(typeof msg === 'string', `Log.post(...) ERROR: Supplied msg was NOT a string, rather a ${typeof msg} type`);
 
     // unconditionally log this message
-    _outputHandler( _fmtProbe(filterName, levelName, msgFn, obj),
+    _outputHandler( _fmtProbe(filterName, levelName, ()=>msg, obj),
                     { // logging context
                       level,
                       levelName,
@@ -539,7 +539,7 @@ function _registerLevels(levelNames) {
 
   // clear our default output logger functions
   _defaultLoggerFn = {
-    PRINT: console.log.bind(console)
+    POST: console.log.bind(console)
   };
 
 
@@ -919,7 +919,7 @@ function _fmtError(err) {
  * 
  * Ex: 
  *    {
- *      'PRINT': console.log,
+ *      'POST':  console.log,
  *      'TRACE': console.log,
  *      'DEBUG': console.debug,
  *      'INFO':  console.info,
