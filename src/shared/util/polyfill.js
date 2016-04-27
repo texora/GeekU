@@ -11,9 +11,6 @@ import 'core-js/es6';
 // MY Error polyfill extension
 import './ErrorExtensionPolyfill';
 
-
-// ??? modularize this in GeekUFetchPolyfill.js
-
 // fetch polyfill ... serves BOTH browser and node
 import 'isomorphic-fetch';
 

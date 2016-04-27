@@ -5,7 +5,7 @@ import Log     from '../shared/util/Log'; // TODO: create a Log4GeekU setup modu
 import subject from '../shared/model/subject';
 import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
 
-const log = new Log('GeekUApp');
+const log = new Log('GeekU');
 
 // show our log messages
 Log.config({
@@ -46,9 +46,10 @@ function showLogs() {
   log.error(()=>'My error message.');
   log.fatal(()=>'My fatal message.');
 
-  const someErr = new Error('Technical gobbely gook.');
-                       // .defineClientMsg('Client Messed Up')
-                       // .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  const someErr = new Error('Technical gobbely gook.')
+                       .defineClientMsg('Client Messed Up')
+                       .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  Log.post('To see an exception, enable ERROR level and disable excludeClientErrors (false).');
   log.error(()=>'Here is an exception.', someErr);
 }
 

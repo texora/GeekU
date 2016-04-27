@@ -3,8 +3,6 @@
 import express from 'express';
 import Log     from './Log';
 
-const log = new Log('LogConfigServer');
-
 /**
  * The LogInteractiveConfigForServer.js module provides an Express
  * middleware component that supports the interactive configuration of
@@ -41,7 +39,7 @@ logConfig.get('/log/config', (req, res, next) => {
   const config = Log.config();
 
   let myHtml = `
-<!doctype html public "storage">
+<!doctype html>
 <html>
   <head>
     <meta charset=utf-8/>
@@ -95,15 +93,17 @@ logConfig.get('/log/config/setFilter/:filterName/:filterValue', (req, res, next)
   const filterValue = req.params.filterValue;
 
   try {
-    Log.config({
+    Log.post(`Setting filter: '${filterName}': '${filterValue}'`);
+    const curConfig = Log.config({
       filter: {
         [filterName]: filterValue
       }
     });
-    log.info(()=>`Setting filter: '${filterName}': '${filterValue}'`);
+    Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
     res.status(200).send('SUCCESS'); // HTTPStatus.OK
   }
   catch(e) {
+    Log.post(`ERROR: Setting filter: '${filterName}': '${filterValue}' ... ${e.message}`, e);
     res.status(500).send(e.message); // HTTPStatus.INTERNAL_SERVER_ERROR
   }
 });
@@ -121,13 +121,15 @@ logConfig.get('/log/config/setExcludeClientErrors/:checked', (req, res, next) =>
   const checked  = req.params.checked==='true';
 
   try {
-    Log.config({
+    Log.post(`Setting excludeClientErrors: ${checked}`);
+    const curConfig = Log.config({
       excludeClientErrors: checked
     });
-    log.info(()=>`Setting excludeClientErrors: ${checked}`);
+    Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
     res.status(200).send('SUCCESS'); // HTTPStatus.OK
   }
   catch(e) {
+    Log.post(`ERROR: Setting excludeClientErrors: ${checked} ... ${e.message}`, e);
     res.status(500).send(e.message); // HTTPStatus.INTERNAL_SERVER_ERROR
   }
 });
@@ -156,44 +158,35 @@ function genSelect(filterName, filterLevel, logLevels) {
 // *** client-side script to update a given filter
 // ***
 
+// NOTE: Because we encapsulate this simple utility in-line, no transpiler is applied.
+//       Therefore, we must code to the browser's least common denominator.
+//       - For example, IE's JavaScript interpreter does NOT support some ES6 syntax
+//         (arrow functions, etc.) ... SO KEEP IT SIMPLE!
+//       - As another example, we use the very primitive XMLHttpRequest binding, 
+//         rather than pull all the fetch/promise dependencies.
+
 const myScript = `
 
 function changeFilter(filterName, filterLevel) {
-  let url = '/log/config/setFilter/' + filterName + '/' + filterLevel;
-  fetch(url)
-    .then( res => {
-      return Promise.all([res, res.text()]);
-    })
-    .then( ([res, text]) => {
-      if (!res.ok) {
-        alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + text);
-        // for good measure, we could set filter back to original setting, 
-        // but because errors are rare in this simple interface ... JUST PUNT
-      }
-      // everything worked ... nothing to do
-    })
-    .catch( err => {
-      alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + err.message);
-    });
+  var url = '/log/config/setFilter/' + filterName + '/' + filterLevel;
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', url, false); // sync request
+  xhttp.send();
+  var response = xhttp.responseText;
+  if (response !== 'SUCCESS') {
+    alert('Problem setting filter ' + filterName + ' to ' + filterLevel + ' ... ERROR: ' + response);
+  }
 }
 
 function changeExcludeClientErrors(checked) {
-  let url = '/log/config/setExcludeClientErrors/' + (checked ? 'true' : 'false');
-  fetch(url)
-    .then( res => {
-      return Promise.all([res, res.text()]);
-    })
-    .then( ([res, text]) => {
-      if (!res.ok) {
-        alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + text);
-        // for good measure, we could set filter back to original setting, 
-        // but because errors are rare in this simple interface ... JUST PUNT
-      }
-      // everything worked ... nothing to do
-    })
-    .catch( err => {
-      alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + err.message);
-    });
+  var url = '/log/config/setExcludeClientErrors/' + (checked ? 'true' : 'false');
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', url, false); // sync request
+  xhttp.send();
+  var response = xhttp.responseText;
+  if (response !== 'SUCCESS') {
+    alert('Problem setting excludeClientErrors: ' + checked + ' ... ERROR: ' + response);
+  }
 }
 
 `;

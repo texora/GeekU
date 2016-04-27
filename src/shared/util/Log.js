@@ -140,6 +140,32 @@ class Log {
   }
 
 
+  /**
+   * Unconditionally emit a message probe in our log.
+   *
+   * @param {String} msg the a message string to log (i.e. post).
+   * @param {Object} obj an optional object (or Error) to detail in the logging probe.
+   * 
+   * @api public
+   */
+  static post(msg, obj) {
+    const level     = 999;
+    const levelName = 'POST';
+    const filterName = '';
+
+    // validate params
+    assert(typeof msg === 'string', `Log.post(...) ERROR: Supplied msg was NOT a string, rather a ${typeof msg} type`);
+
+    // unconditionally log this message
+    _outputHandler( _fmtProbe(filterName, levelName, ()=>msg, obj),
+                    { // logging context
+                      level,
+                      levelName,
+                      filterName
+                    });
+  }
+
+
   // *** 
   // *** Configuration Related ...
   // *** 
@@ -512,7 +538,9 @@ function _registerLevels(levelNames) {
   }
 
   // clear our default output logger functions
-  _defaultLoggerFn = {};
+  _defaultLoggerFn = {
+    POST: console.log.bind(console)
+  };
 
 
   // ***
@@ -891,7 +919,8 @@ function _fmtError(err) {
  * 
  * Ex: 
  *    {
- *      'TRACE': console.trace,
+ *      'POST':  console.log,
+ *      'TRACE': console.log,
  *      'DEBUG': console.debug,
  *      'INFO':  console.info,
  *      'WARN':  console.warn,

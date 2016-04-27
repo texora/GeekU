@@ -9,23 +9,13 @@ import Log from '../shared/util/Log';
    initialization process.
   --------------------------------------------------------------------------------*/
 
-const log = new Log('GeekUApp');
+const log = new Log('GeekU');
 
 const logConfig = Log.config({
-  logLevels: [
-    'TRACE',
-    'DEBUG',
-    'FLOW',  // NEW: used to log process flow enter/exit points
-    '*INFO',
-    'WARN',
-    'ERROR',
-    'FATAL',
-  ],
-
   filter: {
     'root':              'INFO',
-    'GeekUApp':          'none',
-    'GeekUProcessFlow':  'FLOW', // 'none' for virtually NO probes, 'FLOW' for mild enter/exit points, 'TRACE' to see returned payload
+    'GeekU':             'none',
+    'GeekU.ProcessFlow': 'none', // 'WARN' for NO probes, 'INFO for enter/exit points, 'TRACE' to see returned payload
   },
 
   excludeClientErrors: true,  // false: to see client Errors in log

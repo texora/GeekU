@@ -6,13 +6,14 @@ import bodyParser    from 'body-parser';
 import path          from 'path';
 import HTTPStatus    from 'http-status';
 import {MongoClient} from 'mongodb';
+import cors          from 'cors';
 import courses       from './route/courses';
 import students      from './route/students';
 import logConfig     from '../shared/util/LogInteractiveConfigForServer';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 
-const log     = new Log('GeekUApp');
-const logFlow = new Log('GeekUProcessFlow');
+const log     = new Log('GeekU');
+const logFlow = new Log('GeekU.ProcessFlow');
 
 /*--------------------------------------------------------------------------------
 
@@ -129,12 +130,8 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
   app.use(express.static(rootPath));
   log.debug(()=>`Static resources serverd from rootPath: '${rootPath}' (sidebar: __dirname: '${__dirname}').`);
   
-  // allow cross site requests
-  app.use( (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+  // allow cross site requests (CORS)
+  app.use(cors());
   
   // setup our various "API" modular routes
   app.use('/', courses);
@@ -142,7 +139,7 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
   // ... catch-all for /api
   app.get('/api/*', (req, res, next) => {
     const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;
-    log.warn(()=>msg); // ... this log is a bit of an overkill ... will be logged by our error handler
+    // log.warn(()=>msg); // ... this log is a bit of an overkill ... will be logged by our error handler as INFO, but this is WARN
     next(new Error(msg).defineClientMsg(msg)
                        .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR));
   });
@@ -267,7 +264,7 @@ class GeekURes {
    * @api public
    */
   send(payload) {
-    logFlow.flow(()=>`Success - Sending Payload ${logFlow.isLevelEnabled(Log.TRACE) ? '' : ' (NOTE: To see payload enable Log: TRACE)'}`);
+    logFlow.info(()=>`Success - Sending Payload ${logFlow.isLevelEnabled(Log.TRACE) ? '' : ' (NOTE: To see payload enable Log: TRACE)'}`);
     logFlow.trace(()=>'here is the payload:\n', payload);
     const status = HTTPStatus.OK;
     this.res.status(status).send({
@@ -283,7 +280,7 @@ class GeekURes {
    * @api public
    */
   sendNotFound() {
-    logFlow.flow(()=>'Not Found condition - Sending 404');
+    logFlow.info(()=>'Not Found condition - Sending 404');
     const status = HTTPStatus.NOT_FOUND;
     this.res.status(status).send({
       error: {
@@ -312,7 +309,7 @@ class GeekURes {
 
     // log related ... either an INFO log (for client errors) -or- an ERROR log (for real problems)
     const isClientErr = (err.cause === Error.Cause.RECOGNIZED_CLIENT_ERROR);
-    const logFn       = isClientErr ? logFlow.flow.bind(logFlow) : log.error.bind(log);
+    const logFn       = isClientErr ? logFlow.info.bind(logFlow) : log.error.bind(log);
     logFn(()=> {
       const clientQual    = isClientErr ? 'Client ' : 'UNEXPECTED ';
       const clarification = (isClientErr && Log.areClientErrorsExcluded())
