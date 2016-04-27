@@ -3,8 +3,6 @@
 import express from 'express';
 import Log     from './Log';
 
-const log = new Log('LogConfigServer');
-
 /**
  * The LogInteractiveConfigForServer.js module provides an Express
  * middleware component that supports the interactive configuration of
@@ -95,12 +93,13 @@ logConfig.get('/log/config/setFilter/:filterName/:filterValue', (req, res, next)
   const filterValue = req.params.filterValue;
 
   try {
-    Log.config({
+    Log.post(`Setting filter: '${filterName}': '${filterValue}'`);
+    const curConfig = Log.config({
       filter: {
         [filterName]: filterValue
       }
     });
-    log.info(()=>`Setting filter: '${filterName}': '${filterValue}'`);
+    Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
     res.status(200).send('SUCCESS'); // HTTPStatus.OK
   }
   catch(e) {
@@ -121,10 +120,11 @@ logConfig.get('/log/config/setExcludeClientErrors/:checked', (req, res, next) =>
   const checked  = req.params.checked==='true';
 
   try {
-    Log.config({
+    Log.post(`Setting excludeClientErrors: ${checked}`);
+    const curConfig = Log.config({
       excludeClientErrors: checked
     });
-    log.info(()=>`Setting excludeClientErrors: ${checked}`);
+    Log.post('Current settings: ' + JSON.stringify(curConfig, null, 2));
     res.status(200).send('SUCCESS'); // HTTPStatus.OK
   }
   catch(e) {
