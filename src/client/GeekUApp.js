@@ -24,6 +24,8 @@ import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
+import Avatar from 'material-ui/lib/avatar';
+
 import Table from 'material-ui/lib/table/table';
 import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
 import TableRow from 'material-ui/lib/table/table-row';
@@ -49,15 +51,21 @@ const styles = {
 
 const muiTheme = getMuiTheme({
 
-  // ???$$$ height test
+  // ???$$$ height test NO WORKY ... appears to be restricted by a min of 50
   table: {
-    backgroundColor: '#ff0000',
+    // ? backgroundColor: '#ff0000',
   },
   tableRow: {
-    height: 10,
+    // ? height: 10,
   },
   tableRowColumn: {
-    height: 10,
+    // ? height: 180,
+  },
+
+  // ??? no worky
+  paper: {
+    padding: 16,
+    margin: 16,
   },
 
   spacing: {
@@ -438,7 +446,7 @@ class GeekUApp extends React.Component {
     super(props, context);
     this.handleRequestClose = this.handleRequestClose.bind(this);
     this.handleTouchTap     = this.handleTouchTap.bind(this);
-    this.handleStudentSelected     = this.handleStudentSelected.bind(this);
+    this.showStudent        = this.showStudent.bind(this);
 
     this.state = {
       students: _students,
@@ -454,11 +462,18 @@ class GeekUApp extends React.Component {
   }
 
 
-  handleStudentSelected(selectedRows) {
-    const selectedStudent = (selectedRows.length === 0) ? null : this.state.students[selectedRows[0]];
-    log.info(()=>`handleStudentSelected(${selectedRows}): ${JSON.stringify(selectedStudent, null, 2)}`);
+  showStudent(row, col) {
+    // onRowSelection(selectedRows[])
+    // ? const selectedStudent = (selectedRows.length === 0) ? null : this.state.students[selectedRows[0]];
+    // ? log.info(()=>`showStudent(${selectedRows}): ${JSON.stringify(selectedStudent, null, 2)}`);
+    // ? this.setState({
+    // ?   selectedStudent
+    // ? });
+    // showStudent(row, col)
+    const student = this.state.students[row];
+    log.info(()=>`showStudent(${row}): ${JSON.stringify(student, null, 2)}`);
     this.setState({
-      selectedStudent
+      selectedStudent: student
     });
   }
 
@@ -479,23 +494,22 @@ class GeekUApp extends React.Component {
                                         secondary={true}
                                         onTouchTap={this.handleRequestClose}/>;
 
-    const selectionContainerStyle = {
-      margin:    15,
-      textAlign: 'center',
-      // ? display:   'inline-block',
-    };
-
+    // ??? display: 'inline-block' is allowing the two papers to align ??? may be better off to use a simple flexbox
     const selectedContainerStyle = {
       margin:    30,
+      width:     '75%',
       // ? textAlign: 'center',
-      // ? display:   'inline-block',
+      display:   'inline-block',
     };
 
-    // ???$$$ applying heighte ...  
+    // ???$$$ applying height ...  
     return <MuiThemeProvider muiTheme={muiTheme}>
       <span style={styles.container}>
         <AppBar style={{
-                  // backgroundColor: colors.brown400 xx now handled via muiTheme
+               // backgroundColor: colors.brown400, // xx now handled via muiTheme
+
+                  position: 'fixed', // keep AppBar at top ?? covers up 
+               // top:      0,       // ?? works but not sure best way
                 }}
                 title={
                   <span>
@@ -516,26 +530,37 @@ class GeekUApp extends React.Component {
                     <MenuItem primaryText="Sign Out"/>
                   </IconMenu>}/>
 
-        <Paper style={selectionContainerStyle} zDepth={4}>
+        <Paper style={{
+                 margin:    15,
+                 textAlign: 'left',
+                 // position: 'relative', // keep AppBar at top ?? covers up fix attempt
+                 // ? display:   'inline-block',
+               }}
+               zDepth={4}>
           <h1>Students</h1>
-          <Table height={'200'}
-                 fixedHeader={true}
-                 selectable={true}
+          <Table height={'inherit'}
+                 fixedHeader={false}
+                 selectable={false}
                  multiSelectable={false}
-                 onRowSelection={this.handleStudentSelected}>
-            <TableHeader enableSelectAll={false}>
+                 onCellClick={this.showStudent}>
+            <TableHeader enableSelectAll={false}
+                         adjustForCheckbox={false}
+                         displaySelectAll={false}>
               <TableRow>
+                <TableHeaderColumn tooltip="Picture">&nbsp;</TableHeaderColumn>
                 <TableHeaderColumn tooltip="Student ID">ID</TableHeaderColumn>
                 <TableHeaderColumn tooltip="Student Name">Name</TableHeaderColumn>
                 <TableHeaderColumn tooltip="Student Origin State">Origin State</TableHeaderColumn>
               </TableRow>
             </TableHeader>
             <TableBody deselectOnClickaway={false}
+                       displayRowCheckbox={false}
                        showRowHover={true}
                        stripedRows={false}>
               {/* ???$$$ can't get the row height to adjust ... style={{height:10}} -or-  muiTheme={muiTheme}*/}
               {this.state.students.map( (student, indx) => (
                  <TableRow key={student.studentNum} selected={student===this.state.selectedStudent}>
+                   <TableRowColumn><Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={30}/></TableRowColumn>
                    <TableRowColumn>{student.studentNum}</TableRowColumn>
                    <TableRowColumn>{student.firstName + ' ' + student.lastName}</TableRowColumn>
                    <TableRowColumn>{student.addr.state}</TableRowColumn>
@@ -546,54 +571,76 @@ class GeekUApp extends React.Component {
         </Paper>
 
         { this.state.selectedStudent && 
-          <Paper style={selectedContainerStyle}  zDepth={4}>
-            <h3>Selected Student</h3>
-            <TextField disabled={false}
-                       style={{
-                           width: 150,
-                           // FROM: material-ui/lib/TextField/TextField.js
-                           // ? width: props.fullWidth ? '100%' : 256,
-                           // ? height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
-                       }}
-                       floatingLabelText="Student Number"
-                       value={this.state.selectedStudent.studentNum}/>&nbsp;
-            <TextField disabled={false}
-                       style={{ width: 100 }}
-                       floatingLabelText="First Name"
-                       value={this.state.selectedStudent.firstName}/>&nbsp;
-            <TextField disabled={false}
-                       style={{ width: 200 }}
-                       floatingLabelText="Last Name"
-                       value={this.state.selectedStudent.lastName}/>
-            { this.state.selectedStudent.enrollment &&
-              <div>
-                <h3>Enrollment</h3>
-                <Table height={'150'}
-                       fixedHeader={true}
-                       selectable={false}
-                       multiSelectable={false}>
-                  <TableHeader enableSelectAll={false}>
-                    <TableRow>
-                      <TableHeaderColumn tooltip="the enrollment term">Term</TableHeaderColumn>
-                      <TableHeaderColumn style={{width: 400}} tooltip="the course">Course</TableHeaderColumn>
-                      <TableHeaderColumn tooltip="the grade for this course">Grade</TableHeaderColumn>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody deselectOnClickaway={false}
-                             showRowHover={true}
-                             stripedRows={false}>
-                    {this.state.selectedStudent.enrollment.map( (enroll, indx) => (
-                      <TableRow key={enroll.term+enroll.course.courseNum}>
-                        <TableRowColumn>{enroll.term}</TableRowColumn>
-                        <TableRowColumn style={{width: 400}}><b>{enroll.course.courseNum}</b>: {enroll.course.courseTitle}</TableRowColumn>
-                        <TableRowColumn>{enroll.grade}</TableRowColumn>
+          <Dialog title="Selected Student"
+                  modal={false}
+                  open={true}
+                  autoScrollBodyContent={true}
+                  onRequestClose={() => this.setState({selectedStudent: false})}
+                  contentStyle={{
+                    width: '80%',
+                    maxWidth: 'none',
+                    verticalAlign: 'top',
+                  }}>
+            <Paper zDepth={0}
+                   style={{
+                       width: '110',
+                       display: 'inline-block'
+                     }}>
+              <Avatar src={`https://robohash.org/${this.state.selectedStudent.firstName+this.state.selectedStudent.lastName}.bmp?size=100x100&set=set2&bgset=any`}
+                      size={100}/><br/>
+              {this.state.selectedStudent.firstName} {this.state.selectedStudent.lastName}
+            </Paper>
+            <Paper style={selectedContainerStyle}  zDepth={4}>
+              <TextField disabled={false}
+                         style={{
+                             width: '25%',
+                             // FROM: material-ui/lib/TextField/TextField.js
+                             // ? width: props.fullWidth ? '100%' : 256,
+                             // ? height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
+                         }}
+                         floatingLabelText="Student Number"
+                         value={this.state.selectedStudent.studentNum}/>&nbsp;
+              <TextField disabled={false}
+                         style={{ width: 100 }}
+                         floatingLabelText="First Name"
+                         value={this.state.selectedStudent.firstName}/>&nbsp;
+              <TextField disabled={false}
+                         style={{ width: 200 }}
+                         floatingLabelText="Last Name"
+                         value={this.state.selectedStudent.lastName}/>
+              { this.state.selectedStudent.enrollment &&
+                <div>
+                  <h3>Enrollment</h3>
+                  <Table height={'inherit'}
+                         fixedHeader={false}
+                         selectable={false}
+                         multiSelectable={false}>
+                    <TableHeader enableSelectAll={false}
+                                 adjustForCheckbox={false}
+                                 displaySelectAll={false}>
+                      <TableRow>
+                        <TableHeaderColumn tooltip="the enrollment term">Term</TableHeaderColumn>
+                        <TableHeaderColumn style={{width: 400}} tooltip="the course">Course</TableHeaderColumn>
+                        <TableHeaderColumn tooltip="the grade for this course">Grade</TableHeaderColumn>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            }
-          </Paper>
+                    </TableHeader>
+                    <TableBody deselectOnClickaway={false}
+                               displayRowCheckbox={false}
+                               showRowHover={true}
+                               stripedRows={false}>
+                      {this.state.selectedStudent.enrollment.map( (enroll, indx) => (
+                        <TableRow key={enroll.term+enroll.course.courseNum}>
+                          <TableRowColumn>{enroll.term}</TableRowColumn>
+                          <TableRowColumn style={{width: 400}}><b>{enroll.course.courseNum}</b>: {enroll.course.courseTitle}</TableRowColumn>
+                          <TableRowColumn>{enroll.grade}</TableRowColumn>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              }
+            </Paper>
+          </Dialog>
         }
 
         {/* ? TRASH
