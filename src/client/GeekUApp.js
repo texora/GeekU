@@ -3,16 +3,16 @@ import React            from 'react';
 import AppBar from 'material-ui/lib/app-bar';
 import Log    from '../shared/util/Log';
 
-// ??? krappy example stuff ... 
 import RaisedButton     from 'material-ui/lib/raised-button';
 import Dialog           from 'material-ui/lib/Dialog';
 import colors           from 'material-ui/lib/styles/colors';
 import FlatButton       from 'material-ui/lib/flat-button';
 
-import ThemeManager     from 'material-ui/lib/styles/theme-manager';
 
-import getMuiTheme      from 'material-ui/lib/styles/getMuiTheme';
+import myBaseTheme   from 'material-ui/lib/styles/baseThemes/lightBaseTheme'; // or darkBaseTheme
+import ThemeManager     from 'material-ui/lib/styles/theme-manager';
 import MuiThemeProvider from 'material-ui/lib/MuiThemeProvider';
+
 import Checkbox         from 'material-ui/lib/checkbox';
 import Tabs             from 'material-ui/lib/tabs/tabs';
 import Tab              from 'material-ui/lib/tabs/tab';
@@ -23,6 +23,7 @@ import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import FontIcon from 'material-ui/lib/font-icon';
 
 import Avatar from 'material-ui/lib/avatar';
 
@@ -42,45 +43,40 @@ import TextField from 'material-ui/lib/text-field';
 
 const log = new Log('GeekU');
 
-const styles = {
-  container: {
-    // ? textAlign: 'center',
-    // ? paddingTop: 200,
-  },
-};
+const muiThemeOverrides = {
 
-const muiTheme = getMuiTheme({
+  // ColWidth: demarcation for table column width and corresponding container size
 
-  // ???$$$ height test NO WORKY ... appears to be restricted by a min of 50
+  // example
   table: {
-    // ? backgroundColor: '#ff0000',
+    // width: 'auto', // ColWidth: NOT HONORED AT THIS global muiTheme LEVEL (by Material-UI)
+    // backgroundColor: '#ff0000',  // IS honored
   },
   tableRow: {
-    // ? height: 10,
+    height: 20,
   },
   tableRowColumn: {
-    // ? height: 180,
+    height: 20,
+    fontSize: 30, // BAD ... this is HARDCODED in material-ui/lib/table/table-row-column.js ABSOLUTELY NO WAY TO CHANGE IT
   },
 
-  // ??? no worky
   paper: {
-    padding: 16,
-    margin: 16,
+    // width: 'fit-content', // ColWidth: NOT HONORED AT THIS global muiTheme LEVEL (by Material-UI)
   },
 
   spacing: {
-    // ? iconSize: 16,
-    
     desktopGutter: 16,
     desktopGutterMore: 24,
-    desktopGutterLess: 8,
+    desktopGutterLess: 18,
     desktopGutterMini: 4,
     desktopKeylineIncrement: 32,
     desktopDropDownMenuItemHeight: 16,
     desktopDropDownMenuFontSize: 7,
     desktopLeftNavMenuItemHeight: 24,
     desktopSubheaderHeight: 24,
-    desktopToolbarHeight: 8
+    desktopToolbarHeight: 8,
+
+    iconSize: 15,
 
     // from: material-ui/lib/styles/baseThemes/lightBaseTheme.js ...
     // iconSize: 24,
@@ -131,13 +127,20 @@ const muiTheme = getMuiTheme({
     // pickerHeaderColor:   colors.cyan500,
     // shadowColor:         colors.fullBlack,
   },
-});
+};
+// KEY: REALLY KRAPPY Material-UI HACK 
+// ... for some reason ThemeManager.getMuiTheme() will NOT merge overrides for spacing/palette
+// ... force feed it at the baseTheme level (i.e. the first param)
+myBaseTheme.spacing = Object.assign(myBaseTheme.spacing, muiThemeOverrides.spacing);
+myBaseTheme.palette = Object.assign(myBaseTheme.palette, muiThemeOverrides.palette);
+const muiTheme = ThemeManager.getMuiTheme(myBaseTheme, muiThemeOverrides);
 
 log.info(()=>`muiTheme:`, muiTheme);
 
 const _students = [
   {
     "studentNum": "S-001002",
+    "gender": "F",
     "firstName": "Kelly",
     "lastName": "Johnson",
     "addr": {
@@ -146,6 +149,7 @@ const _students = [
   },
   {
     "studentNum": "S-001003",
+    "gender": "F",
     "firstName": "Stephanie",
     "lastName": "Sims",
     "addr": {
@@ -154,6 +158,7 @@ const _students = [
   },
   {
     "studentNum": "S-001004",
+    "gender": "F",
     "firstName": "Anne",
     "lastName": "Watson",
     "addr": {
@@ -162,6 +167,7 @@ const _students = [
   },
   {
     "studentNum": "S-001005",
+    "gender": "F",
     "firstName": "Wanda",
     "lastName": "Hansen",
     "addr": {
@@ -170,6 +176,7 @@ const _students = [
   },
   {
     "studentNum": "S-001006",
+    "gender": "M",
     "firstName": "Victor",
     "lastName": "Bryant",
     "addr": {
@@ -178,6 +185,7 @@ const _students = [
   },
   {
     "studentNum": "S-001007",
+    "gender": "M",
     "firstName": "Donald",
     "lastName": "Lawrence",
     "addr": {
@@ -186,6 +194,7 @@ const _students = [
   },
   {
     "studentNum": "S-001008",
+    "gender": "M",
     "firstName": "Jose",
     "lastName": "Little",
     "addr": {
@@ -194,6 +203,7 @@ const _students = [
   },
   {
     "studentNum": "S-001009",
+    "gender": "F",
     "firstName": "Bonnie",
     "lastName": "Day",
     "addr": {
@@ -202,6 +212,7 @@ const _students = [
   },
   {
     "studentNum": "S-001010",
+    "gender": "M",
     "firstName": "Roger",
     "lastName": "Butler",
     "addr": {
@@ -210,6 +221,7 @@ const _students = [
   },
   {
     "studentNum": "S-001011",
+    "gender": "M",
     "firstName": "Gary",
     "lastName": "Simmons",
     "addr": {
@@ -218,6 +230,7 @@ const _students = [
   },
   {
     "studentNum": "S-001012",
+    "gender": "M",
     "firstName": "Dennis",
     "lastName": "Gordon",
     "addr": {
@@ -226,6 +239,7 @@ const _students = [
   },
   {
     "studentNum": "S-001013",
+    "gender": "F",
     "firstName": "Teresa",
     "lastName": "Miller",
     "addr": {
@@ -234,6 +248,7 @@ const _students = [
   },
   {
     "studentNum": "S-001014",
+    "gender": "M",
     "firstName": "Chris",
     "lastName": "Hayes",
     "addr": {
@@ -242,6 +257,7 @@ const _students = [
   },
   {
     "studentNum": "S-001001",
+    "gender": "F",
     "firstName": "Jacqueline",
     "lastName": "Adams",
     "addr": {
@@ -250,6 +266,7 @@ const _students = [
   },
   {
     "studentNum": "S-001015",
+    "gender": "M",
     "firstName": "Donald",
     "lastName": "Garcia",
     "addr": {
@@ -258,6 +275,7 @@ const _students = [
   },
   {
     "studentNum": "S-001017",
+    "gender": "M",
     "firstName": "Kevin",
     "lastName": "George",
     "addr": {
@@ -266,6 +284,7 @@ const _students = [
   },
   {
     "studentNum": "S-001018",
+    "gender": "F",
     "firstName": "Sharon",
     "lastName": "Jones",
     "addr": {
@@ -274,6 +293,7 @@ const _students = [
   },
   {
     "studentNum": "S-001019",
+    "gender": "M",
     "firstName": "Brian",
     "lastName": "Griffin",
     "addr": {
@@ -282,6 +302,7 @@ const _students = [
   },
   {
     "studentNum": "S-001016",
+    "gender": "F",
     "firstName": "Dorothy",
     "lastName": "Burke",
     "addr": {
@@ -290,6 +311,7 @@ const _students = [
   },
   {
     "studentNum": "S-001020",
+    "gender": "M",
     "firstName": "Dennis",
     "lastName": "Crawford",
     "addr": {
@@ -298,6 +320,7 @@ const _students = [
   },
   {
     "studentNum": "S-001027",
+    "gender": "M",
     "firstName": "Scott",
     "lastName": "Cooper",
     "addr": {
@@ -306,6 +329,7 @@ const _students = [
   },
   {
     "studentNum": "S-001028",
+    "gender": "M",
     "firstName": "Jose",
     "lastName": "Burke",
     "addr": {
@@ -314,6 +338,7 @@ const _students = [
   },
   {
     "studentNum": "S-001029",
+    "gender": "F",
     "firstName": "Phyllis",
     "lastName": "James",
     "addr": {
@@ -322,6 +347,7 @@ const _students = [
   },
   {
     "studentNum": "S-001021",
+    "gender": "M",
     "firstName": "Patrick",
     "lastName": "Richards",
     "addr": {
@@ -330,6 +356,7 @@ const _students = [
   },
   {
     "studentNum": "S-001031",
+    "gender": "M",
     "firstName": "Patrick",
     "lastName": "Holmes",
     "addr": {
@@ -338,6 +365,7 @@ const _students = [
   },
   {
     "studentNum": "S-001030",
+    "gender": "F",
     "firstName": "Martha",
     "lastName": "Howard",
     "addr": {
@@ -346,6 +374,7 @@ const _students = [
   },
   {
     "studentNum": "S-001033",
+    "gender": "M",
     "firstName": "Howard",
     "lastName": "Watkins",
     "addr": {
@@ -354,6 +383,7 @@ const _students = [
   },
   {
     "studentNum": "S-001034",
+    "gender": "M",
     "firstName": "Frances",
     "lastName": "Hart",
     "addr": {
@@ -362,6 +392,7 @@ const _students = [
   },
   {
     "studentNum": "S-001036",
+    "gender": "F",
     "firstName": "Kathleen",
     "lastName": "Bradley",
     "addr": {
@@ -370,6 +401,7 @@ const _students = [
   },
   {
     "studentNum": "S-001022",
+    "gender": "F",
     "firstName": "Amanda",
     "lastName": "Robinson",
     "addr": {
@@ -378,6 +410,7 @@ const _students = [
   },
   {
     "studentNum": "S-001035",
+    "gender": "F",
     "firstName": "Martha",
     "lastName": "Stanley",
     "addr": {
@@ -386,6 +419,7 @@ const _students = [
   },
   {
     "studentNum": "S-001037",
+    "gender": "F",
     "firstName": "Judith",
     "lastName": "Larson",
     "addr": {
@@ -454,14 +488,6 @@ class GeekUApp extends React.Component {
     };
   }
 
-  // ???$$$ height test
-  getChildContext() {
-    return {
-      muiTheme: ThemeManager.getMuiTheme(muiTheme),
-    };
-  }
-
-
   showStudent(row, col) {
     // onRowSelection(selectedRows[])
     // ? const selectedStudent = (selectedRows.length === 0) ? null : this.state.students[selectedRows[0]];
@@ -502,196 +528,187 @@ class GeekUApp extends React.Component {
       display:   'inline-block',
     };
 
-    // ???$$$ applying height ...  
     return <MuiThemeProvider muiTheme={muiTheme}>
-      <span style={styles.container}>
-        <AppBar style={{
-               // backgroundColor: colors.brown400, // xx now handled via muiTheme
+      <div className="page">
+      <AppBar className="page-header"
+              title={
+                <span>
+                  <i>GeekU</i>
+                  <Tabs style={{
+                      width: '50%'
+                    }}>
+                    <Tab label="Students (Jane)"/>
+                    <Tab label="Courses (CS-101)"/>
+                  </Tabs>
+                </span>}
+              iconElementRight={
+                <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
+                          targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                          anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
+                  <MenuItem primaryText="Refresh"/>
+                  <MenuItem primaryText="Help"/>
+                  <MenuItem primaryText="Sign Out"/>
+                </IconMenu>}/>
 
-                  position: 'fixed', // keep AppBar at top ?? covers up 
-               // top:      0,       // ?? works but not sure best way
-                }}
-                title={
-                  <span>
-                    <i>GeekU</i>
-                    <Tabs style={{
-                        width: '50%'
-                      }}>
-                      <Tab label="Students (Jane)"/>
-                      <Tab label="Courses (CS-101)"/>
-                    </Tabs>
-                  </span>}
-                iconElementRight={
-                  <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
-                            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                            anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
-                    <MenuItem primaryText="Refresh"/>
-                    <MenuItem primaryText="Help"/>
-                    <MenuItem primaryText="Sign Out"/>
-                  </IconMenu>}/>
+      <Paper className="page-content"
+             style={{
+               margin:    15,
+               textAlign: 'left',
+            // width: 'fit-content', // ColWidth: HONORED (adding to inline <div> style),
+                                     // 'auto' has NO impact
+                                     // '50%' works
+                                     // 'max-content'/'fit-content' works on chrome NOT IE
+                                     // 'available' still big
+                                     // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
+             }}
+             zDepth={4}>
+        <h1>Students</h1>
+        <Table height={'inherit'}
+               fixedHeader={false}
+               selectable={false}
+               multiSelectable={false}
+               onCellClick={this.showStudent}
+               style={{
+                 // width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
+               }}>
+          <TableHeader enableSelectAll={false}
+                       adjustForCheckbox={false}
+                       displaySelectAll={false}>
+            <TableRow>
+              <TableHeaderColumn tooltip="Picture">&nbsp;</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Student ID">ID</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Student Name">Name</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Student Origin State">Origin State</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody deselectOnClickaway={false}
+                     displayRowCheckbox={false}
+                     showRowHover={true}
+                     stripedRows={false}>
+{/* Alternative to Avatar (may be too expensive for a LARGE list)
+    <TableRowColumn><Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/></TableRowColumn>
+    <TableRowColumn>
+      <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
+      <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
+    </TableRowColumn>
+  */}
+            {this.state.students.map( (student, indx) => (
+               <TableRow key={student.studentNum} selected={student===this.state.selectedStudent}>
+                 <TableRowColumn>
+                   {
+                     student.gender==='M'
+                       ? <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
+                       : <FontIcon className="material-icons" color={colors.pink300}>person</FontIcon>
+                   }
+                 </TableRowColumn>
+                 <TableRowColumn>{student.studentNum}</TableRowColumn>
+                 <TableRowColumn>{student.firstName + ' ' + student.lastName}</TableRowColumn>
+                 <TableRowColumn>{student.addr.state}</TableRowColumn>
+               </TableRow>
+             ))}
+          </TableBody>
+        </Table>
+      </Paper>
 
-        <Paper style={{
-                 margin:    15,
-                 textAlign: 'left',
-                 // position: 'relative', // keep AppBar at top ?? covers up fix attempt
-                 // ? display:   'inline-block',
-               }}
-               zDepth={4}>
-          <h1>Students</h1>
-          <Table height={'inherit'}
-                 fixedHeader={false}
-                 selectable={false}
-                 multiSelectable={false}
-                 onCellClick={this.showStudent}>
-            <TableHeader enableSelectAll={false}
-                         adjustForCheckbox={false}
-                         displaySelectAll={false}>
-              <TableRow>
-                <TableHeaderColumn tooltip="Picture">&nbsp;</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Student ID">ID</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Student Name">Name</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Student Origin State">Origin State</TableHeaderColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody deselectOnClickaway={false}
-                       displayRowCheckbox={false}
-                       showRowHover={true}
-                       stripedRows={false}>
-              {/* ???$$$ can't get the row height to adjust ... style={{height:10}} -or-  muiTheme={muiTheme}*/}
-              {this.state.students.map( (student, indx) => (
-                 <TableRow key={student.studentNum} selected={student===this.state.selectedStudent}>
-                   <TableRowColumn><Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={30}/></TableRowColumn>
-                   <TableRowColumn>{student.studentNum}</TableRowColumn>
-                   <TableRowColumn>{student.firstName + ' ' + student.lastName}</TableRowColumn>
-                   <TableRowColumn>{student.addr.state}</TableRowColumn>
-                 </TableRow>
-               ))}
-            </TableBody>
-          </Table>
-        </Paper>
-
-        { this.state.selectedStudent && 
-          <Dialog title="Selected Student"
-                  modal={false}
-                  open={true}
-                  autoScrollBodyContent={true}
-                  onRequestClose={() => this.setState({selectedStudent: false})}
-                  contentStyle={{
-                    width: '80%',
-                    maxWidth: 'none',
-                    verticalAlign: 'top',
-                  }}>
-            <Paper zDepth={0}
-                   style={{
-                       width: '110',
-                       display: 'inline-block'
-                     }}>
-              <Avatar src={`https://robohash.org/${this.state.selectedStudent.firstName+this.state.selectedStudent.lastName}.bmp?size=100x100&set=set2&bgset=any`}
-                      size={100}/><br/>
-              {this.state.selectedStudent.firstName} {this.state.selectedStudent.lastName}
-            </Paper>
-            <Paper style={selectedContainerStyle}  zDepth={4}>
-              <TextField disabled={false}
-                         style={{
-                             width: '25%',
-                             // FROM: material-ui/lib/TextField/TextField.js
-                             // ? width: props.fullWidth ? '100%' : 256,
-                             // ? height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
-                         }}
-                         floatingLabelText="Student Number"
-                         value={this.state.selectedStudent.studentNum}/>&nbsp;
-              <TextField disabled={false}
-                         style={{ width: 100 }}
-                         floatingLabelText="First Name"
-                         value={this.state.selectedStudent.firstName}/>&nbsp;
-              <TextField disabled={false}
-                         style={{ width: 200 }}
-                         floatingLabelText="Last Name"
-                         value={this.state.selectedStudent.lastName}/>
-              { this.state.selectedStudent.enrollment &&
-                <div>
-                  <h3>Enrollment</h3>
-                  <Table height={'inherit'}
-                         fixedHeader={false}
-                         selectable={false}
-                         multiSelectable={false}>
-                    <TableHeader enableSelectAll={false}
-                                 adjustForCheckbox={false}
-                                 displaySelectAll={false}>
-                      <TableRow>
-                        <TableHeaderColumn tooltip="the enrollment term">Term</TableHeaderColumn>
-                        <TableHeaderColumn style={{width: 400}} tooltip="the course">Course</TableHeaderColumn>
-                        <TableHeaderColumn tooltip="the grade for this course">Grade</TableHeaderColumn>
+      { this.state.selectedStudent && 
+        <Dialog title="Selected Student"
+                modal={false}
+                open={true}
+                autoScrollBodyContent={true}
+                onRequestClose={() => this.setState({selectedStudent: false})}
+                contentStyle={{
+                  width: '80%',
+                  maxWidth: 'none',
+                  verticalAlign: 'top',
+                }}>
+          <Paper zDepth={0}
+                 style={{
+                     width: '110',
+                     display: 'inline-block'
+                   }}>
+            <Avatar src={`https://robohash.org/${this.state.selectedStudent.firstName+this.state.selectedStudent.lastName}.bmp?size=100x100&set=set2&bgset=any`}
+                    size={100}/><br/>
+            {this.state.selectedStudent.firstName} {this.state.selectedStudent.lastName}
+          </Paper>
+          <Paper style={selectedContainerStyle}  zDepth={4}>
+            <TextField disabled={false}
+                       style={{
+                           width: '25%',
+                           // FROM: material-ui/lib/TextField/TextField.js
+                           // ? width: props.fullWidth ? '100%' : 256,
+                           // ? height: (props.rows - 1) * 24 + (props.floatingLabelText ? 72 : 48),
+                       }}
+                       floatingLabelText="Student Number"
+                       value={this.state.selectedStudent.studentNum}/>&nbsp;
+            <TextField disabled={false}
+                       style={{ width: 100 }}
+                       floatingLabelText="First Name"
+                       value={this.state.selectedStudent.firstName}/>&nbsp;
+            <TextField disabled={false}
+                       style={{ width: 200 }}
+                       floatingLabelText="Last Name"
+                       value={this.state.selectedStudent.lastName}/>
+            { this.state.selectedStudent.enrollment &&
+              <div>
+                <h3>Enrollment</h3>
+                <Table height={'inherit'}
+                       fixedHeader={false}
+                       selectable={false}
+                       multiSelectable={false}>
+                  <TableHeader enableSelectAll={false}
+                               adjustForCheckbox={false}
+                               displaySelectAll={false}>
+                    <TableRow>
+                      <TableHeaderColumn tooltip="the enrollment term">Term</TableHeaderColumn>
+                      <TableHeaderColumn style={{width: 400}} tooltip="the course">Course</TableHeaderColumn>
+                      <TableHeaderColumn tooltip="the grade for this course">Grade</TableHeaderColumn>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody deselectOnClickaway={false}
+                             displayRowCheckbox={false}
+                             showRowHover={true}
+                             stripedRows={false}>
+                    {this.state.selectedStudent.enrollment.map( (enroll, indx) => (
+                      <TableRow key={enroll.term+enroll.course.courseNum}>
+                        <TableRowColumn>{enroll.term}</TableRowColumn>
+                        <TableRowColumn style={{width: 400}}><b>{enroll.course.courseNum}</b>: {enroll.course.courseTitle}</TableRowColumn>
+                        <TableRowColumn>{enroll.grade}</TableRowColumn>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody deselectOnClickaway={false}
-                               displayRowCheckbox={false}
-                               showRowHover={true}
-                               stripedRows={false}>
-                      {this.state.selectedStudent.enrollment.map( (enroll, indx) => (
-                        <TableRow key={enroll.term+enroll.course.courseNum}>
-                          <TableRowColumn>{enroll.term}</TableRowColumn>
-                          <TableRowColumn style={{width: 400}}><b>{enroll.course.courseNum}</b>: {enroll.course.courseTitle}</TableRowColumn>
-                          <TableRowColumn>{enroll.grade}</TableRowColumn>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              }
-            </Paper>
-          </Dialog>
-        }
-
-        {/* ? TRASH
-        <Dialog open={this.state.open}
-                title="Super Secret Password"
-                actions={standardActions}
-                onRequestClose={this.handleRequestClose}>
-          1-2-3-4-5
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            }
+          </Paper>
         </Dialog>
-        <h1>material-ui</h1>
-        <h2>example project</h2>
-        <RaisedButton label="Super Secret Password"
-                      primary={true}
-                      onTouchTap={this.handleTouchTap}/>
-        <Checkbox id="checkboxId1"
-                  name="checkboxName1"
-                  value="checkboxValue1"
-                  label="Learned Material UI Today"
-                  style={{
-                      width: '50%',
-                    }}
-                  iconStyle={{
-                      // fill: colors.brown400 xx now handled via muiTheme
-                    }}/>
-        */}
-      </span>
-    </MuiThemeProvider>;
+      }
 
-    // ?? krappy example
-    // ? return <MuiThemeProvider muiTheme={muiTheme}>
-    // ?   <div style={styles.container}>
-    // ?     <Dialog open={this.state.open}
-    // ?             title="Super Secret Password"
-    // ?             actions={standardActions}
-    // ?             onRequestClose={this.handleRequestClose}>
-    // ?       1-2-3-4-5
-    // ?     </Dialog>
-    // ?     <h1>material-ui</h1>
-    // ?     <h2>example project</h2>
-    // ?     <RaisedButton label="Super Secret Password"
-    // ?                   primary={true}
-    // ?                   onTouchTap={this.handleTouchTap}/>
-    // ?   </div>
-    // ? </MuiThemeProvider>;
+      {/* ? TRASH
+      <Dialog open={this.state.open}
+              title="Super Secret Password"
+              actions={standardActions}
+              onRequestClose={this.handleRequestClose}>
+        1-2-3-4-5
+      </Dialog>
+      <h1>material-ui</h1>
+      <h2>example project</h2>
+      <RaisedButton label="Super Secret Password"
+                    primary={true}
+                    onTouchTap={this.handleTouchTap}/>
+      <Checkbox id="checkboxId1"
+                name="checkboxName1"
+                value="checkboxValue1"
+                label="Learned Material UI Today"
+                style={{
+                    width: '50%',
+                  }}
+                iconStyle={{
+                    // fill: colors.brown400 xx now handled via muiTheme
+                  }}/>
+      */}
+    </div>
+    </MuiThemeProvider>;
   }
 }
-
-// ???$$$
-GeekUApp.childContextTypes = {
-  muiTheme: React.PropTypes.object
-};
-
 
 export default GeekUApp;

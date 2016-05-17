@@ -1,8 +1,45 @@
+/* NOTE: Here is our app-level structure:
+         <html>
+           <body>
+             <div id="app">
+               <div class="page">
+                 <div class="page-header">xxx</div>
+                 <div class="page-content">xxx</div>
+
+   NOTE: Top-Level App Layout is demarked with FLEX comment.
+*/
+
 html {
   font-family: 'Roboto', sans-serif;
+  height:      100%; /* FLEX: required for flexbox layout */
 }
 
 body {
-  font-size: 13px;
-  line-height: 20px;
+  font-size:      13px;
+  line-height:    20px;
+  height:         100%;   /* FLEX: required for flexbox layout */
+  overflow:       hidden; /* FLEX: at body level, we disable browser scroll bars (unneeded because flex box is constraining height to window */
+  display:        flex;   /* FLEX: a flexbox container */
+  flex-direction: column; /* FLEX: */
+}
+
+#app {
+  flex:           1 1 auto; /* FLEX: single item takes up all space of container */
+  display:        flex;     /* FLEX: also a flexbox container */
+  flex-direction: column;   /* FLEX: */
+}
+
+.page {
+  flex:           1 1 auto; /* FLEX: single item takes up all space of container */
+  display:        flex;     /* FLEX: also a flexbox container */
+  flex-direction: column;   /* FLEX: */
+}
+
+.page-header {
+  flex: 0 0 auto;   /* FLEX: no growth needed for header */
+}
+
+.page-content {
+  flex: 1;          /* FLEX: take all remaining space ... NOTE: for some reason IE doesn't honor "1 1 auto" in this case? */
+  overflow-y: auto; /* FLOW: allow scrolling as needed at this level */
 }
