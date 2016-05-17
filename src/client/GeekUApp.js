@@ -535,7 +535,7 @@ class GeekUApp extends React.Component {
                 <span>
                   <i>GeekU</i>
                   <Tabs style={{
-                      width: '50%'
+                      width: '90%'
                     }}>
                     <Tab label="Students (Jane)"/>
                     <Tab label="Courses (CS-101)"/>
@@ -552,14 +552,14 @@ class GeekUApp extends React.Component {
 
       <Paper className="page-content"
              style={{
-               margin:    15,
+               margin:    '15px auto', // 15px spacing top/bottom, center left/right
                textAlign: 'left',
-            // width: 'fit-content', // ColWidth: HONORED (adding to inline <div> style),
-                                     // 'auto' has NO impact
-                                     // '50%' works
-                                     // 'max-content'/'fit-content' works on chrome NOT IE
-                                     // 'available' still big
-                                     // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
+               width:     '90%', // ColWidth: HONORED (adding to inline <div> style),
+                                 // 'auto' has NO impact
+                                 // '90%' is honored
+                                 // 'max-content'/'fit-content' works on chrome NOT IE
+                                 // 'available' still big
+                                 // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
              }}
              zDepth={4}>
         <h1>Students</h1>
@@ -569,28 +569,17 @@ class GeekUApp extends React.Component {
                multiSelectable={false}
                onCellClick={this.showStudent}
                style={{
-                 // width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
+                 width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
                }}>
-          <TableHeader enableSelectAll={false}
-                       adjustForCheckbox={false}
-                       displaySelectAll={false}>
-            <TableRow>
-              <TableHeaderColumn tooltip="Picture">&nbsp;</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Student ID">ID</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Student Name">Name</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Student Origin State">Origin State</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
           <TableBody deselectOnClickaway={false}
                      displayRowCheckbox={false}
                      showRowHover={true}
                      stripedRows={false}>
 {/* Alternative to Avatar (may be too expensive for a LARGE list)
-    <TableRowColumn><Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/></TableRowColumn>
-    <TableRowColumn>
-      <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
-      <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
-    </TableRowColumn>
+    <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
+    - vs -
+    <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
+    <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
   */}
             {this.state.students.map( (student, indx) => (
                <TableRow key={student.studentNum} selected={student===this.state.selectedStudent}>
@@ -600,10 +589,10 @@ class GeekUApp extends React.Component {
                        ? <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
                        : <FontIcon className="material-icons" color={colors.pink300}>person</FontIcon>
                    }
+                   {' ' + student.firstName + ' ' + student.lastName}
+                   <i>{` (${student.studentNum})`}</i>
                  </TableRowColumn>
-                 <TableRowColumn>{student.studentNum}</TableRowColumn>
-                 <TableRowColumn>{student.firstName + ' ' + student.lastName}</TableRowColumn>
-                 <TableRowColumn>{student.addr.state}</TableRowColumn>
+                 <TableRowColumn><i>from:</i> {student.addr.state}</TableRowColumn>
                </TableRow>
              ))}
           </TableBody>
@@ -617,7 +606,7 @@ class GeekUApp extends React.Component {
                 autoScrollBodyContent={true}
                 onRequestClose={() => this.setState({selectedStudent: false})}
                 contentStyle={{
-                  width: '80%',
+                  width: '90%',
                   maxWidth: 'none',
                   verticalAlign: 'top',
                 }}>
