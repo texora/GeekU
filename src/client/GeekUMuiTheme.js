@@ -68,7 +68,7 @@ const muiThemeOverrides = {
   // fontFamily: 'Roboto, sans-serif',
 
   palette: {
-    primary1Color:       colors.orangeA700,  // x teal500
+    primary1Color:       colors.teal900,  // x teal500
     primary2Color:       colors.amber700,       // x teal700
     // primary3Color:       colors.grey400,
     accent1Color:        colors.deepOrangeA200, // x deepOrangeA200
@@ -78,7 +78,7 @@ const muiThemeOverrides = {
     // alternateTextColor:  colors.white,
     // canvasColor:         colors.white,
     // borderColor:         colors.grey300,
-    pickerHeaderColor:   colors.orangeA700,  // x teal500
+    pickerHeaderColor:   colors.teal900,  // x teal500
     // shadowColor:         colors.fullBlack,
 
     // from: material-ui/lib/styles/baseThemes/lightBaseTheme.js ...
