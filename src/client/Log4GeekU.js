@@ -15,8 +15,9 @@ const log = new Log('GeekU');
 // configure our initial Log Filter Settings
 const logConfig = Log.config({
   filter: {
-    'root':    'INFO',
-    'GeekU':   'DEBUG', // 'DEBUG' to see entire Material-UI muiTheme
+    'root':               'INFO',
+    'GeekU':              'none', // 'DEBUG' to see entire Material-UI muiTheme
+    'autoBindAllMethods': 'none',
   },
 
   excludeClientErrors: false,  // false: to see client Errors in log

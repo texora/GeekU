@@ -13,10 +13,12 @@ import Paper            from 'material-ui/lib/paper';
 import Tab              from 'material-ui/lib/tabs/tab';
 import Tabs             from 'material-ui/lib/tabs/tabs';
 
-// ?? extend from MyComponent ?? eliminating need for bind()
+import autoBindAllMethods  from '../shared/util/autoBindAllMethods';
+
 class GeekUApp extends React.Component {
   constructor(props, context) {
     super(props, context);
+    autoBindAllMethods(this);
   }
 
   render() {
