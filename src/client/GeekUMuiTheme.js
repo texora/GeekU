@@ -1,7 +1,7 @@
 'use strict';
 
 import Log           from '../shared/util/Log';
-import baseTheme     from 'material-ui/lib/styles/baseThemes/lightBaseTheme'; // or darkBaseTheme
+import baseTheme     from 'material-ui/lib/styles/baseThemes/lightBaseTheme'; // or darkBaseTheme or lightBaseTheme
 import ThemeManager  from 'material-ui/lib/styles/theme-manager';
 import colors        from 'material-ui/lib/styles/colors';
 
@@ -68,22 +68,22 @@ const muiThemeOverrides = {
   // fontFamily: 'Roboto, sans-serif',
 
   palette: {
-    primary1Color:       colors.teal500,
-    primary2Color:       colors.teal700,
+    primary1Color:       colors.orangeA700,  // x teal500
+    primary2Color:       colors.amber700,       // x teal700
     // primary3Color:       colors.grey400,
-    accent1Color:        colors.deepOrangeA200,
+    accent1Color:        colors.deepOrangeA200, // x deepOrangeA200
     // accent2Color:        colors.grey100,
     // accent3Color:        colors.grey500,
     // textColor:           colors.darkBlack,
     // alternateTextColor:  colors.white,
     // canvasColor:         colors.white,
     // borderColor:         colors.grey300,
-    pickerHeaderColor:   colors.teal500,
+    pickerHeaderColor:   colors.orangeA700,  // x teal500
     // shadowColor:         colors.fullBlack,
 
     // from: material-ui/lib/styles/baseThemes/lightBaseTheme.js ...
     // ... made following mods (above)
-    //      - change cyan to teal
+    //      - change cyan to amber -or- teal
     //      - change pink to deepOrange
     // primary1Color:       colors.cyan500,
     // primary2Color:       colors.cyan700,

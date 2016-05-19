@@ -45,21 +45,6 @@ class GeekUApp extends React.Component {
                     <MenuItem primaryText="Help"/>
                     <MenuItem primaryText="Sign Out"/>
                   </IconMenu>}/>
-        
-        <Paper className="page-content"
-               style={{
-                 margin:    '15px auto', // 15px spacing top/bottom, center left/right
-                 textAlign: 'left',
-                 width:     '90%', // ColWidth: HONORED (adding to inline <div> style),
-                                   // 'auto' has NO impact
-                                   // '90%' is honored
-                                   // 'max-content'/'fit-content' works on chrome NOT IE
-                                   // 'available' still big
-                                   // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
-               }}
-               zDepth={4}>
-          <div style={{width: 380, margin: '65px auto'}}><img src="/img/GeekULogo.jpg"/></div>
-        </Paper>
       </div>
     </MuiThemeProvider>;
   }

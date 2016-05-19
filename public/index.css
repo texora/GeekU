@@ -21,6 +21,10 @@ body {
   overflow:       hidden; /* FLEX: at body level, we disable browser scroll bars (unneeded because flex box is constraining height to window */
   display:        flex;   /* FLEX: a flexbox container */
   flex-direction: column; /* FLEX: */
+
+  background-image:    url(img/GeekULogo.jpg);
+  background-position: center center;
+  background-repeat:   no-repeat;
 }
 
 #app {
