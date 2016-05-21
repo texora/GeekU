@@ -76,7 +76,7 @@ const muiThemeOverrides = {
     // accent3Color:        colors.grey500,
     // textColor:           colors.darkBlack,
     // alternateTextColor:  colors.white,
-    // canvasColor:         colors.white,
+    canvasColor:         colors.teal100,
     // borderColor:         colors.grey300,
     pickerHeaderColor:   colors.teal900,  // x teal500
     // shadowColor:         colors.fullBlack,
