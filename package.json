@@ -64,6 +64,7 @@
     "nodemon": "^1.9.1",
     "parallelshell": "^2.0.0",
     "phantomjs-prebuilt": "^2.1.5",
+    "redux-devtools": "^3.3.1",
     "source-map-support": "^0.4.0",
     "webpack": "^1.12.14"
   },
@@ -82,7 +83,10 @@
     "pad": "^1.0.0",
     "react": "^0.14.8",
     "react-dom": "^0.14.8",
+    "react-redux": "^4.4.5",
     "react-tap-event-plugin": "^0.2.2",
+    "redux": "^3.5.2",
+    "redux-thunk": "^2.1.0",
     "shortid": "^2.2.4"
   }
 }

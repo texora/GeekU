@@ -16,7 +16,8 @@ const log = new Log('GeekU');
 const logConfig = Log.config({
   filter: {
     'root':               'INFO',
-    'GeekU':              'none', // 'DEBUG' to see entire Material-UI muiTheme
+    'GeekU':              'none',  // 'DEBUG' to see entire Material-UI muiTheme
+    'GeekU.ProcessFlow':  'none',  // 'DEBUG' to see action content
     'autoBindAllMethods': 'none',
   },
 
