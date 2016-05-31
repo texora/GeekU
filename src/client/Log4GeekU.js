@@ -14,8 +14,15 @@ const log = new Log('GeekU');
 
 // configure our initial Log Filter Settings
 const logConfig = Log.config({
+  logLevels: [
+    'DEBUG',
+    'FLOW',  // NEW level emiting enter/exit points
+    '*INFO',
+    'WARN',
+    'ERROR'],
   filter: {
     'root':               'INFO',
+    'actions':            'FLOW',  // 'FLOW' to see ALL action enter/exit points
     'GeekU':              'none',  // 'DEBUG' to see entire Material-UI muiTheme
     'GeekU.ProcessFlow':  'none',  // 'DEBUG' to see action content
     'autoBindAllMethods': 'none',
@@ -29,4 +36,4 @@ const logConfig = Log.config({
 log.info(()=>`Current Log Configuration:\n${JSON.stringify(logConfig, null, 2)}`);
 
 // allow browser logs to be interactivally configured through Easter Egg key sequence of 'LogConfig'
-registerInteractiveLogConfig('LogConfig');
+registerInteractiveLogConfig('log/config');

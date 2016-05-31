@@ -2,9 +2,8 @@
 
 import Log from '../../shared/util/Log';
 
-const log = new Log('actions'); // ?? currently NOT used
-
-const thunks = _defineThunks();
+const _actionLogCache = {}; // Key: Action Type, Value: Log instance ???
+const _thunks = _defineThunks();
 
 /**
  * Promote all actions used in our app ... both:
@@ -47,10 +46,10 @@ const thunks = _defineThunks();
 
 const genesis = {
 
-  retrieveStudents:         { params: ['selCrit'],                 thunk: thunks.retrieveStudents },
-  retrieveStudentsStart:    { params: ['selCrit'] },
-  retrieveStudentsComplete: { params: ['selCrit', 'arr'] },
-  retrieveStudentsFail:     { params: ['selCrit', 'err'] },
+  'retrieveStudents':          { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
+  'retrieveStudents.start':    { params: ['selCrit'] },
+  'retrieveStudents.complete': { params: ['selCrit', 'arr'] },
+  'retrieveStudents.fail':     { params: ['selCrit', 'err'] },
 
   // ?? ReduxEvaluation ENTRIES ... eventually delete
   // ? buyItem:               ["item"],
@@ -80,6 +79,9 @@ export const AC = {};
 for (let funcName in genesis) {
 
   const actionType = funcName; // alias ... our funcName is one and the same as our actionType
+
+  // pre-carve out our log filter so as to promote all log filters at startup
+  const log = getActionLog(actionType);
 
   // machine generate our AT entries (Action Types)
   AT[actionType] = actionType;
@@ -117,6 +119,19 @@ for (let funcName in genesis) {
 
 
 // ***
+// *** Action Log Cache
+// ***
+
+export function getActionLog(actionType) {
+  let log = _actionLogCache[actionType];
+  if (!log) { // ... lazily create on first usage
+    log = _actionLogCache[actionType] = new Log(`actions.${actionType}`);
+  }
+  return log;
+}
+
+
+// ***
 // *** Async Action Function Definitions (i.e. Thunks)
 // ***
 
@@ -137,8 +152,8 @@ function _defineThunks() {
     // promote our thunk function
     thunks[thunkName] = thunkFunct;
 
-    // pre-carve out our log filter so as to promote all log filters at startup
-    const log = new Log(`actions.${thunkName}`); 
+    // hook into the appropriate action log
+    const log = getActionLog(thunkName);
 
     // promote BOTH thunkName and log
     return { thunkName, log };
@@ -168,7 +183,7 @@ function _defineThunks() {
         log.info(()=>'??? initiating retrieval using selCrit: ', selCrit); // ?? debug
   
         // notify app that an async operation is beginning
-        dispatch( AC[`${thunkName}Start`](selCrit) );
+        dispatch( AC[`${thunkName}.start`](selCrit) );
   
         // async retrieval of students
         geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (return default fields)
@@ -179,7 +194,7 @@ function _defineThunks() {
             log.debug(()=>'??? students: ', students);
         
             // notify app that an async operation is complete
-            dispatch( AC[`${thunkName}Complete`](selCrit, students));
+            dispatch( AC[`${thunkName}.complete`](selCrit, students));
           })
           .catch( err => {
             // ??? is this covered in our dispatch logging middleware?

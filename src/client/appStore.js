@@ -1,18 +1,19 @@
 'use strict';
 
-import Log from '../shared/util/Log';
+import Log            from '../shared/util/Log';
+import {getActionLog} from './state/actions';
 
 import * as Redux from 'redux';
 import appState   from './state/appState';
 
 import thunk from 'redux-thunk';
 
+
 /*--------------------------------------------------------------------------------
    Promote our GeekU Redux appStore.
    --------------------------------------------------------------------------------*/
 
-const log     = new Log('GeekU.appStore');
-const logFlow = new Log('GeekU.ProcessFlow');
+const log = new Log('GeekU.appStore');
 
 log.info(()=> 'creating our GeekU Redux appStore');
 
@@ -25,13 +26,15 @@ log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChrom
 // define a redux middleware hook for logging all action flow
 const actionLogger = store => next => action => {
 
-  // log "dispatching" probe
+  // log "enter" probe
   const actionIsFunct = typeof action === 'function';
   const actionIsObj   = !actionIsFunct;
-  logFlow.info(()=> {
+  const log           = getActionLog(action.type);
+
+  log.flow(()=> {
     const actionType    = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
-    const clarification = !logFlow.isDebugEnabled() && actionIsObj ? ' ... NOTE: reconfigure log to DEBUG to see action details' : '';
-    return `dispatch action: ${actionType} ${clarification}`
+    const clarification = !log.isDebugEnabled() && actionIsObj ? ' ... NOTE: reconfigure log to DEBUG to see action details' : '';
+    return `enter action: ${actionType} ${clarification}`
   });
   if (actionIsObj) {
     // ??? when the action contains a payload, this is a shit load of info to log
@@ -42,15 +45,15 @@ const actionLogger = store => next => action => {
     //                ?? this would have to be done either in the thunk,
     //                   ... may prefer this, so we are more in control
     //                ?? or in the machine generate AC (action creator)
-    logFlow.debug(()=>'action details:\n', action);
+    log.debug(()=>'action details:\n', action);
   }
 
   // defer to original dispatch action logic
   const result = next(action);
 
-  // log "dispatch complete" probe
+  // log "exit" probe
   // ?? we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
-  logFlow.info(()=>`completed dispatch action: ${action.type}`);
+  log.flow(()=>`exit action: ${action.type}`);
 
   // that's all folks
   return result;
