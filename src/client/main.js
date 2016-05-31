@@ -17,7 +17,10 @@ import {AC}              from './state/actions';
 import appStore          from './appStore';
 import GeekUApp          from './GeekUApp';
 
-const log = new Log('GeekU');
+const log = new Log('startup');
+
+// emit our current Log Configuration
+log.info(()=>`Current Log Configuration:\n${JSON.stringify(Log.config(), null, 2)}`);
 
 // render our GeekUApp react component, along with our app-wide support components
 log.info(()=>'render our GeekUApp react component, along with our app-wide support components');

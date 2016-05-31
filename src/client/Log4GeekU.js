@@ -10,8 +10,6 @@ import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigFor
    initialization process.
    --------------------------------------------------------------------------------*/
 
-const log = new Log('GeekU');
-
 // configure our initial Log Filter Settings
 const logConfig = Log.config({
   logLevels: [
@@ -22,18 +20,16 @@ const logConfig = Log.config({
     'ERROR'],
   filter: {
     'root':               'INFO',
-    'actions':            'FLOW',  // 'FLOW' to see ALL action enter/exit points
-    'GeekU':              'none',  // 'DEBUG' to see entire Material-UI muiTheme
-    'GeekU.ProcessFlow':  'none',  // 'DEBUG' to see action content
+    'actions':            'FLOW',  // 'FLOW' to see ALL action enter/exit points, 'DEBUG' to see ALL action content, -OOOORRRRRR- individual action
+    'startup':            'none',
+    'startup.muiTheme':   'none',  // 'DEBUG' to see entire Material-UI muiTheme
+    'startup.appStore':   'none',
     'autoBindAllMethods': 'none',
   },
 
   excludeClientErrors: false,  // false: to see client Errors in log
   
 });
-
-// emit our current Log Configuration
-log.info(()=>`Current Log Configuration:\n${JSON.stringify(logConfig, null, 2)}`);
 
 // allow browser logs to be interactivally configured through Easter Egg key sequence of 'LogConfig'
 registerInteractiveLogConfig('log/config');

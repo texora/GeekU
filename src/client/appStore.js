@@ -13,7 +13,7 @@ import thunk from 'redux-thunk';
    Promote our GeekU Redux appStore.
    --------------------------------------------------------------------------------*/
 
-const log = new Log('GeekU.appStore');
+const log = new Log('startup.appStore');
 
 log.info(()=> 'creating our GeekU Redux appStore');
 

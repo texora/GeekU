@@ -5,7 +5,7 @@ import baseTheme     from 'material-ui/lib/styles/baseThemes/lightBaseTheme'; //
 import ThemeManager  from 'material-ui/lib/styles/theme-manager';
 import colors        from 'material-ui/lib/styles/colors';
 
-const log = new Log('GeekU');
+const log = new Log('startup.muiTheme');
 
 /*--------------------------------------------------------------------------------
    Define/promote the Material-UI Theme used in the GeekU App.
