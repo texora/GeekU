@@ -464,7 +464,7 @@ function _levelNum2Name(levelNum) {
  *
  *   Log.FOO               ... the numeric representation of FOO
  *   log.foo(msgFn, obj)   ... alias to log.log(Log.FOO, msgFn, obj)
- *   log.isFooEnabled(obj) ... alias to log.isEnabled(Log.FOO, obj)
+ *   log.isFooEnabled(obj) ... alias to log.isLevelEnabled(Log.FOO, obj)
  *
  * Because this defines all the levels from scratch, any filters that
  * were previously defined will be reset.
@@ -531,9 +531,9 @@ function _registerLevels(levelNames) {
 
     // remove level-specific isLevelEnabled() convenience method, 
     // for example:
-    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj)
+    //   log.isDebugEnabled(obj); ... alias to log.isLevelEnabled(LEVEL, obj)
     const levelNameHumpback = levelNameLower.charAt(0).toUpperCase() + levelNameLower.slice(1);
-    delete Log.prototype[levelNameHumpback];
+    delete Log.prototype[`is${levelNameHumpback}Enabled`];
 
   }
 
@@ -575,10 +575,10 @@ function _registerLevels(levelNames) {
 
     // inject level-specific isLevelEnabled() convenience method, 
     // for example:
-    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj)
+    //   log.isDebugEnabled(obj); ... alias to log.isLevelEnabled(LEVEL, obj)
     const levelNameHumpback = levelNameLower.charAt(0).toUpperCase() + levelNameLower.slice(1);
-    Log.prototype[levelNameHumpback] = function(obj) {
-      this.isLevelEnabled(Log[levelNameUpper], obj);
+    Log.prototype[`is${levelNameHumpback}Enabled`] = function(obj) {
+      return this.isLevelEnabled(Log[levelNameUpper], obj);
     };
   }
 
