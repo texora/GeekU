@@ -16,7 +16,7 @@ appState: {
 ?   selCrit: {
 ?     bla: 1
     },
-    arr: [
+    items: [
 ?     { <studentIndx> || <studentDetail> },
       ...ditto...
     ],
@@ -26,7 +26,7 @@ appState: {
 ?   selCrit: {
 ?     bla: 1
     },
-?   arr: [
+?   items: [
 ?     { <courseIndx> || <courseDetail> },
       ...ditto...
     ],

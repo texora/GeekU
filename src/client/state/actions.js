@@ -48,8 +48,8 @@ const genesis = {
 
   'retrieveStudents':          { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
   'retrieveStudents.start':    { params: ['selCrit'] },
-  'retrieveStudents.complete': { params: ['selCrit', 'arr'] },
-  'retrieveStudents.fail':     { params: ['selCrit', 'err'] },
+  'retrieveStudents.complete': { params: ['selCrit', 'items'] },
+  'retrieveStudents.fail':     { params: ['selCrit', 'error'] },
 
   // ?? ReduxEvaluation ENTRIES ... eventually delete
   // ? buyItem:               ["item"],

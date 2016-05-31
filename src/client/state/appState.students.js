@@ -2,8 +2,8 @@
 
 import * as Redux from 'redux';
 
-import arr     from './appState.students.arr';
 import selCrit from './appState.students.selCrit';
+import items   from './appState.students.items';
 
 // ***
 // *** appState.students reducer
@@ -11,6 +11,6 @@ import selCrit from './appState.students.selCrit';
 
 const students = Redux.combineReducers({
   selCrit,
-  arr,
+  items,
 });
 export default students;

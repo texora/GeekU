@@ -21,6 +21,7 @@ const logConfig = Log.config({
   filter: {
     'root':               'INFO',
     'actions':            'FLOW',  // 'FLOW' to see ALL action enter/exit points, 'DEBUG' to see ALL action content, -OOOORRRRRR- individual action
+    'appState':           'DEBUG',
     'startup':            'none',
     'startup.muiTheme':   'none',  // 'DEBUG' to see entire Material-UI muiTheme
     'startup.appStore':   'none',
