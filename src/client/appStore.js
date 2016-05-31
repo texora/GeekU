@@ -32,19 +32,13 @@ const actionLogger = store => next => action => {
   const log           = getActionLog(action.type);
 
   log.flow(()=> {
-    const actionType    = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
-    const clarification = !log.isDebugEnabled() && actionIsObj ? ' ... NOTE: reconfigure log to DEBUG to see action details' : '';
-    return `enter action: ${actionType} ${clarification}`
+    const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
+    const clarification         = !log.isDebugEnabled() && actionIsObj
+                                    ? '... NOTE: reconfigure log to DEBUG to see action details (CAUTION: may be LARGE when action contains retrieval payload)'
+                                    : '';
+    return `enter action: ${embellishedActionType} ${clarification}`
   });
   if (actionIsObj) {
-    // ??? when the action contains a payload, this is a shit load of info to log
-    //     ... need to figure this out
-    //         ?? to boot, this is a global switch (if we debug this filter, ALL payloads will be emitted)
-    //         ?? we may want to simply do payload emition on a service-by-service level
-    //            ... emitting a note that says change the 'actions' filter to debug
-    //                ?? this would have to be done either in the thunk,
-    //                   ... may prefer this, so we are more in control
-    //                ?? or in the machine generate AC (action creator)
     log.debug(()=>'action details:\n', action);
   }
 
@@ -53,6 +47,7 @@ const actionLogger = store => next => action => {
 
   // log "exit" probe
   // ?? we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
+  //    ... simply retain beforeState (above) and afterState here
   log.flow(()=>`exit action: ${action.type}`);
 
   // that's all folks
