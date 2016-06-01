@@ -34,7 +34,7 @@ const actionLogger = store => next => action => {
   log.flow(()=> {
     const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
     const clarification         = !log.isDebugEnabled() && actionIsObj
-                                    ? '... NOTE: reconfigure log to DEBUG to see action details (CAUTION: may be LARGE when action contains retrieval payload)'
+                                    ? '... NOTE: reconfigure log to DEBUG to see action details (CAUTION: actions with payload can be LARGE)'
                                     : '';
     return `enter action: ${embellishedActionType} ${clarification}`
   });

@@ -46,6 +46,9 @@ const _thunks = _defineThunks();
 
 const genesis = {
 
+  displayUserMsg: { params: ['msg'] },
+  closeUserMsg:   { params: [] },
+
   'retrieveStudents':          { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
   'retrieveStudents.start':    { params: ['selCrit'] },
   'retrieveStudents.complete': { params: ['selCrit', 'items'] },

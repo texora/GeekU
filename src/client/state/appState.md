@@ -12,6 +12,11 @@ appState: {
 ? userProfile: {   // user profile and login session
   },
 
+  userMsg: {       // message to display to user
+    open: false,
+    msg:  'You messed up!'
+  },
+
   students: {      // our retrieved students
 ?   selCrit: {
 ?     bla: 1
