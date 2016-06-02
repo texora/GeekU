@@ -13,8 +13,8 @@ const log = new Log('appState.userMsg.msg');
 
 const reducers = { // our sub-reducers (in lieu of switch statement)
   
-  [AT.displayUserMsg](msg, action) {
-    log.info(()=>`AT.displayUserMsg(): updating msg: '${action.msg}'`); // ?? debug
+  [AT.userMsg.display](msg, action) {
+    log.info(()=>`AT.userMsg.display: updating msg: '${action.msg}'`); // ?? debug
     return action.msg;
   },
 

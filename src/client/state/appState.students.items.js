@@ -14,7 +14,7 @@ const log         = new Log(reducerName);
 
 const reducers = { // our sub-reducers (in lieu of switch statement)
   
-  [AT['retrieveStudents.complete']](items, action) {
+  [AT.retrieveStudents.complete](items, action) {
     log.debug(()=>`in sub-reducer ${reducerName}, action: '${action.type}' ... replacing items with ${action.items.length} students`);
     return action.items;
   },

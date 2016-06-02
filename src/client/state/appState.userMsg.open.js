@@ -14,17 +14,17 @@ const log         = new Log(reducerName);
 
 const reducers = { // our sub-reducers (in lieu of switch statement)
   
-  [AT.displayUserMsg](open, action) {
+  [AT.userMsg.display](open, action) {
     // ??? consolidate and make debug
     log.info(()=>`in sub-reducer ${reducerName}, action: '${action.type}' ... setting open: true`);
-    log.info(()=>'AT.displayUserMsg: updating open: true');
+    log.info(()=>'AT.userMsg.display: updating open: true');
     return true;
   },
                    
-  [AT.closeUserMsg](open, action) {
+  [AT.userMsg.close](open, action) {
     // ??? consolidate and make debug
     log.info(()=>`in sub-reducer ${reducerName}, action: '${action.type}' ... setting open: false`);
-    log.info(()=>'AT.closeUserMsg: updating open: false');
+    log.info(()=>'AT.userMsg.close: updating open: false');
     return false;
   },
 

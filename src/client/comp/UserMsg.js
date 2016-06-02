@@ -11,7 +11,7 @@ import {AC}               from '../state/actions'
  */
 const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
 
-  class extends React.Component { // component definition
+  class UserMsg extends React.Component { // component definition
 
     constructor(props, context) {
       super(props, context);
@@ -37,13 +37,14 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
     },
     mapDispatchToProps(dispatch, ownProps) {
       return {
-        closeFn: (reason) => { dispatch( AC.closeUserMsg() ) }, // reason can be: 'timeout' or 'clickaway'
+        closeFn: (reason) => { dispatch( AC.userMsg.close() ) }, // reason can be: 'timeout' or 'clickaway'
       }
     }
   }); // end of ... component property injection
 
 // define expected props
 UserMsg.propTypes = {
+  closeFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
 }
 
 export default UserMsg;

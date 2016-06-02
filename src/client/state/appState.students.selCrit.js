@@ -13,9 +13,8 @@ const log = new Log('appState.students.selCrit');
 
 const reducers = { // our sub-reducers (in lieu of switch statement)
   
-  // ??? NOT RIGHT ... refine this
-  [AT.studentsRetrieved](selCrit, action) {
-    log.info(()=>'AT.studentsRetrieved(): updating selCrit: ', action.selCrit); // ?? debug
+  [AT.retrieveStudents.complete](selCrit, action) {
+    log.info(()=>'AT.retrieveStudents.complete: updating selCrit: ', action.selCrit); // ?? debug
     return action.selCrit;
   },
 

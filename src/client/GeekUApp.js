@@ -45,7 +45,7 @@ class GeekUApp extends React.Component {
                   <MenuItem primaryText="Help"/>
                   <MenuItem primaryText="Sign Out"/>
                   <MenuItem primaryText="Sample Message"
-                            onTouchTap={(event)=>displayUserMsg('Final Test: WowZee WowZee WooWoo')}/>
+                            onTouchTap={(event)=>displayUserMsg(`WowZee WowZee WooWoo ${new Date()}`)}/>
                 </IconMenu>}/>
       <UserMsg/>
     </div>;
