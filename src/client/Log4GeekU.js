@@ -19,12 +19,18 @@ const logConfig = Log.config({
     'WARN',
     'ERROR'],
   filter: {
-    'root':               'INFO',
-    'actions':            'FLOW',  // 'FLOW' to see ALL action enter/exit points, 'DEBUG' to see ALL action content, -OOOORRRRRR- individual action
-    'appState':           'DEBUG',
+    'root':               'WARN',
+
     'startup':            'none',
     'startup.muiTheme':   'none',  // 'DEBUG' to see entire Material-UI muiTheme
     'startup.appStore':   'none',
+
+    'actions':            'none',  // 'FLOW'  to see action enter/exit points, 'DEBUG' to include action content too ... -OR- individual action (ex: actions.retrieveStudents)
+  //'actions.userMsg':    'DEBUG',
+
+    'appState':           'none',  // 'DEBUG' to see reducer logic  ... -OR- individual action (ex: appState.students)
+  //'appState.userMsg':   'DEBUG',
+
     'autoBindAllMethods': 'none',
   },
 

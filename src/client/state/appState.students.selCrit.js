@@ -1,25 +1,24 @@
 'use strict'
 
-import {AT}      from './actions';
-import ReduxUtil from '../util/ReduxUtil';
+import {AT}            from './actions';
+import ReduxSubReducer from '../util/ReduxSubReducer';
 
-import Log from '../../shared/util/Log';
-
-const log = new Log('appState.students.selCrit');
 
 // ***
 // *** appState.students.selCrit reducer
 // ***
 
-const reducers = { // our sub-reducers (in lieu of switch statement)
-  
+const subReducer = new ReduxSubReducer('appState.students.selCrit', {
+
   [AT.retrieveStudents.complete](selCrit, action) {
-    log.info(()=>'AT.retrieveStudents.complete: updating selCrit: ', action.selCrit); // ?? debug
-    return action.selCrit;
+    return [
+      action.selCrit,
+      ()=>'set selCrit from action ... ' + JSON.stringify(action.selCrit, null, 2)
+    ];
   },
 
-};
+});
 
 export default function selCrit(selCrit={}, action) {
-  return ReduxUtil.resolveReducer(reducers, selCrit, action)
+  return subReducer.resolve(selCrit, action);
 }

@@ -30,20 +30,6 @@ const ReduxUtil = {
                               mapping.options) (comp);
   },
 
-
-  /**
-   * Resolve the reducer function, from the supplied set of reducers
-   * with the standard redux state/action, providing an alternative to
-   * the switch statement.
-   *
-   * The reducers is a simple object with reducer functions of the
-   * same name as the action.type.
-   */
-  resolveReducer(reducers, state, action) {
-    const  reducer = reducers[action.type];
-    return reducer ? reducer(state, action) : state;
-  }
-
 };
 
 export default ReduxUtil;

@@ -1,25 +1,24 @@
 'use strict'
 
-import {AT}      from './actions';
-import ReduxUtil from '../util/ReduxUtil';
+import {AT}            from './actions';
+import ReduxSubReducer from '../util/ReduxSubReducer';
 
-import Log from '../../shared/util/Log';
-
-const log = new Log('appState.userMsg.msg');
 
 // ***
 // *** appState.userMsg.msg reducer
 // ***
 
-const reducers = { // our sub-reducers (in lieu of switch statement)
-  
+const subReducer = new ReduxSubReducer('appState.userMsg.msg', {
+
   [AT.userMsg.display](msg, action) {
-    log.info(()=>`AT.userMsg.display: updating msg: '${action.msg}'`); // ?? debug
-    return action.msg;
+    return [
+      action.msg,
+      ()=>`set msg from action: '${action.msg}'`
+    ];
   },
 
-};
+});
 
 export default function msg(msg='', action) {
-  return ReduxUtil.resolveReducer(reducers, msg, action)
+  return subReducer.resolve(msg, action);
 }
