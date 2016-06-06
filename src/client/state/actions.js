@@ -119,7 +119,6 @@ for (const funcName in genesis) {
   //           AC['userMsg.display']('Hello World'); // SAME AS PRIOR LINE
   //         - AT.userMsg.display    // ... yeilds type: 'userMsg.display'
   //           AT['userMsg.display'] // ... SAME AS PRIOR LINE
-  // ??? MUST UNIT TEST
   if (actionType.includes('.')) {
     const nodes = actionType.split('.');
     let   runningStr = '';
@@ -129,12 +128,12 @@ for (const funcName in genesis) {
     for (const node of nodes) {
       if (!runningStr) {  // starting federated node ... assign root-level AT/AC (if not already there)
         runningStr += node;
-        runningAT   = AT[node] = AT[runningStr] || {}; // ??? NOT: new String(runningStr);
+        runningAT   = AT[node] = AT[runningStr] || {}; // ... NO NEED for String(runningStr);
         runningAC   = AC[node] = AC[runningStr] || {};
       }
       else {              // intermediate/end federated node
         runningStr += '.' + node;
-        runningAT   = runningAT[node] = AT[runningStr] || {}; // ??? NOT: new String(runningStr);
+        runningAT   = runningAT[node] = AT[runningStr] || {}; // NO NEED for String(runningStr);
         runningAC   = runningAC[node] = AC[runningStr] || {};
       }
     }
@@ -147,7 +146,7 @@ for (const funcName in genesis) {
 // *** Action Log Cache
 // ***
 
-export function getActionLog(actionType) { // ??? test if this works equally well with String and string
+export function getActionLog(actionType) {
   let log = _actionLogCache[actionType];
   if (!log) { // ... lazily create on first usage
     log = _actionLogCache[actionType] = new Log(`actions.${actionType}`);
