@@ -14,7 +14,7 @@ appState: {
 
   userMsg: {       // message to display to user
     open: false,
-    msg:  'You messed up!'
+    msg:  'Hello Waldo!'
   },
 
   students: {      // our retrieved students
