@@ -13,7 +13,6 @@ import ReactDOM          from 'react-dom';
 import GeekUMuiTheme     from './GeekUMuiTheme';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
-import {AC}              from './state/actions';
 import appStore          from './appStore';
 import GeekUApp          from './GeekUApp';
 
@@ -30,9 +29,3 @@ ReactDOM.render(<Provider store={appStore}>
                   </MuiThemeProvider>
                 </Provider>,
                 document.getElementById('app'));
-
-// ??? retrieve our students ... temporary placement to get us going
-const selCrit = {
-  l8tr: 'ToDo',
-};
-appStore.dispatch( AC.retrieveStudents(selCrit) );

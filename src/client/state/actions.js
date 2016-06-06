@@ -202,32 +202,28 @@ function _defineThunks() {
     const {thunkName, log} = _promoteThunk('retrieveStudents', function(selCrit) {
   
       return (dispatch, getState) => { // function interpreted by redux-thunk middleware
-
-        // ??? is this covered in our dispatch logging middleware?
-        log.info(()=>'??? initiating retrieval using selCrit: ', selCrit); // ?? debug
   
-        // notify app that an async operation is beginning
-        dispatch( AC[thunkName].start(selCrit) );
-  
-        // async retrieval of students
-        geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (return default fields)
+        // perform async retrieval of students
+        log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
+        geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (returning default fields)
           .then( res => {
             const students = res.payload;
-            // ??? is this covered in our dispatch logging middleware?
-            log.info (()=>`??? successful retrieval ... ${students.length} students returned`);
-            log.debug(()=>'??? students: ', students);
+            log.debug(()=>`successful retrieval ... ${students.length} students returned`);
         
-            // notify app that an async operation is complete
+            // sync app with results
             dispatch( AC[thunkName].complete(selCrit, students) );
-
           })
           .catch( err => {
-            // ??? is this covered in our dispatch logging middleware?
-            log.error(()=>'??? err: ', err);
+            // TODO: what we do in error processing is related to what our central error handler does
+            log.error(()=>'Error retrieving students with selCrit: ', selCrit);
+            log.error(()=>'Error: ', err);
         
-            // notify app that an async operation errored
+            // communicate async operation failed
             dispatch( AC[thunkName].fail(selCrit, err) );
           });
+        
+        // communicate async operation is in-progress
+        dispatch( AC[thunkName].start(selCrit) );
       };
   
     });

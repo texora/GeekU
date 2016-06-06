@@ -26,29 +26,29 @@ log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChrom
 // define a redux middleware hook for logging all action flow
 const actionLogger = store => next => action => {
 
-  // log "enter" probe
+  // log "ENTER" probe
   const actionIsFunct = typeof action === 'function';
   const actionIsObj   = !actionIsFunct;
   const log           = getActionLog(action.type);
 
   log.flow(()=> {
     const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
-    const clarification         = !log.isDebugEnabled() && actionIsObj
-                                    ? '... NOTE: reconfigure log to DEBUG to see action details (CAUTION: actions with payload can be LARGE)'
+    const clarification         = !log.isVerboseEnabled() && actionIsObj
+                                    ? '... NOTE: reconfigure log to VERBOSE to see action details (CAUTION: actions with payload can be LARGE)'
                                     : '';
-    return `enter action: ${embellishedActionType} ${clarification}`
+    return `ENTER action: ${embellishedActionType} ${clarification}`
   });
   if (actionIsObj) {
-    log.debug(()=>'action details:\n', action);
+    log.verbose(()=>'action details:\n', action);
   }
 
   // defer to original dispatch action logic
   const result = next(action);
 
-  // log "exit" probe
-  // ?? we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
+  // log "EXIT" probe
+  // TODO: we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
   //    ... simply retain beforeState (above) and afterState here
-  log.flow(()=>`exit action: ${action.type}`);
+  log.flow(()=>`EXIT action: ${action.type}`);
 
   // that's all folks
   return result;

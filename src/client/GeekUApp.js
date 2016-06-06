@@ -46,6 +46,8 @@ class GeekUApp extends React.Component {
                   <MenuItem primaryText="Sign Out"/>
                   <MenuItem primaryText="Sample Message"
                             onTouchTap={(event)=>displayUserMsg(`WowZee WowZee WooWoo ${new Date()}`)}/>
+                  <MenuItem primaryText="Test Student Retrieval"
+                            onTouchTap={(event)=>retrieveStudents()}/>
                 </IconMenu>}/>
       <UserMsg/>
     </div>;
@@ -53,3 +55,13 @@ class GeekUApp extends React.Component {
 }
 
 export default GeekUApp;
+
+// ??? VERY TEMP FOR "Test Student Retrieval" above
+import appStore  from './appStore';
+import {AC}      from './state/actions';
+function retrieveStudents() {
+  const selCrit = {
+    l8tr: 'ToDo (L8TR)',
+  };
+  appStore.dispatch( AC.retrieveStudents(selCrit) );
+}

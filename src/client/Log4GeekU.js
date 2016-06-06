@@ -13,23 +13,33 @@ import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigFor
 // configure our initial Log Filter Settings
 const logConfig = Log.config({
   logLevels: [
+    'VERBOSE', // NEW level emitting lot's of detail or large content
     'DEBUG',
-    'FLOW',  // NEW level emiting enter/exit points
+    'FLOW',  // NEW level emiting high-level enter/exit points
     '*INFO',
     'WARN',
     'ERROR'],
   filter: {
-    'root':               'WARN',
+    'root':               'INFO',
 
     'startup':            'none',
     'startup.muiTheme':   'none',  // 'DEBUG' to see entire Material-UI muiTheme
     'startup.appStore':   'none',
 
-    'actions':            'none',  // 'FLOW'  to see action enter/exit points, 'DEBUG' to include action content too ... -OR- individual action (ex: actions.retrieveStudents)
+
+
+    'actions':            'none',  // 'FLOW'    to see action enter/exit points,
+                                   // 'DEBUG'   to see acction app logic,
+                                   // 'VERBOSE' to include action content too (CAUTION: actions with payload can be LARGE)
+                                   // ... -OR- refine with individual action (ex: actions.retrieveStudents)
   //'actions.userMsg':    'DEBUG',
 
-    'appState':           'none',  // 'DEBUG' to see reducer logic  ... -OR- individual action (ex: appState.students)
+
+
+    'appState':           'none',  // 'DEBUG' to see reducer logic
+                                   // ... -OR- refine with individual state (ex: appState.students)
   //'appState.userMsg':   'DEBUG',
+
 
     'autoBindAllMethods': 'none',
   },
