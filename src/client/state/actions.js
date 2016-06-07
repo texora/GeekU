@@ -205,6 +205,7 @@ function _defineThunks() {
   
         // perform async retrieval of students
         log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
+        // throw new Error('??? KJB: exception in thunk');
         geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (returning default fields)
           .then( res => {
             const students = res.payload;
@@ -214,7 +215,11 @@ function _defineThunks() {
             dispatch( AC[thunkName].complete(selCrit, students) );
           })
           .catch( err => {
-            // TODO: what we do in error processing is related to what our central error handler does
+            // TODO: ??? what we do in error processing is related to what our central error handler does
+            //       ??? this action is similar in nature to what we do in .start
+            //           THAT IS:
+            //             - like start, we turn off (or decrement) the spinner
+            //             - in addition to: reporting unexpected condition to user and logging error
             log.error(()=>'Error retrieving students with selCrit: ', selCrit);
             log.error(()=>'Error: ', err);
         

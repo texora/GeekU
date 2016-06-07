@@ -6,6 +6,8 @@ import {getActionLog} from './state/actions';
 import * as Redux from 'redux';
 import appState   from './state/appState';
 
+import displayUserMsg from './util/displayUserMsg';
+
 import thunk from 'redux-thunk';
 
 
@@ -23,6 +25,31 @@ const reduxDevToolsChromeExtension = window.devToolsExtension ? window.devToolsE
 log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension ? 'IS' : "IS NOT"} PRESENT!`);
 
 
+// define a central uncaught exception handler
+// ??? NEW
+const errorHandler = store => next => action => {
+
+  try { // defer to original dispatch action logic
+    return next(action);
+  } 
+  catch (err) { // central handler
+    const log = getActionLog(action.type);
+    log.error(()=>'GeekU: Uncaught Exception: ', err);
+
+    // report unexpected condition to user
+    // ??? 
+    displayUserMsg(`ERROR: ${err.clientMsg} ??? details`);
+
+    // ? Raven.captureException(err, { // ??? KJB: Sentry/Raven (a commercial product) ??? what does this do?
+    // ?   extra: {
+    // ?     action,
+    // ?     state: store.getState()
+    // ?   }
+    // ? });
+    // throw err; // ??? KJB: in this case, I don't think we want to pass this on
+  }
+}
+
 // define a redux middleware hook for logging all action flow
 const actionLogger = store => next => action => {
 
@@ -31,11 +58,13 @@ const actionLogger = store => next => action => {
   const actionIsObj   = !actionIsFunct;
   const log           = getActionLog(action.type);
 
+  // throw new Error('??? KJB: exception in central logger');
+
   log.flow(()=> {
     const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
     const clarification         = !log.isVerboseEnabled() && actionIsObj
-                                    ? '... NOTE: reconfigure log to VERBOSE to see action details (CAUTION: actions with payload can be LARGE)'
-                                    : '';
+                                ? '... NOTE: reconfigure log to VERBOSE to see action details (CAUTION: actions with payload can be LARGE)'
+                                : '';
     return `ENTER action: ${embellishedActionType} ${clarification}`
   });
   if (actionIsObj) {
@@ -57,7 +86,8 @@ const actionLogger = store => next => action => {
 
 // define our Redux app-wide store
 const appStore = Redux.createStore(appState, // our app-wide redux reducer
-                                   Redux.compose(Redux.applyMiddleware(actionLogger, // log each action ... inject first to allow logging of other middleware components
+                                   Redux.compose(Redux.applyMiddleware(errorHandler, // central uncaught exception handler ... inject FIRST to allow coverage of other middleware components
+                                                                       actionLogger, // log each action ... inject early to allow logging of other middleware components
                                                                        thunk),       // support function-based actions (ex: support async actions)
                                                  reduxDevToolsChromeExtension)); // hook into optional Redux DevTools Chrome Extension
 
