@@ -205,7 +205,7 @@ function _defineThunks() {
   
         // perform async retrieval of students
         log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
-        // throw new Error('??? KJB: exception in thunk');
+        // throw new Error('??? KJB: test exception in thunk');
         geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (returning default fields)
           .then( res => {
             const students = res.payload;

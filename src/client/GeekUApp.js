@@ -48,6 +48,8 @@ class GeekUApp extends React.Component {
                             onTouchTap={(event)=>displayUserMsg(`WowZee WowZee WooWoo ${new Date()}`)}/>
                   <MenuItem primaryText="Test Student Retrieval"
                             onTouchTap={(event)=>retrieveStudents()}/>
+                  <MenuItem primaryText="Aggregate Test"
+                            onTouchTap={(event)=>aggregateTest()}/>
                 </IconMenu>}/>
       <UserMsg/>
     </div>;
@@ -56,7 +58,7 @@ class GeekUApp extends React.Component {
 
 export default GeekUApp;
 
-// ??? VERY TEMP FOR "Test Student Retrieval" above
+// ?? TEMP FOR "Test Student Retrieval" above
 import appStore  from './appStore';
 import {AC}      from './state/actions';
 function retrieveStudents() {
@@ -64,4 +66,24 @@ function retrieveStudents() {
     l8tr: 'ToDo (L8TR)',
   };
   appStore.dispatch( AC.retrieveStudents(selCrit) );
+}
+
+// ?? TEMP FOR "Aggregate Test" above
+function aggregateTest() {
+  const selCrit = {
+    l8tr: 'Aggregate Test',
+  };
+
+  // here is the redux-batched-updates enhanced reducer ( THIS WORKS ... FINALLY )
+  appStore.dispatch([
+    AC.retrieveStudents.complete(selCrit, [7, 8, 9]),
+    AC.userMsg.display('It FINALLY Works!'),
+  ]);
+
+  // test a batch of actions that include an async action
+  // ERROR: GeekU Development Error - GeekU action batching does NOT support thunks (retrieveStudents), because batching is handled at the reducer-level, rather than the dispatching-level
+  // ? appStore.dispatch([
+  // ?   AC.retrieveStudents(selCrit),
+  // ?   AC.userMsg.display('Finally It Worked'),
+  // ? ]);
 }
