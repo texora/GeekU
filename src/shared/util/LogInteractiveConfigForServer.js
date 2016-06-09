@@ -61,13 +61,14 @@ logConfig.get('/log/config', (req, res, next) => {
           <td>Level</td>
         </tr>`;
 
+  const logLevelsReversSeverity = config.logLevels.concat().reverse();
   for (const filterName in config.filter) {
     const filterLevel = config.filter[filterName];
     const filterNote  = Log.filter(filterName).note;
     myHtml += `
         <tr>
           <td>${filterName}</td>
-          <td>${genSelect(filterName, filterLevel, config.logLevels)}</td>
+          <td>${genSelect(filterName, filterLevel, logLevelsReversSeverity)}</td>
           <td>${filterNote}</td>
         </tr>`;
   }
@@ -146,12 +147,12 @@ function genSelect(filterName, filterLevel, logLevels) {
   // prepend 'none' to unset
   // ... NOTE:  'root' filter cannot be unset ('none')
   const allLogLevels = filterName==='root' ? logLevels : ['none'].concat(logLevels);
-  let mySelect = `<select onchange="changeFilter('${filterName}', this.value)">`;
-  for (let i=0; i<allLogLevels.length; i++) {
-    const level = allLogLevels[i];
-    mySelect += `\n  <option value="${level}" ${filterLevel===level ? 'selected' : ''}>${level}</option>`;
-  }
+
+  let mySelect = allLogLevels.reduce( (accum, level) => {
+    return accum + `\n  <option value="${level}" ${filterLevel===level ? 'selected' : ''}>${level}</option>`;
+  }, `<select onchange="changeFilter('${filterName}', this.value);">`);
   mySelect += '\n</select>';
+
   return mySelect;
 }
 
