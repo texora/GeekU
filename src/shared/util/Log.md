@@ -493,11 +493,18 @@ settings to the master filter.
   });
 ```
 
-You may specify the filter values with either the Log defined
+You may specify the filter level with either the Log defined
 constants (e.g. Log.DEBUG), or their cooresponding string
-representation (e.g. "DEBUG").
+representation (e.g. 'DEBUG', 'none', etc.).
 
-**Notice that Log pre-defines a 'root' filter**, which is referenced
+In addition to the filter level, you may also define an optional
+**note**.  This note is displayed in the [Interactive Filter
+Configuration](#interactive-filter-configuration), providing a
+convenient place to highlight certain application heuristics.  In
+place of the level setting, merely supply an array of two elements
+... the level, followed by the note.
+
+**Notice that Log pre-defines a 'root' filter**.  This special filter is referenced
 when a given filter has not been set.  This 'root' will always be
 defined (either by Log heuristics, or a client configuration), and
 cannot be un-set (null/undefined).

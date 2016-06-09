@@ -57,16 +57,18 @@ logConfig.get('/log/config', (req, res, next) => {
       <table>
         <tr>
           <td>Filter</td>
+          <td>Notes</td>
           <td>Level</td>
         </tr>`;
 
   for (const filterName in config.filter) {
     const filterLevel = config.filter[filterName];
-
+    const filterNote  = Log.filter(filterName).note;
     myHtml += `
         <tr>
           <td>${filterName}</td>
           <td>${genSelect(filterName, filterLevel, config.logLevels)}</td>
+          <td>${filterNote}</td>
         </tr>`;
   }
 
@@ -197,10 +199,22 @@ function changeExcludeClientErrors(checked) {
 // ***
 
 const myCss = `
+
+dt {
+  float: left;
+  clear: left;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+dd {
+  margin-left: 80px;
+}
+
 /* from: http://www.csstablegenerator.com/  ... BLUE TINT */
 .CSSTableGenerator {
   margin:0px;padding:0px;
-  width:90%;
+  width:98%;
   box-shadow: 10px 10px 5px #888888;
   border:1px solid #000000;
   -moz-border-radius-bottomleft:7px;

@@ -23,22 +23,17 @@ const logConfig = Log.config({
     'root':               'INFO',
 
     'startup':            'none',
-    'startup.muiTheme':   'none',  // 'DEBUG' to see entire Material-UI muiTheme
     'startup.appStore':   'none',
+    'startup.muiTheme':  ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see entire Material-UI muiTheme </dd>
+                                    </dl>`],
 
+    'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see action enter/exit points </dd>
+                                         <dt> DEBUG:  </dt> <dd> include action app logic </dd>
+                                         <dt> VERBOSE:</dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
+                                    </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
-
-    'actions':            'none',  // 'FLOW'    to see action enter/exit points,
-                                   // 'DEBUG'   to see acction app logic,
-                                   // 'VERBOSE' to include action content too (CAUTION: actions with payload can be LARGE)
-                                   // ... -OR- refine with individual action (ex: actions.retrieveStudents)
-  //'actions.userMsg':    'DEBUG',
-
-
-
-    'appState':           'none',  // 'DEBUG' to see reducer logic
-                                   // ... -OR- refine with individual state (ex: appState.students)
-  //'appState.userMsg':   'DEBUG',
+    'appState':          ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see reducer app logic </dd>
+                                    </dl> ... may apply lower (ex: 'appState.userMsg')`],
 
 
     'autoBindAllMethods': 'none',
