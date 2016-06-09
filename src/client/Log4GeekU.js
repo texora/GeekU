@@ -20,7 +20,7 @@ const logConfig = Log.config({
     'WARN',
     'ERROR'],
   filter: {
-    'root':               'INFO',
+    'root':               ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
 
     'startup':            'none',
     'startup.appStore':   'none',

@@ -13,7 +13,7 @@ const log = new Log('GeekU');
 
 const logConfig = Log.config({
   filter: {
-    'root':              'INFO',
+    'root':             ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
     'GeekU':             'none',
     'GeekU.ProcessFlow': ['none', ` <dl> <dt> WARN:   </dt> <dd> for NO probes </dd>
                                          <dt> INFO:   </dt> <dd> see enter/exit points </dd>
