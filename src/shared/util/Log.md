@@ -742,12 +742,12 @@ To use it, simply register it as follows:
 ```javascript
 import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
 ...
-registerInteractiveLogConfig('LogConfig'); 
+registerInteractiveLogConfig('log/config'); 
 ```
 
 With this in place, you may activate it through an Easter Egg
 ... simply type the supplied keyCombination (in this example
-'LogConfig') anywhere within your browser window (including void
+'log/config') anywhere within your browser window (including void
 space).  A new browser window will be activated with a GUI that
 interactively adjusts the client-side browser Log filters.
 
