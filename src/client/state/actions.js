@@ -1,6 +1,7 @@
 'use strict'
 
-import Log from '../../shared/util/Log';
+import assert from 'assert';
+import Log    from '../../shared/util/Log';
 
 const _actionLogCache = {}; // Key: Action Type, Value: Log instance
 const _thunks = _defineThunks();
@@ -55,7 +56,18 @@ const _thunks = _defineThunks();
 
 const genesis = {
 
-  'userMsg.display':           { params: ['msg'] },
+  /**
+   * Action Creator to display a user message.
+   *
+   * @param {string} msg the message to display.
+   * @param {Obj} userAction an optional structure defining a user click action:
+   *                userAction: {  // optional action that can be activated by the user
+   *                  txt:      '',
+   *                  callback: function(event)
+   *                }
+   */
+  // AC.userMsg.display(msg, userAction): Action
+  'userMsg.display':           { params: ['msg', 'userAction'],       ac: _userMsg_display },
   'userMsg.close':             { params: [] },
 
   'retrieveStudents':          { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
@@ -86,6 +98,11 @@ for (const funcName in genesis) {
 
   // machine generate our AC entries (Action Creator)
   AC[funcName] = function(...args) {
+
+    // interpret pre-defined action creators
+    if (genesis[funcName].ac) {
+      return genesis[funcName].ac(...args);
+    }
 
     // validate proper number of params passed in
     const paramNames = genesis[funcName].params;
@@ -143,15 +160,28 @@ for (const funcName in genesis) {
 
 
 // ***
-// *** Action Log Cache
+// *** Pre-Defined Action Creators
 // ***
 
-export function getActionLog(actionType) {
-  let log = _actionLogCache[actionType];
-  if (!log) { // ... lazily create on first usage
-    log = _actionLogCache[actionType] = new Log(`actions.${actionType}`);
+function _userMsg_display(msg, userAction) {
+
+  // validate params
+  const errPrefix = () => {
+    const userActionStr = userAction ? `, ${JSON.stringify(userAction)}` : '';
+    return `ERROR: Action Creator AC.userMsg.display('${msg}'${userActionStr}) ...`;
+  };
+  assert(typeof msg === 'string', `${errPrefix()} requires a msg string param`);
+  if (userAction) { // optional
+    assert(typeof userAction.txt      === 'string',   `${errPrefix()} userAction param requires a .txt string property`);
+    assert(typeof userAction.callback === 'function', `${errPrefix()} userAction param requires a .callback function property`);
   }
-  return log;
+
+  // create our action
+  return {
+    type: AT.userMsg.display,
+    msg,
+    userAction
+  };
 }
 
 
@@ -190,7 +220,8 @@ function _defineThunks() {
   //         - the interpretation of the selCrit
   //           ... could be done in outer funct and pass in as url, post payload, etc.
 
-
+  // TODO: Consider technique to break out these functions into seperate modules.
+  //       ... can't depend on actions.js, because this would inject a circular dependancy
 
 
   /**
@@ -238,4 +269,17 @@ function _defineThunks() {
 
   // wrapping up our internal _defineThunks() utility
   return thunks;
+}
+
+
+// ***
+// *** Action Log Cache
+// ***
+
+export function getActionLog(actionType) {
+  let log = _actionLogCache[actionType];
+  if (!log) { // ... lazily create on first usage
+    log = _actionLogCache[actionType] = new Log(`actions.${actionType}`);
+  }
+  return log;
 }

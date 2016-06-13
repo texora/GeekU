@@ -19,10 +19,12 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { open, msg, closeFn } = this.props
+      const { open, msg, actionTxt, actionFn, closeFn } = this.props
       return <Snackbar open={open}
                        message={msg}
-                       autoHideDuration={5000}
+                       action={actionTxt}
+                       onActionTouchTap={actionFn}
+                       autoHideDuration={4000}
                        onRequestClose={closeFn}/>;
     }
 
@@ -30,21 +32,33 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
 
   { // component property injection
     mapStateToProps(appState, ownProps) {
+      const open       =  appState.userMsg.length>0;
+      const userMsg    =  appState.userMsg[0];
+      const msg        =  open ? userMsg.msg : '';
+      const userAction =  open ? userMsg.userAction : null;
+      const actionTxt  =  userAction ? userAction.txt      : null;
+      const actionFn   =  userAction ? userAction.callback : null;
       return {
-        open: appState.userMsg.open,
-        msg:  appState.userMsg.msg,
+        open,
+        msg,
+        actionTxt,
+        actionFn,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
       return {
-        closeFn: (reason) => { dispatch( AC.userMsg.close() ) }, // reason can be: 'timeout' or 'clickaway'
+        closeFn: (reason) => { if (reason==='timeout') dispatch( AC.userMsg.close() ) }, // reason can be: 'timeout' or 'clickaway'
       }
     }
   }); // end of ... component property injection
 
 // define expected props
-UserMsg.propTypes = {
-  closeFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
+UserMsg.propTypes =  {
+  open:       React.PropTypes.bool,    // .isRequired - injected via self's wrapper
+  msg:        React.PropTypes.string,  // .isRequired - injected via self's wrapper
+  actionTxt:  React.PropTypes.string,  //               injected via self's wrapper
+  actionFn:   React.PropTypes.func,    //               injected via self's wrapper
+  closeFn:    React.PropTypes.func     // .isRequired - injected via self's wrapper
 }
 
 export default UserMsg;

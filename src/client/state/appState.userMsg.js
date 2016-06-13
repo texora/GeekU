@@ -1,16 +1,33 @@
 'use strict'
 
-import * as Redux from 'redux';
+import {AT}            from './actions';
+import ReduxSubReducer from '../util/ReduxSubReducer';
 
-import open from './appState.userMsg.open';
-import msg  from './appState.userMsg.msg';
 
 // ***
 // *** appState.userMsg reducer
 // ***
 
-const userMsg = Redux.combineReducers({
-  open,
-  msg,
+const subReducer = new ReduxSubReducer('appState.userMsg', {
+
+  [AT.userMsg.display](userMsg, action) {
+    return [
+      [...userMsg, {msg: action.msg, userAction: action.userAction}], // add new msg to end of queue
+      ()=>`set msg from action: '${action.msg}'`
+    ];
+  },
+
+  [AT.userMsg.close](userMsg, action) {
+    return userMsg.length === 0 
+             ? userMsg
+             : [
+                 [...userMsg.slice(1)], // remove first element (of queue)
+                 ()=>`removing current msg: '${userMsg[0].msg}'`
+               ];
+  },
+
 });
-export default userMsg;
+
+export default function userMsg(userMsg=[], action) {
+  return subReducer.resolve(userMsg, action);
+}

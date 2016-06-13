@@ -35,17 +35,17 @@ const muiThemeOverrides = {
     // width: 'fit-content', // ColWidth: NOT HONORED AT THIS global muiTheme LEVEL (by Material-UI)
   },
 
-  spacing: {
-    desktopGutter: 16,
-    desktopGutterMore: 24,
-    desktopGutterLess: 18,
-    desktopGutterMini: 4,
-    desktopKeylineIncrement: 32,
-    desktopDropDownMenuItemHeight: 16,
-    desktopDropDownMenuFontSize: 7,
-    desktopLeftNavMenuItemHeight: 24,
-    desktopSubheaderHeight: 24,
-    desktopToolbarHeight: 8,
+  spacing: { // TODO: revisit this when I get to tables (had a bit of impact on desktopSubheaderHeight for Snackbar)
+    // ? desktopGutter: 16,
+    // ? desktopGutterMore: 24,
+    // ? desktopGutterLess: 18,
+    // ? desktopGutterMini: 4,
+    // ? desktopKeylineIncrement: 32,
+    // ? desktopDropDownMenuItemHeight: 16,
+    // ? desktopDropDownMenuFontSize: 7,
+    // ? desktopLeftNavMenuItemHeight: 24,
+    // ? desktopSubheaderHeight: 24, // ... this one impacts Snackbar height
+    // ? desktopToolbarHeight: 8,
 
     iconSize: 15,
 
