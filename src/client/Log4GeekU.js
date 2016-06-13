@@ -22,10 +22,10 @@ const logConfig = Log.config({
   filter: {
     'root':               ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
 
-    'startup':            'none',
-    'startup.appStore':   'none',
-    'startup.muiTheme':  ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see entire Material-UI muiTheme </dd>
-                                    </dl>`],
+    'startup':                'none',
+    'startup.createAppStore': 'none',
+    'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see entire Material-UI muiTheme </dd>
+                                        </dl>`],
 
     'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see action enter/exit points </dd>
                                          <dt> DEBUG:  </dt> <dd> include action app logic </dd>

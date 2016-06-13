@@ -13,10 +13,13 @@ import ReactDOM          from 'react-dom';
 import GeekUMuiTheme     from './GeekUMuiTheme';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
-import appStore          from './appStore';
+import createAppStore    from './createAppStore';
 import GeekUApp          from './GeekUApp';
 
 const log = new Log('startup');
+
+// create our GeekU redux appStore
+const appStore = createAppStore();
 
 // emit our current Log Configuration
 log.info(()=>`Initial Log Configuration:\n${JSON.stringify(Log.config(), null, 2)}`);

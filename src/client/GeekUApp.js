@@ -11,7 +11,6 @@ import Paper              from 'material-ui/lib/paper';
 import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
 import UserMsg            from './comp/UserMsg';
-import displayUserMsg     from './util/displayUserMsg'
 import autoBindAllMethods from '../shared/util/autoBindAllMethods';
 import {AC}               from './state/actions';
 
