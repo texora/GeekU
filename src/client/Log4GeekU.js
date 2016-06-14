@@ -24,8 +24,15 @@ const logConfig = Log.config({
 
     'startup':                'none',
     'startup.createAppStore': 'none',
-    'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see entire Material-UI muiTheme </dd>
+    'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG: </dt> <dd> see entire Material-UI muiTheme </dd>
                                         </dl>`],
+
+    'middleware':             ['none', ` <dl> <dt> DEBUG: </dt> <dd> see ENTER/EXIT of redux middleware components </dd>
+                                         </dl> ... may apply lower (ex: 'middleware.batchHandler')`],
+    'middleware.errorHandler': 'none',
+    'middleware.batchHandler': 'none',
+    'middleware.actionLogger': 'none',
+    
 
     'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see action enter/exit points </dd>
                                          <dt> DEBUG:  </dt> <dd> include action app logic </dd>

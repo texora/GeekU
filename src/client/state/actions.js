@@ -1,7 +1,8 @@
 'use strict'
 
-import assert from 'assert';
-import Log    from '../../shared/util/Log';
+import assert                from 'assert';
+import Log                   from '../../shared/util/Log';
+import handleUnexpectedError from '../util/handleUnexpectedError';
 
 const _actionLogCache = {}; // Key: Action Type, Value: Log instance
 const _thunks = _defineThunks();
@@ -236,26 +237,23 @@ function _defineThunks() {
   
         // perform async retrieval of students
         log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
-        // throw new Error('??? KJB: test exception in thunk');
         geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (returning default fields)
           .then( res => {
+            // sync app with results
             const students = res.payload;
             log.debug(()=>`successful retrieval ... ${students.length} students returned`);
-        
-            // sync app with results
             dispatch( AC[thunkName].complete(selCrit, students) );
           })
           .catch( err => {
-            // TODO: ??? what we do in error processing is related to what our central error handler does
-            //       ??? this action is similar in nature to what we do in .start
-            //           THAT IS:
-            //             - like start, we turn off (or decrement) the spinner
-            //             - in addition to: reporting unexpected condition to user and logging error
-            log.error(()=>'Error retrieving students with selCrit: ', selCrit);
-            log.error(()=>'Error: ', err);
-        
             // communicate async operation failed
-            dispatch( AC[thunkName].fail(selCrit, err) );
+            // TODO: how do we communicate details of selCrit
+            //       ... should this be part of the err, so we don't have to worry about it here
+            //       ... however done, it would need to be in detail only (NOT the qual message to user)
+            //           ... for example: concatinate it to the err.message (only shows in detail and log)
+            dispatch([
+              AC[thunkName].fail(selCrit, err),                  // turn off our spinner
+              handleUnexpectedError(err, 'retrieving students'), // report unexpected condition to user (logging details for tech reference)
+            ]);
           });
         
         // communicate async operation is in-progress

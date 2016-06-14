@@ -68,6 +68,8 @@ if (!Error.prototype.defineClientMsg) { // key off of one of several extension p
     RECOGNIZED_CLIENT_ERROR: 'RECOGNIZED_CLIENT_ERROR'
   };
 
+  Error.prototype.cause = Error.Cause.UNEXPECTED_CONDITION; // prototype provides the default
+
 
 
   /**

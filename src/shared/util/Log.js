@@ -921,19 +921,24 @@ function _fmtError(err) {
   // return our formatted representation of the err
   let msg =  `
     Error:
-      Name:       ${err.name}`;
-  if (err.httpStatus)
+      Name:        ${err.name}`;
+  if (err.httpStatus) {
     msg += `
-      Status:     ${err.httpStatus}
-      StatusMsg:  ${HTTPStatus[err.httpStatus]}`;
+      HTTP Status: ${err.httpStatus} (${HTTPStatus[err.httpStatus]})`;
+  }
   msg += `
-      Client Msg: ${err.clientMsg}
-      Message:    ${err.message}`;
-  if (err.url)
+      Client Msg:  ${err.clientMsg}
+      Message:     ${err.message}`;
+  if (err.cause) {
     msg += `
-      URL:        ${err.url}`;
+      Cause:       ${err.cause}`;
+  }
+  if (err.url) {
+    msg += `
+      URL:         ${err.url}`;
+  }
   msg += `
-      LogId:      ${err.logId}
+      LogId:       ${err.logId}
       Stack Trace:
        ${err.stack}
 `;
