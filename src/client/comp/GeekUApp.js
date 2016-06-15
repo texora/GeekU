@@ -10,9 +10,12 @@ import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
 import Paper              from 'material-ui/lib/paper';
 import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
-import UserMsg            from '../comp/UserMsg';
+import Students           from './Students';
+import UserMsg            from './UserMsg';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
+import LeftNav            from './LeftNav';
+
 
 /**
  * Top-Level GeekUApp component.
@@ -26,7 +29,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     }
   
     render() {
-      const { sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+      const { mainPage, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
 
       return <div className="page">
         <AppBar className="page-header"
@@ -42,6 +45,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                       </Tabs>
                       */}
                   </span>}
+                iconElementLeft={<LeftNav/>}
                 iconElementRight={
                   <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
                             targetOrigin={{vertical: 'top', horizontal: 'right', }}
@@ -55,6 +59,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                     <MenuItem primaryText="Test Student Retrieval"           onTouchTap={retrieveStudentsFn}/>
                     <MenuItem primaryText="Aggregate Test"                   onTouchTap={aggregateTestFn}/>
                   </IconMenu>}/>
+        { mainPage==='students' && <Students/> }
         <UserMsg/>
       </div>;
     }
@@ -63,6 +68,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
+        mainPage: appState.mainPage,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {

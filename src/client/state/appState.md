@@ -24,6 +24,8 @@ appState: {
       }
   ],
 
+  mainPage: 'students'/'courses',
+
   students: {      // our retrieved students
 ?   selCrit: {
 ?     bla: 1

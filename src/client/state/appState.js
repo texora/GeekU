@@ -3,6 +3,7 @@
 import * as Redux from 'redux';
 
 import userMsg  from './appState.userMsg';
+import mainPage from './appState.mainPage';
 import students from './appState.students';
 
 // ***
@@ -11,6 +12,7 @@ import students from './appState.students';
 
 const appState = Redux.combineReducers({
   userMsg,
+  mainPage,
   students,
 });
 export default appState;

@@ -71,6 +71,8 @@ const genesis = {
   'userMsg.display':           { params: ['msg', 'userAction'],       ac: _userMsg_display },
   'userMsg.close':             { params: [] },
 
+  'changeMainPage':            { params: ['mainPage'] }, // 'students'/'courses'
+
   'retrieveStudents':          { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
   'retrieveStudents.start':    { params: ['selCrit'] },
   'retrieveStudents.complete': { params: ['selCrit', 'items'] },

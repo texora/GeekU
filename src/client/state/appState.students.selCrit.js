@@ -19,6 +19,6 @@ const subReducer = new ReduxSubReducer('appState.students.selCrit', {
 
 });
 
-export default function selCrit(selCrit={}, action) {
+export default function selCrit(selCrit=null, action) {
   return subReducer.resolve(selCrit, action);
 }
