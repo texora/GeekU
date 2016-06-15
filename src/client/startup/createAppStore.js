@@ -1,13 +1,13 @@
 'use strict';
 
-import Log            from '../shared/util/Log';
-import {getActionLog} from './state/actions';
+import Log            from '../../shared/util/Log';
+import {getActionLog} from '../state/actions';
 
 import * as Redux                            from 'redux';
 import {enableBatching, batchActions, BATCH} from 'redux-batched-actions';
 import thunk                                 from 'redux-thunk';
-import appState                              from './state/appState';
-import handleUnexpectedError                 from './util/handleUnexpectedError';
+import appState                              from '../state/appState';
+import handleUnexpectedError                 from '../util/handleUnexpectedError';
 
 const log = new Log('startup.createAppStore');
 

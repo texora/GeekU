@@ -1,6 +1,6 @@
 'use strict';
 
-import '../shared/util/polyfill'; // our standarad polyfill (for both client/server)
+import '../../shared/util/polyfill'; // our standarad polyfill (for both client/server)
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 

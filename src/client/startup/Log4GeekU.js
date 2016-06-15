@@ -1,7 +1,7 @@
 'use strict';
 
-import Log                          from '../shared/util/Log';
-import registerInteractiveLogConfig from '../shared/util/LogInteractiveConfigForBrowser';
+import Log                          from '../../shared/util/Log';
+import registerInteractiveLogConfig from '../../shared/util/LogInteractiveConfigForBrowser';
 
 /*--------------------------------------------------------------------------------
    Configure logs for GeekUApp.

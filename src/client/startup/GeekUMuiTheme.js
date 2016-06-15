@@ -1,6 +1,6 @@
 'use strict';
 
-import Log           from '../shared/util/Log';
+import Log           from '../../shared/util/Log';
 import baseTheme     from 'material-ui/lib/styles/baseThemes/lightBaseTheme'; // or darkBaseTheme or lightBaseTheme
 import ThemeManager  from 'material-ui/lib/styles/theme-manager';
 import colors        from 'material-ui/lib/styles/colors';

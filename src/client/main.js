@@ -4,17 +4,17 @@
    The GeekU client-side entry point (i.e. the mainline).
    --------------------------------------------------------------------------------*/
 
-import './ClientSidePolyfill';
-import './Log4GeekU'; // configure logs for GeekUApp (NOTE: include VERY early in our start-up process)
+import './startup/ClientSidePolyfill';
+import './startup/Log4GeekU'; // configure logs for GeekUApp (NOTE: include VERY early in our start-up process)
 
 import Log               from '../shared/util/Log';
+import GeekUMuiTheme     from './startup/GeekUMuiTheme';
+import createAppStore    from './startup/createAppStore';
 import React             from 'react';
 import ReactDOM          from 'react-dom';
-import GeekUMuiTheme     from './GeekUMuiTheme';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
-import createAppStore    from './createAppStore';
-import GeekUApp          from './GeekUApp';
+import GeekUApp          from './comp/GeekUApp';
 
 const log = new Log('startup');
 
