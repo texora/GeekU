@@ -365,6 +365,20 @@ class Log {
     return _excludeClientErrors;
   }
 
+
+  /**
+   * Locate a filter, based on it's name.
+   * 
+   * @param {String} filterName the filter name to locate.
+   *
+   * @return {FilterNode} the filterNode associated to the supplied filterName.
+   *
+   * @api public
+   */
+  static filter(filterName) {
+    return _locateOrDefineFilter(filterName);
+  }
+
 } // end of ... class Log
 
 export default Log
@@ -464,7 +478,7 @@ function _levelNum2Name(levelNum) {
  *
  *   Log.FOO               ... the numeric representation of FOO
  *   log.foo(msgFn, obj)   ... alias to log.log(Log.FOO, msgFn, obj)
- *   log.isFooEnabled(obj) ... alias to log.isEnabled(Log.FOO, obj)
+ *   log.isFooEnabled(obj) ... alias to log.isLevelEnabled(Log.FOO, obj)
  *
  * Because this defines all the levels from scratch, any filters that
  * were previously defined will be reset.
@@ -531,9 +545,9 @@ function _registerLevels(levelNames) {
 
     // remove level-specific isLevelEnabled() convenience method, 
     // for example:
-    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj)
+    //   log.isDebugEnabled(obj); ... alias to log.isLevelEnabled(LEVEL, obj)
     const levelNameHumpback = levelNameLower.charAt(0).toUpperCase() + levelNameLower.slice(1);
-    delete Log.prototype[levelNameHumpback];
+    delete Log.prototype[`is${levelNameHumpback}Enabled`];
 
   }
 
@@ -575,10 +589,10 @@ function _registerLevels(levelNames) {
 
     // inject level-specific isLevelEnabled() convenience method, 
     // for example:
-    //   log.isDebugEnabled(obj); ... alias to log.isEnabled(LEVEL, obj)
+    //   log.isDebugEnabled(obj); ... alias to log.isLevelEnabled(LEVEL, obj)
     const levelNameHumpback = levelNameLower.charAt(0).toUpperCase() + levelNameLower.slice(1);
-    Log.prototype[levelNameHumpback] = function(obj) {
-      this.isLevelEnabled(Log[levelNameUpper], obj);
+    Log.prototype[`is${levelNameHumpback}Enabled`] = function(obj) {
+      return this.isLevelEnabled(Log[levelNameUpper], obj);
     };
   }
 
@@ -611,8 +625,15 @@ function _registerLevels(levelNames) {
  * @api private
  */
 function _locateOrDefineFilter(filterName) {
-  // purge any filterName whitespace
-  filterName = filterName.replace(/\s+/g, '');
+
+  // if the filter is previously defined, simply return it
+  const filterNode = _filter[filterName];
+  if (filterNode)
+    return filterNode;
+
+  // validate supplied filterName
+  assert(!/\s/g.test(filterName),
+         `Log.filter('${filterName}') ERROR: filterName CANNOT contain whitespace`);
 
   // locate top-level root filter
   // ... dynamically create on first occurrance
@@ -660,12 +681,19 @@ function _locateOrDefineFilter(filterName) {
  * @param {String} filterName the filter name to set.
  * @param {int/String} level the log level (e.g. Log.DEBUG) to set in
  * supplied filter.  Use null/'none' to undefine (defering to parentage).
+ * NOTE: level may also optionally contain a note, by wrapping in an array ... [level, filterNote]
  *
  * @return {FilterNode} the filterNode associated to the supplied filterName.
  *
  * @api private
  */
 function _setFilter(filterName, level) {
+
+  // level may also optionally contain a note, by wrapping in an array ... [level, filterNote]
+  let filterNote = null;
+  if (Array.isArray(level)) {
+    [level, filterNote] = level;
+  }
 
   // resolve/validate supplied level (int/String) to it's internal numeric representation
   // ... null for none
@@ -679,6 +707,9 @@ function _setFilter(filterName, level) {
   // locate/define filter, and set it
   const filterNode = _locateOrDefineFilter(filterName);
   filterNode.level = level;
+  if (filterNote !== null) {
+    filterNode.note = filterNote
+  }
 
   return filterNode;
 }
@@ -727,7 +758,7 @@ class FilterNode {
   /**
    * Construct a new FilterNode instance.
    * 
-   * @param {String} filterName the filter name.
+   * @param {String} filterName the filter name (ex: 'startup.actionCreation')
    * @param {FilterNode} parentFilterNode the parent FilterNode (null for top-level 'root')
    * 
    * @api private
@@ -745,6 +776,7 @@ class FilterNode {
     this.filterName = filterName;
     this.level      = null; // initially undefined level (deferring to parentage)
     this.parent     = parentFilterNode;
+    this.note       = '';
   }
 
 
@@ -889,19 +921,24 @@ function _fmtError(err) {
   // return our formatted representation of the err
   let msg =  `
     Error:
-      Name:       ${err.name}`;
-  if (err.httpStatus)
+      Name:        ${err.name}`;
+  if (err.httpStatus) {
     msg += `
-      Status:     ${err.httpStatus}
-      StatusMsg:  ${HTTPStatus[err.httpStatus]}`;
+      HTTP Status: ${err.httpStatus} (${HTTPStatus[err.httpStatus]})`;
+  }
   msg += `
-      Client Msg: ${err.clientMsg}
-      Message:    ${err.message}`;
-  if (err.url)
+      Client Msg:  ${err.clientMsg}
+      Message:     ${err.message}`;
+  if (err.cause) {
     msg += `
-      URL:        ${err.url}`;
+      Cause:       ${err.cause}`;
+  }
+  if (err.url) {
+    msg += `
+      URL:         ${err.url}`;
+  }
   msg += `
-      LogId:      ${err.logId}
+      LogId:       ${err.logId}
       Stack Trace:
        ${err.stack}
 `;

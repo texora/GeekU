@@ -1,21 +1,33 @@
 <!doctype html>
 <html>
   <head>
-    <!-- NOTE: Asset resources are absolute to allow react-router  to serve resources correctly.
+    <!-- NOTE: Asset resources are absolute to allow react-router to serve resources correctly.
                Ex: http://localhost:8080/route1/route2 will re-direct to this index.html.
                    HOWEVER, without absolute references, it would attempt to resolve 
                      http://localhost:8080/route1/route2/img/GeekULogo.png
       -->
     <meta charset="UTF-8">
     <title>GeekU</title>
-    <!-- ???
-    <link rel="stylesheet" href="/index.css"/>
-    -->
+
+    <!-- Use minimum-scale=1 to enable GPU rasterization ??? WHA? -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
+
+    <!-- ??? unsure about css packaging with webpack (punt for now) -->
+    <link rel="stylesheet" type="text/css" href="/index.css"/>
+
+    <!-- include font icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- include Roboto font used in Material-UI -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:400,300,500">
   </head>
   <body>
+    <!-- ??? OLD STUFF
     <img src="/img/GeekULogo.png">
     <br/>
     This is a test from GeekU!
+      -->
     <div id="app"></div>
     <script src="/dist/clientBundle.js"></script>
   </body>

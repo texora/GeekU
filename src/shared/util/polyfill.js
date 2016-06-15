@@ -31,7 +31,7 @@ if (!root.geekUFetch) {
     return fetch(...args)
 
       .then( resp => { // all completed service responses are processed here ... no distinction http status outside the range of 2xx
-        return Promise.all([resp, resp.json()]); // jsonize our payload ??? FRINGE: when no json supplied (ex: /route1 returning html) weget a generic Error: SyntaxError: Unexpected token < ??? unsure how to catch this exception only and munge in "invalid json in reposnse)
+        return Promise.all([resp, resp.json()]); // jsonize our payload ??? FRINGE: when no json supplied (ex: /route1 returning html) we get a generic Error: SyntaxError: Unexpected token < ??? unsure how to catch this exception only and munge in "invalid json in reposnse)
       })
 
       .then( ([resp, jsonPayload]) => {
@@ -43,9 +43,13 @@ if (!root.geekUFetch) {
           if (serverError.logId) {
             errMsg += ` ... ServerLogId: ${serverError.logId}`;
           }
-          const err = new Error(errMsg);
-          err.status     = resp.status;
-          err.statusText = resp.statusText;
+          const err = new Error(errMsg).defineHttpStatus(resp.status);
+          if (serverError.cause) {
+            err.cause = serverError.cause;
+          }
+          if (serverError.url) {
+            err.url = serverError.url;
+          }
           if (serverError.name) {
             err.name = serverError.name;
           }

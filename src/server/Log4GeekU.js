@@ -13,9 +13,12 @@ const log = new Log('GeekU');
 
 const logConfig = Log.config({
   filter: {
-    'root':              'INFO',
+    'root':             ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
     'GeekU':             'none',
-    'GeekU.ProcessFlow': 'none', // 'WARN' for NO probes, 'INFO for enter/exit points, 'TRACE' to see returned payload
+    'GeekU.ProcessFlow': ['none', ` <dl> <dt> WARN:   </dt> <dd> for NO probes </dd>
+                                         <dt> INFO:   </dt> <dd> see enter/exit points </dd>
+                                         <dt> TRACE:  </dt> <dd> include returned payload<br/><i>CAUTION: payloads may be BIG</i> </dd>
+                                    </dl>`],
   },
 
   excludeClientErrors: true,  // false: to see client Errors in log

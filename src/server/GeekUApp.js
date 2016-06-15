@@ -33,6 +33,8 @@ const logFlow = new Log('GeekU.ProcessFlow');
                                  // NOTE: GeekU considers a NOT Found status (404) as an error WITH an error object
              name:    <string>,     // the name classification for this error, ex: Error, ParseError, TypeError, etc.
              message: <string>,     // message for client consumption
+             cause:   <string>      // the root cause of the error [optional]
+             url:     <string>      // the url in affect [optional]
              logId:   <string>      // server log identifier, when applicable (i.e. logging of unexpected condition)
            },
            payload: { -or- [     // payload data structure (can be an object or an array)
@@ -325,6 +327,12 @@ class GeekURes {
       name:    err.name,
       message: err.clientMsg,
     };
+    if (err.cause) { // cause is optional
+      errRes.cause = err.cause;
+    }
+    if (err.url) { // url is optional
+      errRes.url = err.url;
+    }
     if (err.logId) { // err may NOT be logged if client condition
       errRes.logId = err.logId;
     }
