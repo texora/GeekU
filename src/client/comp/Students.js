@@ -25,7 +25,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { students, poopFn } = this.props; // ??? no poopFn
+      const { students, studentsShown, poopFn } = this.props; // ??? no poopFn
 
       // ?? use this in <Table attr=> to show detail student
       //    ... onCellClick={this.showStudent}
@@ -40,6 +40,12 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         // 'available' still big
         // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
       };
+      // we actually hide the students if NOT displayed as an attempted optimization for large list
+      // ... doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
+      // >>> one side-benefit is that we retain scrolling state from previous renderings
+      if (!studentsShown) {
+        myStyle.display = 'none';
+      }
 
       return <Paper className="page-content"
                     style={myStyle}
@@ -89,6 +95,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         students:      appState.students.items,
+        studentsShown: appState.mainPage==='students',
       }
     },
     mapDispatchToProps(dispatch, ownProps) {

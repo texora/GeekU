@@ -29,7 +29,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     }
   
     render() {
-      const { mainPage, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+      const { sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
 
       return <div className="page">
         <AppBar className="page-header"
@@ -59,7 +59,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                     <MenuItem primaryText="Test Student Retrieval"           onTouchTap={retrieveStudentsFn}/>
                     <MenuItem primaryText="Aggregate Test"                   onTouchTap={aggregateTestFn}/>
                   </IconMenu>}/>
-        { mainPage==='students' && <Students/> }
+        <Students/>
         <UserMsg/>
       </div>;
     }
@@ -68,7 +68,6 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
-        mainPage: appState.mainPage,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
