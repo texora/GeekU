@@ -61,7 +61,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
           <TableBody deselectOnClickaway={false}
                      displayRowCheckbox={false}
                      showRowHover={true}
-                     stripedRows={false}>
+                     stripedRows={true}>
             {/* Alternative to Avatar (may be too expensive for a LARGE list)
             <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
             - vs -
@@ -69,9 +69,9 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
             <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
             */}
             {students.map( (student, indx) => (
-            indx > 100 ? '' : // TODO: temporally narrow entries till we figure out how to handle big lists or make them unneeded
+            indx > 100 ? '' : // TODO: ??? temporally narrow entries till we figure out how to handle big lists or make them unneeded
             <TableRow key={student.studentNum} 
-                      selected={student.studentNum==='S-001004' || student==='??? TODO: this.state.selectedStudent'}>
+                      selected={student.studentNum==='S-001004' || student==='TODO: ??? this.state.selectedStudent'}>
               <TableRowColumn>
                 {
                 student.gender==='M'
@@ -84,7 +84,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
               <TableRowColumn>{student.degree}</TableRowColumn>
               <TableRowColumn>{student.graduation || ''}</TableRowColumn>
               <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
-              <TableRowColumn><i>born</i>: {student.birthday}</TableRowColumn>
+              <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
             </TableRow>
             ))}
           </TableBody>
