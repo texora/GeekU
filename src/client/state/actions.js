@@ -78,6 +78,8 @@ const genesis = {
   'retrieveStudents.complete': { params: ['selCrit', 'items'] },
   'retrieveStudents.fail':     { params: ['selCrit', 'error'] },
 
+  'selectStudent':             { params: ['student'] }, // null for de-select
+
 };
 
 // AT: Action Types container object

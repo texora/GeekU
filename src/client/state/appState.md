@@ -30,8 +30,9 @@ appState: {
 ?   selCrit: {
 ?     bla: 1
     },
+    selectedStudent: null/item[below],
     items: [
-?     { <studentIndx> || <studentDetail> },
+      { <studentIndx> || <studentDetail> },
       ...ditto...
     ],
   },
@@ -40,6 +41,7 @@ appState: {
 ?   selCrit: {
 ?     bla: 1
     },
+?   selectedCourse: null/item[below],
 ?   items: [
 ?     { <courseIndx> || <courseDetail> },
       ...ditto...

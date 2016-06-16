@@ -29,7 +29,9 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     }
   
     render() {
-      const { mainPage, changeMainPageFn, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+      const { mainPage, selectedStudent, changeMainPageFn, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+
+      const selectedStudentName = selectedStudent ? `(${selectedStudent.firstName})` : '';
 
       return <div className="app">
         <AppBar className="app-header"
@@ -41,8 +43,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                         <td>
                           <Tabs value={mainPage}
                                 onChange={(value)=>changeMainPageFn(value)}>
-                            <Tab value="students" style={{textTransform: 'none'}} label={<span>Students <i>(Jane)</i></span>}/>
-                            <Tab value="courses"  style={{textTransform: 'none'}} label={<span>Courses  <i>(CS-101)</i></span>}/>
+                            <Tab value="students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                            <Tab value="courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
                           </Tabs>
                         </td>
                       </tr>
@@ -71,7 +73,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
-        mainPage: appState.mainPage,
+        mainPage:        appState.mainPage,
+        selectedStudent: appState.students.selectedStudent,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {

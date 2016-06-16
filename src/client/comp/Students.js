@@ -33,7 +33,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { students, studentsShown, poopFn } = this.props; // ??? no poopFn
+      const { students, selectedStudent, studentsShown, selectStudentFn } = this.props;
 
       // ?? use this in <Table attr=> to show detail student
       //    ... onCellClick={this.showStudent}
@@ -84,15 +84,16 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
           <Table className="page-content"
                  height={'inherit'}
                  fixedHeader={false}
-                 selectable={false}
+                 selectable={true}
                  multiSelectable={false}
+                 onRowSelection={(selectedRows)=>selectStudentFn(selectedRows.length===0 ? null : students[selectedRows[0]])}
                  style={{
                      width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
                    }}>
             <TableBody deselectOnClickaway={false}
                        displayRowCheckbox={false}
                        showRowHover={true}
-                       stripedRows={true}>
+                       stripedRows={false}>
               {/* Alternative to Avatar (may be too expensive for a LARGE list)
               <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
               - vs -
@@ -102,7 +103,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
               {students.map( (student, indx) => (
               indx > 100 ? '' : // TODO: ??? temporally narrow entries till we figure out how to handle big lists or make them unneeded
               <TableRow key={student.studentNum} 
-                        selected={student.studentNum==='S-001004' || student==='TODO: ??? this.state.selectedStudent'}>
+                        selected={student===selectedStudent}>
                 <TableRowColumn>
                   {
                   student.gender==='M'
@@ -128,20 +129,21 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
-        students:      appState.students.items,
-        studentsShown: appState.mainPage==='students',
+        students:        appState.students.items,
+        selectedStudent: appState.students.selectedStudent,
+        studentsShown:   appState.mainPage==='students',
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
       return {
-        poopFn: () => { dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]) },
+        selectStudentFn: (student) => { dispatch( AC.selectStudent(student) )},
       }
     }
   }); // end of ... component property injection
 
 // define expected props
 Students.propTypes = {
-  poopFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
+  selectStudentFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
 }
 
 export default Students;
