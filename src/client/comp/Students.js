@@ -13,6 +13,14 @@ import FontIcon           from 'material-ui/lib/font-icon';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
 
+// FYI: following used to add AppBar to Students page
+import AppBar             from 'material-ui/lib/app-bar';
+import IconMenu           from 'material-ui/lib/menus/icon-menu';
+import IconButton         from 'material-ui/lib/icon-button';
+import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
+import MenuItem           from 'material-ui/lib/menus/menu-item';
+
+
 /**
  * The Students component displays a list of students.
  */
@@ -33,7 +41,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       const myStyle = {
         margin:    '15px auto', // 15px spacing top/bottom, center left/right
         textAlign: 'left',
-        width:     '90%', // ColWidth: HONORED (adding to inline <div> style),
+        width:     '97%',       // ColWidth: HONORED (adding to inline <div> style),
         // 'auto' has NO impact
         // '90%' is honored
         // 'max-content'/'fit-content' works on chrome NOT IE
@@ -47,48 +55,72 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         myStyle.display = 'none';
       }
 
-      return <Paper className="page-content"
+      return <Paper className="app-content"
                     style={myStyle}
                     zDepth={4}>
-        <h1>Students</h1>
-        <Table height={'inherit'}
-               fixedHeader={false}
-               selectable={false}
-               multiSelectable={false}
+
+        <Paper className="page"
                style={{
-                   width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
-                 }}>
-          <TableBody deselectOnClickaway={false}
-                     displayRowCheckbox={false}
-                     showRowHover={true}
-                     stripedRows={true}>
-            {/* Alternative to Avatar (may be too expensive for a LARGE list)
-            <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
-            - vs -
-            <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
-            <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
-            */}
-            {students.map( (student, indx) => (
-            indx > 100 ? '' : // TODO: ??? temporally narrow entries till we figure out how to handle big lists or make them unneeded
-            <TableRow key={student.studentNum} 
-                      selected={student.studentNum==='S-001004' || student==='TODO: ??? this.state.selectedStudent'}>
-              <TableRowColumn>
-                {
-                student.gender==='M'
-                ? <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
-                : <FontIcon className="material-icons" color={colors.pink300}>person</FontIcon>
-                }
-                {' ' + student.firstName + ' ' + student.lastName}
-                <i>{` (${student.studentNum})`}</i>
-              </TableRowColumn>
-              <TableRowColumn>{student.degree}</TableRowColumn>
-              <TableRowColumn>{student.graduation || ''}</TableRowColumn>
-              <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
-              <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
-            </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                 textAlign: 'left',
+                 width:     '100%',
+               }}
+               zDepth={1}>
+
+          <AppBar className="page-header"
+                  style={{
+                    backgroundColor: colors.blueGrey700, // also like lime900
+                  }}
+                  title={<i>Students</i>}
+                  iconElementLeft={<i/>}
+                  iconElementRight={
+                    <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
+                              targetOrigin={{vertical: 'top', horizontal: 'right', }}
+                              anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                      <MenuItem primaryText="Select"/>
+                      <MenuItem primaryText="Filter"/>
+                      <MenuItem primaryText="... more"/>
+                    </IconMenu>}/>
+
+          <Table className="page-content"
+                 height={'inherit'}
+                 fixedHeader={false}
+                 selectable={false}
+                 multiSelectable={false}
+                 style={{
+                     width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
+                   }}>
+            <TableBody deselectOnClickaway={false}
+                       displayRowCheckbox={false}
+                       showRowHover={true}
+                       stripedRows={true}>
+              {/* Alternative to Avatar (may be too expensive for a LARGE list)
+              <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
+              - vs -
+              <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
+              <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
+              */}
+              {students.map( (student, indx) => (
+              indx > 100 ? '' : // TODO: ??? temporally narrow entries till we figure out how to handle big lists or make them unneeded
+              <TableRow key={student.studentNum} 
+                        selected={student.studentNum==='S-001004' || student==='TODO: ??? this.state.selectedStudent'}>
+                <TableRowColumn>
+                  {
+                  student.gender==='M'
+                  ? <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
+                  : <FontIcon className="material-icons" color={colors.pink300}>person</FontIcon>
+                  }
+                  {' ' + student.firstName + ' ' + student.lastName}
+                  <i>{` (${student.studentNum})`}</i>
+                </TableRowColumn>
+                <TableRowColumn>{student.degree}</TableRowColumn>
+                <TableRowColumn>{student.graduation || ''}</TableRowColumn>
+                <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
+                <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
+              </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
       </Paper>
     }
   }, // end of ... component definition

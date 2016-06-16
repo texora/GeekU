@@ -31,8 +31,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     render() {
       const { sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
 
-      return <div className="page">
-        <AppBar className="page-header"
+      return <div className="app">
+        <AppBar className="app-header"
                 title={
                   <span>
                     <i>GeekU</i>

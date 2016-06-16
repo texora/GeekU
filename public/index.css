@@ -18,7 +18,7 @@ body {
   font-size:      13px;
   line-height:    20px;
   height:         100%;   /* FLEX: required for flexbox layout */
-  overflow:       hidden; /* FLEX: at body level, we disable browser scroll bars (unneeded because flex box is constraining height to window */
+  overflow:       hidden; /* FLEX: at body level, we disable browser scroll bars (needed because flex box is constraining height to window */
   display:        flex;   /* FLEX: a flexbox container */
   flex-direction: column; /* FLEX: */
 
@@ -33,14 +33,19 @@ body {
   flex-direction: column;   /* FLEX: */
 }
 
-.page {
+.app, .page {
   flex:           1 1 auto; /* FLEX: single item takes up all space of container */
   display:        flex;     /* FLEX: also a flexbox container */
   flex-direction: column;   /* FLEX: */
 }
 
-.page-header {
+.app-header, .page-header {
   flex: 0 0 auto;   /* FLEX: no growth needed for header */
+}
+
+.app-content {
+  flex: 1;       /* FLEX: take all remaining space ... NOTE: for some reason IE doesn't honor "1 1 auto" in this case? */
+  display: flex; /* FLEX: also a flexbox container */
 }
 
 .page-content {
