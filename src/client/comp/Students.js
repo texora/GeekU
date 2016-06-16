@@ -10,6 +10,7 @@ import TableRow           from 'material-ui/lib/table/table-row';
 import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import Avatar             from 'material-ui/lib/avatar';
 import FontIcon           from 'material-ui/lib/font-icon';
+import CircularProgress   from 'material-ui/lib/circular-progress';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
 
@@ -33,7 +34,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { students, selectedStudent, studentsShown, selectStudentFn } = this.props;
+      const { inProgress, students, selectedStudent, studentsShown, selectStudentFn } = this.props;
 
       // ?? use this in <Table attr=> to show detail student
       //    ... onCellClick={this.showStudent}
@@ -55,6 +56,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         myStyle.display = 'none';
       }
 
+      const inProgressIndicator =  inProgress ? <CircularProgress size={0.3} color={colors.white}/> : <i/>;
+
       return <Paper className="app-content"
                     style={myStyle}
                     zDepth={4}>
@@ -70,7 +73,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   style={{
                     backgroundColor: colors.blueGrey700, // also like lime900
                   }}
-                  title={<i>Students</i>}
+                  title={<i>Students{inProgressIndicator}</i>}
                   iconElementLeft={<i/>}
                   iconElementRight={
                     <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
@@ -129,6 +132,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
+        inProgress:      appState.students.inProgress ? true : false,
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
         studentsShown:   appState.mainPage==='students',

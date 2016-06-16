@@ -27,6 +27,7 @@ appState: {
   mainPage: 'students'/'courses',
 
   students: {      // our retrieved students
+    inProgress: 0,1,2, // truethy ... number of outstanding student requests
 ?   selCrit: {
 ?     bla: 1
     },
@@ -38,6 +39,7 @@ appState: {
   },
 
 ? courses: {       // our retrieved courses
+?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
 ?   selCrit: {
 ?     bla: 1
     },

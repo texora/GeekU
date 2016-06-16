@@ -2,6 +2,7 @@
 
 import * as Redux from 'redux';
 
+import inProgress      from './appState.students.inProgress';
 import selCrit         from './appState.students.selCrit';
 import selectedStudent from './appState.students.selectedStudent';
 import items           from './appState.students.items';
@@ -12,6 +13,7 @@ import items           from './appState.students.items';
 // ***
 
 const students = Redux.combineReducers({
+  inProgress,
   selCrit,
   selectedStudent,
   items,
