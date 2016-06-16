@@ -29,22 +29,25 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     }
   
     render() {
-      const { sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+      const { mainPage, changeMainPageFn, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
 
       return <div className="app">
         <AppBar className="app-header"
                 title={
-                  <span>
-                    <i>GeekU</i>
-                      {/* 
-                      <Tabs style={{
-                      width: '90%'
-                      }}>
-                      <Tab label="Students (Jane)"/>
-                      <Tab label="Courses (CS-101)"/>
-                      </Tabs>
-                      */}
-                  </span>}
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td><i>GeekU</i></td>
+                        <td>
+                          <Tabs value={mainPage}
+                                onChange={(value)=>changeMainPageFn(value)}>
+                            <Tab value="students" style={{textTransform: 'none'}} label={<span>Students <i>(Jane)</i></span>}/>
+                            <Tab value="courses"  style={{textTransform: 'none'}} label={<span>Courses  <i>(CS-101)</i></span>}/>
+                          </Tabs>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>}
                 iconElementLeft={<LeftNav/>}
                 iconElementRight={
                   <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
@@ -68,10 +71,12 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
+        mainPage: appState.mainPage,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
       return {
+        changeMainPageFn: (page) => { dispatch( AC.changeMainPage(page) ) },
         sampleMessageFn: () => { dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`)) },
         sampleMultiMessageFn: () => { dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]) },
         sampleMessageWithUserActionFn: () => { dispatch( sampleMessageWithUserAction() )},
