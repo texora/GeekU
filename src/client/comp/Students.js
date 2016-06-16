@@ -69,7 +69,9 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
             <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
             */}
             {students.map( (student, indx) => (
-            <TableRow key={student.studentNum} selected={student==='???this.state.selectedStudent'}>
+            indx > 100 ? '' : // TODO: temporally narrow entries till we figure out how to handle big lists or make them unneeded
+            <TableRow key={student.studentNum} 
+                      selected={student.studentNum==='S-001004' || student==='??? TODO: this.state.selectedStudent'}>
               <TableRowColumn>
                 {
                 student.gender==='M'
