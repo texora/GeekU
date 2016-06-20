@@ -17,6 +17,13 @@ const subReducer = new ReduxSubReducer('appState.students.selectedStudent', {
     ];
   },
 
+  [AT.retrieveStudents.complete] (selectedStudent, action) {
+    return [
+      null,
+      ()=>'de-selecting selectedStudent on new retrieval'
+    ];
+  },
+
 });
 
 export default function selectedStudent(selectedStudent=null, action) {
