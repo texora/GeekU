@@ -10,7 +10,7 @@ import TableRow           from 'material-ui/lib/table/table-row';
 import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import Avatar             from 'material-ui/lib/avatar';
 import FontIcon           from 'material-ui/lib/font-icon';
-import CircularProgress   from 'material-ui/lib/circular-progress';
+import RefreshIndicator   from 'material-ui/lib/refresh-indicator';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
 
@@ -56,7 +56,19 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         myStyle.display = 'none';
       }
 
-      const inProgressIndicator =  inProgress ? <CircularProgress size={0.3} color={colors.white}/> : <i/>;
+      // NOTE: Our retrieval is SO FAST, I am using a determinate mode because the animation is starting so small there is no time to see it
+      // NOTE: <CircularProgress> is VERY HOAKY ... insists on 50px by 50px outer rectangle (NO WAY TO DECREASE)
+      //       const inProgressIndicator =  inProgress ? <CircularProgress size={0.3} color={colors.white}/> : <i/>;
+      // NOTE: <RefreshIndicator> is NOT MUCH BETTER ... any size under 50 has mucho transformation problems
+      const refreshInd = <RefreshIndicator size={50}
+                                           top={10}
+                                           left={60}
+                                           percentage={80}
+                                           color={"red"}
+                                           status="ready"
+                                           style={{display:  'inline-block',
+                                                   position: 'relative'}}/>
+      const inProgressIndicator =  inProgress ? refreshInd : <i/>;
 
       return <Paper className="app-content"
                     style={myStyle}
