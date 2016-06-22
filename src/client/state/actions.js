@@ -79,6 +79,15 @@ const genesis = {
   'retrieveStudents.fail':     { params: ['selCrit', 'error'] },
 
   'selectStudent':             { params: ['student'] }, // null for de-select
+  'hoverStudent':              { params: ['student'] }, // null for un-hover
+
+  'detailStudent':             { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
+
+  'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: _thunks.detailStudent },
+//'detailStudent.retrieve.start':     { params: ['studentNum', 'editMode'] }, // ... currently NOT USED
+  'detailStudent.retrieve.complete':  { params: ['student',    'editMode'] },
+//'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },      // ... currently NOT USED
+  'detailStudent.close':              { params: [] },
 
 };
 
@@ -264,6 +273,41 @@ function _defineThunks() {
         dispatch( AC[thunkName].start(selCrit) );
       };
   
+    });
+  }
+
+
+  /**
+   * retrieveStudents(selCrit): an async action creator to retrievie students.
+   *
+   * @param {Obj} selCrit the selection criteria used in defining the students to retrieve.
+   */
+  {
+    const {thunkName, log} = _promoteThunk('detailStudent', function(studentNum, editMode) {
+      
+      return (dispatch, getState) => { // function interpreted by redux-thunk middleware
+        
+        // perform async retrieval of student
+        log.debug(()=>`initiating async detail student num: ${studentNum}`);
+        geekUFetch(`/api/students/${studentNum}`)
+          .then( res => {
+            // sync app with results
+            const student = res.payload;
+            log.debug(()=>'successful retrieval of detailed student: ', student);
+            dispatch( AC[thunkName].retrieve.complete(student, editMode) );
+          })
+          .catch( err => {
+            // communicate async operation failed
+            dispatch([
+           // AC[thunkName].retrieve.fail(studentNum, err),  // turn off our spinner (currently NOT USED)
+              handleUnexpectedError(err, `retrieving student detail for: ${studentNum}`), // report unexpected condition to user (logging details for tech reference)
+            ]);
+          });
+        
+        // communicate async operation is in-progress
+        // dispatch( AC[thunkName].retrieve.start(studentNum, editMode) ); // ... currently NOT USED
+      };
+      
     });
   }
 

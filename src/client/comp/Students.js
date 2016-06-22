@@ -2,24 +2,28 @@
 
 import React              from 'react';
 import ReduxUtil          from '../util/ReduxUtil';
-import colors             from 'material-ui/lib/styles/colors';
+
+import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+
+import {AC}               from '../state/actions';
+
+import AppBar             from 'material-ui/lib/app-bar';
+import Avatar             from 'material-ui/lib/avatar';
+import FontIcon           from 'material-ui/lib/font-icon';
+import IconButton         from 'material-ui/lib/icon-button';
+import IconMenu           from 'material-ui/lib/menus/icon-menu';
+import MenuItem           from 'material-ui/lib/menus/menu-item';
+import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
 import Paper              from 'material-ui/lib/paper';
+import RefreshIndicator   from 'material-ui/lib/refresh-indicator';
 import Table              from 'material-ui/lib/table/table';
 import TableBody          from 'material-ui/lib/table/table-body';
 import TableRow           from 'material-ui/lib/table/table-row';
 import TableRowColumn     from 'material-ui/lib/table/table-row-column';
-import Avatar             from 'material-ui/lib/avatar';
-import FontIcon           from 'material-ui/lib/font-icon';
-import RefreshIndicator   from 'material-ui/lib/refresh-indicator';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
-import {AC}               from '../state/actions';
 
-// FYI: following used to add AppBar to Students page
-import AppBar             from 'material-ui/lib/app-bar';
-import IconMenu           from 'material-ui/lib/menus/icon-menu';
-import IconButton         from 'material-ui/lib/icon-button';
-import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
-import MenuItem           from 'material-ui/lib/menus/menu-item';
+import colors             from 'material-ui/lib/styles/colors';
+
+import Student            from './Student';
 
 
 /**
@@ -34,7 +38,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { inProgress, students, selectedStudent, studentsShown, selectStudentFn } = this.props;
+      const { inProgress, students, selectedStudent, hoveredStudent, studentsShown, detailStudent, selectStudentFn, hoverStudentFn, detailStudentFn } = this.props;
 
       // ?? use this in <Table attr=> to show detail student
       //    ... onCellClick={this.showStudent}
@@ -102,6 +106,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                  selectable={true}
                  multiSelectable={false}
                  onRowSelection={(selectedRows)=>selectStudentFn(selectedRows.length===0 ? null : students[selectedRows[0]])}
+                 onRowHover={(rowNum)=> hoverStudentFn(students[rowNum])}
+                 onRowHoverExit={(rowNum)=> hoverStudentFn(null)}
                  style={{
                      width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
                    }}>
@@ -115,28 +121,42 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
               <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
               <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
               */}
-              {students.map( (student, indx) => (
-              indx > 100 ? '' : // TODO: ??? temporally narrow entries till we figure out how to handle big lists or make them unneeded
-              <TableRow key={student.studentNum} 
-                        selected={student===selectedStudent}>
-                <TableRowColumn>
-                  {
-                  student.gender==='M'
-                  ? <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
-                  : <FontIcon className="material-icons" color={colors.pink300}>person</FontIcon>
+              { students.map( (student, indx) => {
+                  if (indx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
+                    return '';
                   }
-                  {' ' + student.firstName + ' ' + student.lastName}
-                  <i>{` (${student.studentNum})`}</i>
-                </TableRowColumn>
-                <TableRowColumn>{student.degree}</TableRowColumn>
-                <TableRowColumn>{student.graduation || ''}</TableRowColumn>
-                <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
-                <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
-              </TableRow>
-              ))}
+
+                  const genderColor = student.gender==='M' ? colors.blue900 : colors.pink300;
+
+                  const hoverControls = <i style={{
+                                             cursor:     'pointer',
+                                             // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
+                                             visibility: hoveredStudent===student ? 'visible' : 'hidden'
+                                           }}>
+                                          <FontIcon className="material-icons" color={colors.grey700} onClick={()=>detailStudentFn(student.studentNum, false)}>portrait</FontIcon>
+                                          <FontIcon className="material-icons" color={colors.red900}  onClick={()=>detailStudentFn(student.studentNum, true)}>edit</FontIcon>
+                                        </i>;
+                  
+                  return (
+                    <TableRow key={student.studentNum} 
+                              selected={student===selectedStudent}>
+                      <TableRowColumn>
+                        <FontIcon className="material-icons" color={genderColor}>person</FontIcon>
+                        {student.firstName} {student.lastName}
+                        <i>{` (${student.studentNum})`}</i>
+                      </TableRowColumn>
+                      <TableRowColumn>{hoverControls}</TableRowColumn>
+                      <TableRowColumn>{student.degree}</TableRowColumn>
+                      <TableRowColumn>{student.graduation || ''}</TableRowColumn>
+                      <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
+                      <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </Paper>
+        { detailStudent &&  <Student/> }
       </Paper>
     }
   }, // end of ... component definition
@@ -147,12 +167,23 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         inProgress:      appState.students.inProgress ? true : false,
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
+        hoveredStudent:  appState.students.hoveredStudent,
         studentsShown:   appState.mainPage==='students',
+
+        detailStudent:   appState.students.detailStudent,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
+      let latest_hoveredStudent = null;
       return {
-        selectStudentFn: (student) => { dispatch( AC.selectStudent(student) )},
+        selectStudentFn: (student) => { if (student) dispatch( AC.selectStudent(student) )},
+        hoverStudentFn:  (student) => { 
+          if (latest_hoveredStudent !== student) { // optimization to prune duplicate requests (assumes this as a central logic point adjusting students hover)
+            latest_hoveredStudent = student;
+            dispatch( AC.hoverStudent(student) );
+          }
+        },
+        detailStudentFn: (studentNum, editMode)  => { dispatch( AC.detailStudent(studentNum, editMode) )},
       }
     }
   }); // end of ... component property injection
@@ -160,6 +191,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
 // define expected props
 Students.propTypes = {
   selectStudentFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
+  hoverStudentFn:  React.PropTypes.func, // .isRequired - injected via self's wrapper
+  detailStudentFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
 }
 
 export default Students;

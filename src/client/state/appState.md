@@ -27,11 +27,17 @@ appState: {
   mainPage: 'students'/'courses',
 
   students: {      // our retrieved students
-    inProgress: 0,1,2, // truethy ... number of outstanding student requests
+
+    hoveredStudent:  null/item[below],
+    selectedStudent: null/item[below],
+
+    detailStudent:  null/item[below],
+    detailEditMode: true/false
+
+    inProgress: 0,1,2, // truthy ... number of outstanding student requests
 ?   selCrit: {
 ?     bla: 1
     },
-    selectedStudent: null/item[below],
     items: [
       { <studentIndx> || <studentDetail> },
       ...ditto...
@@ -39,11 +45,17 @@ appState: {
   },
 
 ? courses: {       // our retrieved courses
+
+?   hoveredCourse:  null/item[below],
+?   selectedCourse: null/item[below],
+
+?   detailCourse:   null/item[below],
+?   detailEditMode: true/false
+
 ?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
 ?   selCrit: {
 ?     bla: 1
     },
-?   selectedCourse: null/item[below],
 ?   items: [
 ?     { <courseIndx> || <courseDetail> },
       ...ditto...
