@@ -12,6 +12,7 @@ import Avatar             from 'material-ui/lib/avatar';
 import Dialog             from 'material-ui/lib/Dialog';
 import Divider            from 'material-ui/lib/divider';
 import IconButton         from 'material-ui/lib/icon-button';
+import FlatButton         from 'material-ui/lib/flat-button';
 import Paper              from 'material-ui/lib/paper';
 import Table              from 'material-ui/lib/table/table';
 import TableBody          from 'material-ui/lib/table/table-body';
@@ -20,6 +21,8 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import TextField          from 'material-ui/lib/text-field';
 
 import colors             from 'material-ui/lib/styles/colors';
+
+import Alert              from './Alert';
 
 
 /**
@@ -33,14 +36,33 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
       autoBindAllMethods(this);
     }
 
+    // conditionally close self if NO un-saved changes
+    closeRequested() {
+      const unsavedChanges = false; // TODO: activate this appropriatly
+
+      // obtain user confirmation when unsaved changes exist
+      if (unsavedChanges) {
+        this.unsavedChangesAlert.open();
+      }
+      // close self for no outstanding unsaved changes
+      else {
+        this.close();
+      }
+    }
+
+    // unconditionally close self
+    close() {
+      this.props.closeStudentDialogFn();
+    }
+
     render() {
-      const { student, editMode, closeFn } = this.props;
+      const { student, editMode } = this.props;
 
       return (
         <Dialog modal={false}
                 open={true}
                 autoScrollBodyContent={true}
-                onRequestClose={closeFn}
+                onRequestClose={this.closeRequested}
                 contentStyle={{
                     width:         '90%',
                     maxWidth:      'none',
@@ -62,7 +84,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                 alignItems:  'center',
               
               }}>
-              <IconButton onClick={(event)=>closeFn(true)}
+              <IconButton onClick={this.closeRequested}
                           iconStyle={{
                             width:  24,
                             height: 24,          
@@ -170,6 +192,25 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
             </div>
           </div>
+
+          <Alert ref={(alert)=>{this.unsavedChangesAlert=alert}}
+                 title='Student Edit'
+                 actions={[
+                   <FlatButton label="Discard Changes"
+                               primary={true}
+                               onTouchTap={ () => {
+                                   this.unsavedChangesAlert.close();
+                                   this.close(); // close our overall Student dialog (discarding changes)
+                                 }}/>,
+                   <FlatButton label="Go Back (in order to Save Changes)"
+                               primary={true}
+                               onTouchTap={ () => {
+                                   this.unsavedChangesAlert.close();
+                                 }}/>,
+                 ]}>
+            You have un-saved changes ... if you leave, your changes will NOT be saved!
+          </Alert>
+
         </Dialog>
       );
     }
@@ -184,7 +225,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
     },
     mapDispatchToProps(dispatch, ownProps) {
       return {
-        closeFn: (buttonClicked) => { dispatch( AC.detailStudent.close() )},
+        closeStudentDialogFn: () => { dispatch( AC.detailStudent.close() )},
       }
     }
   }); // end of ... component property injection
