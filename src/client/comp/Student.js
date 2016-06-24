@@ -38,7 +38,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
     // conditionally close self if NO un-saved changes
     closeRequested() {
-      const unsavedChanges = false; // TODO: activate this appropriatly
+      const unsavedChanges = this.props.editMode; // TODO: activate this appropriatly
 
       // obtain user confirmation when unsaved changes exist
       if (unsavedChanges) {
