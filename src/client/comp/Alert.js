@@ -3,7 +3,7 @@
 import React              from 'react';
 import assert             from 'assert';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
-import Dialog             from 'material-ui/lib/Dialog';
+import Dialog             from 'material-ui/lib/dialog';
 
 
 /**

@@ -5,15 +5,27 @@ import ReduxUtil          from '../util/ReduxUtil';
 
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 
+import moment             from 'moment';
+
 import {AC}               from '../state/actions';
 
+import subject            from '../../shared/model/subject';
+import term               from '../../shared/model/term';
+
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
+import AutoComplete       from 'material-ui/lib/auto-complete';
+import SelectField        from 'material-ui/lib/select-field';
+import MenuItem           from 'material-ui/lib/menus/menu-item';
 import Avatar             from 'material-ui/lib/avatar';
-import Dialog             from 'material-ui/lib/Dialog';
+import DatePicker         from 'material-ui/lib/date-picker/date-picker';
+import Dialog             from 'material-ui/lib/dialog';
 import Divider            from 'material-ui/lib/divider';
-import IconButton         from 'material-ui/lib/icon-button';
+import EditIcon           from 'material-ui/lib/svg-icons/image/edit';
 import FlatButton         from 'material-ui/lib/flat-button';
+import IconButton         from 'material-ui/lib/icon-button';
 import Paper              from 'material-ui/lib/paper';
+import RadioButton        from 'material-ui/lib/radio-button';
+import RadioButtonGroup   from 'material-ui/lib/radio-button-group';
 import Table              from 'material-ui/lib/table/table';
 import TableBody          from 'material-ui/lib/table/table-body';
 import TableRow           from 'material-ui/lib/table/table-row';
@@ -23,7 +35,6 @@ import TextField          from 'material-ui/lib/text-field';
 import colors             from 'material-ui/lib/styles/colors';
 
 import Alert              from './Alert';
-
 
 /**
  * The Student component displays a dialog of the details of a given student.
@@ -56,13 +67,189 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { student, editMode } = this.props;
+      const { student, editMode, changeEditModeFn, saveEditFn, cancelEditFn } = this.props;
+      
+      // conditionally provide Save/Cancel edit buttons
+      const editActions = !editMode ? null : [
+        <FlatButton label="Save"
+                    primary={true}
+                    onTouchTap={ () => {
+                        saveEditFn();
+                      }}/>,
+        <FlatButton label="Cancel"
+                    primary={true}
+                    onTouchTap={ () => {
+                        cancelEditFn();
+                      }}/>,
+      ];
+
+
+      const contentForm = editMode ?
+        <div style={{
+               padding: '0px 15px 0px 15px',
+             }}>
+          <TextField floatingLabelText="First"
+                     style={{ width: '15em' }}
+                     defaultValue={student.firstName}/>
+          &emsp;
+          <TextField floatingLabelText="Last"
+                     style={{ width: '15em' }}
+                     defaultValue={student.lastName}/>
+          <br/>
+          <TextField floatingLabelText="Email"
+                     style={{ width: '15em' }}
+                     defaultValue={student.email}
+                     hintText="yourMail@gmail.com"/>
+          &emsp;
+          <TextField floatingLabelText="Phone"
+                     style={{ width: '15em' }}
+                     defaultValue={student.phone}
+                     hintText="618.555.1212"/>
+          <br/>
+          <TextField floatingLabelText="Address"
+                     style={{ width: '15em' }}
+                     defaultValue={student.addr.line1}
+                     hintText="line 1"/>
+          <br/>
+          <TextField style={{ width: '15em' }}
+                     defaultValue={student.addr.line2}
+                     hintText="line 2"/>
+          <br/>
+          <TextField floatingLabelText="City"
+                     style={{ width: '10em' }}
+                     defaultValue={student.addr.city}/>
+          &emsp;
+          <AutoComplete floatingLabelText="State"
+                        style={{ width: '10em' }}
+                        filter={AutoComplete.caseInsensitiveFilter}
+                        searchText={student.addr.state}
+                        dataSource={['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']}
+
+                        openOnFocus={true}
+                        onFocus={()=>console.log('xxx AutoComplete FOCUS')}
+                        onBlur={()=> console.log('xxx AutoComplete BLUR')}
+
+                        onNewRequest={(txt, indx)=>     console.log(`xxx onNewRequest  txt: '${txt}', indx: ${indx}`)}
+                        onUpdateInput={(txt, dataArr)=> console.log(`xxx onUpdateInput txt: '${txt}'`)}
+
+                        />
+          &emsp;
+          &emsp;
+          &emsp;
+          {/*
+            AutoComplete CRAPPIENESS ...
+            - this component is REALLY BAD ... definitly NOT production ready
+            - NO WORK: openOnFocus={true}
+            - NO WORK: onFocus={()=>console.log('xxx AutoComplete now has focus')}
+            - NO WORK: maxSearchResults={5}
+            - can't figure out how to FORCE selection (it accepts free-formed entered text)
+            - open={true} causes weird error
+                ... popover.js:278 Uncaught TypeError: Cannot read property 'getBoundingClientRect' of null
+            - keyboard focus tab order goes into oblivia after selection
+            - popup is ALL OVER THE PLACE - JUMPY JUMPY (sometimes on top of screen)
+            - doesn't support async data source (that I can tell)
+          */}
+          <TextField floatingLabelText="Zip"
+                     style={{ width: '4em' }}
+                     defaultValue={student.addr.zip}/>
+        </div>
+      : <div style={{
+               padding: '0px 15px 0px 15px',
+             }}>
+          {student.email}
+          <Divider/>
+          {student.phone}
+          <Divider/>
+          {student.addr.line1}<br/>
+          {student.addr.line2 ? <span>{student.addr.line2}<br/></span> : <i/>}
+          {student.addr.city}, {student.addr.state}  {student.addr.zip}<br/>
+        </div>;
+
+      const profileForm = editMode ?
+        <div style={{
+               padding: '0px 15px 0px 15px',
+             }}>
+
+          <div style={{
+                 display:        'flex',
+                 flexFlow:       'row nowrap',
+                 justifyContent: 'space-between',
+                 alignItems:     'center',
+               }}>
+
+            <RadioButtonGroup name="gender"
+                              defaultSelected={student.gender}
+                              style={{ width: '10em' }}>
+              <RadioButton value='M'
+                           label='Male'/>
+              <RadioButton value='F'
+                           label='Female'/>
+            </RadioButtonGroup>
+
+            <DatePicker floatingLabelText="Birthday"
+                        autoOk={true}
+                        style={{ width: '8em' }}
+                        textFieldStyle={{ width: '8em' }}
+                        minDate={moment().subtract(200, 'years').toDate() /* we have some really old dates in our data */}
+                        formatDate={(date)=> moment(date).format('YYYY-MM-DD')}
+                        defaultDate={moment(student.birthday, 'YYYY-MM-DD').toDate()}
+                        />
+            {/*
+              DatePicker CRAPPIENESS ...
+              - no way to simply enter date as a string
+              - it is a MONSTOR BIG dialog ... container="inline" is TOO BIG for my dialog
+            */}
+
+            <AutoComplete floatingLabelText="Degree"
+                          style={{ width: '4em' }}
+                          filter={AutoComplete.caseInsensitiveFilter}
+                          searchText={student.degree}
+                          dataSource={subject.subjects()}
+
+                          openOnFocus={true}
+                          onFocus={()=>console.log('xxx degree: AutoComplete FOCUS')}
+                          onBlur={()=> console.log('xxx degree: AutoComplete BLUR')}
+
+                          onNewRequest={(txt, indx)=>     console.log(`xxx degree: onNewRequest  txt: '${txt}', indx: ${indx}`)}
+                          onUpdateInput={(txt, dataArr)=> console.log(`xxx degree: onUpdateInput txt: '${txt}'`)}
+                          />
+
+            <TextField floatingLabelText="GPA"
+                       style={{ width: '4em' }}
+                       type='number'
+                       disabled={true}
+                       defaultValue={student.gpa}/>
+
+            <AutoComplete floatingLabelText="Graduation"
+                          style={{ width: '6em' }}
+                          filter={AutoComplete.caseInsensitiveFilter}
+                          searchText={student.graduation}
+                          dataSource={term.terms()}
+
+                          openOnFocus={true}
+                          onFocus={()=>console.log('xxx graduation: AutoComplete FOCUS')}
+                          onBlur={()=> console.log('xxx graduation: AutoComplete BLUR')}
+
+                          onNewRequest={(txt, indx)=>     console.log(`xxx graduation: onNewRequest  txt: '${txt}', indx: ${indx}`)}
+                          onUpdateInput={(txt, dataArr)=> console.log(`xxx graduation: onUpdateInput txt: '${txt}'`)}
+                          />
+          </div>
+        </div>
+      : <div style={{
+               padding: '0px 15px 0px 15px',
+             }}>
+          {student.gender==='M' ? 'Male' : 'Female'} ... <i>Birthday</i>: {student.birthday}
+          <br/>
+          <i>Degree</i>: {student.degree} ... <i>GPA</i>: {student.gpa} ... <i>Graduation</i>: {student.graduation}
+        </div>;
+
 
       return (
         <Dialog modal={false}
                 open={true}
                 autoScrollBodyContent={true}
                 onRequestClose={this.closeRequested}
+                actions={editActions}
                 contentStyle={{
                     width:         '90%',
                     maxWidth:      'none',
@@ -77,32 +264,55 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
             {/* left panel */}
             <div style={{
-                flex: '0 0 auto',
+                   flex: '0 0 auto',
 
-                display:     'flex',
-                flexFlow:    'column nowrap',
-                alignItems:  'center',
-              
-              }}>
-              <IconButton onClick={this.closeRequested}
-                          iconStyle={{
-                            width:  24,
-                            height: 24,          
-                          }}
-                          style={{
-                            width:   36,
-                            height:  36,          
-                            padding: 6,
-                            alignSelf: 'flex-start',
-                          }}
-                          tooltip='Back'
-                          tooltipPosition='top-right'>
-                <ArrowBackIcon color={colors.grey700}/>
-              </IconButton>
+                   display:     'flex',
+                   flexFlow:    'column nowrap',
+                   alignItems:  'center',
+                 }}>
+
+              {/* button panel */}
+              <div style={{
+                     width:          '100%',
+                     display:        'flex',
+                     flexFlow:       'row nowrap',
+                     alignItems:     'center',
+                     justifyContent: 'space-between',
+                   }}>
+                <IconButton onClick={this.closeRequested}
+                            iconStyle={{
+                              width:  24,
+                              height: 24,          
+                            }}
+                            style={{
+                              width:   36,
+                              height:  36,          
+                              padding:  6,
+                            }}
+                            tooltip='Back'
+                            tooltipPosition='top-right'>
+                  <ArrowBackIcon color={colors.grey700}/>
+                </IconButton>
+                { !editMode &&
+                  <IconButton onClick={changeEditModeFn}
+                              iconStyle={{
+                                  width:  24,
+                                  height: 24,          
+                                }}
+                              style={{
+                                  width:   36,
+                                  height:  36,          
+                                  padding:  6,
+                                }}
+                              tooltip='Edit'
+                              tooltipPosition='top-right'>
+                    <EditIcon color={colors.red900}/>
+                  </IconButton>
+                }
+              </div>
               <Avatar src={`https://robohash.org/${student.firstName + student.lastName}.bmp?size=100x100&set=set2&bgset=any`}
                       size={100}/>
               <h2>{student.firstName} {student.lastName}</h2>
-              <div>??? editMode: {editMode ? 'true' : 'false'}</div>
             </div>
 
             {/* right panel */}
@@ -125,28 +335,11 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                    zDepth={4}>
 
                 <b>Contact</b>: {student.studentNum}
-                <div style={{
-                       padding: '0px 15px 0px 15px',
-                     }}>
-                  {student.email}
-                  <Divider/>
-                  {student.phone}
-                  <Divider/>
-                  {student.addr.line1}<br/>
-                  {student.addr.line2 ? <span>{student.addr.line2}<br/></span> : <i/>}
-                  {student.addr.city}, {student.addr.state}  {student.addr.zip}<br/>
-                </div>
+                {contentForm}
 
                 <br/>
                 <b>Profile</b>:
-
-                <div style={{
-                    padding: '0px 15px 0px 15px',
-                  }}>
-                  {student.gender==='M' ? 'Male' : 'Female'} ... <i>Birthday</i>: {student.birthday}
-                  <br/>
-                  <i>Degree</i>: {student.degree} ... <i>GPA</i>: {student.gpa} ... <i>Graduation</i>: {student.graduation}
-                </div>
+                {profileForm}
 
               </Paper>
 
@@ -180,8 +373,34 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                         return (
                           <TableRow key={student.studentNum+enroll.term+enroll.courseNum}>
                             <TableRowColumn>{enroll.course.courseNum}</TableRowColumn>
-                            <TableRowColumn>{enroll.grade || ''}</TableRowColumn>
-                            <TableRowColumn>{enroll.term}</TableRowColumn>
+                            <TableRowColumn>
+                              { !editMode ? enroll.grade || '' // xxx this stupid SelectField (CRAPPIENESS) CAN ONLY be controlled ... NO defaultValue semantics
+                              : <SelectField floatingLabelText="Grade"
+                                             style={{ width: '2em' }}
+                                             value={enroll.grade}>
+                                  <MenuItem key={'A'} value={'A'} primaryText="A"/>
+                                  <MenuItem key={'B'} value={'B'} primaryText="B"/>
+                                  <MenuItem key={'C'} value={'C'} primaryText="C"/>
+                                  <MenuItem key={'D'} value={'D'} primaryText="D"/>
+                                  <MenuItem key={'F'} value={'F'} primaryText="F"/>
+                                </SelectField>}
+                            </TableRowColumn>
+                            <TableRowColumn>
+                              { !editMode ? enroll.term
+                              : <AutoComplete floatingLabelText="Term"
+                                              style={{ width: '8em' }}
+                                              filter={AutoComplete.caseInsensitiveFilter}
+                                              searchText={enroll.term}
+                                              dataSource={term.terms()}
+                              
+                                              openOnFocus={true}
+                                              onFocus={()=>console.log('xxx term: AutoComplete FOCUS')}
+                                              onBlur={()=> console.log('xxx term: AutoComplete BLUR')}
+                              
+                                              onNewRequest={(txt, indx)=>     console.log(`xxx term: onNewRequest  txt: '${txt}', indx: ${indx}`)}
+                                              onUpdateInput={(txt, dataArr)=> console.log(`xxx term: onUpdateInput txt: '${txt}'`)}
+                                              />}
+                            </TableRowColumn>
                             <TableRowColumn>{enroll.course.courseTitle}</TableRowColumn>
                           </TableRow>
                         );
@@ -226,6 +445,9 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
     mapDispatchToProps(dispatch, ownProps) {
       return {
         closeStudentDialogFn: () => { dispatch( AC.detailStudent.close() )},
+        changeEditModeFn:     () => { dispatch( AC.detailStudent.changeEditMode() )},
+        saveEditFn:           () => { dispatch([ AC.detailStudent.close(), AC.userMsg.display('TODO: Save Complete') ])},
+        cancelEditFn:         () => { dispatch([ AC.detailStudent.close(), AC.userMsg.display('Edit Canceled') ])},
       }
     }
   }); // end of ... component property injection

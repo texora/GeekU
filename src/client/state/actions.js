@@ -88,6 +88,7 @@ const genesis = {
   'detailStudent.retrieve.complete':  { params: ['student',    'editMode'] },
 //'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },      // ... currently NOT USED
   'detailStudent.close':              { params: [] },
+  'detailStudent.changeEditMode':     { params: [] },
 
 };
 
