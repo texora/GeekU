@@ -8,14 +8,14 @@ const students = express.Router();
 
 
 //***************************************************************************************************
-//*** retrieve a list of students: /api/students[? fields=f1,f2,f3 & filter={mongoQuery}]
+//*** retrieve a list of students: /api/students[?query-string ... see below]
 //***
-//***   - use optional "fields" query string to fine tune fields to emit
+//***   - use optional "fields" query-string to fine tune fields to emit
 //***     * specify comma delimited list of field names
 //***       ... see: studentsMeta.validFields for valid field names
 //***     * DEFAULT: studentsMeta.defaultDisplayFields will be emitted
 //***
-//***   - use optional "filter" query string to supply selection criteria
+//***   - use optional "filter" query-string to supply selection criteria
 //***     * specify a JSON structure conforming to the MongoDB query structure
 //***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
 //***       ... ex:  /api/students?filter={"_id":{"$in":["S-001002","S-001989"]}}
@@ -25,7 +25,7 @@ const students = express.Router();
 //***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
 //***     * DEFAULT: return ALL students
 //***
-//***   - use optional "sort" query string to define sort order of returned results
+//***   - use optional "sort" query-string to define sort order of returned results
 //***     * specify a JSON structure conforming to the MongoDB sort structure
 //***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
 //***       ... ex:  /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
@@ -35,25 +35,25 @@ const students = express.Router();
 students.get('/api/students', (req, res, next) => {
 
   // define our fields to display (a mongo projection) 
-  // tweaked from the optional client-supplied "fields" query string
+  // tweaked from the optional client-supplied "fields" query-string
   // ... ex: /api/students?fields=a,b,c
   const displayFields = MongoUtil.mongoFields(studentsMeta.validFields,
                                               studentsMeta.defaultDisplayFields,
                                               req.query.fields);
 
-  // define our mongo query object
-  // tweaked from the optional client-supplied "query" query string
+  // define our mongo filter object
+  // tweaked from the optional client-supplied "filter" query-string
   // ... ex: /api/students?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-  const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
+  const mongoFilter = MongoUtil.mongoFilter(req.query.filter);
 
   // define our mongo sort object
-  // tweaked from the optional client-supplied "query" sort string
+  // tweaked from the optional client-supplied "sort" query-string
   // ... ex: /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
   const mongoSort = MongoUtil.mongoSort(req.query.sort);
 
   // perform retrieval
   const studentsColl = req.geekU.db.collection('Students');
-  studentsColl.find(mongoQuery, displayFields)
+  studentsColl.find(mongoFilter, displayFields)
               .sort(mongoSort)
               .toArray()
               .then( students => {
@@ -61,7 +61,7 @@ students.get('/api/students', (req, res, next) => {
               })
               .catch( err => {
                 // NOTE: unsure if we ALWAYS want to cover up technical message
-                //       ... it may be due to bad interpretation of mongoQuery
+                //       ... it may be due to bad interpretation of mongoFilter
                 throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
               });
 });

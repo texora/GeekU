@@ -4,6 +4,7 @@
 // *** Promotes various MongoDB utilities.
 // ***
 
+
 /**
  * Return a Mongo projection object, from the supplied field definitions.
  *
@@ -48,24 +49,24 @@ export function mongoFields(validFields, defaultFields, reqQueryFields) {
 
 
 /**
- * Return a Mongo query object, defining the selection criteria for a collection.
+ * Return a Mongo filter object, defining the selection criteria for a collection.
  *
  * @param {string} reqQueryFilter an optional http request query
- * string parameter containing the json query object
+ * string parameter containing the json filter object
  * (ex: '{"_id":{"$in":["CS-1110","CS-1112"]}}').
  * 
  * @return {string} the desired Mongo sort object.
  */
-export function mongoQuery(reqQueryFilter) {
+export function mongoFilter(reqQueryFilter) {
 
   // default to return all documents in collection
-  let mongoQuery = {};
+  let mongoFilter = {};
 
   // when supplied, refine with client-supplied query (a string)
   if (reqQueryFilter) {
     const filter = decodeURIComponent(reqQueryFilter);
     try {
-      mongoQuery = JSON.parse(filter);
+      mongoFilter = JSON.parse(filter);
     }
     catch(e) {
       throw e.defineClientMsg(`Invalid request query filter: '${filter}' ... ${e.message}`)
@@ -74,7 +75,7 @@ export function mongoQuery(reqQueryFilter) {
   }
 
   // that's all folks
-  return mongoQuery;
+  return mongoFilter;
 }
 
 
