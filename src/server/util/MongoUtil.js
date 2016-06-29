@@ -64,3 +64,29 @@ export function mongoQuery(reqQueryFilter) {
   // that's all folks
   return mongoQuery;
 }
+
+
+// return a Mongo sort object, defining the sort order for a collection.
+// PARAMS:
+// - reqQuerySort: an optional http request query string parameter (a string) containing the json sort object
+//                   ... ex: /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
+export function mongoSort(reqQuerySort) {
+
+  // default to NO sort fields
+  let mongoSort = {};
+
+  // when supplied, refine with client-supplied sort (a string)
+  if (reqQuerySort) {
+    const sort = decodeURIComponent(reqQuerySort);
+    try {
+      mongoSort = JSON.parse(sort);
+    }
+    catch(e) {
+      throw e.defineClientMsg(`Invalid request query sort: '${sort}' ... ${e.message}`)
+             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+    }
+  }
+
+  // that's all folks
+  return mongoSort;
+}

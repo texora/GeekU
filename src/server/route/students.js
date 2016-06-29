@@ -25,6 +25,11 @@ const students = express.Router();
 //***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
 //***     * DEFAULT: return ALL students
 //***
+//***   - use optional "sort" query string to define sort order of returned results
+//***     * specify a JSON structure conforming to the MongoDB sort structure
+//***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
+//***       ... ex:  /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
+//***
 //***************************************************************************************************
 
 students.get('/api/students', (req, res, next) => {
@@ -41,18 +46,24 @@ students.get('/api/students', (req, res, next) => {
   // ... ex: /api/students?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
   const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
+  // define our mongo sort object
+  // tweaked from the optional client-supplied "query" sort string
+  // ... ex: /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
+  const mongoSort = MongoUtil.mongoSort(req.query.sort);
+
   // perform retrieval
   const studentsColl = req.geekU.db.collection('Students');
   studentsColl.find(mongoQuery, displayFields)
-             .toArray()
-             .then( students => {
-               res.geekU.send(students);
-             })
-             .catch( err => {
-               // NOTE: unsure if we ALWAYS want to cover up technical message
-               //       ... it may be due to bad interpretation of mongoQuery
-               throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
-             });
+              .sort(mongoSort)
+              .toArray()
+              .then( students => {
+                res.geekU.send(students);
+              })
+              .catch( err => {
+                // NOTE: unsure if we ALWAYS want to cover up technical message
+                //       ... it may be due to bad interpretation of mongoQuery
+                throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
+              });
 });
 
 

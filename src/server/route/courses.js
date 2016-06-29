@@ -25,6 +25,11 @@ const courses = express.Router();
 //***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
 //***     * DEFAULT: return ALL courses
 //***
+//***   - use optional "sort" query string to define sort order of returned results
+//***     * specify a JSON structure conforming to the MongoDB sort structure
+//***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
+//***       ... ex:  /api/courses?sort={"academicGroup":1,"courseNum":1}
+//***
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {
@@ -41,18 +46,23 @@ courses.get('/api/courses', (req, res, next) => {
   // ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
   const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
 
+  // define our mongo sort object
+  // tweaked from the optional client-supplied "query" sort string
+  // ... ex: /api/courses?sort={"academicGroup":1,"courseNum":1}
+  const mongoSort = MongoUtil.mongoSort(req.query.sort);
+
   // perform retrieval
   const coursesColl = req.geekU.db.collection('Courses');
   coursesColl.find(mongoQuery, displayFields)
-  .toArray()
-  .then( courses => {
-    res.geekU.send(courses);
-  })
-  .catch( err => {
-    // NOTE: unsure if we ALWAYS want to cover up technical message
-    //       ... it may be due to bad interpretation of mongoQuery
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
-  });
+             .sort(mongoSort)  .toArray()
+             .then( courses => {
+               res.geekU.send(courses);
+             })
+             .catch( err => {
+               // NOTE: unsure if we ALWAYS want to cover up technical message
+               //       ... it may be due to bad interpretation of mongoQuery
+               throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
+             });
 });
 
 
