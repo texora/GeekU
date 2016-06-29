@@ -1,15 +1,22 @@
 'use strict';
 
-/**
- * Promotes various MongoDB utilities.
- */
+// ***
+// *** Promotes various MongoDB utilities.
+// ***
 
-// return a Mongo projection object, defining the fields to promote.
-// PARAMS:
-// - validFields:    valid fields for the desired collection
-// - defaultFields:  the default fields to display (when NO reqQueryFields is supplied)
-// - reqQueryFields: an optional http request query string parameter enumerating the fields to display
-//                   ... ex: http://localhost:8080/api/courses?fields=a,b,c
+/**
+ * Return a Mongo projection object, from the supplied field definitions.
+ *
+ * @param {object} validFields the valid fields for the desired
+ * collection (an object with field properties).
+ * @param {object} defaultFields the default fields to display when NO
+ * reqQueryFields is supplied (a mongo projection object)
+ * @param {string} reqQueryFields an optional http request query
+ * string parameter enumerating a comma delimited set of fields to
+ * display (ex: "a,b").
+ * 
+ * @return {string} the desired Mongo projection object
+ */
 export function mongoFields(validFields, defaultFields, reqQueryFields) {
 
   // when NO reqQueryFields have been supplied, simply use the supplied default
@@ -40,10 +47,15 @@ export function mongoFields(validFields, defaultFields, reqQueryFields) {
 }
 
 
-// return a Mongo query object, defining the selection criteria for a collection.
-// PARAMS:
-// - reqQueryFilter: an optional http request query string parameter (a string) containing the json query object
-//                   ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
+/**
+ * Return a Mongo query object, defining the selection criteria for a collection.
+ *
+ * @param {string} reqQueryFilter an optional http request query
+ * string parameter containing the json query object
+ * (ex: '{"_id":{"$in":["CS-1110","CS-1112"]}}').
+ * 
+ * @return {string} the desired Mongo sort object.
+ */
 export function mongoQuery(reqQueryFilter) {
 
   // default to return all documents in collection
@@ -66,10 +78,15 @@ export function mongoQuery(reqQueryFilter) {
 }
 
 
-// return a Mongo sort object, defining the sort order for a collection.
-// PARAMS:
-// - reqQuerySort: an optional http request query string parameter (a string) containing the json sort object
-//                   ... ex: /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
+/**
+ * Return a Mongo sort object, defining the sort order for a collection.
+ *
+ * @param {string} reqQuerySort an optional http request query
+ * string parameter containing the json sort object
+ * (ex: '{"lastName":1,"firstName":1,"birthday":-1}').
+ * 
+ * @return {string} the desired Mongo sort object.
+ */
 export function mongoSort(reqQuerySort) {
 
   // default to NO sort fields
