@@ -21,26 +21,6 @@ const courses = express.Router();
 //***           encodeJsonQueryStr(queryName, jsonObj) utility.
 //***           ... src/shared/util/QueryStrUtil.js
 //***
-//***   - DEPRECATED: use optional "fields" query-string to fine tune fields to emit ?? OBSOLETE
-//***     * specify comma delimited list of field names
-//***       ... see: coursesMeta.validFields for valid field names
-//***     * DEFAULT: coursesMeta.defaultDisplayFields will be emitted
-//***
-//***   - DEPRECATED: use optional "filter" query-string to supply selection criteria ?? OBSOLETE
-//***     * specify a JSON structure conforming to the MongoDB query structure
-//***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
-//***       ... ex:  /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-//***                ... returns info from two courses (CS-1110 and CS-1112)
-//***       ... ex:  /api/courses?filter={"subjDesc":"Applied & Engineering Physics"}
-//***                ... returns courses from the "Applied & Engineering Physics" field of study
-//***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
-//***     * DEFAULT: return ALL courses
-//***
-//***   - DEPRECATED: use optional "sort" query-string to define sort order of returned results ?? OBSOLETE
-//***     * specify a JSON structure conforming to the MongoDB sort structure
-//***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
-//***       ... ex:  /api/courses?sort={"academicGroup":1,"courseNum":1}
-//***
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {

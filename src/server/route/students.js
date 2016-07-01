@@ -22,26 +22,6 @@ const students = express.Router();
 //***           encodeJsonQueryStr(queryName, jsonObj) utility.
 //***           ... src/shared/util/QueryStrUtil.js
 //***
-//***   - DEPRECATED: use optional "fields" query-string to fine tune fields to emit ?? OBSOLETE
-//***     * specify comma delimited list of field names
-//***       ... see: studentsMeta.validFields for valid field names
-//***     * DEFAULT: studentsMeta.defaultDisplayFields will be emitted
-//***
-//***   - DEPRECATED: use optional "filter" query-string to supply selection criteria ?? OBSOLETE
-//***     * specify a JSON structure conforming to the MongoDB query structure
-//***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
-//***       ... ex:  /api/students?filter={"_id":{"$in":["S-001002","S-001989"]}}
-//***                ... returns info from two students (S-001002 AND S-001989)
-//***       ... ex:  /api/students?filter={"gender":"M","addr.state": "Missouri"}
-//***                ... returns all male students from Missouri
-//***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
-//***     * DEFAULT: return ALL students
-//***
-//***   - DEPRECATED: use optional "sort" query-string to define sort order of returned results ?? OBSOLETE
-//***     * specify a JSON structure conforming to the MongoDB sort structure
-//***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
-//***       ... ex:  /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
-//***
 //***************************************************************************************************
 
 students.get('/api/students', (req, res, next) => {
