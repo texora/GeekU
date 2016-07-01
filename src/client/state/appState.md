@@ -36,7 +36,7 @@ appState: {
 
     inProgress: 0,1,2, // truthy ... number of outstanding student requests
     selCrit: {
-      // common structure for ALL DB retrievals ... see [selCrit](#selcrit) (below) for details
+      // common structure for ALL DB retrievals ... see selCrit (below) for details
     },
     items: [
       { <studentIndx> || <studentDetail> },
@@ -54,7 +54,7 @@ appState: {
 
 ?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
 ?   selCrit: {
-      // common structure for ALL DB retrievals ... see [selCrit](#selcrit) (below) for details
+      // common structure for ALL DB retrievals ... see selCrit (below) for details
     },
 ?   items: [
 ?     { <courseIndx> || <courseDetail> },
