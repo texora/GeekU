@@ -35,8 +35,8 @@ appState: {
     detailEditMode: true/false
 
     inProgress: 0,1,2, // truthy ... number of outstanding student requests
-?   selCrit: {
-?     bla: 1
+    selCrit: {
+      // common structure for ALL DB retrievals ... see [selCrit](#selcrit) (below) for details
     },
     items: [
       { <studentIndx> || <studentDetail> },
@@ -54,12 +54,55 @@ appState: {
 
 ?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
 ?   selCrit: {
-?     bla: 1
+      // common structure for ALL DB retrievals ... see [selCrit](#selcrit) (below) for details
     },
 ?   items: [
 ?     { <courseIndx> || <courseDetail> },
       ...ditto...
     ],
   },
+}
+```
+
+
+
+### selCrit
+
+The GeekU App uses a common selCrit JSON structure to fine tune
+retrieval/sort functionality.  It contains a number of fields, some
+for user consumption, and others are machine-interpretable directives
+(fields, sort, filter).
+
+The following example is taken from a students collection and
+retrieves female students from MO/IN with a GPA over 3.65:
+
+```javascript
+selCrit: {
+  name:   "Female students from MO/IN with GPA over 3.65",
+  desc:   "optional longer description",
+  target: "students"/"courses", // identifies the targeted mongo collection
+  fields: [  // list of desired field names to emit ... DEFAULT: studentsMeta.defaultDisplayFields
+    "studentNum",
+    "firstName",
+    "lastName",
+    "addr.state",
+    "gpa"
+  ],
+  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: random order
+    "lastName": 1,
+    "firstName": 1
+  },
+  filter: {  // a mongo query object defining the selection criteria ... DEFAULT: ALL students
+    "gender": "F",
+    "addr.state": {
+      "$in": [
+        "Missouri",
+        "Indiana"
+      ]
+    },
+    "gpa": {
+      "$gt": "3.65"
+    }
+  }
 }
 ```

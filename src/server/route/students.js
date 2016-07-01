@@ -10,12 +10,24 @@ const students = express.Router();
 //***************************************************************************************************
 //*** retrieve a list of students: /api/students[?query-string ... see below]
 //***
-//***   - use optional "fields" query-string to fine tune fields to emit
+//***   - by default, all students will be retrieved, in random order, emitting fields defined in
+//***     studentsMeta.defaultDisplayFields.
+//***
+//***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
+//***
+//***     This is a common structure for ALL DB retrievals
+//***      ... see: src/client/state/appState.md for details
+//***
+//***     NOTE: Client's should always protect the data (above) by using the
+//***           encodeJsonQueryStr(queryName, jsonObj) utility.
+//***           ... src/shared/util/QueryStrUtil.js
+//***
+//***   - DEPRECATED: use optional "fields" query-string to fine tune fields to emit ?? OBSOLETE
 //***     * specify comma delimited list of field names
 //***       ... see: studentsMeta.validFields for valid field names
 //***     * DEFAULT: studentsMeta.defaultDisplayFields will be emitted
 //***
-//***   - use optional "filter" query-string to supply selection criteria
+//***   - DEPRECATED: use optional "filter" query-string to supply selection criteria ?? OBSOLETE
 //***     * specify a JSON structure conforming to the MongoDB query structure
 //***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
 //***       ... ex:  /api/students?filter={"_id":{"$in":["S-001002","S-001989"]}}
@@ -25,7 +37,7 @@ const students = express.Router();
 //***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
 //***     * DEFAULT: return ALL students
 //***
-//***   - use optional "sort" query-string to define sort order of returned results
+//***   - DEPRECATED: use optional "sort" query-string to define sort order of returned results ?? OBSOLETE
 //***     * specify a JSON structure conforming to the MongoDB sort structure
 //***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
 //***       ... ex:  /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
@@ -34,27 +46,13 @@ const students = express.Router();
 
 students.get('/api/students', (req, res, next) => {
 
-  // define our fields to display (a mongo projection) 
-  // tweaked from the optional client-supplied "fields" query-string
-  // ... ex: /api/students?fields=a,b,c
-  const displayFields = MongoUtil.mongoFields(studentsMeta.validFields,
-                                              studentsMeta.defaultDisplayFields,
-                                              req.query.fields);
-
-  // define our mongo filter object
-  // tweaked from the optional client-supplied "filter" query-string
-  // ... ex: /api/students?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-  const mongoFilter = MongoUtil.mongoFilter(req.query.filter);
-
-  // define our mongo sort object
-  // tweaked from the optional client-supplied "sort" query-string
-  // ... ex: /api/students?sort={"lastName":1,"firstName":1,"birthday":-1}
-  const mongoSort = MongoUtil.mongoSort(req.query.sort);
+  // define our optional top-level selCrit from the request object
+  const selCrit = MongoUtil.selCrit(req, studentsMeta);
 
   // perform retrieval
   const studentsColl = req.geekU.db.collection('Students');
-  studentsColl.find(mongoFilter, displayFields)
-              .sort(mongoSort)
+  studentsColl.find(selCrit.mongoFilter, selCrit.mongoFields)
+              .sort(selCrit.mongoSort)
               .toArray()
               .then( students => {
                 res.geekU.send(students);

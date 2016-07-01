@@ -3,6 +3,7 @@
 import assert                from 'assert';
 import Log                   from '../../shared/util/Log';
 import handleUnexpectedError from '../util/handleUnexpectedError';
+import {encodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
 
 const _actionLogCache = {}; // Key: Action Type, Value: Log instance
 const _thunks = _defineThunks();
@@ -251,7 +252,38 @@ function _defineThunks() {
   
         // perform async retrieval of students
         log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
-        geekUFetch('/api/students') // TODO: interpret selCrit ... for now: all Students (returning default fields)
+
+        // TODO: interpret selCrit ... for now: hard-code it for testing
+        // const url = '/api/students';
+        selCrit = {
+          // ? fields: [       // currently, our display is limited to the default fields
+          // ?   "studentNum",
+          // ?   "firstName",
+          // ?   "lastName",
+          // ?   "addr.state",
+          // ?   "gpa"
+          // ? ],
+          sort: {
+            lastName: 1,
+            firstName: 1
+          },
+          filter: { // all female students in MO/IN with GPA >= 3.65
+            // "gender": "F",
+            "addr.state": {
+              "$in": [
+                "Missouri",
+                "Indiana"
+              ]
+            },
+            // "gpa": {
+            //   "$gte": "3.65"
+            // }
+          }
+        };
+        const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
+        log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
+
+        geekUFetch(url)
           .then( res => {
             // sync app with results
             const students = res.payload;

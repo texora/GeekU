@@ -6,16 +6,27 @@ import * as MongoUtil from '../util/MongoUtil';
 
 const courses = express.Router();
 
-
 //***************************************************************************************************
 //*** retrieve a list of courses: /api/courses[?query-string ... see below]
 //***
-//***   - use optional "fields" query-string to fine tune fields to emit
+//***   - by default, all courses will be retrieved, in random order, emitting fields defined in
+//***     coursesMeta.defaultDisplayFields.
+//***
+//***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
+//***
+//***     This is a common structure for ALL DB retrievals
+//***      ... see: src/client/state/appState.md for details
+//***
+//***     NOTE: Client's should always protect the data (above) by using the
+//***           encodeJsonQueryStr(queryName, jsonObj) utility.
+//***           ... src/shared/util/QueryStrUtil.js
+//***
+//***   - DEPRECATED: use optional "fields" query-string to fine tune fields to emit ?? OBSOLETE
 //***     * specify comma delimited list of field names
 //***       ... see: coursesMeta.validFields for valid field names
 //***     * DEFAULT: coursesMeta.defaultDisplayFields will be emitted
 //***
-//***   - use optional "filter" query-string to supply selection criteria
+//***   - DEPRECATED: use optional "filter" query-string to supply selection criteria ?? OBSOLETE
 //***     * specify a JSON structure conforming to the MongoDB query structure
 //***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
 //***       ... ex:  /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
@@ -25,7 +36,7 @@ const courses = express.Router();
 //***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
 //***     * DEFAULT: return ALL courses
 //***
-//***   - use optional "sort" query-string to define sort order of returned results
+//***   - DEPRECATED: use optional "sort" query-string to define sort order of returned results ?? OBSOLETE
 //***     * specify a JSON structure conforming to the MongoDB sort structure
 //***       ... see: https://docs.mongodb.com/manual/reference/method/cursor.sort/
 //***       ... ex:  /api/courses?sort={"academicGroup":1,"courseNum":1}
@@ -34,27 +45,14 @@ const courses = express.Router();
 
 courses.get('/api/courses', (req, res, next) => {
 
-  // define our fields to display (a mongo projection) 
-  // tweaked from the optional client-supplied "fields" query-string
-  // ... ex: /api/courses?fields=a,b,c
-  const displayFields = MongoUtil.mongoFields(coursesMeta.validFields,
-                                              coursesMeta.defaultDisplayFields,
-                                              req.query.fields);
-
-  // define our mongo filter object
-  // tweaked from the optional client-supplied "filter" query-string
-  // ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-  const mongoFilter = MongoUtil.mongoFilter(req.query.filter);
-
-  // define our mongo sort object
-  // tweaked from the optional client-supplied "sort" query-string
-  // ... ex: /api/courses?sort={"academicGroup":1,"courseNum":1}
-  const mongoSort = MongoUtil.mongoSort(req.query.sort);
+  // define our optional top-level selCrit from the request object
+  const selCrit = MongoUtil.selCrit(req, coursesMeta);
 
   // perform retrieval
   const coursesColl = req.geekU.db.collection('Courses');
-  coursesColl.find(mongoFilter, displayFields)
-             .sort(mongoSort)  .toArray()
+  coursesColl.find(selCrit.mongoFilter, selCrit.mongoFields)
+             .sort(selCrit.mongoSort)
+             .toArray()
              .then( courses => {
                res.geekU.send(courses);
              })

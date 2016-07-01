@@ -17,6 +17,7 @@ const logConfig = Log.config({
     'GeekU':             'none',
     'GeekU.ProcessFlow': ['none', ` <dl> <dt> WARN:   </dt> <dd> for NO probes </dd>
                                          <dt> INFO:   </dt> <dd> see enter/exit points </dd>
+                                         <dt> DEBUG:  </dt> <dd> see service logic </dd>
                                          <dt> TRACE:  </dt> <dd> include returned payload<br/><i>CAUTION: payloads may be BIG</i> </dd>
                                     </dl>`],
   },
