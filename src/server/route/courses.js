@@ -28,6 +28,11 @@ courses.get('/api/courses', (req, res, next) => {
   // define our optional top-level selCrit from the request object
   const selCrit = MongoUtil.selCrit(req, coursesMeta);
 
+  // force courseNum to always be emitted
+  if (!selCrit.mongoFields.courseNum) {
+    selCrit.mongoFields.courseNum = true;
+  }
+
   // perform retrieval
   const coursesColl = req.geekU.db.collection('Courses');
   coursesColl.find(selCrit.mongoFilter, selCrit.mongoFields)

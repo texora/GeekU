@@ -4,6 +4,7 @@ import React              from 'react';
 import ReduxUtil          from '../util/ReduxUtil';
 
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+import studentsMeta       from '../../shared/model/studentsMeta';
 
 import {AC}               from '../state/actions';
 
@@ -38,10 +39,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     render() {
-      const { inProgress, students, selectedStudent, hoveredStudent, studentsShown, detailStudent, selectStudentFn, hoverStudentFn, detailStudentFn } = this.props;
-
-      // ?? use this in <Table attr=> to show detail student
-      //    ... onCellClick={this.showStudent}
+      const { inProgress, selCrit, students, selectedStudent, hoveredStudent, studentsShown, detailStudent, selectStudentFn, hoverStudentFn, detailStudentFn } = this.props;
 
       const myStyle = {
         margin:    '15px auto', // 15px spacing top/bottom, center left/right
@@ -53,9 +51,10 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         // 'available' still big
         // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
       };
+
       // we actually hide the students if NOT displayed as an attempted optimization for large list
-      // ... doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
-      // >>> one side-benefit is that we retain scrolling state from previous renderings
+      // ... one side-benefit is that we retain scrolling state from previous renderings
+      //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
       if (!studentsShown) {
         myStyle.display = 'none';
       }
@@ -73,6 +72,39 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                                            style={{display:  'inline-block',
                                                    position: 'relative'}}/>
       const inProgressIndicator =  inProgress ? refreshInd : <i/>;
+
+      // analyze fullName construct based on optional sort order of first/last
+      // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
+      function analyzeFirstNameFirst() {
+        const sortFields = (selCrit && selCrit.sort) ? Object.keys(selCrit.sort) : []; // in precedence order
+        for (const field of sortFields) {
+          if (field === 'firstName')
+            return true;
+          if (field === 'lastName')
+            return false;
+        }
+        return true; // default
+      }
+      const displayFirstNameFirst = analyzeFirstNameFirst();
+
+      // define the order that our columns are displayed (based on selCrit)
+      const displayFieldOrder = (selCrit && selCrit.fields)
+              ? selCrit.fields
+                // default found in student meta info
+              : Object.keys(studentsMeta.defaultDisplayFields);
+              // ?   // TECHNICALLY: only should include items with a true value // ??? keep as example, eliminate when in version control
+              // ? : Object.keys(studentsMeta.defaultDisplayFields).reduce( (accum, field) => { 
+              // ?     if (studentsMeta.defaultDisplayFields[field]) {
+              // ?       accum.push(field);
+              // ?     }
+              // ?     return accum;
+              // ?   }, []);
+
+      // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
+      const fieldsInDisplay = displayFieldOrder.reduce( (obj, field) => {
+        obj[field] = true;
+        return obj;
+      }, {});
 
       return <Paper className="app-content"
                     style={myStyle}
@@ -115,41 +147,115 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                        displayRowCheckbox={false}
                        showRowHover={true}
                        stripedRows={false}>
-              {/* Alternative to Avatar (may be too expensive for a LARGE list)
-              <Avatar src={`https://robohash.org/${student.firstName+student.lastName}.bmp?size=100x100&set=set2&bgset=any`} size={20}/>
-              - vs -
-              <FontIcon className="material-icons" color={colors.blue900}>face</FontIcon>
-              <FontIcon className="material-icons" color={colors.blue900}>person</FontIcon>
-              */}
+
               { students.map( (student, indx) => {
+
+                  // NOTE: student.studentNum is always emitted (enforced by server)
+
                   if (indx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
                     return '';
                   }
 
                   const genderColor = student.gender==='M' ? colors.blue900 : colors.pink300;
+                  const genderDisp  = fieldsInDisplay.gender // gendor-icon - alternative to Avatar (simply too expensive for LARGE lists)
+                                        ? <FontIcon className="material-icons" color={genderColor}>person</FontIcon>
+                                        : null;
 
-                  const hoverControls = <i style={{
-                                             cursor:     'pointer',
-                                             // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
-                                             visibility: hoveredStudent===student ? 'visible' : 'hidden'
-                                           }}>
-                                          <FontIcon className="material-icons" color={colors.grey700} onClick={()=>detailStudentFn(student.studentNum, false)}>portrait</FontIcon>
-                                          <FontIcon className="material-icons" color={colors.red900}  onClick={()=>detailStudentFn(student.studentNum, true)}>edit</FontIcon>
-                                        </i>;
                   
+                  // format fullName based on optional sort order of first/last ... 'Bridges, Kevin' ... or 'Kevin Bridges'
+                  let fullName = '';
+                  if (displayFirstNameFirst) {
+                    if (fieldsInDisplay.firstName) {
+                      fullName += student.firstName;
+                    }
+                    if (fieldsInDisplay.lastName) {
+                      fullName += (fullName ? ' ' : '') + student.lastName;
+                    }
+                  }
+                  else {
+                    if (fieldsInDisplay.lastName) {
+                      fullName += student.lastName;
+                    }
+                    if (fieldsInDisplay.firstName) {
+                      fullName += (fullName ? ', ' : '') + student.firstName;
+                    }
+                  }
+
+                  // group studentEssentials in one field ... displays much better in <TableRow>
+                  const studentEssentials = <TableRowColumn key={`${student.studentNum}-studentEssentials`}>
+                                              {genderDisp}
+                                              {fullName}
+                                              {fieldsInDisplay.studentNum ? <i>{` (${student.studentNum})`}</i> : <i/>}
+                                            </TableRowColumn>;
+
+
+                  // define the control buttons to use when row is 'hovered' over
+                  const hoverControls = <TableRowColumn key={`${student.studentNum}-hoverControls`}>
+                                          <i style={{
+                                               cursor:     'pointer',
+                                               // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
+                                               visibility: hoveredStudent===student ? 'visible' : 'hidden'
+                                             }}>
+                                            <FontIcon className="material-icons" color={colors.grey700} onClick={()=>detailStudentFn(student.studentNum, false)}>portrait</FontIcon>
+                                            <FontIcon className="material-icons" color={colors.red900}  onClick={()=>detailStudentFn(student.studentNum, true)}>edit</FontIcon>
+                                          </i>
+                                        </TableRowColumn>;
+
+                  // maintain indicator as to whether studentEssentials have been displayed (only do once per row)
+                  let studentEssentialsDisplayed = false;
+
                   return (
                     <TableRow key={student.studentNum} 
                               selected={student===selectedStudent}>
-                      <TableRowColumn>
-                        <FontIcon className="material-icons" color={genderColor}>person</FontIcon>
-                        {student.firstName} {student.lastName}
-                        <i>{` (${student.studentNum})`}</i>
-                      </TableRowColumn>
-                      <TableRowColumn>{hoverControls}</TableRowColumn>
-                      <TableRowColumn>{student.degree}</TableRowColumn>
-                      <TableRowColumn>{student.graduation || ''}</TableRowColumn>
-                      <TableRowColumn><i>GPA</i>: {student.gpa}</TableRowColumn>
-                      <TableRowColumn><i>birth</i>: {student.birthday}</TableRowColumn>
+
+                      { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit
+
+                          // our fieldDisplayCntl provides additional control on how each field is displayed
+                          const fieldDisplayCntl = _fieldDisplayCntl[field];
+
+                          // never displayed (rare)
+                          if (!fieldDisplayCntl) {
+                            return null;
+                          }
+
+                          // display as part of our studentEssentials aggregate
+                          else if (fieldDisplayCntl==='#studentEssentials#') {
+                            if (studentEssentialsDisplayed) {
+                              return null;
+                            }
+                            studentEssentialsDisplayed = true;
+                            return [
+                              studentEssentials,
+                              hoverControls
+                            ];
+                          }
+
+                          // display through hybrid function (ex: 'addr' handled by formatting entire address)
+                          else if (typeof fieldDisplayCntl === 'function') {
+
+                            const fieldValue = fieldDisplayCntl(student);
+                            
+                            return fieldValue
+                                     ? <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldValue}</TableRowColumn>
+                                     : null;
+                          }
+
+                          // plain display of unformatted field (with optional label)
+                          else {
+                            const fieldLabel = typeof fieldDisplayCntl === 'string' ? <i>{fieldDisplayCntl}</i> : '';
+
+                            const fieldValue = student[field]
+                                                  // normal case
+                                                ? student[field]
+                                                  // handle dotted fields (ex: 'addr.state') by dereferencing (ex: student['addr']['state'])
+                                                : field.split('.').reduce( (obj, node) => obj ? obj[node] : null, student);
+
+                            return fieldValue
+                                     ? <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldLabel} {fieldValue}</TableRowColumn>
+                                     : null;
+                          }
+                        })}
+
                     </TableRow>
                   );
                 })}
@@ -165,6 +271,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         inProgress:      appState.students.inProgress ? true : false,
+        selCrit:         appState.students.selCrit,
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
         hoveredStudent:  appState.students.hoveredStudent,
@@ -196,3 +303,39 @@ Students.propTypes = {
 }
 
 export default Students;
+
+
+
+
+// define our control structure of how individual fields are displayed
+// ... possible values:
+//     - true:                 display plain (without a label)
+//     - false:                never display (rare) ... same as non-existent entry (ex: '_id')
+//     - '#studentEssentials#' displayed as part of a studentEssentials grouping (first field hit displays all studentEssentials)
+//     - string:               displays with defined label
+//     - function(student)     invoke function, returning content to display
+const _fieldDisplayCntl = {
+  'studentNum':  '#studentEssentials#',
+  'gender':      '#studentEssentials#',
+  'firstName':   '#studentEssentials#',
+  'lastName':    '#studentEssentials#',
+  'birthday':    'birth:',
+  'phone':       true,
+  'email':       true,
+  'addr':        (student) => {
+                   const addr = student.addr;
+                   return <span>
+                            {addr.line1}<br/>
+                            {addr.line2 ? <span>{addr.line2}<br/></span> : <i/>}
+                            {addr.city}, {addr.state}  {addr.zip}
+                          </span>
+                 },
+  'addr.line1':  true,
+  'addr.line2':  true,
+  'addr.city':   true,
+  'addr.state':  'from:',
+  'addr.zip':    true,
+  'gpa':         'GPA',
+  'graduation':  true,
+  'degree':      true,
+};

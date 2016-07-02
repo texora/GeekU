@@ -31,7 +31,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     render() {
       const { mainPage, selectedStudent, changeMainPageFn, sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
 
-      const selectedStudentName = selectedStudent ? `(${selectedStudent.firstName})` : '';
+      // studentNum is used as a back-up if name is NOT retrieved (studentNum is ALWAYS returned)
+      const selectedStudentName = selectedStudent ? `(${selectedStudent.firstName || selectedStudent.lastName || selectedStudent.studentNum})` : '';
 
       return <div className="app">
         <AppBar className="app-header"

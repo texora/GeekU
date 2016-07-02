@@ -29,6 +29,11 @@ students.get('/api/students', (req, res, next) => {
   // define our optional top-level selCrit from the request object
   const selCrit = MongoUtil.selCrit(req, studentsMeta);
 
+  // force studentNum to always be emitted
+  if (!selCrit.mongoFields.studentNum) {
+    selCrit.mongoFields.studentNum = true;
+  }
+
   // perform retrieval
   const studentsColl = req.geekU.db.collection('Students');
   studentsColl.find(selCrit.mongoFilter, selCrit.mongoFields)

@@ -256,16 +256,24 @@ function _defineThunks() {
         // TODO: interpret selCrit ... for now: hard-code it for testing
         // const url = '/api/students';
         selCrit = {
-          // ? fields: [       // currently, our display is limited to the default fields
-          // ?   "studentNum",
-          // ?   "firstName",
-          // ?   "lastName",
-          // ?   "addr.state",
-          // ?   "gpa"
-          // ? ],
+          fields: [
+            'graduation',
+            
+            'gender',     // these are all part of studentEssentials (grouped our display logic forces them to render together)
+            'firstName',
+            'lastName',
+            'studentNum',
+            
+            'degree',
+            'gpa',
+            // 'birthday',
+            // 'addr',
+            // 'addr.state',
+          ],
           sort: {
+            graduation: -1,
             lastName: 1,
-            firstName: 1
+            firstName: 1,
           },
           filter: { // all female students in MO/IN with GPA >= 3.65
             // "gender": "F",
