@@ -90,15 +90,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       // define the order that our columns are displayed (based on selCrit)
       const displayFieldOrder = (selCrit && selCrit.fields)
               ? selCrit.fields
-                // default found in student meta info
-              : Object.keys(studentsMeta.defaultDisplayFields);
-              // ?   // TECHNICALLY: only should include items with a true value // ??? keep as example, eliminate when in version control
-              // ? : Object.keys(studentsMeta.defaultDisplayFields).reduce( (accum, field) => { 
-              // ?     if (studentsMeta.defaultDisplayFields[field]) {
-              // ?       accum.push(field);
-              // ?     }
-              // ?     return accum;
-              // ?   }, []);
+              : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
 
       // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
       const fieldsInDisplay = displayFieldOrder.reduce( (obj, field) => {
