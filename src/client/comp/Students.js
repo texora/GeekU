@@ -59,20 +59,6 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         myStyle.display = 'none';
       }
 
-      // NOTE: Our retrieval is SO FAST, I am using a determinate mode because the animation is starting so small there is no time to see it
-      // NOTE: <CircularProgress> is VERY HOAKY ... insists on 50px by 50px outer rectangle (NO WAY TO DECREASE)
-      //       const inProgressIndicator =  inProgress ? <CircularProgress size={0.3} color={colors.white}/> : <i/>;
-      // NOTE: <RefreshIndicator> is NOT MUCH BETTER ... any size under 50 has mucho transformation problems
-      const refreshInd = <RefreshIndicator size={50}
-                                           top={10}
-                                           left={60}
-                                           percentage={80}
-                                           color={"red"}
-                                           status="ready"
-                                           style={{display:  'inline-block',
-                                                   position: 'relative'}}/>
-      const inProgressIndicator =  inProgress ? refreshInd : <i/>;
-
       // analyze fullName construct based on optional sort order of first/last
       // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
       function analyzeFirstNameFirst() {
@@ -113,7 +99,11 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   style={{
                     backgroundColor: colors.blueGrey700, // also like lime900
                   }}
-                  title={<i>Students{inProgressIndicator}</i>}
+                  title={<span>
+                           <i>Students</i>
+                           {inProgress && refreshInd}
+                           <i style={{fontSize: 12}}> ... {selCrit && selCrit.name}</i>
+                         </span>}
                   iconElementLeft={<i/>}
                   iconElementRight={
                     <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
@@ -297,6 +287,19 @@ Students.propTypes = {
 export default Students;
 
 
+ 
+// NOTE: Our retrieval is SO FAST, I am using a determinate mode because the animation is starting so small there is no time to see it
+// NOTE: <CircularProgress> is VERY HOAKY ... insists on 50px by 50px outer rectangle (NO WAY TO DECREASE)
+//       <CircularProgress size={0.3} color={colors.white}/> : <i/>;
+// NOTE: <RefreshIndicator> is NOT MUCH BETTER ... any size under 50 has mucho transformation problems
+const refreshInd = <RefreshIndicator size={50}
+                                     top={10}
+                                     left={60}
+                                     percentage={80}
+                                     color={"red"}
+                                     status="ready"
+                                     style={{display:  'inline-block',
+                                             position: 'relative'}}/>
 
 
 // define our control structure of how individual fields are displayed

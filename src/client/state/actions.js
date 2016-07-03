@@ -256,6 +256,9 @@ function _defineThunks() {
         // TODO: interpret selCrit ... for now: hard-code it for testing
         // const url = '/api/students';
         selCrit = {
+          name: 'from: Missouri/Indiana, ordered by: Graduation/Name',
+          desc: 'Even though the state is not shown, believe me ... this is Missourt/Indiana',
+          tartet: 'students',
           fields: [
             'graduation',
             
