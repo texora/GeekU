@@ -78,9 +78,11 @@ retrieves female students from MO/IN with a GPA over 3.65:
 
 ```javascript
 selCrit: {
+
   name:   "Female students from MO/IN with GPA over 3.65",
   desc:   "optional longer description",
   target: "students"/"courses", // identifies the targeted mongo collection
+
   fields: [  // list of desired field names to emit ... DEFAULT: studentsMeta.defaultDisplayFields
     "studentNum",
     "firstName",
@@ -88,10 +90,13 @@ selCrit: {
     "addr.state",
     "gpa"
   ],
+
   sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: random order
     "lastName": 1,
     "firstName": 1
   },
+  distinguishMajorSortField: boolean: // supporting a visual break when values from the major-sort field changes
+
   filter: {  // a mongo query object defining the selection criteria ... DEFAULT: ALL students
     "gender": "F",
     "addr.state": {

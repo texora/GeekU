@@ -277,9 +277,10 @@ function _defineThunks() {
           ],
           sort: {
             graduation: -1,
-            lastName: 1,
             firstName: 1,
+            lastName: 1,
           },
+          distinguishMajorSortField: true,
           filter: { // all female students in MO/IN with GPA >= 3.65
             // "gender": "F",
             "addr.state": {

@@ -61,8 +61,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
 
       // analyze fullName construct based on optional sort order of first/last
       // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
+      const sortFields = (selCrit && selCrit.sort) ? Object.keys(selCrit.sort) : []; // in precedence order
       function analyzeFirstNameFirst() {
-        const sortFields = (selCrit && selCrit.sort) ? Object.keys(selCrit.sort) : []; // in precedence order
         for (const field of sortFields) {
           if (field === 'firstName')
             return true;
@@ -83,6 +83,10 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         obj[field] = true;
         return obj;
       }, {});
+
+      // setup control structures supporting a visual break when values from the major-sort field changes
+      let curMajorSortValue, lastMajorSortValue = null;
+      const majorSortField = sortFields[0];
 
       return <Paper className="app-content"
                     style={myStyle}
@@ -129,11 +133,11 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                        showRowHover={true}
                        stripedRows={false}>
 
-              { students.map( (student, indx) => {
+              { students.map( (student, studentIndx) => {
 
                   // NOTE: student.studentNum is always emitted (enforced by server)
 
-                  if (indx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
+                  if (studentIndx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
                     return '';
                   }
 
@@ -185,8 +189,16 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   // maintain indicator as to whether studentEssentials have been displayed (only do once per row)
                   let studentEssentialsDisplayed = false;
 
+                  // provide a visual break when the major-sort field changes
+                  curMajorSortValue = majorSortField ? student[majorSortField] : null;
+                  const majorSortBreakStyle = selCrit.distinguishMajorSortField && curMajorSortValue !== lastMajorSortValue && studentIndx !== 0
+                                                ? {borderTop: '2px solid'}
+                                                : {};
+                  lastMajorSortValue = curMajorSortValue;
+                  
                   return (
-                    <TableRow key={student.studentNum} 
+                    <TableRow key={student.studentNum}
+                              style={majorSortBreakStyle}
                               selected={student===selectedStudent}>
 
                       { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit

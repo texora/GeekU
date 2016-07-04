@@ -26,6 +26,7 @@ const _selCrit = Redux.combineReducers({
 
   fields: placebo,
   sort:   placebo,
+  distinguishMajorSortField: placebo,
   filter: placebo,
 
   editing,
