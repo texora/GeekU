@@ -39,7 +39,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         mainPage: appState.mainPage,
-        haveStudentsBeenFetched: appState.students.selCrit, // TODO: hoaky work-around till we support batching of thunks
+        haveStudentsBeenFetched: appState.students.selCrit.target, // TODO: hoaky work-around till we support batching of thunks
       }
     },
     mapDispatchToProps(dispatch, ownProps) {

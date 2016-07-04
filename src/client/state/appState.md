@@ -104,5 +104,9 @@ selCrit: {
       "$gt": "3.65"
     }
   }
+
+  editing:  boolean, // indicator as to whether selCrit is being edited (i.e. a Dialog is open on this selCrit)
+  dbHash:   "hash",  // current hash of the selCrit in our persistent DB
+  editHash: "hash",  // current hash of THIS selCrit (if !=== dbHash, then a save is needed to sync to DB)
 }
 ```
