@@ -91,6 +91,8 @@ const genesis = {
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
+  'editStudentsSelCrit':       { params: [] },
+  'editStudentsSelCrit.close': { params: [] },
 };
 
 // AT: Action Types container object
