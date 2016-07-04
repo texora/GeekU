@@ -232,9 +232,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                                                   // handle dotted fields (ex: 'addr.state') by dereferencing (ex: student['addr']['state'])
                                                 : field.split('.').reduce( (obj, node) => obj ? obj[node] : null, student);
 
-                            return fieldValue
-                                     ? <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldLabel} {fieldValue}</TableRowColumn>
-                                     : null;
+                            return <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldLabel} {fieldValue}</TableRowColumn>
                           }
                         })}
 
