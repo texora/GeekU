@@ -91,8 +91,9 @@ const genesis = {
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
-  'editStudentsSelCrit':       { params: [] },
-  'editStudentsSelCrit.close': { params: [] },
+  'editStudentsSelCrit':              { params: [] },
+  'editStudentsSelCrit.fieldsChange': { params: ['fields'] },
+  'editStudentsSelCrit.close':        { params: [] },
 };
 
 // AT: Action Types container object
@@ -258,16 +259,17 @@ function _defineThunks() {
         // TODO: interpret selCrit ... for now: hard-code it for testing
         // const url = '/api/students';
         selCrit = {
-          name:   'from: Missouri/Indiana, ordered by: Graduation/Name',
-          desc:   'Even though the state is not shown, believe me ... this is Missourt/Indiana',
+          name:   'MO/IN',
+          desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
           target: 'students',
           fields: [
-            'graduation',
             
             'gender',     // these are all part of studentEssentials (grouped our display logic forces them to render together)
             'firstName',
             'lastName',
             'studentNum',
+
+            'graduation',
             
             'degree',
             'gpa',

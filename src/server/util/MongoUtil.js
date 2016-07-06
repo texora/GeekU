@@ -49,7 +49,7 @@ export function selCrit(req, meta) {
 
     selCrit.mongoFields = selCrit.fields.reduce( (projection, field) => {
       field = field.trim();
-      if (!meta.validFields[field]) {
+      if (meta.validFields[field] === undefined) {
         const msg = `Invalid field ('${field}') specified in request query-string parameter`
         throw new Error(msg).defineClientMsg(msg)
                             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);

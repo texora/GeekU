@@ -61,7 +61,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
 
       // analyze fullName construct based on optional sort order of first/last
       // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
-      const sortFields = (selCrit && selCrit.sort) ? Object.keys(selCrit.sort) : []; // in precedence order
+      const sortFields = Object.keys(selCrit.sort || {}); // in precedence order
       function analyzeFirstNameFirst() {
         for (const field of sortFields) {
           if (field === 'firstName')
@@ -74,7 +74,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       const displayFirstNameFirst = analyzeFirstNameFirst();
 
       // define the order that our columns are displayed (based on selCrit)
-      const displayFieldOrder = (selCrit && selCrit.fields)
+      const displayFieldOrder = selCrit.fields
               ? selCrit.fields
               : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
 
@@ -106,7 +106,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   title={<span>
                            <i>Students</i>
                            {inProgress && refreshInd}
-                           <i style={{fontSize: 12}}> ... {selCrit && selCrit.name}</i>
+                           <i style={{fontSize: 12}}> ... {selCrit.name} {selCrit.desc}</i>
                          </span>}
                   iconElementLeft={<i/>}
                   iconElementRight={
@@ -263,7 +263,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         inProgress:      appState.students.inProgress ? true : false,
-        selCrit:         appState.students.selCrit,
+        selCrit:         appState.students.selCrit || {},
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
         hoveredStudent:  appState.students.hoveredStudent,

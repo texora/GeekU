@@ -11,24 +11,27 @@
 const studentsMeta = {
 
   // valid fields that make up the Students collection
+  // ... from a validation perspective, a non-existent entry (fieldLabel of undefined)
+  // ... a value of null (i.e. null fieldLabel) is NOT publically promoted in user-defined selCrit
   validFields: {
-    '_id':         '_id',
-    'studentNum':  'studentNum',
-    'gender':      'gender',
-    'firstName':   'firstName',
-    'lastName':    'lastName',
-    'birthday':    'birthday',
-    'phone':       'phone',
-    'email':       'email',
-    'addr':        'addr',       // when addr only emitted, all sub-fields are included
-    'addr.line1':  'addr.line1', // can emit individual sub-field (ex: 'addr.state': true)
-    'addr.line2':  'addr.line2',
-    'addr.city':   'addr.city',
-    'addr.state':  'addr.state',
-    'addr.zip':    'addr.zip',
-    'gpa':         'gpa',
-    'graduation':  'graduation',
-    'degree':      'degree'
+//  fieldName (DB):  fieldLabel (null for non-public)
+    '_id':           null,
+    'studentNum':    'Student Num',
+    'gender':        'Gender',
+    'firstName':     'First Name',
+    'lastName':      'Last Name',
+    'birthday':      'Birthday',
+    'phone':         'Phone',
+    'email':         'Email',
+    'addr':          'Address',    // when addr only emitted, all sub-fields are included
+    'addr.line1':    null,         // ... can emit individual sub-field (ex: 'addr.state': true)
+    'addr.line2':    null,
+    'addr.city':     null,
+    'addr.state':    'From',
+    'addr.zip':      null,
+    'gpa':           'GPA',
+    'graduation':    'Graduation Term',
+    'degree':        'Degree'
   },
 
   // default fields to display in a Students retrieval (a mongo projection)
