@@ -58,7 +58,7 @@ const StudentsSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         <div style={{width: '100%'}}>
           <span style={{color: 'grey'}}>Display Fields <i>(note that Gender/Name/StudentNum are always grouped together)</i>:</span><br/>
           <Select value={selCrit.fields}
-                  options={validFields} 
+                  options={fieldOptions} 
                   multi={true}
                   resetValue={[]}
                   valueComponent={FieldValue}
@@ -109,21 +109,21 @@ export default StudentsSelCrit;
 
 
 /**
- * Valid Fields promoted to the user (via studentsMeta.validFields).
- * ... value/label used in react-select
+ * Field options promoted to the user (derived from studentsMeta.validFields).
+ * ... value/label used in react-select <Select>
  */
-const validFields = [];
+const fieldOptions = [];
 for (const fieldName in studentsMeta.validFields) {
   const fieldLabel = studentsMeta.validFields[fieldName];
   if (fieldLabel) {
-    validFields.push( { value: fieldName, label: fieldLabel} );
+    fieldOptions.push( { value: fieldName, label: fieldLabel} );
   }
 }
 
 
 
 /**
- * The FieldValue component provides a custom control for the selected fields to display.
+ * FieldValue custom control for field selection in react-select <Select>
  */
 const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
 
