@@ -45,7 +45,7 @@ export function selCrit(req, meta) {
   // resolve our generated mongo fields
 
   // ... selCrit.mongoFields
-  if (selCrit.fields) {
+  if (selCrit.fields && selCrit.fields.length > 0) {
 
     selCrit.mongoFields = selCrit.fields.reduce( (projection, field) => {
       field = field.trim();

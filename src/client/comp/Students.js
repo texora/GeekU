@@ -74,7 +74,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       const displayFirstNameFirst = analyzeFirstNameFirst();
 
       // define the order that our columns are displayed (based on selCrit)
-      const displayFieldOrder = selCrit.fields
+      const displayFieldOrder = selCrit.fields && selCrit.fields.length > 0
               ? selCrit.fields
               : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
 

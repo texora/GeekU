@@ -83,7 +83,7 @@ selCrit: {
   desc:   "optional longer description",
   target: "students"/"courses", // identifies the targeted mongo collection
 
-  fields: [  // list of desired field names to emit ... DEFAULT: null, deferring to default fields (via meta.defaultDisplayFields)
+  fields: [  // list of desired field names to emit ... DEFAULT: null/[] deferring to default fields (via meta.defaultDisplayFields)
     "studentNum",
     "firstName",
     "lastName",
@@ -91,13 +91,14 @@ selCrit: {
     "gpa"
   ],
 
-  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: null for NO sort
-    "lastName": 1,
-    "firstName": 1
+  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: null/{} for NO sort
+    "graduation": -1,
+    "lastName":    1,
+    "firstName":   1
   },
   distinguishMajorSortField: boolean: // supporting a visual break when values from the major-sort field changes
 
-  filter: {  // a mongo query object defining the selection criteria ... DEFAULT: ALL students
+  filter: {  // a mongo query object defining the selection criteria ... DEFAULT: null/{} for ALL students
     "gender": "F",
     "addr.state": {
       "$in": [
