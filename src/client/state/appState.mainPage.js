@@ -13,7 +13,7 @@ const subReducer = new ReduxSubReducer('appState.mainPage', {
   [AT.changeMainPage](mainPage, action) {
     return [
       action.mainPage,
-      ()=>`set mainPage to: '${action.mainPage}'`
+      ()=>`set mainPage from action.mainPage: '${action.mainPage}'`
     ];
   },
 

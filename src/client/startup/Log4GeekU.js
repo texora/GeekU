@@ -33,16 +33,17 @@ const logConfig = Log.config({
     'middleware.errorHandler': 'none',
     'middleware.batchHandler': 'none',
     'middleware.actionLogger': 'none',
-    
 
     'actions':           ['none', ` <dl> <dt> FOLLOW: </dt> <dd> see dispatched action enter/exit points </dd>
                                          <dt> DEBUG:  </dt> <dd> include action app logic (in thunks) </dd>
                                          <dt> TRACE:  </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
-    'appState':          ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see reducer app logic </dd>
-                                    </dl> ... may apply lower (ex: 'appState.userMsg')`],
-
+    'appState':          ['DEBUG', ` <dl> <dt> FOLLOW: </dt> <dd> monitor reducer state changes only </dd>
+                                          <dt> DEBUG:  </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
+                                          <dt> TRACE:  </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
+                                     </dl> ... may apply lower (ex: 'appState.userMsg')`],
+    'appState.students.hoveredStudent': ['INFO', 'INFO - turn off probes (way too much content from simply hovering)'],
 
     'autoBindAllMethods': 'none',
   },

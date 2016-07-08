@@ -104,7 +104,7 @@ export default GeekUApp;
 
 function aggregateTest() {
   const selCrit = {
-    l8tr: 'Aggregate Test',
+    // l8tr: 'Aggregate Test',
   };
 
   // here is the redux-batched-updates enhanced reducer ( THIS WORKS ... FINALLY )

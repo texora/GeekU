@@ -62,13 +62,29 @@ class ReduxSubReducer {
     const subReducer = this.subReducer[action.type];
     const [nextState, subLogMsgFn] = subReducer
                                       ? subReducer(state, action) 
-                                      : [state, ()=>'using current state'];
+                                      : [state, null];
 
-    this.log.debug(()=> {
-      const qualify = subReducer 
-                        ? `sub-reducer: ${subLogMsgFn()}`
-                        : `${subLogMsgFn()}`;
-      return `in reducer: ${this.reducerName} for action: '${action.type}' ... ${qualify}`
+
+    // apply a VERY useful log process, that distinguishes between state changes,
+    // allowing FOLLOW/DEBUG enablement at a top-level with useful insight -AND- minimal output!
+    // Log Levels: 
+    //   FOLLOW: monitor reducer state changes only
+    //   DEBUG:  include explicit reducer logic action reasoning (regardless if state changes)
+    //   TRACE:  include ALL reducer enter/exit points (NO real value - simply shows ALL appState reducers)
+    const logIt = ((state !== nextState)
+                     ? this.log.follow     // state change - use log.follow()
+                     : (subReducer)
+                         ? this.log.debug  // no state change, but app-specific logic - use log.debug()
+                         : this.log.trace) // no state change, and no app-logic = use log.trace()
+                   .bind(this.log);
+    logIt(()=> {
+      const stateChanged  = state !== nextState
+                              ? '(STATE CHANGED)'
+                              : '(*NO* state change)';
+      const subReducerMsg = subReducer 
+                              ? `... sub-reducer: ${subLogMsgFn()}`
+                              : '';
+      return `Reducer: ${this.reducerName}, Action: '${action.type}' ${stateChanged} ${subReducerMsg}`
     });
     
     return nextState;
