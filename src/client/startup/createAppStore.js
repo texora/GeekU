@@ -94,7 +94,7 @@ export default function createAppStore() {
   
   
   
-  // define a redux middleware hook for logging all action flow
+  // define a redux middleware hook for logging all action probes
   const actionLogger = store => next => action => {
     const log = new Log('middleware.actionLogger');
     try {
@@ -115,15 +115,15 @@ export default function createAppStore() {
           throw new Error(`Developer Error - GeekU action batching does NOT support thunks ('${action.type}'), because batching is handled at the reducer-level rather than the dispatching-level`);
         }
       
-        log.flow(()=> {
+        log.follow(()=> {
           const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
-          const clarification         = !log.isVerboseEnabled() && actionIsObj
-                                      ? '... NOTE: reconfigure log to VERBOSE to see action details (CAUTION: actions with payload can be LARGE)'
+          const clarification         = !log.isTraceEnabled() && actionIsObj
+                                      ? '... NOTE: reconfigure log to TRACE to see action details (CAUTION: actions with payload can be LARGE)'
                                       : '';
           return `ENTER${batched ? ' [BATCHED] ' : ' '}action: ${embellishedActionType} ${clarification}`
         });
         if (actionIsObj) {
-          log.verbose(()=>'action details:\n', action);
+          log.trace(()=>'action details:\n', action);
         }
       }
       logEnter(action, null, null, false);
@@ -141,7 +141,7 @@ export default function createAppStore() {
         const log = getActionLog(action.type);
         // TODO: we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
         //       ... simply retain beforeState (above) and afterState here
-        log.flow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${action.type}`);
+        log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${action.type}`);
       }
       if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
         action.payload.concat().reverse().forEach(logExit);

@@ -50,7 +50,7 @@ export function encodeJsonQueryStr(queryName, jsonObj, log) {
 
   const jsonStrEncoded = encodeURIComponent(jsonStr);
   queryStr = buildQueryStr(jsonStrEncoded);
-  log.verbose(()=>`encoded queryStr: '${queryStr}'`);
+  log.trace(()=>`encoded queryStr: '${queryStr}'`);
 
   return queryStr;
 }

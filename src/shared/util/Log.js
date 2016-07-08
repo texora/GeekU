@@ -216,13 +216,11 @@ class Log {
    *     },
    *
    *     logLevels: [      // log levels (in order of severity) ... out-of-box levels shown
-   *       'TRACE',
-   *       'DEBUG',
-   *       'INFO',
-   *       'WARN',
    *       'ERROR',
-   *       'FATAL',
-   *       'OFF'
+   *       'WARN',
+   *       '*INFO',
+   *       'DEBUG',
+   *       'TRACE',
    *     ],
    *
    *     outputHandler: function(msgProbe): void  // output handler of completed msg probe (defaults to console.log())
@@ -327,10 +325,11 @@ class Log {
     }
 
     // define the log levels
-    let levelNames = [];
+    const levelNames = [];
     for (let level in _levelName) {
       levelNames.push(_levelName[level]);
     }
+    levelNames.reverse();
 
 
     // package-up/return our configuration
@@ -500,6 +499,7 @@ function _registerLevels(levelNames) {
   assert(levelNames.length > 0, '_registerLevels() must be passed a levelNames string array with at least one entry');
 
   let   initialRootLevelName = null; // <String>
+
   const newLevelNames = []; // working copy, slightly altered from input param (asterisk stripped, OFF added)
   for (let i=0; i<levelNames.length; i++) { 
     let levelName = levelNames[i];
@@ -515,7 +515,11 @@ function _registerLevels(levelNames) {
       _levelPad = levelName.length;
     }
   }
+
   assert(initialRootLevelName, `registerLevels() One (and only one) asterisk prefix '*' must be supplied to set the root level filter`);
+
+  newLevelNames.reverse();
+
   newLevelNames.push('OFF');
 
 
@@ -954,15 +958,14 @@ function _fmtError(err) {
  * A hash referencing the default output logger functions, 
  * machine generated, keyed by levelName.
  * 
- * Ex: 
+ * Ex:
  *    {
  *      'POST':  console.log,
- *      'TRACE': console.log,
- *      'DEBUG': console.debug,
- *      'INFO':  console.info,
- *      'WARN':  console.warn,
  *      'ERROR': console.error,
- *      'FATAL': console.log
+ *      'WARN':  console.warn,
+ *      'INFO':  console.info,
+ *      'DEBUG': console.debug,
+ *      'TRACE': console.log,
  *    }
  */
 let _defaultLoggerFn = {};
@@ -985,11 +988,10 @@ function _outputHandler(msgProbe, context) {
 
 Log.config({ 
   logLevels: [
-    'TRACE',
-    'DEBUG',
-    '*INFO',
-    'WARN',
     'ERROR',
-    'FATAL'
+    'WARN',
+    '*INFO',
+    'DEBUG',
+    'TRACE',
   ]
 });

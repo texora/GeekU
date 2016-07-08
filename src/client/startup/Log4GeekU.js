@@ -12,13 +12,14 @@ import registerInteractiveLogConfig from '../../shared/util/LogInteractiveConfig
 
 // configure our initial Log Filter Settings
 const logConfig = Log.config({
-  logLevels: [
-    'VERBOSE', // NEW level emitting lot's of detail or large content
-    'DEBUG',
-    'FLOW',    // NEW level emiting high-level enter/exit points
-    '*INFO',
+  logLevels: [ // NOTE: log levels should be consistent between client/server for shared utilities to operate
+    'ERROR',
     'WARN',
-    'ERROR'],
+    '*INFO',
+    'FOLLOW',  // NON-Standard level (providing more control between INFO/DEBUG)
+    'DEBUG',
+    'TRACE',
+  ],
   filter: {
     'root':               ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
 
@@ -34,9 +35,9 @@ const logConfig = Log.config({
     'middleware.actionLogger': 'none',
     
 
-    'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see dispatched action enter/exit points </dd>
+    'actions':           ['none', ` <dl> <dt> FOLLOW: </dt> <dd> see dispatched action enter/exit points </dd>
                                          <dt> DEBUG:  </dt> <dd> include action app logic (in thunks) </dd>
-                                         <dt> VERBOSE:</dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
+                                         <dt> TRACE:  </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
     'appState':          ['none', ` <dl> <dt> DEBUG:  </dt> <dd> see reducer app logic </dd>

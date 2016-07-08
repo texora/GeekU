@@ -92,8 +92,8 @@ export default function correlateLogsToTransaction(req, res, next) {
  * 
  * Simply piggy back on the end of our filterName.
  * ... ex: 
- *     FLOW  2016-04-26 13:02:44 GeekU.ProcessFlow Trans(transId: EyrPhqOgZ, userId: L8TR, url: /api/courses/CS-1132)):
- *           Enter Transaction
+ *     DEBUG  2016-04-26 13:02:44 GeekU.ProcessFlow Trans(transId: EyrPhqOgZ, userId: L8TR, url: /api/courses/CS-1132)):
+ *            Enter Transaction
  *
  */
 Log.config({
