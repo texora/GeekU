@@ -83,7 +83,7 @@ selCrit: {
   desc:   "optional longer description",
   target: "students"/"courses", // identifies the targeted mongo collection
 
-  fields: [  // list of desired field names to emit ... DEFAULT: null which defers to default set of fields (via meta.defaultDisplayFields)
+  fields: [  // list of desired field names to emit ... DEFAULT: null, deferring to default fields (via meta.defaultDisplayFields)
     "studentNum",
     "firstName",
     "lastName",
