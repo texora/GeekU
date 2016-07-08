@@ -92,7 +92,8 @@ const genesis = {
   'detailStudent.changeEditMode':     { params: [] },
 
   'editStudentsSelCrit':              { params: [] },
-  'editStudentsSelCrit.fieldsChange': { params: ['fields'] },
+  'editStudentsSelCrit.fieldsChange': { params: ['fields'] }, // fields: use null which defers to default set of fields (via meta.defaultDisplayFields)
+  'editStudentsSelCrit.sortChange':   { params: ['sort'] },   // sort:   use null for NO sort
   'editStudentsSelCrit.close':        { params: [] },
 };
 

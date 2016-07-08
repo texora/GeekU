@@ -8,6 +8,7 @@ import crc             from 'crc';
 import placebo  from './placeboReducer';
 import name     from './appState.students.selCrit.name';
 import fields   from './appState.students.selCrit.fields';
+import sort     from './appState.students.selCrit.sort';
 import editing  from './appState.students.selCrit.editing';
 
 
@@ -26,7 +27,7 @@ const _selCrit = Redux.combineReducers({
   target: placebo,
 
   fields,
-  sort:   placebo,
+  sort,
   distinguishMajorSortField: placebo,
   filter: placebo,
 

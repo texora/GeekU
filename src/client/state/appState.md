@@ -83,7 +83,7 @@ selCrit: {
   desc:   "optional longer description",
   target: "students"/"courses", // identifies the targeted mongo collection
 
-  fields: [  // list of desired field names to emit ... DEFAULT: studentsMeta.defaultDisplayFields
+  fields: [  // list of desired field names to emit ... DEFAULT: null which defers to default set of fields (via meta.defaultDisplayFields)
     "studentNum",
     "firstName",
     "lastName",
@@ -91,7 +91,7 @@ selCrit: {
     "gpa"
   ],
 
-  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: random order
+  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: null for NO sort
     "lastName": 1,
     "firstName": 1
   },

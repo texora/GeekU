@@ -11,7 +11,6 @@ import ReduxSubReducer from '../util/ReduxSubReducer';
 const subReducer = new ReduxSubReducer('appState.students.selCrit.fields', {
 
   [AT.editStudentsSelCrit.fieldsChange](fields, action) {
-    console.log('??? action.fields: ', action.fields);
     return [
       action.fields,
       ()=>`set fields to action.fields: ${action.fields ? action.fields.toString() : 'null'}`

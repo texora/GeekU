@@ -15,7 +15,7 @@ const logConfig = Log.config({
   logLevels: [
     'VERBOSE', // NEW level emitting lot's of detail or large content
     'DEBUG',
-    'FLOW',  // NEW level emiting high-level enter/exit points
+    'FLOW',    // NEW level emiting high-level enter/exit points
     '*INFO',
     'WARN',
     'ERROR'],
@@ -34,8 +34,8 @@ const logConfig = Log.config({
     'middleware.actionLogger': 'none',
     
 
-    'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see action enter/exit points </dd>
-                                         <dt> DEBUG:  </dt> <dd> include action app logic </dd>
+    'actions':           ['none', ` <dl> <dt> FLOW:   </dt> <dd> see dispatched action enter/exit points </dd>
+                                         <dt> DEBUG:  </dt> <dd> include action app logic (in thunks) </dd>
                                          <dt> VERBOSE:</dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
