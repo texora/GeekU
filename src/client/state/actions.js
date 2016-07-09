@@ -80,7 +80,6 @@ const genesis = {
   'retrieveStudents.fail':     { params: ['selCrit', 'error'] },
 
   'selectStudent':             { params: ['student'] }, // null for de-select
-  'hoverStudent':              { params: ['student'] }, // null for un-hover
 
   'detailStudent':             { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
 

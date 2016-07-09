@@ -36,10 +36,25 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     constructor(props, context) {
       super(props, context);
       autoBindAllMethods(this);
+
+      // define our initial local component state
+      this.state = { 
+        hoveredStudent: null,
+      };
+    }
+
+    /**
+     * Handle changes to hoveredStudent.
+     * @param {Student} hoveredStudent the student that is being overed over (null for none).
+     */
+    handleHover(hoveredStudent) {
+      if (hoveredStudent !== this.state.hoveredStudent) {
+        this.setState({hoveredStudent});
+      }
     }
 
     render() {
-      const { inProgress, selCrit, students, selectedStudent, hoveredStudent, studentsShown, detailStudent, selectStudentFn, hoverStudentFn, detailStudentFn, editSelCritFn } = this.props;
+      const { inProgress, selCrit, students, selectedStudent, studentsShown, detailStudent, selectStudentFn, detailStudentFn, editSelCritFn } = this.props;
 
       const myStyle = {
         margin:    '15px auto', // 15px spacing top/bottom, center left/right
@@ -123,8 +138,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                  selectable={true}
                  multiSelectable={false}
                  onRowSelection={(selectedRows)=>selectStudentFn(selectedRows.length===0 ? null : students[selectedRows[0]])}
-                 onRowHover={(rowNum)=> hoverStudentFn(students[rowNum])}
-                 onRowHoverExit={(rowNum)=> hoverStudentFn(null)}
+                 onRowHover={(rowNum)=> this.handleHover(students[rowNum])}
+                 onRowHoverExit={(rowNum)=> this.handleHover(null)}
                  style={{
                      width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
                    }}>
@@ -179,7 +194,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                                           <i style={{
                                                cursor:     'pointer',
                                                // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
-                                               visibility: hoveredStudent===student ? 'visible' : 'hidden'
+                                               visibility: this.state.hoveredStudent===student ? 'visible' : 'hidden',
                                              }}>
                                             <FontIcon className="material-icons" color={colors.grey700} onClick={()=>detailStudentFn(student.studentNum, false)}>portrait</FontIcon>
                                             <FontIcon className="material-icons" color={colors.red900}  onClick={()=>detailStudentFn(student.studentNum, true)}>edit</FontIcon>
@@ -266,33 +281,22 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         selCrit:         appState.students.selCrit || {},
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
-        hoveredStudent:  appState.students.hoveredStudent,
         studentsShown:   appState.mainPage==='students',
 
         detailStudent:   appState.students.detailStudent,
       }
     },
     mapDispatchToProps(dispatch, ownProps) {
-      let latest_hoveredStudent = null;
       return {
-        selectStudentFn: (student) => { if (student) dispatch( AC.selectStudent(student) )},
-        hoverStudentFn:  (student) => { 
-          if (latest_hoveredStudent !== student) { // optimization to prune duplicate requests (assumes this as a central logic point adjusting students hover)
-            latest_hoveredStudent = student;
-            dispatch( AC.hoverStudent(student) );
-          }
-        },
+        selectStudentFn: (student)               => { if (student) dispatch( AC.selectStudent(student) )},
         detailStudentFn: (studentNum, editMode)  => { dispatch( AC.detailStudent(studentNum, editMode) )},
-        editSelCritFn: () => { dispatch( AC.editStudentsSelCrit() )},
+        editSelCritFn:   ()                      => { dispatch( AC.editStudentsSelCrit() )},
       }
     }
   }); // end of ... component property injection
 
 // define expected props
 Students.propTypes = {
-  selectStudentFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
-  hoverStudentFn:  React.PropTypes.func, // .isRequired - injected via self's wrapper
-  detailStudentFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
 }
 
 export default Students;

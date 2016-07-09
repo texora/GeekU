@@ -43,7 +43,6 @@ const logConfig = Log.config({
                                           <dt> DEBUG:  </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
                                           <dt> TRACE:  </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
                                      </dl> ... may apply lower (ex: 'appState.userMsg')`],
-    'appState.students.hoveredStudent': ['INFO', 'INFO - turn off probes (way too much content from simply hovering)'],
 
     'autoBindAllMethods': 'none',
   },

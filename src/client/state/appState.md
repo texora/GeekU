@@ -28,7 +28,6 @@ appState: {
 
   students: {      // our retrieved students
 
-    hoveredStudent:  null/item[below],
     selectedStudent: null/item[below],
 
     detailStudent:  null/item[below],
@@ -46,7 +45,6 @@ appState: {
 
 ? courses: {       // our retrieved courses
 
-?   hoveredCourse:  null/item[below],
 ?   selectedCourse: null/item[below],
 
 ?   detailCourse:   null/item[below],
