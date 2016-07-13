@@ -46,7 +46,7 @@ import SortValue   from './SortValue'
  *   variety of different logic points) by simply calling the static
  *   edit() method:
  *   
- *       EditSelCrit.edit(selCrit, editCompleteExtraCb): void
+ *       EditSelCrit.edit(selCrit, extraActionsOnCompletionCb): void
  *         ... see JavaDoc (below)
  * 
  * Edit Complete - External Synchronization:
@@ -74,7 +74,7 @@ import SortValue   from './SortValue'
  * 
  *     Extra Actions (invoker based):
  *
- *       - additional actions identified by the optional editCompleteExtraCb callback
+ *       - additional actions identified by the optional extraActionsOnCompletionCb callback
  *         (ex: refresh a retrieval based on this selCrit)
  *         NOTE: additional actions CANNOT be acomplished by monotoring the standard EditSelCrit actions,
  *               because this would require a reducer to issue actions (an anti-pattern).
@@ -103,24 +103,24 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      *       instantiated.
      * 
      * @parm {SelCrit} selCrit the selCrit to edit.
-     * @parm {function} editCompleteExtraCb an optional client
+     * @parm {function} extraActionsOnCompletionCb an optional client
      * callback, executed on edit completion, supporting additional
      * logic over-and-above the normal synchronization (ex: refresh a
      * retrieval based on this selCrit).
-     *   API: editCompleteExtraCb(selCrit): Action -or- Action[]
+     *   API: extraActionsOnCompletionCb(selCrit): Action -or- Action[]
      * 
      * @public
      */
-    static edit(selCrit, editCompleteExtraCb) {
+    static edit(selCrit, extraActionsOnCompletionCb) {
       // validate that an <EditSelCrit> has been instantiated
       assert(_singleton, "EditSelCrit.edit() ... ERROR: NO <EditSelCrit> has been instantiated within the app.");
 
       // pass-through to our instance method
-      _singleton.edit(selCrit, editCompleteExtraCb);
+      _singleton.edit(selCrit, extraActionsOnCompletionCb);
     }
 
     // internal instance method that initiates the selCrit edit session
-    edit(selCrit, editCompleteExtraCb) {
+    edit(selCrit, extraActionsOnCompletionCb) {
       const p = this.props;
 
       // determine the DB meta definition we are working for
@@ -146,6 +146,9 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         }
       }
 
+      // retain extraActionsOnCompletionCb in self for future reference (on close)
+      this.extraActionsOnCompletionCb = extraActionsOnCompletionCb;
+
       // retain the starting selCrit.curHash, providing the ability to determine when self has changed the selCrit
       // ... NOTE: we have to calculate it, because the appState selCrit.curHash is not defined till after
       //           the following dispatch cycle
@@ -154,7 +157,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
 
       // dispatch the appropriate action
-      p.dispatch( AC.selCrit.edit(selCrit, editCompleteExtraCb, this.meta) );
+      p.dispatch( AC.selCrit.edit(selCrit, this.meta) );
     }
 
     handleEditComplete() {
@@ -179,8 +182,8 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // ... we cannot accomplish this in our standard synchronization actions, 
       //     because it would require a reducer to dispatch other actions (an anti-pattern)
       //     TODO: eventually this will be batched into ONE dispatch (for now, we do a seperate dispatch - till we support batching of thunks)
-      if (p.editCompleteExtraCb) {
-        const extraActions = p.editCompleteExtraCb(p.selCrit); 
+      if (this.extraActionsOnCompletionCb) {
+        const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
         if (extraActions) {
           p.dispatch( extraActions );
         }
@@ -278,7 +281,6 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         selCrit:              appState.editSelCrit.selCrit,
-        editCompleteExtraCb:  appState.editSelCrit.editCompleteExtraCb,
         selectedFieldOptions: appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedFieldOptions : null,
         selectedSortOptions:  appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedSortOptions : null,
       };

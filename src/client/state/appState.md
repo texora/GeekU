@@ -66,11 +66,6 @@ appState: {
       // ... content contains common selCrit structure ... see selCrit (below) for details
     },
 
-    editCompleteExtraCb: function, // optional client callback, executed on edit completion, supporting additional
-                                   // logic over-and-above the normal synchronization (ex: refresh a
-                                   // retrieval based on this selCrit).
-                                   //   API: editCompleteExtraCb(selCrit): [Action(s)]
-
     extra: { // additional temporal structure streamlining various UI components
 
       // field options, streamlining react-select

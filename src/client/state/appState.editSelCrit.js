@@ -3,7 +3,6 @@
 import * as Redux      from 'redux';
 
 import selCrit             from './appState.editSelCrit.selCrit';
-import editCompleteExtraCb from './appState.editSelCrit.editCompleteExtraCb';
 import extra               from './appState.editSelCrit.extra';
 
 
@@ -13,7 +12,6 @@ import extra               from './appState.editSelCrit.extra';
 
 const editSelCrit = Redux.combineReducers({
   selCrit,
-  editCompleteExtraCb,
   extra, // additional temporal structure streamlining various UI components
 });
 

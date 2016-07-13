@@ -91,7 +91,7 @@ const genesis = {
   'detailStudent.changeEditMode':     { params: [] },
 
   // PRIVATE AC: used by <EditSelCrit>
-  'selCrit.edit':              { params: ['selCrit', 'editCompleteExtraCb', 'meta'] }, // start a selCrit edit session .... editCompleteExtraCb: use null for none
+  'selCrit.edit':              { params: ['selCrit', 'meta'] }, // start a selCrit edit session
   'selCrit.edit.nameChange':   { params: ['name'] },
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
