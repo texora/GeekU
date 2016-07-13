@@ -25,7 +25,8 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import colors             from 'material-ui/lib/styles/colors';
 
 import Student            from './Student';
-import StudentsSelCrit    from './StudentsSelCrit';
+import EditSelCrit        from './EditSelCrit/EditSelCrit';
+
 
 /**
  * The Students component displays a list of students.
@@ -53,8 +54,13 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       }
     }
 
+    handleEditSelCrit() {
+      const p = this.props;
+      EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
+    }
+
     render() {
-      const { inProgress, selCrit, students, selectedStudent, studentsShown, detailStudent, selectStudentFn, detailStudentFn, editSelCritFn } = this.props;
+      const { inProgress, selCrit, students, selectedStudent, studentsShown, detailStudent, selectStudentFn, detailStudentFn } = this.props;
 
       const myStyle = {
         margin:    '15px auto', // 15px spacing top/bottom, center left/right
@@ -128,7 +134,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                     <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
                               targetOrigin={{vertical: 'top', horizontal: 'right', }}
                               anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                      <MenuItem primaryText="Filter" onTouchTap={()=>editSelCritFn()}/>
+                      <MenuItem primaryText="Filter" onTouchTap={this.handleEditSelCrit}/>
                       <MenuItem primaryText="... more"/>
                     </IconMenu>}/>
 
@@ -269,7 +275,6 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
           </Table>
         </Paper>
         { detailStudent   && <Student/> }
-        { selCrit.editing && <StudentsSelCrit/> }
       </Paper>
     }
   }, // end of ... component definition
@@ -290,7 +295,6 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       return {
         selectStudentFn: (student)               => { if (student) dispatch( AC.selectStudent(student) )},
         detailStudentFn: (studentNum, editMode)  => { dispatch( AC.detailStudent(studentNum, editMode) )},
-        editSelCritFn:   ()                      => { dispatch( AC.editStudentsSelCrit() )},
       }
     }
   }); // end of ... component property injection

@@ -15,6 +15,7 @@ import UserMsg            from './UserMsg';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
 import LeftNav            from './LeftNav';
+import EditSelCrit        from './EditSelCrit/EditSelCrit';
 
 
 /**
@@ -66,6 +67,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                     <MenuItem primaryText="Aggregate Test"                   onTouchTap={aggregateTestFn}/>
                   </IconMenu>}/>
         <Students/>
+        <EditSelCrit/>
         <UserMsg/>
       </div>;
     }
@@ -84,7 +86,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
         sampleMessageFn: () => { dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`)) },
         sampleMultiMessageFn: () => { dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]) },
         sampleMessageWithUserActionFn: () => { dispatch( sampleMessageWithUserAction() )},
-        retrieveStudentsFn: () => { dispatch( AC.retrieveStudents({l8tr: 'ToDo'}) ) },
+        retrieveStudentsFn: () => { dispatch( AC.retrieveStudents(null) ) }, // ?? null selCrit is temporary
         aggregateTestFn: () => { dispatch( aggregateTest() ) },
       }
     }

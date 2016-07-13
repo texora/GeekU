@@ -90,10 +90,13 @@ const genesis = {
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
-  'editStudentsSelCrit':              { params: [] },
-  'editStudentsSelCrit.fieldsChange': { params: ['fields'] }, // fields: use null which defers to default set of fields (via meta.defaultDisplayFields)
-  'editStudentsSelCrit.sortChange':   { params: ['sort'] },   // sort:   use null for NO sort
-  'editStudentsSelCrit.close':        { params: [] },
+  // PRIVATE AC: used by <EditSelCrit>
+  'selCrit.edit':              { params: ['selCrit', 'editCompleteExtraCb', 'meta'] }, // start a selCrit edit session .... editCompleteExtraCb: use null for none
+  'selCrit.edit.nameChange':   { params: ['name'] },
+  'selCrit.edit.descChange':   { params: ['desc'] },
+  'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
+  'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
+  'selCrit.edit.complete':     { params: ['selCrit'] }, // selCrit edit session complete ... selCrit: newly modified selCrit
 };
 
 // AT: Action Types container object
@@ -256,46 +259,48 @@ function _defineThunks() {
         // perform async retrieval of students
         log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
 
-        // TODO: interpret selCrit ... for now: hard-code it for testing
-        // const url = '/api/students';
-        selCrit = {
-          name:   'MO/IN',
-          desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
-          target: 'students',
-          fields: [
-            
-            'gender',     // these are all part of studentEssentials (grouped our display logic forces them to render together)
-            'firstName',
-            'lastName',
-            'studentNum',
+        // TODO: interpret selCrit ... for now: hard-code it for testing (when NOT supplied)
+        if (! selCrit) {
+          selCrit = {
+            key:    'TEST-KEY',
+            target: 'Students',
+            name:   'MO/IN',
+            desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
+            fields: [
+              
+              'gender',     // these are all part of studentEssentials (grouped our display logic forces them to render together)
+              'firstName',
+              'lastName',
+              'studentNum',
 
-            'graduation',
-            
-            'degree',
-            'gpa',
-            // 'birthday',
-            // 'addr',
-            // 'addr.state',
-          ],
-          sort: {
-            graduation: -1,
-            firstName: 1,
-            lastName: 1,
-          },
-          distinguishMajorSortField: true,
-          filter: { // all female students in MO/IN with GPA >= 3.65
-            // "gender": "F",
-            "addr.state": {
-              "$in": [
-                "Missouri",
-                "Indiana"
-              ]
+              'graduation',
+              
+              'degree',
+              'gpa',
+              // 'birthday',
+              // 'addr',
+              // 'addr.state',
+            ],
+            sort: {
+              graduation: -1,
+              firstName: 1,
+              lastName: 1,
             },
-            // "gpa": {
-            //   "$gte": "3.65"
-            // }
-          }
-        };
+            distinguishMajorSortField: true,
+            filter: { // all female students in MO/IN with GPA >= 3.65
+              // "gender": "F",
+              "addr.state": {
+                "$in": [
+                  "Missouri",
+                  "Indiana"
+                ]
+              },
+                      // "gpa": {
+                      //   "$gte": "3.65"
+                      // }
+            }
+          };
+        }
         const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
         log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
 

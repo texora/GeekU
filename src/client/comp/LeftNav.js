@@ -58,8 +58,8 @@ export default LeftNav;
 
 // TODO: hoaky work-around till we support batching of thunks
 function changeMainPageFn(page, haveItemsBeenFetched) {
-  if (page === 'students') {
-    return haveItemsBeenFetched ? AC.changeMainPage(page) : AC.retrieveStudents({l8tr: 'ToDo'})
+  if (page === 'students') { // ?? null selCrit is temp for now
+    return haveItemsBeenFetched ? AC.changeMainPage(page) : AC.retrieveStudents(null)
   }
   else {
     return AC.changeMainPage(page); // ??? we don't have AC.retrieveCourses() yet

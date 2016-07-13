@@ -59,6 +59,29 @@ appState: {
       ...ditto...
     ],
   },
+
+  editSelCrit: {       // structure supporting ANY selCrit edit
+
+    selCrit: { // the selCrit object being edited, null for none (i.e. edit NOT in-progress)
+      // ... content contains common selCrit structure ... see selCrit (below) for details
+    },
+
+    editCompleteExtraCb: function, // optional client callback, executed on edit completion, supporting additional
+                                   // logic over-and-above the normal synchronization (ex: refresh a
+                                   // retrieval based on this selCrit).
+                                   //   API: editCompleteExtraCb(selCrit): [Action(s)]
+
+    extra: { // additional temporal structure streamlining various UI components
+
+      // field options, streamlining react-select
+      selectedFieldOptions: [ {fieldOption}, { value: 'firstName', label: 'First Name' }, ... ],
+
+      // sort options, streamlining react-select
+      selectedSortOptions: [ {sortOption}, { value: 'gender', label: 'Gender', ascDec: -1 }, ... ],
+
+    },
+  },
+
 }
 ```
 
@@ -77,9 +100,12 @@ retrieves female students from MO/IN with a GPA over 3.65:
 ```javascript
 selCrit: {
 
+  key:    "shortId",            // the unique key identifying this selCrit instance (also used in mongo _id)
+
+  target: "Students"/"Courses", // identifies the targeted mongo collection
+
   name:   "Female students from MO/IN with GPA over 3.65",
   desc:   "optional longer description",
-  target: "students"/"courses", // identifies the targeted mongo collection
 
   fields: [  // list of desired field names to emit ... DEFAULT: null/[] deferring to default fields (via meta.defaultDisplayFields)
     "studentNum",
@@ -109,8 +135,7 @@ selCrit: {
     }
   }
 
-  editing:  boolean, // indicator as to whether selCrit is being edited (i.e. a Dialog is open on this selCrit)
-  dbHash:   "hash",  // current hash of the selCrit in our persistent DB
-  editHash: "hash",  // current hash of THIS selCrit (if !=== dbHash, then a save is needed to sync to DB)
+  dbHash:  "hash",  // current hash of the selCrit in our persistent DB (null if NOT persisted)
+  curHash: "hash",  // current hash of this selCrit instance (if !=== dbHash, then a save is needed to sync to DB)
 }
 ```
