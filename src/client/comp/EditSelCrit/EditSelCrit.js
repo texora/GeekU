@@ -175,19 +175,26 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         console.log('?? <EditSelCrit>.handleEditComplete() ... there is NO need to broadcast change, because selCrit has NOT changed!');
       }
 
+      const actions = [];
+
       // publish our standard synchronization actions
-      p.dispatch( AC.selCrit.edit.complete(p.selCrit) );
+      actions.push( AC.selCrit.edit.complete(p.selCrit) );
 
       // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
       // ... we cannot accomplish this in our standard synchronization actions, 
       //     because it would require a reducer to dispatch other actions (an anti-pattern)
-      //     TODO: eventually this will be batched into ONE dispatch (for now, we do a seperate dispatch - till we support batching of thunks)
       if (this.extraActionsOnCompletionCb) {
         const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
         if (extraActions) {
-          p.dispatch( extraActions );
+          if (Array.isArray(extraActions))
+            actions.push(...extraActions);
+          else
+            actions.push(extraActions);
         }
       }
+
+      p.dispatch( actions );
+
     }
 
     handleNameChange(event) {

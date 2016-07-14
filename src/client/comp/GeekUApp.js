@@ -45,8 +45,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                         <td>
                           <Tabs value={mainPage}
                                 onChange={(value)=>changeMainPageFn(value)}>
-                            <Tab value="students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
-                            <Tab value="courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
+                            <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                            <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
                           </Tabs>
                         </td>
                       </tr>
@@ -113,6 +113,7 @@ function aggregateTest() {
   return [
     AC.retrieveStudents(null),
     AC.userMsg.display('Batching thunks FINALLY works!'),
+    AC.changeMainPage('Students')
   ];
 }
 

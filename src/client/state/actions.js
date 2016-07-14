@@ -247,7 +247,7 @@ function _defineThunks() {
 
 
   /**
-   * retrieveStudents(selCrit): an async action creator to retrievie students.
+   * retrieveStudents(selCrit): an async action creator to retrieve students.
    *
    * @param {Obj} selCrit the selection criteria used in defining the students to retrieve.
    */
@@ -332,7 +332,7 @@ function _defineThunks() {
 
 
   /**
-   * retrieveStudents(selCrit): an async action creator to retrievie students.
+   * detailedStudent(studentNum, editMode): an async action creator to retrieve details of a student.
    *
    * @param {Obj} selCrit the selection criteria used in defining the students to retrieve.
    */

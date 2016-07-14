@@ -286,7 +286,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         selCrit:         appState.students.selCrit || {},
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
-        studentsShown:   appState.mainPage==='students',
+        studentsShown:   appState.mainPage==='Students',
 
         detailStudent:   appState.students.detailStudent,
       }

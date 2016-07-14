@@ -20,8 +20,35 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
       autoBindAllMethods(this);
     }
 
+    handleStudentsSelection() {
+      const p = this.props;
+
+      const actions = [ AC.changeMainPage('Students') ];
+
+      // when the view contains NO data, also perform an initial default retrieval
+      if (!p.studentsSelCrit) {
+        actions.push(AC.retrieveStudents(null));  // TODO: null selCrit is temporary for now
+      }
+
+      p.dispatch( actions );
+    }
+    
+    handleCoursesSelection() {
+      const p = this.props;
+
+      const actions = [ AC.changeMainPage('Courses') ];
+
+      // when the view contains NO data, also perform an initial default retrieval
+      // TODO: add this with courses are supported
+      // ? if (!p.coursesSelCrit)
+      // ?   actions.push(AC.retrieveCourses(bla));
+      // ? }
+
+      p.dispatch( actions );
+    }
+
     render() {
-      const { mainPage, haveStudentsBeenFetched, changeMainPageFn } = this.props;
+      const p = this.props;
 
       // ... why is MenuIcon the opposite color of the baseTheme?
       //     - I suspect because it is supposed to appear on the baseTheme background
@@ -29,8 +56,8 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
       return <IconMenu iconButtonElement={ <IconButton><MenuIcon color="white"/></IconButton> }
                        targetOrigin={{vertical: 'top', horizontal: 'left', }}
                        anchorOrigin={{vertical: 'top', horizontal: 'left'}}>
-        <MenuItem primaryText="Students" checked={mainPage==='students'} insetChildren={true} onTouchTap={()=>changeMainPageFn('students', haveStudentsBeenFetched)}/>
-        <MenuItem primaryText="Courses"  checked={mainPage==='courses'}  insetChildren={true} onTouchTap={()=>changeMainPageFn('courses')}/>
+        <MenuItem primaryText="Students" checked={p.mainPage==='Students'} insetChildren={true} onTouchTap={this.handleStudentsSelection}/>
+        <MenuItem primaryText="Courses"  checked={p.mainPage==='Courses'}  insetChildren={true} onTouchTap={this.handleCoursesSelection}/>
       </IconMenu>;
     }
   }, // end of ... component definition
@@ -38,30 +65,16 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
-        mainPage: appState.mainPage,
-        haveStudentsBeenFetched: appState.students.selCrit.target, // TODO: hoaky work-around till we support batching of thunks
-      }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        changeMainPageFn: (page, haveItemsBeenFetched) => { dispatch( changeMainPageFn(page, haveItemsBeenFetched) ) },
+        mainPage:        appState.mainPage,
+        studentsSelCrit: appState.students.selCrit,
+     // coursesSelCrit:  appState.courses.selCrit,  // TODO: add this with courses are supported
+
       }
     }
   }); // end of ... component property injection
 
 // define expected props
 LeftNav.propTypes = {
-  changeMainPageFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
 }
 
 export default LeftNav;
-
-// TODO: hoaky work-around till we support batching of thunks
-function changeMainPageFn(page, haveItemsBeenFetched) {
-  if (page === 'students') { // ?? null selCrit is temp for now
-    return haveItemsBeenFetched ? AC.changeMainPage(page) : AC.retrieveStudents(null)
-  }
-  else {
-    return AC.changeMainPage(page); // ??? we don't have AC.retrieveCourses() yet
-  }
-}
