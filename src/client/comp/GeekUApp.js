@@ -109,17 +109,10 @@ function aggregateTest() {
     // l8tr: 'Aggregate Test',
   };
 
-  // here is the redux-batched-updates enhanced reducer ( THIS WORKS ... FINALLY )
+  // we CAN now batch actions that include thunks as well as normal action objects
   return [
-    AC.retrieveStudents.complete(selCrit, [7, 8, 9]),
-    AC.userMsg.display('It FINALLY Works!'),
-  ];
-
-  // test a batch of actions that include an async action
-  // ERROR: GeekU Development Error - GeekU action batching does NOT support thunks (retrieveStudents), because batching is handled at the reducer-level, rather than the dispatching-level
-  return [
-    AC.retrieveStudents(selCrit),
-    AC.userMsg.display('Finally It Worked'),
+    AC.retrieveStudents(null),
+    AC.userMsg.display('Batching thunks FINALLY works!'),
   ];
 }
 

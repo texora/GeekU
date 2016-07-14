@@ -34,6 +34,34 @@ export default function createAppStore() {
   const reduxDevToolsChromeExtension = window.devToolsExtension ? window.devToolsExtension() : NO_EXTENSION;
   log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension !== NO_EXTENSION ? 'IS' : 'IS NOT'} PRESENT!`);
   
+
+  // internal utility that emits human readable info detailing action types in a variety of scenerios
+  // ... used in our middleware logging
+  function actionTypeMsg(action) {
+    let msg = 'Type';
+    if (Array.isArray(action)) {
+      msg += '(array): [';
+      for (const subAction of action) {
+        msg += actionTypeMsg(subAction);
+      }
+      msg += ']';
+    }
+    else if (typeof action === 'function') {
+      msg += `(thunk): '${action.type}' `; // ... in GeekU, even our thunks (functions) have a type attribute
+    }
+    else if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
+      msg += `(${BATCH}): [`;
+      for (const subAction of action.payload) {
+        msg += actionTypeMsg(subAction);
+      }
+      msg += ']';
+    }
+    else { // an action object
+      msg += `(object): '${action.type}' `;
+    }
+    return msg;
+  }
+
   
   // define our central error handler for uncaught exceptions
   let   errInInProgress = null;  // ... used to detect recursive errors (see below)
@@ -42,7 +70,7 @@ export default function createAppStore() {
     const log = new Log('middleware.errorHandler');
   
     try { // defer to original dispatch action logic
-      log.debug(()=>`ENTER ${log.filterName} for action: ${action.type}`);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
       return next(action);
     } 
     catch (err) { // central handler
@@ -67,28 +95,121 @@ export default function createAppStore() {
     }
     finally {
       errInInProgress = null;
-      log.debug(()=>`EXIT ${log.filterName} for action: ${action.type}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
+
     }
   }
   
-  
-  
-  // define our batch handler ... morphing action arrays into batchActions
-  const batchHandler = store => next => action => {
-    const log = new Log('middleware.batchHandler');
+  // define our thunk/batch handler ... supporting BOTH thunks and action arrays (containing both objects and thunks)
+  const thunkBatchHandler = ({dispatch, getState}) => next => action => {
+    const log = new Log('middleware.thunkBatchHandler');
     try {
-      log.debug(()=>`ENTER ${log.filterName} for action: ${action.type}`);
-      return Array.isArray(action)
-        ? store.dispatch( batchActions(action) ) // morph action arrays into batchActions, and re-dispatch
-        : next(action);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
+
+      //***
+      //*** Phase I: Collect Phase - collect all action objects (resolving thunks into action objects)
+      //***
+
+      let phase = 'collectActions'; // in effect during the direct execution of thunks
+
+      // our collection of ALL action object(s)
+      // ... thunks are resolved by collecting any optional actions they dispatch within their direct execution (via our wrappedDispatch)
+      const allActionObjects = [];
+
+      // maintain any thunk return value(s)
+      // ... TODO: this return value has NOT been used/tested - it may need work (if we decide to utilize thunk composition)
+      const thunkReturnVals    = []; // ex: promise(s) returned from thunk(s)
+      function evalThunkReturnVals() {
+        switch (thunkReturnVals.length) {
+          case 0:  return undefined;
+          case 1:  return thunkReturnVals[0];
+          default: return thunkReturnVals;
+        }
+      }
+
+      // utility to add supplied action (an object, or an array, or a thunk), resolving into action object
+      function addActionObject(action) {
+
+        // for action thunks, we directly execute the thunk
+        // ... this is similar to redux-thunk middleware
+        //     - EXCEPT we collect action objects in allActionObjects
+        //       ... via wrappedDispatch (in our 'collectActions' phase)
+        //       ... KEY: supporting our batching philosophy
+        //     - please refer to the redux-thunk source: 
+        //       ... https://github.com/gaearon/redux-thunk/blob/master/src/index.js
+        if (typeof action === 'function') {
+          const thunkReturnVal = action(wrappedDispatch, getState);
+          if (thunkReturnVal) {
+            thunkReturnVals.push(thunkReturnVal);
+          }
+        }
+
+        // for action arrays, we resolve each action (which could be an action object, or a thunk)
+        else if (Array.isArray(action)) {
+          action.forEach( (action) => {
+            addActionObject(action);
+          });
+        }
+
+        // for action objects, simply collect them
+        else {
+          allActionObjects.push(action);
+        }
+      }
+
+      // here is our wrapped dispatch object that operates differently within our two phases
+      function wrappedDispatch(otherAction) {
+
+        // within our 'collectActions' phase, we merely collect actions from any thunk execution
+        if (phase === 'collectActions') {
+          addActionObject(otherAction);
+        }
+
+        // within our execution phase, we simply pass-through to the real dispatch
+        // ... this occurs once all thunks have initially executed
+        //     ex: a future execution of a thunk's inner callback
+        else {
+          dispatch(otherAction);
+        }
+      }
+
+      // bootstrap our process by adding the initial action supplied to our middleware
+      addActionObject(action);
+
+
+      //***
+      //*** Phase II: Execution Phase - all actions have been resolved as action objects (i.e. NOT thunks)
+      //***
+
+      phase = 'executeActions'; // in effect during a future execution of a thunk's inner callback
+
+      switch (allActionObjects.length) {
+
+        case 0:  // NO action objects to dispatch (ex: thunk with delayed dispatch)
+          log.debug(()=>'NO action object to dispatch (ex: thunk with delayed dispatch)');
+          return evalThunkReturnVals();
+
+        case 1:  // A single action object to dispatch
+          log.debug(()=>`Dispatch a single action object, ${actionTypeMsg(allActionObjects[0])}`);
+          next(allActionObjects[0]);
+          return evalThunkReturnVals();
+
+        default: // multiple action objects to dispatch
+                 // ... in support batching of actions, 
+                 //     we re-dispatch an action array morphed into batchActions (using redux-batched-actions middleware)
+          log.debug(()=>`Re-Dispatch multiple action objects (by morphing them into batch), ${actionTypeMsg(allActionObjects)}`);
+          return dispatch( batchActions( allActionObjects ));
+      }
+
     }
     finally {
-      log.debug(()=>`EXIT ${log.filterName} for action: ${action.type}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
     }
   }
   
+
   // prime the log-filter pump for the BATCHING_REDUCER, because this is NOT part of our AT
-  // ... this merely promotes the filter prior to it being executed at run-time
+  // ... this merely promotes the log filter prior to it being executed at run-time
   //     normally this happens in the module scope
   getActionLog(BATCH);
   
@@ -98,7 +219,7 @@ export default function createAppStore() {
   const actionLogger = store => next => action => {
     const log = new Log('middleware.actionLogger');
     try {
-      log.debug(()=>`ENTER ${log.filterName} for action: ${action.type}`);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
 
       // log "ENTER" probe
       // NOTE: We have special logic to support batched sub-actions 
@@ -110,17 +231,11 @@ export default function createAppStore() {
         const actionIsObj   = !actionIsFunct;
         const log           = getActionLog(action.type);
       
-        // special validation, cannot handle batched thunks
-        if (batched && actionIsFunct) {
-          throw new Error(`Developer Error - GeekU action batching does NOT support thunks ('${action.type}'), because batching is handled at the reducer-level rather than the dispatching-level`);
-        }
-      
         log.follow(()=> {
-          const embellishedActionType = action.type + (actionIsFunct ? ' (a thunk)' : ' (an object)');
           const clarification         = !log.isTraceEnabled() && actionIsObj
                                       ? '... NOTE: reconfigure log to TRACE to see action details (CAUTION: actions with payload can be LARGE)'
                                       : '';
-          return `ENTER${batched ? ' [BATCHED] ' : ' '}action: ${embellishedActionType} ${clarification}`
+          return `ENTER${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeMsg(action)} ${clarification}`
         });
         if (actionIsObj) {
           log.trace(()=>'action details:\n', action);
@@ -141,7 +256,7 @@ export default function createAppStore() {
         const log = getActionLog(action.type);
         // TODO: we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
         //       ... simply retain beforeState (above) and afterState here
-        log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${action.type}`);
+        log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeMsg(action)}`); 
       }
       if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
         action.payload.concat().reverse().forEach(logExit);
@@ -152,17 +267,17 @@ export default function createAppStore() {
       return result;
     }
     finally {
-      log.debug(()=>`EXIT ${log.filterName} for action: ${action.type}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
     }
   }
   
   
   // define our Redux app-wide store
   const appStore = Redux.createStore(enableBatching(appState), // our app-wide redux reducer ... wrapped in a batch-capable reducer
-                                     Redux.compose(Redux.applyMiddleware(errorHandler, // central uncaught exception handler ... inject FIRST to allow coverage of other middleware components
-                                                                         batchHandler, // morph action arrays into batchActions ... inject before actionLogger (minor: doesn't have a type)
-                                                                         actionLogger, // log each action ... inject early to allow logging of other middleware components
-                                                                         thunk),       // support function-based actions (ex: support async actions)
+                                     Redux.compose(Redux.applyMiddleware(errorHandler,      // ... inject FIRST to allow coverage of other middleware components
+                                                                         thunkBatchHandler, // ... inject before actionLogger (minor: doesn't have a type)
+                                                                         actionLogger       // ... inject early to allow logging of other middleware components
+                                                                         /* thunk */),      // thunks NOW supported through our own thunkBatchHandler
                                                    reduxDevToolsChromeExtension)); // hook into optional Redux DevTools Chrome Extension
 
   return appStore;
