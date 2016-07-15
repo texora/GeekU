@@ -68,7 +68,7 @@ const genesis = {
    *                  callback: function(event)
    *                }
    */
-  // AC.userMsg.display(msg, userAction): Action
+  // AC.userMsg.display(msg, userAction): Action TODO: provide alt means to programatically activate (use singleton <UserMsg> - patterned after EditSelCrit>
   'userMsg.display':           { params: ['msg', 'userAction'],       ac: _userMsg_display },
   'userMsg.close':             { params: [] },
 
@@ -90,13 +90,16 @@ const genesis = {
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
-  // PRIVATE AC: used by <EditSelCrit>
+  // PRIVATE AC: emitted from <EditSelCrit>
   'selCrit.edit':              { params: ['selCrit', 'meta'] }, // start a selCrit edit session
   'selCrit.edit.nameChange':   { params: ['name'] },
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
-  'selCrit.edit.complete':     { params: ['selCrit'] }, // selCrit edit session complete ... selCrit: newly modified selCrit
+  'selCrit.edit.close':        { params: [] },  // close dialog
+  // PUBLIC AC: emitted from <EditSelCrit>
+  'selCrit.edit.changed':     { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+
 };
 
 // AT: Action Types container object

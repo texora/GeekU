@@ -51,7 +51,7 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit', {
     ];
   },
 
-  [AT.selCrit.edit.complete](selCrit, action) {
+  [AT.selCrit.edit.close](selCrit, action) {
     return [
       null,
       ()=>'set selCrit to null'

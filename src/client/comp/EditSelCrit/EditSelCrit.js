@@ -24,13 +24,16 @@ import SortValue   from './SortValue'
 
 /**
  * The EditSelCrit component edits a supplied selCrit object, through
- * an interactive modal dialog.  Any selCrit.target is supported (for
- * example: Students, Courses, etc.).  
+ * an interactive modal dialog.  Because the selCrit is a generic
+ * object, any selCrit.target is supported (for example: Students,
+ * Courses, etc.).
  *
  * An edit session is initiated through the edit() static method.  The
  * incentive for this programmatic interface is an edit session can be
  * invoked from a variety of different places - programmatically
  * (i.e. the invoker does NOT need access to the dispatcher).
+ *
+ *
  *
  * USAGE:
  *
@@ -47,37 +50,71 @@ import SortValue   from './SortValue'
  *   edit() method:
  *   
  *       EditSelCrit.edit(selCrit, extraActionsOnCompletionCb): void
- *         ... see JavaDoc (below)
+ *         ... see edit() JavaDoc below
  * 
- * Edit Complete - External Synchronization:
  * 
- *   selCrit objects may reside in a variety of different places (for
- *   example: in the LefNav menu [to choose], and driving the dispay
- *   content in a view).  Each selCrit object has a unique key, that
- *   identifies that specific instance.
  * 
- *   When an edit session is complete, it may be necessary to
- *   syncronize the modifications to a variety of places.  This is
- *   acomplished throught the following actions:
+ * External Synchronization on Edit Complete:
  * 
- *     EditSelCrit based actions:
- * 
- *       - AC.selCrit.edit.complete (Action Object)
- *         ... client should sync to all instances with the same selCrit.key
- * 
- *       - ?? AC.selCrit.save(selCrit) (Action Thunk ?? I suspect)
- *           ... ?? consider this:
- *                  this async save, could be acomplished in-line (without redux thunk)
- *                  BECAUSE: nothing in the selCrit will change (as we even provide the key)
- *                           THAT IS, if we apply the selCrit.dbHash at this time
- *                  I THINK this is where Dan Abramov would use promise chaining to Save -> broadcast edit.complete
- * 
- *     Extra Actions (invoker based):
+ *   selCrit objects may reside in a variety of different places
+ *   ... for example:
+ *        - in the LefNav menu [to choose], and 
+ *        - driving the dispay content in a view).
  *
- *       - additional actions identified by the optional extraActionsOnCompletionCb callback
- *         (ex: refresh a retrieval based on this selCrit)
- *         NOTE: additional actions CANNOT be acomplished by monotoring the standard EditSelCrit actions,
- *               because this would require a reducer to issue actions (an anti-pattern).
+ *   These instances must be synced to reflect the latest changes.
+ *   Each selCrit object has a unique key (selCrit.key), that
+ *   identifies that specific instance.  This key is maintained
+ *   irrespective to whether the selCrit is persisted or not.  You may
+ *   have a selCrit that is temporary (not saved at all), or you
+ *   may decide to temporarly modify a persistant selCrit.
+ * 
+ *   - ACTION: AT.selCrit.edit.changed ... action contains: selCrit
+ * 
+ *     To facilate this external synchronization, the edit completion
+ *     process will emit the AT.selCrit.edit.changed action, and
+ *     should be PUBLICALLY monitored by various reducers.
+ *
+ *     This action is intelligently emitted ONLY if a change has
+ *     actually occured (within the edit session).
+ * 
+ *     This action indicates that the supplied selCrit has been
+ *     modified within the app (in memory irrespective to it's DB save
+ *     status).  
+ *
+ *     This is a public trigger to sync the supplied selCrit where
+ *     appropriate (matching selCrit.key).  As an example, the LeftNav
+ *     contains a variety of selCrit objects that may be selected to
+ *     view, and should be updated.
+ *
+ * 
+ *   - PARAM: extraActionsOnCompletionCb ... see edit() JavaDoc below
+ * 
+ *     The syncing of active views should be handled through the
+ *     extraActionsOnCompletionCb parameter, and NOT the
+ *     AT.selCrit.edit.changed action.
+ *
+ *     The reason for this is additional work is required - over and
+ *     above the in-memory syncing the selCrit ... namely an
+ *     additional action to re-retrieve DB results from the newly
+ *     modified selCrit.  This additional work CANNOT be acomplished
+ *     by monnitoring the AT.selCrit.edit.changed action, because this
+ *     would require a reducer to issue actions (an anti-pattern
+ *     side-effect).
+ * 
+ *   - AT.selCrit.save ... action contains: selCrit
+ * 
+ *     In addition, the edit session may be completed through a save
+ *     operation.  When this occurs, the AT.selCrit.save action is emitted.
+ * 
+ *     This action is emitted in addition to the other
+ *     complete-related actions (discussed here), and is NOT really of
+ *     PUBLIC concern.  In other words, the app should sync changes by
+ *     monioring the actions discussed above.
+ *
+ *     With that said, the selCrit should be synced when the save is
+ *     complete, by monitoring the AT.selCrit.save.complete action.
+ *     This is merely to accomidate the change to selCrit.dbHash -
+ *     reflecting it's DB persistance status.
  */
 const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
@@ -153,7 +190,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // ... NOTE: we have to calculate it, because the appState selCrit.curHash is not defined till after
       //           the following dispatch cycle
       this.starting_curHash = hashSelCrit(selCrit);
-      // console.log(`?? <EditSelCrit>.edit() initial selCrit: ${JSON.stringify(selCrit, null, 2)}`); // our hash check appears to be working!
+      // console.log(`xx <EditSelCrit>.edit() initial selCrit: ${JSON.stringify(selCrit, null, 2)}`); // our hash check appears to be working!
 
 
       // dispatch the appropriate action
@@ -163,36 +200,49 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
     handleEditComplete() {
       const p = this.props;
 
-      // ??? apply validation
+      // TODO: apply validation
 
-      // ??? conditionally apply some actions only when selCrit changed
-      //     ?? one problem is: we need the AC.selCrit.edit.complete() to close the dialog
-      //        ... ?? we would need to make that a seperate action ... AC.selCrit.edit.close()
-      //        ... ?? and possibly renaming AC.selCrit.edit.complete TO: AC.selCrit.edit.changed(selCrit)
+
+      // ??? apply this visually in dialog
       // console.log(`?? <EditSelCrit>.handleEditComplete() originalHash: '${this.starting_curHash}', curHash: '${p.selCrit.curHash}'`); // our hash check appears to be working!
       // console.log(`?? <EditSelCrit>.handleEditComplete() cur selCrit: ${JSON.stringify(p.selCrit, null, 2)}`); // our hash check appears to be working!
       if (this.starting_curHash === p.selCrit.curHash) {
         console.log('?? <EditSelCrit>.handleEditComplete() ... there is NO need to broadcast change, because selCrit has NOT changed!');
       }
 
-      const actions = [];
 
-      // publish our standard synchronization actions
-      actions.push( AC.selCrit.edit.complete(p.selCrit) );
+      //***
+      //*** emit the appropriate action(s)
+      //***
 
-      // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
-      // ... we cannot accomplish this in our standard synchronization actions, 
-      //     because it would require a reducer to dispatch other actions (an anti-pattern)
-      if (this.extraActionsOnCompletionCb) {
-        const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
-        if (extraActions) {
-          if (Array.isArray(extraActions))
-            actions.push(...extraActions);
-          else
-            actions.push(extraActions);
+      // ??? actions based on what button was hit ??? how can I tell what was hit?
+      //     - cancel = emit close ONLY
+      //     - save   = emit additional xxx.save (placebo for now)
+
+
+      // we always issue a close (to take down our dialog)
+      const actions = [AC.selCrit.edit.close()];
+
+      // when selCrit has actually changed ...
+      if (this.starting_curHash !== p.selCrit.curHash) {
+
+        // publish our standard PUBLIC sync action
+        actions.push( AC.selCrit.edit.changed(p.selCrit) );
+
+        // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
+        if (this.extraActionsOnCompletionCb) {
+          const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
+          if (extraActions) {
+            if (Array.isArray(extraActions))
+              actions.push(...extraActions);
+            else
+              actions.push(extraActions);
+          }
         }
+
       }
 
+      // publish the appropriate actions
       p.dispatch( actions );
 
     }
