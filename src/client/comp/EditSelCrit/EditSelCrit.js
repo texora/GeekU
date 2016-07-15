@@ -17,6 +17,7 @@ const  metaXlate = {      // indexed via selCrit.target
 
 import Dialog      from 'material-ui/lib/dialog';
 import TextField   from 'material-ui/lib/text-field';
+import FlatButton  from 'material-ui/lib/flat-button';
 import Select      from 'react-select'
 import FieldValue  from './FieldValue'
 import SortValue   from './SortValue'
@@ -197,39 +198,27 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit(selCrit, this.meta) );
     }
 
-    handleEditComplete() {
+    handleEditComplete(completionType) { // completionType: 'Use'/'Save'/'Cancel'
       const p = this.props;
 
       // TODO: apply validation
-
-
-      // ??? apply this visually in dialog
-      // console.log(`?? <EditSelCrit>.handleEditComplete() originalHash: '${this.starting_curHash}', curHash: '${p.selCrit.curHash}'`); // our hash check appears to be working!
-      // console.log(`?? <EditSelCrit>.handleEditComplete() cur selCrit: ${JSON.stringify(p.selCrit, null, 2)}`); // our hash check appears to be working!
-      if (this.starting_curHash === p.selCrit.curHash) {
-        console.log('?? <EditSelCrit>.handleEditComplete() ... there is NO need to broadcast change, because selCrit has NOT changed!');
-      }
 
 
       //***
       //*** emit the appropriate action(s)
       //***
 
-      // ??? actions based on what button was hit ??? how can I tell what was hit?
-      //     - cancel = emit close ONLY
-      //     - save   = emit additional xxx.save (placebo for now)
-
-
       // we always issue a close (to take down our dialog)
       const actions = [AC.selCrit.edit.close()];
 
-      // when selCrit has actually changed ...
-      if (this.starting_curHash !== p.selCrit.curHash) {
+      // issue change actions (when appropriate) ...
+      if (this.starting_curHash !== p.selCrit.curHash &&  // when selCrit has actually changed -AND-
+          completionType !== 'Cancel') {                  // the Cancel button was NOT used
 
         // publish our standard PUBLIC sync action
         actions.push( AC.selCrit.edit.changed(p.selCrit) );
 
-        // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
+            // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
         if (this.extraActionsOnCompletionCb) {
           const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
           if (extraActions) {
@@ -239,7 +228,12 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
               actions.push(extraActions);
           }
         }
+      }
 
+      // issue save (when appropriate) ...
+      if (this.starting_curHash !== p.selCrit.dbHash && // when selCrit needs to be saved -AND-
+          completionType === 'Save') {                  // the Save button was used
+        // ??? need a save action
       }
 
       // publish the appropriate actions
@@ -274,11 +268,28 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       if (!p.selCrit)
         return null;
 
+      // NOTE: non-modal dialog: outer click same as 'Use' button
       return <Dialog modal={false}
                      title={`${p.selCrit.target} Filter`}
                      open={true}
                      autoScrollBodyContent={true}
-                     onRequestClose={this.handleEditComplete}
+                     onRequestClose={ (buttonClicked) => this.handleEditComplete('Use')}
+                     actions={[
+                       <FlatButton label="Use"
+                                   primary={true}
+                                   title="use this filter (without saving)"
+                                   onTouchTap={ (e) => this.handleEditComplete('Use') }/>,
+                       <FlatButton label="Save"
+                                   primary={true}
+                                   title={p.selCrit.dbHash===this.starting_curHash ? 'there are NO changes to save' : 'save and use changes'}
+                                   disabled={p.selCrit.dbHash===this.starting_curHash}
+                                   onTouchTap={ (e) => this.handleEditComplete('Save') }/>,
+                       <FlatButton label="Cancel"
+                                   primary={true}
+                                   title={p.selCrit.curHash===this.starting_curHash ? 'there are NO changes to cancel' : 'cancel changes'}
+                                   disabled={p.selCrit.curHash===this.starting_curHash}
+                                   onTouchTap={ (e) => this.handleEditComplete('Cancel') }/>,
+                     ]}
                      contentStyle={{
                          width:         '90%',
                          maxWidth:      'none',
