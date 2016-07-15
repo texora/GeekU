@@ -201,8 +201,15 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
     handleEditComplete(completionType) { // completionType: 'Use'/'Save'/'Cancel'
       const p = this.props;
 
-      // TODO: apply validation
-
+      // apply validation - prematurely returning on errors
+      // ... validation errors dynamically are shown in dialog
+      if (completionType !== 'Cancel') {
+        if (!p.selCrit.name.trim() ||  // name is required
+            !p.selCrit.desc.trim()) {  // desc is required
+          p.dispatch( AC.userMsg.display('Please resolve the highlighted validation errors.') );
+          return;
+        }
+      }
 
       //***
       //*** emit the appropriate action(s)
@@ -299,13 +306,15 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
         <TextField floatingLabelText="Name"
                    style={{ width: '10em' }}
+                   errorText={p.selCrit.name.trim() ? null : 'Name is required'}
                    value={p.selCrit.name}
                    onChange={this.handleNameChange}/>
         &emsp;
 
         <TextField floatingLabelText="Description"
                    style={{ width: '40em' }}
-                   defaultValue={p.selCrit.desc}
+                   errorText={p.selCrit.desc.trim() ? null : 'Description is required'}
+                   value={p.selCrit.desc}
                    onChange={this.handleDescChange}/>
         <br/>
         <br/>
