@@ -98,7 +98,9 @@ const genesis = {
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
   'selCrit.edit.close':        { params: [] },  // close dialog
   // PUBLIC AC: emitted from <EditSelCrit>
-  'selCrit.edit.changed':     { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+  'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+
+  'selCrit.save':              { params: ['selCrit'],    thunk: _thunks['selCrit.save'] },
 
 };
 
@@ -363,6 +365,24 @@ function _defineThunks() {
         
         // communicate async operation is in-progress
         // dispatch( AC[thunkName].retrieve.start(studentNum, editMode) ); // ... currently NOT USED
+      };
+      
+    });
+  }
+
+
+  /**
+   * selCrit.save(selCrit): an async action creator to save the supplied selCrit.
+   *
+   * @param {Obj} selCrit the selection criteria to save.
+   */
+  {
+    const {thunkName, log} = _promoteThunk('selCrit.save', function(selCrit) {
+      
+      return (dispatch, getState) => { // function interpreted by redux-thunk middleware
+
+        // TODO: fully implement selCrit.save() ... for now just display user message
+        dispatch( AC.userMsg.display('TODO: Save requested (but not yet implemented)') );
       };
       
     });

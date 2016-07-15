@@ -233,7 +233,8 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // issue save (when appropriate) ...
       if (this.starting_curHash !== p.selCrit.dbHash && // when selCrit needs to be saved -AND-
           completionType === 'Save') {                  // the Save button was used
-        // ??? need a save action
+
+        actions.push( AC.selCrit.save(p.selCrit) );
       }
 
       // publish the appropriate actions

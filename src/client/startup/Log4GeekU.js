@@ -40,7 +40,7 @@ const logConfig = Log.config({
                                          <dt> TRACE:  </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
-    'appState':          ['DEBUG', ` <dl> <dt> FOLLOW: </dt> <dd> monitor reducer state changes only </dd>
+    'appState':          ['none', `  <dl> <dt> FOLLOW: </dt> <dd> monitor reducer state changes only </dd>
                                           <dt> DEBUG:  </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
                                           <dt> TRACE:  </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
                                      </dl> ... may apply lower (ex: 'appState.userMsg')`],
