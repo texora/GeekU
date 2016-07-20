@@ -32,5 +32,10 @@ const coursesMeta = {
     subjDesc:      true
   },
 
+  // control structure driving interactive selCrit constraints
+  // TODO: add selCritFields to support interactive filter editing
+  // selCritFields: {
+  // }
+
 };
 export default coursesMeta;
