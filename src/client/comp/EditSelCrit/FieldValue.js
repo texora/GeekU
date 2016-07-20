@@ -71,15 +71,15 @@ const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
 
   		return <div className="Select-value">
   			<span className="Select-value-icon" title="Remove"
-              onClick={(e)=>this.handleRemove(fieldOption)}>x</span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleRemove(fieldOption);}}>x</span>
 
   			<span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
-              onClick={(e)=>this.handleReposition(fieldOption, -1)}><ArrowBackIcon style={iconStyle}/></span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(fieldOption, -1);}}><ArrowBackIcon style={iconStyle}/></span>
         
   			<span className="Select-value-label">{fieldOption.label}</span>
         
    			<span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
-              onClick={(e)=>this.handleReposition(fieldOption, +1)}><ArrowForwardIcon style={iconStyle}/></span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(fieldOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
       </div>;
     }
     

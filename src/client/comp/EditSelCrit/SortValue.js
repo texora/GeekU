@@ -95,16 +95,16 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
 
   		return <div className="Select-value">
   			<span className="Select-value-icon" title="Remove"
-              onClick={(e)=>this.handleRemove(sortOption)}>x</span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleRemove(sortOption);}}>x</span>
   			<span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
-              onClick={(e)=>this.handleReposition(sortOption, -1)}><ArrowBackIcon style={iconStyle}/></span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(sortOption, -1);}}><ArrowBackIcon style={iconStyle}/></span>
         
   			<span className="Select-value-label">{sortOption.label}</span>
   			<span className="Select-value-icon" style={iconContainerStyle} title="Toggle Ascending/Descending"
-              onClick={(e)=>this.handleAscDecToggle(sortOption)}><FilterListIcon style={{...iconStyle, ...iconAscDecStyle}}/></span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleAscDecToggle(sortOption);}}><FilterListIcon style={{...iconStyle, ...iconAscDecStyle}}/></span>
         
    			<span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
-              onClick={(e)=>this.handleReposition(sortOption, +1)}><ArrowForwardIcon style={iconStyle}/></span>
+              onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(sortOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
       </div>;
     }
     
