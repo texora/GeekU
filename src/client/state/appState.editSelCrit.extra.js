@@ -6,7 +6,7 @@ import ReduxSubReducer from '../util/ReduxSubReducer';
 
 import selectedFieldOptions from './appState.editSelCrit.extra.selectedFieldOptions';
 import selectedSortOptions  from './appState.editSelCrit.extra.selectedSortOptions';
-
+import filter               from './appState.editSelCrit.extra.filter';
 
 // ***
 // *** appState.editSelCrit.extra reducer
@@ -19,6 +19,7 @@ import selectedSortOptions  from './appState.editSelCrit.extra.selectedSortOptio
 const _extra = Redux.combineReducers({
   selectedFieldOptions,
   selectedSortOptions,
+  filter,
 });
 
 const subReducer = new ReduxSubReducer('appState.editSelCrit.extra', {

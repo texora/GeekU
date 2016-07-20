@@ -10,7 +10,7 @@ import name     from './appState.editSelCrit.selCrit.name';
 import desc     from './appState.editSelCrit.selCrit.desc';
 import fields   from './appState.editSelCrit.selCrit.fields';
 import sort     from './appState.editSelCrit.selCrit.sort';
-
+import filter   from './appState.editSelCrit.selCrit.filter';
 
 // ***
 // *** appState.editSelCrit.selCrit reducer
@@ -35,7 +35,7 @@ const _selCrit = Redux.combineReducers({
   fields,
   sort,
   distinguishMajorSortField: placebo,
-  filter: placebo,
+  filter,
 
   dbHash:  placebo,
   curHash: placebo,

@@ -15,13 +15,13 @@ const  metaXlate = {      // indexed via selCrit.target
          'Courses':  coursesMeta,
        };
 
-import Dialog      from 'material-ui/lib/dialog';
-import TextField   from 'material-ui/lib/text-field';
-import FlatButton  from 'material-ui/lib/flat-button';
-import Select      from 'react-select'
-import FieldValue  from './FieldValue'
-import SortValue   from './SortValue'
-
+import Dialog         from 'material-ui/lib/dialog';
+import TextField      from 'material-ui/lib/text-field';
+import FlatButton     from 'material-ui/lib/flat-button';
+import Select         from 'react-select'
+import FieldValue     from './FieldValue'
+import SortValue      from './SortValue'
+import SelCritDetail  from './SelCritDetail'
 
 /**
  * The EditSelCrit component edits a supplied selCrit object, through
@@ -204,8 +204,18 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // apply validation - prematurely returning on errors
       // ... validation errors dynamically are shown in dialog
       if (completionType !== 'Cancel') {
-        if (!p.selCrit.name.trim() ||  // name is required
-            !p.selCrit.desc.trim()) {  // desc is required
+        let valid = true;
+        if (!p.selCrit.name.trim()) // name is required
+          valid = false;
+        if (!p.selCrit.desc.trim()) // desc is required
+          valid = false;
+        for (const extraFilterObj of p.extraFilter) { // filter is missing some components
+          if (!extraFilterObj.operator ||
+              !extraFilterObj.value ||
+              extraFilterObj.value.length === 0)
+            valid = false;
+        }
+        if (!valid) {
           p.dispatch( AC.userMsg.display('Please resolve the highlighted validation errors.') );
           return;
         }
@@ -323,6 +333,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
           <span style={{color: 'grey'}}>Display Fields <i>(note that Students Gender/Name/StudentNum are always grouped together)</i>:</span><br/>
           <Select multi={true}
                   options={this.fieldOptions}
+                  matchProp="label"
                   valueComponent={FieldValue}
                   value={p.selectedFieldOptions}
                   onChange={this.handleFieldsChange}
@@ -334,22 +345,15 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
           <span style={{color: 'grey'}}>Sort Fields:</span><br/>
           <Select multi={true}
                   options={this.sortOptions} 
+                  matchProp="label"
                   valueComponent={SortValue}
                   value={p.selectedSortOptions}
                   onChange={this.handleSortChange}
                   resetValue={[]}/>
         </div>
+        <br/>
 
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/> {/* ... insure sufficient space in dialog to accommodate UI-Select drop-down */}
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+        <SelCritDetail meta={this.meta}/>
 
       </Dialog>;
     }
@@ -361,6 +365,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         selCrit:              appState.editSelCrit.selCrit,
         selectedFieldOptions: appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedFieldOptions : null,
         selectedSortOptions:  appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedSortOptions : null,
+        extraFilter:          appState.editSelCrit.extra ? appState.editSelCrit.extra.filter : null,
       };
     }
   }); // end of ... component property injection

@@ -220,10 +220,10 @@
   box-sizing: border-box;
   margin-top: -1px;
   max-height: 200px;
-  position: absolute;
+  position: relative; /* KJB: was absolute: relative: kinda works enlarges container, fixed: renders way off, absolute: hides under container (even with increased z-index) */
   top: 100%;
   width: 100%;
-  z-index: 1;
+  z-index: 1; /* KJB: was 1: larger number has no effect */
   -webkit-overflow-scrolling: touch;
 }
 .Select-menu {
@@ -279,7 +279,7 @@
   background-color: rgba(0, 126, 255, 0.08);
   border-radius: 2px;
   border: 1px solid rgba(0, 126, 255, 0.24);
-  color: #007eff;
+  color: #007eff; /* KJB: was #007eff, ???*/
   display: inline-block;
   font-size: 0.9em;
   line-height: 1.4;

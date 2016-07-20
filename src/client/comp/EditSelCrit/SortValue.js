@@ -8,7 +8,6 @@ import {AC}               from '../../state/actions';
 import ArrowBackIcon           from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import ArrowForwardIcon        from 'material-ui/lib/svg-icons/navigation/arrow-forward';
 import FilterListIcon          from 'material-ui/lib/svg-icons/content/filter-list';
-import RemoveCircleOutlineIcon from 'material-ui/lib/svg-icons/content/remove-circle-outline';
 
 
 /**
@@ -79,8 +78,8 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
       }
 
   		return <div className="Select-value" style={{borderWidth: 1, borderColor: 'grey', color: 'black'}}>
-  			<span className="Select-value-icon" style={iconContainerStyle} title="Remove"
-              onClick={(e)=>this.handleRemove(sortOption)}><RemoveCircleOutlineIcon style={iconStyle}/></span>
+  			<span className="Select-value-icon" title="Remove"
+              onClick={(e)=>this.handleRemove(sortOption)}>x</span>
   			<span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
               onClick={(e)=>this.handleReposition(sortOption, -1)}><ArrowBackIcon style={iconStyle}/></span>
         

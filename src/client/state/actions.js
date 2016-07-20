@@ -96,6 +96,7 @@ const genesis = {
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
+  'selCrit.edit.filterChange': { params: ['extraFilter'] },
   'selCrit.edit.close':        { params: [] },  // close dialog
   // PUBLIC AC: emitted from <EditSelCrit>
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
@@ -293,16 +294,18 @@ function _defineThunks() {
             },
             distinguishMajorSortField: true,
             filter: { // all female students in MO/IN with GPA >= 3.65
-              // "gender": "F",
+              "gender": {
+                "$eq": "F"
+              },
               "addr.state": {
                 "$in": [
                   "Missouri",
                   "Indiana"
                 ]
               },
-                      // "gpa": {
-                      //   "$gte": "3.65"
-                      // }
+              "gpa": {
+                "$gte": "3.65"
+              },
             }
           };
         }
