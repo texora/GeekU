@@ -157,7 +157,10 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       _singleton.edit(selCrit, extraActionsOnCompletionCb);
     }
 
-    // internal instance method that initiates the selCrit edit session
+
+    /**
+     * edit() - internal instance method that initiates the selCrit edit session
+     */
     edit(selCrit, extraActionsOnCompletionCb) {
       const p = this.props;
 
@@ -198,6 +201,10 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit(selCrit, this.meta) );
     }
 
+
+    /**
+     * handleEditComplete()
+     */
     handleEditComplete(completionType) { // completionType: 'Use'/'Save'/'Cancel'
       const p = this.props;
 
@@ -259,26 +266,46 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
     }
 
+
+    /**
+     * handleNameChange()
+     */
     handleNameChange(event) {
       const p = this.props;
       p.dispatch( AC.selCrit.edit.nameChange(event.target.value) );
     }
 
+
+    /**
+     * handleDescChange()
+     */
     handleDescChange(event) {
       const p = this.props;
       p.dispatch( AC.selCrit.edit.descChange(event.target.value) );
     }
 
+
+    /**
+     * handleFieldsChange()
+     */
     handleFieldsChange(selectedFieldOptions) { // selectedFieldOptions: Option[ {value, label}, ...]
       const p = this.props;
       p.dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
     }
 
+
+    /**
+     * handleSortChange()
+     */
     handleSortChange(selectedSortOptions) { // selectedSortOptions: Option[ {value, label, ascDec}, ...]
       const p = this.props;
       p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
     }
 
+
+    /**
+     * render()
+     */
     render() {
       const p = this.props;
 

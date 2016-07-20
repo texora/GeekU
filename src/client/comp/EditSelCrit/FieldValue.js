@@ -19,7 +19,11 @@ const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
       super(props, context);
       autoBindAllMethods(this);
     }
-    
+
+
+    /**
+     * handleReposition()
+     */
     handleReposition(fieldOption, offset) {
       const p = this.props;
 
@@ -35,6 +39,10 @@ const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
     }
 
+
+    /**
+     * handleRemove()
+     */
     handleRemove(fieldOption) {
       const p = this.props;
 
@@ -44,7 +52,11 @@ const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
     }
     
-  	render () {
+
+    /**
+     * render()
+     */
+  	render() {
       const p = this.props;
 
       const fieldOption = p.value; // value (the options entry with value/label) is the only property of interest

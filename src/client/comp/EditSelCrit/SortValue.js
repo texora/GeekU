@@ -21,6 +21,10 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
       autoBindAllMethods(this);
     }
 
+
+    /**
+     * handleAscDecToggle()
+     */
     handleAscDecToggle(sortOption) {
       const p = this.props;
 
@@ -34,6 +38,10 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
     }
     
+
+    /**
+     * handleReposition()
+     */
     handleReposition(sortOption, offset) {
       const p = this.props;
 
@@ -49,6 +57,10 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
     }
 
+
+    /**
+     * handleRemove()
+     */
     handleRemove(sortOption) {
       const p = this.props;
 
@@ -58,6 +70,10 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
     }
     
+
+    /**
+     * render()
+     */
   	render () {
       const p = this.props;
 

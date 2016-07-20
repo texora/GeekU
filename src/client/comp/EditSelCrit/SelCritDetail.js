@@ -81,11 +81,19 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       autoBindAllMethods(this);
     }
 
+
+    /**
+     * handleFilterChange()
+     */
     handleFilterChange(extraFilter) {
       const p = this.props;
       p.dispatch( AC.selCrit.edit.filterChange(extraFilter) );
     }
 
+
+    /**
+     * handleOperatorChange()
+     */
     handleOperatorChange(fieldName, opValue) {
       const p = this.props;
       const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
@@ -99,6 +107,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * handleTextValueChange()
+     */
     handleTextValueChange(fieldName, txtValue) {
       const p = this.props;
       const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
@@ -112,6 +124,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * handleSingleSelectValueChange()
+     */
     handleSingleSelectValueChange(fieldName, value) {
       const p = this.props;
       const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
@@ -125,6 +141,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * handleMultiSelectValueChange()
+     */
     handleMultiSelectValueChange(fieldName, options) {
       const p = this.props;
       const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
@@ -138,6 +158,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * handleAddFilter()
+     */
     handleAddFilter(fieldName) {
       const p = this.props;
 
@@ -162,6 +186,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * handleDeleteFilter()
+     */
     handleDeleteFilter(fieldName) {
       const p = this.props;
 
@@ -170,6 +198,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       this.handleFilterChange(newExtraFilter);
     }
 
+
+    /**
+     * genFilterOperatorElm()
+     */
     genFilterOperatorElm(extraFilterObj) {
       const p = this.props;
 
@@ -205,6 +237,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       }
     }
 
+
+    /**
+     * genFilterValueElm()
+     */
     genFilterValueElm(extraFilterObj) {
       const p = this.props;
 
@@ -245,6 +281,10 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       }
     }
 
+
+    /**
+     * render()
+     */
     render() {
       const p = this.props;
 
