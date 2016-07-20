@@ -69,7 +69,7 @@ const FieldValue = ReduxUtil.wrapCompWithInjectedProps(
         height: 12,
       };
 
-  		return <div className="Select-value" style={{borderWidth: 1, borderColor: 'grey', color: 'black'}}>
+  		return <div className="Select-value">
   			<span className="Select-value-icon" title="Remove"
               onClick={(e)=>this.handleRemove(fieldOption)}>x</span>
 

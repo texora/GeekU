@@ -93,7 +93,7 @@ const SortValue = ReduxUtil.wrapCompWithInjectedProps(
         iconAscDecStyle.transform = 'rotate(180deg)';
       }
 
-  		return <div className="Select-value" style={{borderWidth: 1, borderColor: 'grey', color: 'black'}}>
+  		return <div className="Select-value">
   			<span className="Select-value-icon" title="Remove"
               onClick={(e)=>this.handleRemove(sortOption)}>x</span>
   			<span className="Select-value-icon" style={iconContainerStyle} title="Move Left"

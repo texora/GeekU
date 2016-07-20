@@ -278,8 +278,8 @@
   /* Fallback color for IE 8 */
   background-color: rgba(0, 126, 255, 0.08);
   border-radius: 2px;
-  border: 1px solid rgba(0, 126, 255, 0.24);
-  color: #007eff; /* KJB: was #007eff, ???*/
+  border: 1px solid grey;  /* KJB: was ... 1px solid rgba(0, 126, 255, 0.24) */
+  color:  black;           /* KJB: was ... #007eff*/
   display: inline-block;
   font-size: 0.9em;
   line-height: 1.4;
