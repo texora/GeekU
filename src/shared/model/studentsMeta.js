@@ -48,6 +48,9 @@ const studentsMeta = {
 
   // control structure driving interactive selCrit constraints
   selCritFields: {
+    // TODO: multiSelectCreate is NOT operational because allowCreate is NOT supported in react-select 1.0.0-beta (for now, don't use)
+    // 'studentNum': {type: 'multiSelectCreate', options: []},
+    'studentNum': {type: 'comparison'},
     'gender':     {type: 'singleSelect', options: [{value: 'M', label: 'Male'}, {value: 'F', label: 'Female'}]},
     'firstName':  {type: 'comparison'},
     'lastName':   {type: 'comparison'},

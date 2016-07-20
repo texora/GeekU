@@ -168,15 +168,17 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       const metaSelCritField = p.meta.selCritFields[fieldName];
 
       const initialOperator = {
-        singleSelect: '$eq',
-        multiSelect:  '$in',
-        comparison:   null, // require user selection (vs. '$eq')
+        singleSelect:      '$eq',
+        multiSelect:       '$in',
+        multiSelectCreate: '$in',
+        comparison:        null, // require user selection (vs. '$eq')
       };
 
       const initialValue = {
-        singleSelect: '',
-        multiSelect:  [],
-        comparison:   '',
+        singleSelect:      '',
+        multiSelect:       [],
+        multiSelectCreate: [],
+        comparison:        '',
       };
 
       const newExtraFilterObj = { fieldName, operator: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
@@ -213,6 +215,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
           return 'matches';
 
         case 'multiSelect':
+        case 'multiSelectCreate':
           return 'any of';
 
         case 'comparison':
@@ -263,6 +266,16 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
         case 'multiSelect':
           return <Select multi={true}
+                         style={{width: '10em'}}
+                         options={metaSelCritField.options}
+                         value={extraFilterObj.value}
+                         onChange={ (options) => this.handleMultiSelectValueChange(extraFilterObj.fieldName, options) }
+                         placeholder={<span style={{color: colors.red900}}>value is required</span>}
+                         resetValue={[]}/>;
+
+        case 'multiSelectCreate': // TODO: multiSelectCreate is NOT operational because allowCreate is NOT supported in react-select 1.0.0-beta (for now, don't use)
+          return <Select multi={true}
+                         allowCreate={true}
                          style={{width: '10em'}}
                          options={metaSelCritField.options}
                          value={extraFilterObj.value}
