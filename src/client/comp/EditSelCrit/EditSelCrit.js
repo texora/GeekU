@@ -18,6 +18,7 @@ const  metaXlate = {      // indexed via selCrit.target
 import Dialog         from 'material-ui/lib/dialog';
 import TextField      from 'material-ui/lib/text-field';
 import FlatButton     from 'material-ui/lib/flat-button';
+import Toggle         from 'material-ui/lib/toggle';
 import Select         from 'react-select'
 import FieldValue     from './FieldValue'
 import SortValue      from './SortValue'
@@ -304,6 +305,14 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
 
     /**
+     * handleDistinguishMajorSortFieldChange()
+     */
+    handleDistinguishMajorSortFieldChange(event, value) {
+      const p = this.props;
+      p.dispatch( AC.selCrit.edit.distinguishMajorSortFieldChange(value) );
+    }
+
+    /**
      * render()
      */
     render() {
@@ -377,6 +386,11 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
                   value={p.selectedSortOptions}
                   onChange={this.handleSortChange}
                   resetValue={[]}/>
+          <Toggle label="Distinguish Major Sort Field"
+                  labelPosition="right"
+                  style={{paddingLeft: 20}}
+                  toggled={p.selCrit.distinguishMajorSortField}
+                  onToggle={this.handleDistinguishMajorSortFieldChange}/>
         </div>
         <br/>
 

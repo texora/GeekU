@@ -97,6 +97,7 @@ const genesis = {
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
   'selCrit.edit.filterChange': { params: ['extraFilter'] },
+  'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
   'selCrit.edit.close':        { params: [] },  // close dialog
   // PUBLIC AC: emitted from <EditSelCrit>
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
