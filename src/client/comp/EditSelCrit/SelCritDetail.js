@@ -294,7 +294,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
         <div style={{width: '100%'}}>
           <span style={{color: 'grey'}}>Selection Criteria:</span>
           <IconMenu iconButtonElement={ <IconButton title="Add new field to Selection Criteria">
-                                          <AddCircleOutlineIcon color={colors.red900}/>
+                                          <AddCircleOutlineIcon color={colors.deepOrangeA200}/>
                                         </IconButton> }
                     targetOrigin={{vertical: 'top', horizontal: 'right', }}
                     anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
@@ -327,7 +327,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                       <TableRowColumn>
                         <IconButton title="Remove field from Selection Criteria"
                                     onTouchTap={()=> this.handleDeleteFilter(extraFilterObj.fieldName)}>
-                          <RemoveCircleOutlineIcon color={colors.red900}/>
+                          <RemoveCircleOutlineIcon color={colors.deepOrangeA200}/>
                         </IconButton>
                       </TableRowColumn>
                     </TableRow>
