@@ -369,7 +369,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         <br/>
 
         <div style={{width: '100%'}}>
-          <span style={{color: 'grey'}}>Sort Fields:</span><br/>
+          <span style={{color: 'grey'}}>Order By:</span><br/>
           <Select multi={true}
                   options={this.sortOptions} 
                   matchProp="label"
