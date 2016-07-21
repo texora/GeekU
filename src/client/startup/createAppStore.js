@@ -7,6 +7,7 @@ import * as Redux                            from 'redux';
 import {enableBatching, batchActions, BATCH} from 'redux-batched-actions';
 import thunk                                 from 'redux-thunk';
 import appState                              from '../state/appState';
+import actionTypeAmplified                   from '../state/actionTypeAmplified';
 import handleUnexpectedError                 from '../util/handleUnexpectedError';
 
 const log = new Log('startup.createAppStore');
@@ -34,35 +35,6 @@ export default function createAppStore() {
   const reduxDevToolsChromeExtension = window.devToolsExtension ? window.devToolsExtension() : NO_EXTENSION;
   log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension !== NO_EXTENSION ? 'IS' : 'IS NOT'} PRESENT!`);
   
-
-  // internal utility that emits human readable info detailing action types in a variety of scenerios
-  // ... used in our middleware logging
-  function actionTypeMsg(action) {
-    let msg = 'Type';
-    if (Array.isArray(action)) {
-      msg += '(array): [';
-      for (const subAction of action) {
-        msg += actionTypeMsg(subAction);
-      }
-      msg += ']';
-    }
-    else if (typeof action === 'function') {
-      msg += `(thunk): '${action.type}' `; // ... in GeekU, even our thunks (functions) have a type attribute
-    }
-    else if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
-      msg += `(${BATCH}): [`;
-      for (const subAction of action.payload) {
-        msg += actionTypeMsg(subAction);
-      }
-      msg += ']';
-    }
-    else { // an action object
-      msg += `(object): '${action.type}' `;
-    }
-    return msg;
-  }
-
-  
   // define our central error handler for uncaught exceptions
   let   errInInProgress = null;  // ... used to detect recursive errors (see below)
   const errorHandler = store => next => action => {
@@ -70,7 +42,7 @@ export default function createAppStore() {
     const log = new Log('middleware.errorHandler');
   
     try { // defer to original dispatch action logic
-      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
       return next(action);
     } 
     catch (err) { // central handler
@@ -83,19 +55,19 @@ export default function createAppStore() {
         //           ... because we are outside the dispatch try/catch of this errorHandler
         const msg = 'A recursive error was detected in reporting a prior error';
         alert(`${msg}:\n\n    ${errInInProgress.clientMsg}\n    ${errInInProgress.message}\n\nIf this problem persists, please contact your tech support.`);
-        log.error(()=>`${msg}, in action: ${action.type} ... the prior error was logged above, the new error is:`, err);
+        log.error(()=>`${msg}, in action: ${actionTypeAmplified(action)} ... the prior error was logged above, the new error is:`, err);
       }
       // normal (happy-path) error handler
       else {
         errInInProgress = err;
         // report unexpected condition to user (logging details for tech reference)
-        store.dispatch( handleUnexpectedError(err, `processing action: ${action.type}`) );
+        store.dispatch( handleUnexpectedError(err, `processing action: ${actionTypeAmplified(action)}`) );
       }
 
     }
     finally {
       errInInProgress = null;
-      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
 
     }
   }
@@ -104,7 +76,7 @@ export default function createAppStore() {
   const thunkBatchHandler = ({dispatch, getState}) => next => action => {
     const log = new Log('middleware.thunkBatchHandler');
     try {
-      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
 
       //***
       //*** Phase I: Collect Phase - collect all action objects (resolving thunks into action objects)
@@ -190,20 +162,20 @@ export default function createAppStore() {
           return evalThunkReturnVals();
 
         case 1:  // A single action object to dispatch
-          log.debug(()=>`Dispatch a single action object, ${actionTypeMsg(allActionObjects[0])}`);
+          log.debug(()=>`Dispatch a single action object, ${actionTypeAmplified(allActionObjects[0])}`);
           next(allActionObjects[0]);
           return evalThunkReturnVals();
 
         default: // multiple action objects to dispatch
                  // ... in support batching of actions, 
                  //     we re-dispatch an action array morphed into batchActions (using redux-batched-actions middleware)
-          log.debug(()=>`Re-Dispatch multiple action objects (by morphing them into batch), ${actionTypeMsg(allActionObjects)}`);
+          log.debug(()=>`Re-Dispatch multiple action objects (by morphing them into batch), ${actionTypeAmplified(allActionObjects)}`);
           return dispatch( batchActions( allActionObjects ));
       }
 
     }
     finally {
-      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
     }
   }
   
@@ -219,7 +191,7 @@ export default function createAppStore() {
   const actionLogger = store => next => action => {
     const log = new Log('middleware.actionLogger');
     try {
-      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
 
       // log "ENTER" probe
       // NOTE: We have special logic to support batched sub-actions 
@@ -235,7 +207,7 @@ export default function createAppStore() {
           const clarification         = !log.isTraceEnabled() && actionIsObj
                                       ? '... NOTE: reconfigure log to TRACE to see action details (CAUTION: actions with payload can be LARGE)'
                                       : '';
-          return `ENTER${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeMsg(action)} ${clarification}`
+          return `ENTER${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeAmplified(action)} ${clarification}`
         });
         if (actionIsObj) {
           log.trace(()=>'action details:\n', action);
@@ -256,7 +228,7 @@ export default function createAppStore() {
         const log = getActionLog(action.type);
         // TODO: we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
         //       ... simply retain beforeState (above) and afterState here
-        log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeMsg(action)}`); 
+        log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeAmplified(action)}`); 
       }
       if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
         action.payload.concat().reverse().forEach(logExit);
@@ -267,7 +239,7 @@ export default function createAppStore() {
       return result;
     }
     finally {
-      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeMsg(action)}`);
+      log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
     }
   }
   

@@ -1,6 +1,7 @@
 'use strict'
 
-import Log from '../../shared/util/Log';
+import actionTypeAmplified from '../state/actionTypeAmplified';
+import Log                 from '../../shared/util/Log';
 
 /**
  * A ReduxSubReducer object orchestrates redux state changes through
@@ -84,7 +85,7 @@ class ReduxSubReducer {
       const subReducerMsg = subReducer 
                               ? `... sub-reducer: ${subLogMsgFn()}`
                               : '';
-      return `Reducer: ${this.reducerName}, Action: '${action.type}' ${stateChanged} ${subReducerMsg}`
+      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChanged} ${subReducerMsg}`
     });
     
     return nextState;
