@@ -14,7 +14,7 @@ const log = new Log('middleware.thunkBatchHandler');
  */
 const thunkBatchHandler = ({dispatch, getState}) => next => action => {
   try {
-    log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
 
     //***
     //*** Phase I: Collect Phase - collect all action objects (resolving thunks into action objects)
@@ -113,7 +113,7 @@ const thunkBatchHandler = ({dispatch, getState}) => next => action => {
 
   }
   finally {
-    log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
   }
 }
 

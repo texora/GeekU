@@ -27,7 +27,7 @@ class ReduxSubReducer {
    * set of sub-reducer functions indexed by the standard redux
    * action.type.  
    * 
-   * Each sub-reducer function has the followin signature:
+   * Each sub-reducer function has the inspecting signature:
    *   function(state, action): [nextState, subLogMsgFn]
    * 
    * For example:
@@ -67,13 +67,13 @@ class ReduxSubReducer {
 
 
     // apply a VERY useful log process, that distinguishes between state changes,
-    // allowing FOLLOW/DEBUG enablement at a top-level with useful insight -AND- minimal output!
+    // allowing INSPECT/DEBUG enablement at a top-level with useful insight -AND- minimal output!
     // Log Levels: 
-    //   FOLLOW: monitor reducer state changes only
-    //   DEBUG:  include explicit reducer logic action reasoning (regardless if state changes)
-    //   TRACE:  include ALL reducer enter/exit points (NO real value - simply shows ALL appState reducers)
+    //   INSPECT: monitor reducer state changes only
+    //   DEBUG:   include explicit reducer logic action reasoning (regardless if state changes)
+    //   TRACE:   include ALL reducer enter/exit points (NO real value - simply shows ALL appState reducers)
     const logIt = ((state !== nextState)
-                     ? this.log.follow     // state change - use log.follow()
+                     ? this.log.inspect    // state change - use log.inspect()
                      : (subReducer)
                          ? this.log.debug  // no state change, but app-specific logic - use log.debug()
                          : this.log.trace) // no state change, and no app-logic = use log.trace()
@@ -101,8 +101,8 @@ class ReduxSubReducer {
    */
   logStandardizedMsg(action, stateChanged, msg) {
     const logIt = (stateChanged
-                    ? this.log.follow // state change    - use log.follow()
-                    : this.log.debug) // no state change - use log.debug()
+                    ? this.log.inspect // state change    - use log.inspect()
+                    : this.log.debug)  // no state change - use log.debug()
                   .bind(this.log);
     logIt(()=> {
       const stateChangedMsg  = stateChanged

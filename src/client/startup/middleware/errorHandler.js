@@ -14,7 +14,7 @@ const log = new Log('middleware.errorHandler');
 const errorHandler = store => next => action => {
   
   try { // defer to original dispatch action logic
-    log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
     return next(action);
   } 
 
@@ -41,7 +41,7 @@ const errorHandler = store => next => action => {
 
   finally {
     errInInProgress = null;
-    log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
   }
 }
 

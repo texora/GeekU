@@ -14,7 +14,7 @@ const log = new Log('middleware.actionLogger');
  */
 const actionLogger = store => next => action => {
   try {
-    log.follow(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`ENTER ${log.filterName} for action: ${actionTypeAmplified(action)}`);
 
     // log "ENTER" probe
     // NOTE: We have special logic to support batched sub-actions 
@@ -26,7 +26,7 @@ const actionLogger = store => next => action => {
       const actionIsObj   = !actionIsFunct;
       const log           = getActionLog(action.type);
       
-      log.follow(()=> {
+      log.inspect(()=> {
         const clarification = !log.isTraceEnabled() && actionIsObj
                                 ? '... NOTE: reconfigure log to TRACE to see action details (CAUTION: actions with payload can be LARGE)'
                                 : '';
@@ -51,7 +51,7 @@ const actionLogger = store => next => action => {
       const log = getActionLog(action.type);
       // TODO: we could log store.getState(), but that is WAY TOO MUCH ... CONSIDER DIFF LOGIC
       //       ... simply retain beforeState (above) and afterState here
-      log.follow(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeAmplified(action)}`); 
+      log.inspect(()=>`EXIT${batched ? ' [BATCHED] ' : ' '}action: ${actionTypeAmplified(action)}`); 
     }
     if (action.type == BATCH) { // ... use == because our types are String objects ... NOT string built-ins
       action.payload.concat().reverse().forEach(logExit);
@@ -62,7 +62,7 @@ const actionLogger = store => next => action => {
     return result;
   }
   finally {
-    log.follow(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
+    log.inspect(()=>`EXIT ${log.filterName} for action: ${actionTypeAmplified(action)}`);
   }
 }
 

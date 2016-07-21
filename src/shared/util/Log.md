@@ -654,7 +654,7 @@ aspects will be dynamically introduced:
 ```
 
 The following example basically defines the out-of-box levels, but
-introduces a new FOLLOW level:
+introduces a new INSPECT level:
 
 ```javascript
 Log.config({ 
@@ -662,7 +662,7 @@ Log.config({
     'ERROR',
     'WARN',
     '*INFO',
-    'FOLLOW',  // NON-Standard level (providing more control between INFO/DEBUG)
+    'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
     'DEBUG',
     'TRACE',
   ]

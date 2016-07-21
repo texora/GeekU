@@ -16,7 +16,7 @@ const logConfig = Log.config({
     'ERROR',
     'WARN',
     '*INFO',
-    'FOLLOW',  // NON-Standard level (providing more control between INFO/DEBUG)
+    'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
     'DEBUG',
     'TRACE',
   ],
@@ -28,21 +28,21 @@ const logConfig = Log.config({
     'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG: </dt> <dd> see entire Material-UI muiTheme </dd>
                                         </dl>`],
 
-    'middleware':             ['none', ` <dl> <dt> FOLLOW: </dt> <dd> see ENTER/EXIT of redux middleware components </dd>
-                                              <dt> DEBUG:  </dt> <dd> include middleware logic </dd>
+    'middleware':             ['none', ` <dl> <dt> INSPECT: </dt> <dd> see ENTER/EXIT of redux middleware components </dd>
+                                              <dt> DEBUG:   </dt> <dd> include middleware logic </dd>
                                          </dl> ... may apply lower (ex: 'middleware.thunkBatchHandler')`],
     'middleware.errorHandler':      'none',
     'middleware.thunkBatchHandler': 'none',
     'middleware.actionLogger':      'none',
 
-    'actions':           ['none', ` <dl> <dt> FOLLOW: </dt> <dd> see ENTER/EXIT of dispatched actions </dd>
-                                         <dt> DEBUG:  </dt> <dd> include action app logic (in thunks) </dd>
-                                         <dt> TRACE:  </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
+    'actions':           ['none', ` <dl> <dt> INSPECT: </dt> <dd> see ENTER/EXIT of dispatched actions </dd>
+                                         <dt> DEBUG:   </dt> <dd> include action app logic (in thunks) </dd>
+                                         <dt> TRACE:   </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
-    'appState':          ['none', `  <dl> <dt> FOLLOW: </dt> <dd> monitor reducer state changes only </dd>
-                                          <dt> DEBUG:  </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
-                                          <dt> TRACE:  </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
+    'appState':          ['none', `  <dl> <dt> INSPECT: </dt> <dd> monitor reducer state changes only </dd>
+                                          <dt> DEBUG:   </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
+                                          <dt> TRACE:   </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
                                      </dl> ... may apply lower (ex: 'appState.userMsg')`],
 
     'autoBindAllMethods': 'none',

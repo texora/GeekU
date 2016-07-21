@@ -16,7 +16,7 @@ const logConfig = Log.config({
     'ERROR',
     'WARN',
     '*INFO',
-    'FOLLOW',  // NON-Standard level (providing more control between INFO/DEBUG)
+    'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
     'DEBUG',
     'TRACE',
   ],
