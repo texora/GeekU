@@ -59,8 +59,20 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
     }
 
+    handleSelectStudent(student) {
+      const p = this.props;
+      if (student) {
+        p.dispatch( AC.selectStudent(student) );
+      }
+    }
+
+    handleDetailStudent(studentNum, editMode) {
+      const p = this.props;
+      p.dispatch( AC.detailStudent(studentNum, editMode) );
+    }
+
     render() {
-      const { inProgress, selCrit, students, selectedStudent, studentsShown, detailStudent, selectStudentFn, detailStudentFn } = this.props;
+      const p = this.props;
 
       const myStyle = {
         margin:    '15px auto', // 15px spacing top/bottom, center left/right
@@ -76,13 +88,13 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       // we actually hide the students if NOT displayed as an attempted optimization for large list
       // ... one side-benefit is that we retain scrolling state from previous renderings
       //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
-      if (!studentsShown) {
+      if (!p.studentsShown) {
         myStyle.display = 'none';
       }
 
       // analyze fullName construct based on optional sort order of first/last
       // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
-      const sortFields = Object.keys(selCrit.sort || {}); // in precedence order
+      const sortFields = Object.keys(p.selCrit.sort || {}); // in precedence order
       function analyzeFirstNameFirst() {
         for (const field of sortFields) {
           if (field === 'firstName')
@@ -95,8 +107,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       const displayFirstNameFirst = analyzeFirstNameFirst();
 
       // define the order that our columns are displayed (based on selCrit)
-      const displayFieldOrder = selCrit.fields && selCrit.fields.length > 0
-              ? selCrit.fields
+      const displayFieldOrder = p.selCrit.fields && p.selCrit.fields.length > 0
+              ? p.selCrit.fields
               : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
 
       // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
@@ -126,8 +138,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   }}
                   title={<span>
                            <i>Students</i>
-                           {inProgress && refreshInd}
-                           <i style={{fontSize: 12}}> ... {selCrit.name} {selCrit.desc}</i>
+                           {p.inProgress && refreshInd}
+                           <i style={{fontSize: 12}}> ... {p.selCrit.name} {p.selCrit.desc}</i>
                          </span>}
                   iconElementLeft={<i/>}
                   iconElementRight={
@@ -143,8 +155,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                  fixedHeader={false}
                  selectable={true}
                  multiSelectable={false}
-                 onRowSelection={(selectedRows)=>selectStudentFn(selectedRows.length===0 ? null : students[selectedRows[0]])}
-                 onRowHover={(rowNum)=> this.handleHover(students[rowNum])}
+                 onRowSelection={(selectedRows)=>this.handleSelectStudent(selectedRows.length===0 ? null : p.students[selectedRows[0]])}
+                 onRowHover={(rowNum)=> this.handleHover(p.students[rowNum])}
                  onRowHoverExit={(rowNum)=> this.handleHover(null)}
                  style={{
                      width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
@@ -154,7 +166,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                        showRowHover={true}
                        stripedRows={false}>
 
-              { students.map( (student, studentIndx) => {
+              { p.students.map( (student, studentIndx) => {
 
                   // NOTE: student.studentNum is always emitted (enforced by server)
 
@@ -202,8 +214,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                                                // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
                                                visibility: this.state.hoveredStudent===student ? 'visible' : 'hidden',
                                              }}>
-                                            <FontIcon className="material-icons" color={colors.grey700} onClick={()=>detailStudentFn(student.studentNum, false)}>portrait</FontIcon>
-                                            <FontIcon className="material-icons" color={colors.red900}  onClick={()=>detailStudentFn(student.studentNum, true)}>edit</FontIcon>
+                                            <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailStudent(student.studentNum, false)}>portrait</FontIcon>
+                                            <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailStudent(student.studentNum, true)}>edit</FontIcon>
                                           </i>
                                         </TableRowColumn>;
 
@@ -212,7 +224,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
 
                   // provide a visual break when the major-sort field changes
                   curMajorSortValue = majorSortField ? student[majorSortField] : null;
-                  const majorSortBreakStyle = selCrit.distinguishMajorSortField && curMajorSortValue !== lastMajorSortValue && studentIndx !== 0
+                  const majorSortBreakStyle = p.selCrit.distinguishMajorSortField && curMajorSortValue !== lastMajorSortValue && studentIndx !== 0
                                                 ? {borderTop: '2px solid'}
                                                 : {};
                   lastMajorSortValue = curMajorSortValue;
@@ -220,7 +232,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   return (
                     <TableRow key={student.studentNum}
                               style={majorSortBreakStyle}
-                              selected={student===selectedStudent}>
+                              selected={student===p.selectedStudent}>
 
                       { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit
 
@@ -274,7 +286,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
             </TableBody>
           </Table>
         </Paper>
-        { detailStudent   && <Student/> }
+        { p.detailStudent   && <Student/> }
       </Paper>
     }
   }, // end of ... component definition
@@ -289,12 +301,6 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
         studentsShown:   appState.mainPage==='Students',
 
         detailStudent:   appState.students.detailStudent,
-      }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        selectStudentFn: (student)               => { if (student) dispatch( AC.selectStudent(student) )},
-        detailStudentFn: (studentNum, editMode)  => { dispatch( AC.detailStudent(studentNum, editMode) )},
       }
     }
   }); // end of ... component property injection

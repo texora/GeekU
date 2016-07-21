@@ -49,7 +49,8 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
     // conditionally close self if NO un-saved changes
     closeRequested() {
-      const unsavedChanges = this.props.editMode; // TODO: activate this appropriatly
+      const p = this.props;
+      const unsavedChanges = p.editMode; // TODO: activate this appropriatly
 
       // obtain user confirmation when unsaved changes exist
       if (unsavedChanges) {
@@ -63,66 +64,84 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
     // unconditionally close self
     close() {
-      this.props.closeStudentDialogFn();
+      const p = this.props;
+      p.dispatch( AC.detailStudent.close() );
+    }
+
+    changeEditMode() {
+      const p = this.props;
+      p.dispatch( AC.detailStudent.changeEditMode() );
+    }
+
+    saveEdit() {
+      const p = this.props;
+      p.dispatch([ AC.detailStudent.close(),
+                   AC.userMsg.display('TODO: Save Complete') ]);
+    }
+
+    cancelEdit() {
+      const p = this.props;
+      p.dispatch([ AC.detailStudent.close(),
+                   AC.userMsg.display('Edit Canceled') ]);
     }
 
     render() {
-      const { student, editMode, changeEditModeFn, saveEditFn, cancelEditFn } = this.props;
+      const p = this.props;
       
       // conditionally provide Save/Cancel edit buttons
-      const editActions = !editMode ? null : [
+      const editActions = !p.editMode ? null : [
         <FlatButton label="Save"
                     primary={true}
                     onTouchTap={ () => {
-                        saveEditFn();
+                        this.saveEdit();
                       }}/>,
         <FlatButton label="Cancel"
                     primary={true}
                     onTouchTap={ () => {
-                        cancelEditFn();
+                        this.cancelEdit();
                       }}/>,
       ];
 
 
-      const contentForm = editMode ?
+      const contentForm = p.editMode ?
         <div style={{
                padding: '0px 15px 0px 15px',
              }}>
           <TextField floatingLabelText="First"
                      style={{ width: '15em' }}
-                     defaultValue={student.firstName}/>
+                     defaultValue={p.student.firstName}/>
           &emsp;
           <TextField floatingLabelText="Last"
                      style={{ width: '15em' }}
-                     defaultValue={student.lastName}/>
+                     defaultValue={p.student.lastName}/>
           <br/>
           <TextField floatingLabelText="Email"
                      style={{ width: '15em' }}
-                     defaultValue={student.email}
+                     defaultValue={p.student.email}
                      hintText="yourMail@gmail.com"/>
           &emsp;
           <TextField floatingLabelText="Phone"
                      style={{ width: '15em' }}
-                     defaultValue={student.phone}
+                     defaultValue={p.student.phone}
                      hintText="618.555.1212"/>
           <br/>
           <TextField floatingLabelText="Address"
                      style={{ width: '15em' }}
-                     defaultValue={student.addr.line1}
+                     defaultValue={p.student.addr.line1}
                      hintText="line 1"/>
           <br/>
           <TextField style={{ width: '15em' }}
-                     defaultValue={student.addr.line2}
+                     defaultValue={p.student.addr.line2}
                      hintText="line 2"/>
           <br/>
           <TextField floatingLabelText="City"
                      style={{ width: '10em' }}
-                     defaultValue={student.addr.city}/>
+                     defaultValue={p.student.addr.city}/>
           &emsp;
           <AutoComplete floatingLabelText="State"
                         style={{ width: '10em' }}
                         filter={AutoComplete.caseInsensitiveFilter}
-                        searchText={student.addr.state}
+                        searchText={p.student.addr.state}
                         dataSource={['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']}
 
                         openOnFocus={true}
@@ -151,21 +170,21 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
           */}
           <TextField floatingLabelText="Zip"
                      style={{ width: '4em' }}
-                     defaultValue={student.addr.zip}/>
+                     defaultValue={p.student.addr.zip}/>
         </div>
       : <div style={{
                padding: '0px 15px 0px 15px',
              }}>
-          {student.email}
+          {p.student.email}
           <Divider/>
-          {student.phone}
+          {p.student.phone}
           <Divider/>
-          {student.addr.line1}<br/>
-          {student.addr.line2 ? <span>{student.addr.line2}<br/></span> : <i/>}
-          {student.addr.city}, {student.addr.state}  {student.addr.zip}<br/>
+          {p.student.addr.line1}<br/>
+          {p.student.addr.line2 ? <span>{p.student.addr.line2}<br/></span> : <i/>}
+          {p.student.addr.city}, {p.student.addr.state}  {p.student.addr.zip}<br/>
         </div>;
 
-      const profileForm = editMode ?
+      const profileForm = p.editMode ?
         <div style={{
                padding: '0px 15px 0px 15px',
              }}>
@@ -178,7 +197,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                }}>
 
             <RadioButtonGroup name="gender"
-                              defaultSelected={student.gender}
+                              defaultSelected={p.student.gender}
                               style={{ width: '10em' }}>
               <RadioButton value='M'
                            label='Male'/>
@@ -192,7 +211,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                         textFieldStyle={{ width: '8em' }}
                         minDate={moment().subtract(200, 'years').toDate() /* we have some really old dates in our data */}
                         formatDate={(date)=> moment(date).format('YYYY-MM-DD')}
-                        defaultDate={moment(student.birthday, 'YYYY-MM-DD').toDate()}
+                        defaultDate={moment(p.student.birthday, 'YYYY-MM-DD').toDate()}
                         />
             {/*
               DatePicker CRAPPIENESS ...
@@ -203,7 +222,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
             <AutoComplete floatingLabelText="Degree"
                           style={{ width: '4em' }}
                           filter={AutoComplete.caseInsensitiveFilter}
-                          searchText={student.degree}
+                          searchText={p.student.degree}
                           dataSource={subject.subjects()}
 
                           openOnFocus={true}
@@ -218,12 +237,12 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                        style={{ width: '4em' }}
                        type='number'
                        disabled={true}
-                       defaultValue={student.gpa}/>
+                       defaultValue={p.student.gpa}/>
 
             <AutoComplete floatingLabelText="Graduation"
                           style={{ width: '6em' }}
                           filter={AutoComplete.caseInsensitiveFilter}
-                          searchText={student.graduation}
+                          searchText={p.student.graduation}
                           dataSource={term.terms()}
 
                           openOnFocus={true}
@@ -238,9 +257,9 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
       : <div style={{
                padding: '0px 15px 0px 15px',
              }}>
-          {student.gender==='M' ? 'Male' : 'Female'} ... <i>Birthday</i>: {student.birthday}
+          {p.student.gender==='M' ? 'Male' : 'Female'} ... <i>Birthday</i>: {p.student.birthday}
           <br/>
-          <i>Degree</i>: {student.degree} ... <i>GPA</i>: {student.gpa} ... <i>Graduation</i>: {student.graduation}
+          <i>Degree</i>: {p.student.degree} ... <i>GPA</i>: {p.student.gpa} ... <i>Graduation</i>: {p.student.graduation}
         </div>;
 
 
@@ -293,8 +312,8 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                             tooltipPosition='top-right'>
                   <ArrowBackIcon color={colors.grey700}/>
                 </IconButton>
-                { !editMode &&
-                  <IconButton onClick={changeEditModeFn}
+                { !p.editMode &&
+                  <IconButton onClick={this.changeEditMode}
                               iconStyle={{
                                   width:  24,
                                   height: 24,          
@@ -310,9 +329,9 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                   </IconButton>
                 }
               </div>
-              <Avatar src={`https://robohash.org/${student.firstName + student.lastName}.bmp?size=100x100&set=set2&bgset=any`}
+              <Avatar src={`https://robohash.org/${p.student.firstName + p.student.lastName}.bmp?size=100x100&set=set2&bgset=any`}
                       size={100}/>
-              <h2>{student.firstName} {student.lastName}</h2>
+              <h2>{p.student.firstName} {p.student.lastName}</h2>
             </div>
 
             {/* right panel */}
@@ -334,7 +353,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                      }}
                    zDepth={4}>
 
-                <b>Contact</b>: {student.studentNum}
+                <b>Contact</b>: {p.student.studentNum}
                 {contentForm}
 
                 <br/>
@@ -369,12 +388,12 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                              displayRowCheckbox={false}
                              showRowHover={true}
                              stripedRows={false}>
-                    { student.enrollment.map( (enroll, indx) => {
+                    { p.student.enrollment.map( (enroll, indx) => {
                         return (
-                          <TableRow key={student.studentNum+enroll.term+enroll.courseNum}>
+                          <TableRow key={p.student.studentNum+enroll.term+enroll.courseNum}>
                             <TableRowColumn>{enroll.course.courseNum}</TableRowColumn>
                             <TableRowColumn>
-                              { !editMode ? enroll.grade || '' // xxx this stupid SelectField (CRAPPIENESS) CAN ONLY be controlled ... NO defaultValue semantics
+                              { !p.editMode ? enroll.grade || '' // xxx this stupid SelectField (CRAPPIENESS) CAN ONLY be controlled ... NO defaultValue semantics
                               : <SelectField floatingLabelText="Grade"
                                              style={{ width: '2em' }}
                                              value={enroll.grade}>
@@ -386,7 +405,7 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
                                 </SelectField>}
                             </TableRowColumn>
                             <TableRowColumn>
-                              { !editMode ? enroll.term
+                              { !p.editMode ? enroll.term
                               : <AutoComplete floatingLabelText="Term"
                                               style={{ width: '8em' }}
                                               filter={AutoComplete.caseInsensitiveFilter}
@@ -440,14 +459,6 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
       return {
         student:   appState.students.detailStudent,
         editMode:  appState.students.detailEditMode,
-      }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        closeStudentDialogFn: () => { dispatch( AC.detailStudent.close() )},
-        changeEditModeFn:     () => { dispatch( AC.detailStudent.changeEditMode() )},
-        saveEditFn:           () => { dispatch([ AC.detailStudent.close(), AC.userMsg.display('TODO: Save Complete') ])},
-        cancelEditFn:         () => { dispatch([ AC.detailStudent.close(), AC.userMsg.display('Edit Canceled') ])},
       }
     }
   }); // end of ... component property injection

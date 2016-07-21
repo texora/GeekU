@@ -18,14 +18,20 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
       autoBindAllMethods(this);
     }
 
+    handleClose(reason) { // reason can be: 'timeout' or 'clickaway'
+      const p = this.props;
+      if (reason==='timeout')
+        p.dispatch( AC.userMsg.close() );
+    }
+
     render() {
-      const { open, msg, actionTxt, actionFn, closeFn } = this.props
-      return <Snackbar open={open}
-                       message={msg}
-                       action={actionTxt}
-                       onActionTouchTap={actionFn}
+      const p = this.props;
+      return <Snackbar open={p.open}
+                       message={p.msg}
+                       action={p.actionTxt}
+                       onActionTouchTap={p.actionFn}
                        autoHideDuration={4000}
-                       onRequestClose={closeFn}/>;
+                       onRequestClose={this.handleClose}/>;
     }
 
   }, // end of ... component definition
@@ -44,21 +50,11 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
         actionTxt,
         actionFn,
       }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        closeFn: (reason) => { if (reason==='timeout') dispatch( AC.userMsg.close() ) }, // reason can be: 'timeout' or 'clickaway'
-      }
     }
   }); // end of ... component property injection
 
 // define expected props
 UserMsg.propTypes =  {
-  open:       React.PropTypes.bool,    // .isRequired - injected via self's wrapper
-  msg:        React.PropTypes.string,  // .isRequired - injected via self's wrapper
-  actionTxt:  React.PropTypes.string,  //               injected via self's wrapper
-  actionFn:   React.PropTypes.func,    //               injected via self's wrapper
-  closeFn:    React.PropTypes.func     // .isRequired - injected via self's wrapper
 }
 
 export default UserMsg;
