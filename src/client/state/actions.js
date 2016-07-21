@@ -4,6 +4,7 @@ import assert                from 'assert';
 import Log                   from '../../shared/util/Log';
 import handleUnexpectedError from '../util/handleUnexpectedError';
 import {encodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
+import UserMsg               from '../comp/UserMsg';
 
 const _actionLogCache = {}; // Key: Action Type, Value: Log instance
 const _thunks = _defineThunks();
@@ -61,6 +62,13 @@ const genesis = {
   /**
    * Action Creator to display a user message.
    *
+   * NOTE: An alternate technique to activate a user message is through
+   *       the static UserMsg.display(msg [, userAction]) method.  This
+   *       may be preferred when:
+   *         a) no other actions need to be 'batched' with the user
+   *            message, and/or
+   *         b) when you have NO access to the dispatcher.
+   *
    * @param {string} msg the message to display.
    * @param {Obj} userAction an optional structure defining a user click action:
    *                userAction: {  // optional action that can be activated by the user
@@ -68,7 +76,6 @@ const genesis = {
    *                  callback: function(event)
    *                }
    */
-  // AC.userMsg.display(msg, userAction): Action TODO: provide alt means to programatically activate (use singleton <UserMsg> - patterned after EditSelCrit>
   'userMsg.display':           { params: ['msg', 'userAction'],       ac: _userMsg_display },
   'userMsg.close':             { params: [] },
 
@@ -386,7 +393,7 @@ function _defineThunks() {
       return (dispatch, getState) => { // function interpreted by redux-thunk middleware
 
         // TODO: fully implement selCrit.save() ... for now just display user message
-        dispatch( AC.userMsg.display('TODO: Save requested (but not yet implemented)') );
+        UserMsg.display('TODO: Save requested (but not yet implemented)');
       };
       
     });

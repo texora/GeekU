@@ -4,6 +4,7 @@ import React              from 'react';
 import ReduxUtil          from '../util/ReduxUtil';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import Snackbar           from 'material-ui/lib/snackbar';
+import assert             from 'assert';
 import {AC}               from '../state/actions'
 
 /**
@@ -16,7 +17,48 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
     constructor(props, context) {
       super(props, context);
       autoBindAllMethods(this);
+
+      // keep track of our one-and-only instance
+      assert(!_singleton, "<UserMsg> only ONE UserMsg is needed and therefore may be instantiated within the app.");
+      _singleton = this;
     }
+
+
+    /**
+     * Display a user message programmatically.
+     *
+     * NOTE: An alternate technique to activate a user message is through
+     *       the Action Creator AC.userMsg.display(msg, userAction).  This 
+     *       may be preferred when:
+     *         a) additional actions need to be 'batched' with the user
+     *            message, and
+     *         b) when you have access to the dispatcher.
+     *
+     * @param {string} msg the message to display.
+     * @param {Obj} userAction an optional structure defining a user click action:
+     *                userAction: {  // optional action that can be activated by the user
+     *                  txt:      '',
+     *                  callback: function(event)
+     *                }
+     * @public
+     */
+    static display(msg, userAction) {
+      // validate that an <UserMsg> has been instantiated
+      assert(_singleton, "UserMsg.edit() ... ERROR: NO <UserMsg> has been instantiated within the app.");
+
+      // pass-through to our instance method
+      _singleton.display(msg, userAction);
+    }
+
+
+    /**
+     * display() - internal instance method that activates the user message.
+     */
+    display(msg, userAction) {
+      const p = this.props;
+      p.dispatch( AC.userMsg.display(msg, userAction) );
+    }
+
 
     handleClose(reason) { // reason can be: 'timeout' or 'clickaway'
       const p = this.props;
@@ -56,5 +98,8 @@ const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
 // define expected props
 UserMsg.propTypes =  {
 }
+
+// keep track of our one-and-only instance
+let _singleton = null;
 
 export default UserMsg;

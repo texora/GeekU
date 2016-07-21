@@ -24,6 +24,9 @@ import FieldValue     from './FieldValue'
 import SortValue      from './SortValue'
 import SelCritDetail  from './SelCritDetail'
 
+import UserMsg from '../UserMsg';
+
+
 /**
  * The EditSelCrit component edits a supplied selCrit object, through
  * an interactive modal dialog.  Because the selCrit is a generic
@@ -224,7 +227,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
             valid = false;
         }
         if (!valid) {
-          p.dispatch( AC.userMsg.display('Please resolve the highlighted validation errors.') );
+          UserMsg.display('Please resolve the highlighted validation errors.');
           return;
         }
       }
