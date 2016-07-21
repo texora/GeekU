@@ -85,11 +85,12 @@ export default function selCrit(selCrit=null, action) {
   if (nextSelCrit !== selCrit) {
     const fromHash = nextSelCrit.curHash;
     const toHash   = hashSelCrit(nextSelCrit);
-    const stateChangedMsg = fromHash === toHash ? '(*NO* state change)' : '(STATE CHANGED)';
+
     nextSelCrit.curHash = toHash;
-    // ??? TODO: standardize log entries within Reducer value-added-logic  throudh a ReduxSubReducer utility
-    // ??? utilize actionTypeAmplified(action) in place of action.type
-    subReducer.log.follow(()=>`Reducer: ${subReducer.reducerName}, Action: '${action.type}' ${stateChangedMsg} ... value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
+
+    subReducer.logStandardizedMsg(action,
+                                  fromHash !== toHash,
+                                  `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
   }
 
   return nextSelCrit;

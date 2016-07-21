@@ -79,16 +79,37 @@ class ReduxSubReducer {
                          : this.log.trace) // no state change, and no app-logic = use log.trace()
                    .bind(this.log);
     logIt(()=> {
-      const stateChanged  = state !== nextState
-                              ? '(STATE CHANGED)'
-                              : '(*NO* state change)';
-      const subReducerMsg = subReducer 
-                              ? `... sub-reducer: ${subLogMsgFn()}`
-                              : '';
-      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChanged} ${subReducerMsg}`
+      const stateChangedMsg  = state !== nextState
+                                ? '(STATE CHANGED)'
+                                : '(*NO* state change)';
+      const subReducerMsg    = subReducer 
+                                 ? `... sub-reducer: ${subLogMsgFn()}`
+                                 : '';
+      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChangedMsg} ${subReducerMsg}`;
     });
     
     return nextState;
+  }
+
+  /**
+   * Log message in a standardized way, used by top-level Reducer logic.
+   * Similar format to the SubReducer log (above).
+   * 
+   * @param {Object}  action       the standard redux action involved.
+   * @param {boolean} stateChanged indicator as to whether the state has changed.
+   * @param {string}  msg          the message to log
+   */
+  logStandardizedMsg(action, stateChanged, msg) {
+    const logIt = (stateChanged
+                    ? this.log.follow // state change    - use log.follow()
+                    : this.log.debug) // no state change - use log.debug()
+                  .bind(this.log);
+    logIt(()=> {
+      const stateChangedMsg  = stateChanged
+                                ? '(STATE CHANGED)'
+                                : '(*NO* state change)';
+      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChangedMsg} ... ${msg}`;
+    });
   }
 
 }
