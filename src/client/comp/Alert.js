@@ -4,54 +4,36 @@ import React              from 'react';
 import assert             from 'assert';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import Dialog             from 'material-ui/lib/dialog';
+import FlatButton         from 'material-ui/lib/flat-button';
 
 
 /**
- * An Alert is a thin wrapper around the <Dialog> component that
- * manages the display independent from appState.  The incentive for
- * this component is to provide a means to activate an Alert within a
- * logic flow.
+ * The Alert utility provides a programmatic means by which user
+ * alerts and confirmations may be obtained through a modal dialog.
  *
  * Alerts are urgent interruptions that inform the user about a
  * particular situation, requiring user acknowledgment.
  * 
- * The Alert component accepts all the properties of <Dialog>, with
- * the following exceptions:
- *  - actions: are required, because this is the only way to communicate
- *    user intent (and must close the <Alert> because alerts are
- *    modal)
- *  - modal: may NOT be supplied, because alerts are forced to be modal
- *  - onRequestClose: may NOT be supplied, because this is controlled by <Alert>
- *  - open: may NOT be supplied, because this is controlled by <Alert>
+ * Alerts may be created with a simple user 'OK' confirmation, or any
+ * number of client-specific actions (via a functional callback per action).
  * 
  * Usage:
  *
- *  - Pre-Instantiate all needed Alert(s) (initially hidden) with
- *    appropriate content -AND- actions, retaining a reference to each
- *    Alert instance:
+ *  - Pre-Instantiate one Alert (initially hidden) somewhere at the top-level of your app.
  *
- *        <Alert ref={(alert)=>{this.unsavedChangesAlert=alert}}
- *               title='Foo Edit'
- *               actions={[
- *                 <FlatButton label="Discard Changes"
- *                             primary={true}
- *                             onTouchTap={ () => {
- *                                 this.unsavedChangesAlert.close();
- *                                 this.close(); // close our overall Foo dialog
- *                               }}/>,
- *                 <FlatButton label="Go Back (in order to Save Changes)"
- *                             primary={true}
- *                             onTouchTap={ () => {
- *                                 this.unsavedChangesAlert.close();
- *                               }}/>,
- *               ]}>
- *          You have un-saved changes ... if you leave, your changes will NOT be saved!
- *        </Alert>
+ *        <Alert/>
  *    
- *  - When needed (in your logic), activate the alert, which forces the user
- *    to take one of the actions.
+ *  - When needed (anywhere in your logic), activate the alert, forcing the user
+ *    to acknowledge one of the actions.
  *    
- *        this.unsavedChangesAlert.open();
+ *        Alert.display({
+ *          title: 'Student Edit',
+ *          msg:   'You have un-saved changes ... if you leave, your changes will NOT be saved!',
+ *          actions: [
+ *            { txt: 'Discard Changes', action: () => ...callback-logic-here... },
+ *            { txt: 'Go Back',         action: () => ...callback-logic-here... }
+ *          ]
+ *        });
  *    
  */
 export default class Alert extends React.Component {
@@ -61,48 +43,91 @@ export default class Alert extends React.Component {
 
     autoBindAllMethods(this);
 
-    // validate supplied properties
-    // ... we pass through all supplied props to <Dialog>
-    // ... except those that we control ourselves
-    const props = args[0];
-    assert(props.actions,                    "<Alert> component REQUIRES the 'actions' property, as this is the only way to close the alert (because all alerts are modal).");
-    assert(props.modal===undefined,          "<Alert> may NOT contain the 'modal' property, because all alerts are modal.");
-    assert(props.onRequestClose===undefined, "<Alert> may NOT contain the 'onRequestClose' property, because this is controlled by <Alert>.");
-    assert(props.open===undefined,           "<Alert> may NOT contain the 'open' property, because this is controlled by <Alert>.");
+    // keep track of our one-and-only instance
+    assert(!_singleton, "<Alert> only ONE Alert is needed and therefore may be instantiated within the app.");
+    _singleton = this;
 
     // define initial state controlling display of our modal dialog
     this.state = { open: false };
+
+    // we maintain an array of directives, supporting multiple concurrent alerts
+    this.directives = [];
   }
 
   /**
-   * Open (i.e. visualize) our modal alert ... a public access point.
+   * Display our modal alert ... a public access point.
+   *
+   * @param {Object} directive the directive containing message/actions/title.
+   *   {
+   *     title: 'bla',  // the OPTIONAL Alert title
+   *     msg:   'bla',  // the primary message to display (can be string or dom elm)
+   *     actions: [     // the OPTIONAL user actions to invoke [DEFAULT: simple OK button]
+   *       { txt 'bla' [, action: function()] },
+   *       { txt 'bla' [, action: function()] },
+   *     ]
+   *   }
+   *
    * @public
    */
-  open() {
-    this.setState({open: true});
+  static display(directive) {
+    // validate that an <Alert> has been instantiated
+    assert(_singleton, "Alert.display() ... ERROR: NO <Alert> has been instantiated within the app.");
+
+    // pass-through to our instance method
+    _singleton.display(directive);
   }
 
-  /**
-   * Close (i.e. hide) our modal alert ... a public access point.
-   * @public
-   */
+  display(directive) {
+    // validate the directive parameter
+    assert(directive,     '<Alert.display() missing the directive parameter');
+    assert(directive.msg, `<Alert.display() missing the directive.msg attribute for directive: ${JSON.stringify(directive, null, 2)}`);
+
+    // maintain our state as OPEN
+    this.directives.push(directive);                   // ... retain the directive to display
+    this.setState({open: this.directives.length > 0}); // ... utilize react state to refresh display
+  }
+
   close() {
-    this.setState({open: false});
+    // maintain our state as CLOSED (or display prior directive)
+    this.directives.pop();
+    this.setState({open: this.directives.length > 0});
+  }
+
+  currentDirective() {
+    const  indx = this.directives.length - 1;
+    return indx >= 0 ? this.directives[indx] : null;
   }
 
   render() {
-    // NOTE: onRequestClose={this.close} 
-    //       ... does NOT appear to be called when actions are invoked,
-    //           RATHER the invoker's action MUST call close()
-    //       ... so it appears to be unnneeded here
+    // no-op when NO alerts are active
+    if (!this.state.open)
+      return null;
+
+    const directive = this.currentDirective();
+
+    // morph supplied actions in to a series of buttons used in our dialog
+    const actions = directive.actions || [{txt: 'OK'}]; // when NO actions are supplied, merely use an Alert Dialog
+    const dialogActions = actions.map( (action) => {
+      return <FlatButton label={action.txt}
+                         primary={true}
+                         onTouchTap={ () => {
+                             this.close();       // always close self
+                             if (action.action)  // invoke client-function (when supplied)
+                               action.action();
+                           }}/>;
+    });
+
     return <Dialog modal={true}
-                   open={this.state.open}
-                   onRequestClose={(buttonClicked)=>alert(`WowZee (I can't believe it) the onRequestClose() WAS FIRED ... buttonClicked: ${buttonClicked?'true':'false'}`)} 
-                   {...this.props}/>;
+                   open={true}
+                   title={directive.title}
+                   actions={dialogActions}
+                   children={directive.msg}/>;
   }
 }
 
 // define expected props
 Alert.propTypes = {
-  actions: React.PropTypes.node.isRequired, // Actions are the ONLY way to take down our Alert
 }
+
+// keep track of our one-and-only instance
+let _singleton = null;

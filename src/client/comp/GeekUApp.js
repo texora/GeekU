@@ -12,6 +12,7 @@ import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
 import Students           from './Students';
 import UserMsg            from './UserMsg';
+import Alert              from './Alert';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../state/actions';
 import LeftNav            from './LeftNav';
@@ -32,6 +33,41 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
     handleMainPageChange(page) {
       const p = this.props;
       p.dispatch( AC.changeMainPage(page) );
+    }
+
+    tempAlert() {
+      const p = this.props;
+      const directive1 = {
+        title: 'Test Alert 1',
+        msg:   'This is a test of our Alert Dialog!',
+        actions: [  
+          {txt: 'Option 1',  action: () => p.dispatch( AC.userMsg.display('User chose Option 1') ) },
+          {txt: 'Option 2',  action: () => p.dispatch( AC.userMsg.display('User chose Option 2') ) },
+          {txt: 'Alert A', action: () => Alert.display(directiveA) },
+          {txt: 'Cancel' },
+        ]
+      };
+      const directiveA = {
+        title: 'Test Alert A',
+        msg:   'This is a test of our Alert Dialog!',
+        actions: [  
+          {txt: 'Option A', action: () => p.dispatch( AC.userMsg.display('User chose Option A') ) },
+          {txt: 'Option B', action: () => p.dispatch( AC.userMsg.display('User chose Option B') ) },
+          {txt: 'Cancel' },
+        ]
+      };
+      const directiveX = {
+        title: 'Test Alert X',
+        msg:   'This is a test of our Alert Dialog!',
+        actions: [  
+          {txt: 'Option X', action: () => p.dispatch( AC.userMsg.display('User chose Option X') ) },
+          {txt: 'Option Y', action: () => p.dispatch( AC.userMsg.display('User chose Option Y') ) },
+          {txt: 'Cancel' },
+        ]
+      };
+      Alert.display(directive1);
+      Alert.display(directiveX); // test multiple concurrent alerts
+      Alert.display({msg: <span style={{color: 'red'}}>This is a simple Alert</span>});
     }
 
     tempSampleMsg() {
@@ -97,6 +133,8 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                     <MenuItem primaryText="Refresh"/>
                     <MenuItem primaryText="Help"/>
                     <MenuItem primaryText="Sign Out"/>
+
+                    <MenuItem primaryText="Sample Alerts"                    onTouchTap={this.tempAlert}/>
                     <MenuItem primaryText="Sample Message"                   onTouchTap={this.tempSampleMsg}/>
                     <MenuItem primaryText="Sample Multi-Message"             onTouchTap={this.tempSampleMultiMsg}/>
                     <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
@@ -106,6 +144,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
         <Students/>
         <EditSelCrit/>
         <UserMsg/>
+        <Alert/>
       </div>;
     }
   }, // end of ... component definition

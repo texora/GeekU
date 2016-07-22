@@ -54,7 +54,14 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
       // obtain user confirmation when unsaved changes exist
       if (unsavedChanges) {
-        this.unsavedChangesAlert.open();
+        Alert.display({
+          title: 'Student Edit',
+          msg:   'You have un-saved changes ... if you leave, your changes will NOT be saved!',
+          actions: [
+            { txt: 'Discard Changes', action: () => this.close() }, 
+            { txt: 'Go Back (in order to Save Changes)' }
+          ]
+        });
       }
       // close self for no outstanding unsaved changes
       else {
@@ -430,24 +437,6 @@ const Student = ReduxUtil.wrapCompWithInjectedProps(
 
             </div>
           </div>
-
-          <Alert ref={(alert)=>{this.unsavedChangesAlert=alert}}
-                 title='Student Edit'
-                 actions={[
-                   <FlatButton label="Discard Changes"
-                               primary={true}
-                               onTouchTap={ () => {
-                                   this.unsavedChangesAlert.close();
-                                   this.close(); // close our overall Student dialog (discarding changes)
-                                 }}/>,
-                   <FlatButton label="Go Back (in order to Save Changes)"
-                               primary={true}
-                               onTouchTap={ () => {
-                                   this.unsavedChangesAlert.close();
-                                 }}/>,
-                 ]}>
-            You have un-saved changes ... if you leave, your changes will NOT be saved!
-          </Alert>
 
         </Dialog>
       );
