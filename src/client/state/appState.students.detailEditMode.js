@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.students.detailEditMode reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.students.detailEditMode', {
+const reductionHandler = new ReductionHandler('appState.students.detailEditMode', {
 
   [AT.detailStudent.retrieve.complete](detailEditMode, action) {
     return [
@@ -27,5 +27,5 @@ const subReducer = new ReduxSubReducer('appState.students.detailEditMode', {
 });
 
 export default function detailEditMode(detailEditMode=false, action) {
-  return subReducer.resolve(detailEditMode, action);
+  return reductionHandler.reduce(detailEditMode, action);
 }

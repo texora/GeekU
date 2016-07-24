@@ -1,8 +1,8 @@
 'use strict'
 
-import * as Redux      from 'redux';
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import * as Redux       from 'redux';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 import selectedFieldOptions from './appState.editSelCrit.extra.selectedFieldOptions';
 import selectedSortOptions  from './appState.editSelCrit.extra.selectedSortOptions';
@@ -22,7 +22,7 @@ const _extra = Redux.combineReducers({
   filter,
 });
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.extra', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.extra', {
 
   [AT.selCrit.edit](extra, action) {
     return [
@@ -43,7 +43,7 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.extra', {
 export default function extra(extra=null, action) {
 
   // invoke our top-level extra reducer
-  let nextExtra = subReducer.resolve(extra, action);
+  let nextExtra = reductionHandler.reduce(extra, action);
 
   // short-circuit further reduction, when NO edit session is active
   // ... our extra is null (it has no fields)

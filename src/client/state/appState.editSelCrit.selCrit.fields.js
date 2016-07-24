@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.editSelCrit.selCrit.fields reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.fields', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.fields', {
 
   [AT.selCrit.edit.fieldsChange](fields, action) {
     const selectedFieldOptions = action.selectedFieldOptions;
@@ -26,5 +26,5 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.fields', {
 });
 
 export default function fields(fields=null, action) {
-  return subReducer.resolve(fields, action);
+  return reductionHandler.reduce(fields, action);
 }

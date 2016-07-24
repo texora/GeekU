@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.students.inProgress reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.students.inProgress', {
+const reductionHandler = new ReductionHandler('appState.students.inProgress', {
   [AT.retrieveStudents.start]    (inProgress, action) { return addIn(inProgress, +1); },
   [AT.retrieveStudents.complete] (inProgress, action) { return addIn(inProgress, -1); },
   [AT.retrieveStudents.fail]     (inProgress, action) { return addIn(inProgress, -1); },
@@ -22,5 +22,5 @@ function addIn(val, additive) {
 }
 
 export default function inProgress(inProgress=0, action) {
-  return subReducer.resolve(inProgress, action);
+  return reductionHandler.reduce(inProgress, action);
 }

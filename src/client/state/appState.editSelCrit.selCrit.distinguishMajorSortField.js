@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.editSelCrit.selCrit.distinguishMajorSortField reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.distinguishMajorSortField', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.distinguishMajorSortField', {
 
   [AT.selCrit.edit.distinguishMajorSortFieldChange](distinguishMajorSortField, action) {
     return [
@@ -20,5 +20,5 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.distinguish
 });
 
 export default function distinguishMajorSortField(distinguishMajorSortField=null, action) {
-  return subReducer.resolve(distinguishMajorSortField, action);
+  return reductionHandler.reduce(distinguishMajorSortField, action);
 }

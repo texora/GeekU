@@ -1,15 +1,14 @@
 'use strict'
 
-import * as Redux      from 'redux';
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.students.selCrit reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.students.selCrit', {
+const reductionHandler = new ReductionHandler('appState.students.selCrit', {
 
   [AT.retrieveStudents.complete](selCrit, action) {
     const nextSelCrit = action.selCrit;
@@ -22,5 +21,5 @@ const subReducer = new ReduxSubReducer('appState.students.selCrit', {
 });
 
 export default function selCrit(selCrit=null, action) {
-  return subReducer.resolve(selCrit, action);
+  return reductionHandler.reduce(selCrit, action);
 }

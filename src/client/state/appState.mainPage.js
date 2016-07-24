@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.mainPage reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.mainPage', {
+const reductionHandler = new ReductionHandler('appState.mainPage', {
 
   [AT.changeMainPage](mainPage, action) {
     return [
@@ -20,5 +20,5 @@ const subReducer = new ReduxSubReducer('appState.mainPage', {
 });
 
 export default function mainPage(mainPage='', action) {
-  return subReducer.resolve(mainPage, action);
+  return reductionHandler.reduce(mainPage, action);
 }

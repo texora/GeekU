@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.students.items reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.students.items', {
+const reductionHandler = new ReductionHandler('appState.students.items', {
 
   [AT.retrieveStudents.complete](items, action) {
     return [
@@ -29,5 +29,5 @@ const subReducer = new ReduxSubReducer('appState.students.items', {
 });
 
 export default function items(items=[], action) {
-  return subReducer.resolve(items, action);
+  return reductionHandler.reduce(items, action);
 }

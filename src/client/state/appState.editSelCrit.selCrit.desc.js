@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.editSelCrit.selCrit.desc reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.desc', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.desc', {
 
   [AT.selCrit.edit.descChange](desc, action) {
     return [
@@ -20,5 +20,5 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.desc', {
 });
 
 export default function desc(desc='', action) {
-  return subReducer.resolve(desc, action);
+  return reductionHandler.reduce(desc, action);
 }

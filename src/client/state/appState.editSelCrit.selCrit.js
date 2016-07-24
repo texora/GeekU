@@ -1,9 +1,9 @@
 'use strict'
 
-import * as Redux      from 'redux';
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
-import {hashSelCrit}   from '../util/selCritUtil';
+import * as Redux       from 'redux';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
+import {hashSelCrit}    from '../util/selCritUtil';
 
 import placebo  from './placeboReducer';
 import name     from './appState.editSelCrit.selCrit.name';
@@ -43,7 +43,7 @@ const _selCrit = Redux.combineReducers({
   curHash: placebo,
 });
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit', {
 
   [AT.selCrit.edit](selCrit, action) {
     const nextSelCrit = action.selCrit;
@@ -65,7 +65,7 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit', {
 export default function selCrit(selCrit=null, action) {
 
   // invoke our top-level selCrit reducer
-  let nextSelCrit = subReducer.resolve(selCrit, action);
+  let nextSelCrit = reductionHandler.reduce(selCrit, action);
 
   // short-circuit further reduction, when NO edit session is active
   // ... our selCrit is null (it has no fields)
@@ -88,7 +88,7 @@ export default function selCrit(selCrit=null, action) {
 
     nextSelCrit.curHash = toHash;
 
-    subReducer.logStandardizedMsg(action,
+    reductionHandler.logStandardizedMsg(action,
                                   fromHash !== toHash,
                                   `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
   }

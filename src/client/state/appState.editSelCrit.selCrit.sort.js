@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.editSelCrit.selCrit.sort reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.sort', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.sort', {
 
   [AT.selCrit.edit.sortChange](sort, action) {
     const selectedSortOptions = action.selectedSortOptions;
@@ -29,5 +29,5 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.sort', {
 });
 
 export default function sort(sort=null, action) {
-  return subReducer.resolve(sort, action);
+  return reductionHandler.reduce(sort, action);
 }

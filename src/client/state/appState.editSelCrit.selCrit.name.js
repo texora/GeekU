@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from './actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.editSelCrit.selCrit.name reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.name', {
+const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.name', {
 
   [AT.selCrit.edit.nameChange](name, action) {
     return [
@@ -20,5 +20,5 @@ const subReducer = new ReduxSubReducer('appState.editSelCrit.selCrit.name', {
 });
 
 export default function name(name='', action) {
-  return subReducer.resolve(name, action);
+  return reductionHandler.reduce(name, action);
 }
