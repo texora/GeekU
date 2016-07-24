@@ -2,7 +2,7 @@
 
 import {batchActions, BATCH} from 'redux-batched-actions';
 import {getActionLog}        from '../../state/actions';
-import actionTypeAmplified   from '../../state/actionTypeAmplified';
+import actionTypeAmplified   from '../../util/actionTypeAmplified';
 
 import Log                   from '../../../shared/util/Log';
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import handleUnexpectedError from '../../util/handleUnexpectedError';
-import actionTypeAmplified   from '../../state/actionTypeAmplified';
+import actionTypeAmplified   from '../../util/actionTypeAmplified';
 
 import Log                   from '../../../shared/util/Log';
 
