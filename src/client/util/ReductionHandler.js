@@ -17,8 +17,9 @@ import Log                 from '../../shared/util/Log';
  * One of the value-added benefits of using ReductionHandler is the
  * promotion of a very useful logging feature, that distinguishes
  * between state changes.  This provides a means to enable logging at 
- * a high-level, with a concise recording of reducers that actually 
- * changed state.  The following log levels are employed:
+ * a high-logging-level, with a concise recording of reducers that
+ * actually changed state (i.e. minimal output).  The following log
+ * levels are employed:
  *
  *   INSPECT: monitor reducer state changes only
  *   DEBUG:   include explicit reducer reasoning (regardless if state changes)
