@@ -49,9 +49,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
      * @param {Student} hoveredStudent the student that is being overed over (null for none).
      */
     handleHover(hoveredStudent) {
-      if (hoveredStudent !== this.state.hoveredStudent) {
-        this.setState({hoveredStudent});
-      }
+      this.setState({hoveredStudent});
     }
 
     handleEditSelCrit() {
