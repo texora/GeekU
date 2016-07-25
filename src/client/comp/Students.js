@@ -49,7 +49,15 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
      * @param {Student} hoveredStudent the student that is being overed over (null for none).
      */
     handleHover(hoveredStudent) {
-      this.setState({hoveredStudent});
+      // optimize the number of setState() invocations
+      // ... hover events happen in rapid succession
+      // ... setState() is NOT guaranteed to be synchronous
+      // ... utilize our own separate lastSetHoveredStudent setting to:
+      //     - KEY: reduce the number of setState() invocations by 50%
+      if (hoveredStudent !== this.lastSetHoveredStudent) {
+        this.lastSetHoveredStudent = hoveredStudent;
+        this.setState({hoveredStudent});
+      }
     }
 
     handleEditSelCrit() {
