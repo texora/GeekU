@@ -16,9 +16,11 @@ const log = new Log('selCritUtil');
 export function newStudentsSelCrit() {
 
   const selCrit = {
-    key:    shortid.generate(),
+
+    _id:    null,               // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
+    key:    shortid.generate(), // the unique key identifying this selCrit instance (also used in mongo _id)
+    userId: "common",           // the user the selCrit belongs to ('common' for all)
     target: "Students",
-    userId: "global",   // user the selCrit belongs to ('global' for all)
 
     name:   'New Student Selection',
     desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',

@@ -13,7 +13,7 @@ const selCrit = express.Router();
 //***************************************************************************************************
 //*** retrieve all selCrit documents: GET /api/selCrit[?userId=xxx]
 //***
-//***   - by default, all selCrit will be retrieved for userId=global.
+//***   - by default, all selCrit will be retrieved for userId=common.
 //***
 //***     NOTE: Client's should always protect the data (above) by using the
 //***           encodeJsonQueryStr(queryName, jsonObj) utility.
@@ -23,7 +23,7 @@ const selCrit = express.Router();
 
 selCrit.get('/api/selCrit', (req, res, next) => {
 
-  const userId = req.params.userId || 'global';
+  const userId = req.params.userId || 'common';
 
   // perform retrieval
   // ??? figure out how to do this

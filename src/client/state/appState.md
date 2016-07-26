@@ -101,8 +101,9 @@ retrieves female students from MO/IN with a GPA over 3.65:
 ```javascript
 selCrit: {
 
+  _id:    "shortId",            // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
   key:    "shortId",            // the unique key identifying this selCrit instance (also used in mongo _id)
-
+  userId: "common",             // the user the selCrit belongs to ('common' for all)
   target: "Students"/"Courses", // identifies the targeted mongo collection
 
   name:   "Female students from MO/IN with GPA over 3.65",
