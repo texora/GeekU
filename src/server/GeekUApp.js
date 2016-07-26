@@ -9,6 +9,7 @@ import {MongoClient} from 'mongodb';
 import cors          from 'cors';
 import courses       from './route/courses';
 import students      from './route/students';
+import selCrit       from './route/selCrit';
 import logConfig     from '../shared/util/LogInteractiveConfigForServer';
 import correlateLogsToTransaction from './util/correlateLogsToTransaction';
 
@@ -138,6 +139,7 @@ export function createRunningApp(dbUrl='mongodb://localhost:27017/GeekU', appPor
   // setup our various "API" modular routes
   app.use('/', courses);
   app.use('/', students);
+  app.use('/', selCrit);
   // ... catch-all for /api
   app.get('/api/*', (req, res, next) => {
     const msg = `Unrecognized API request: ${decodeURIComponent(req.originalUrl)}`;

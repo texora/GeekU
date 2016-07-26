@@ -18,8 +18,8 @@ export function newStudentsSelCrit() {
   const selCrit = {
     key:    shortid.generate(),
     target: "Students",
+    userId: "global",   // user the selCrit belongs to ('global' for all)
 
-    // ?? possibly create configurable default filter (via param)?
     name:   'New Student Selection',
     desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
 
@@ -78,8 +78,10 @@ export function newStudentsSelCrit() {
  */
 export function hashSelCrit(selCrit) {
   const selCritStr = JSON.stringify(selCrit, (prop, val) => {
-    if (prop === 'curHash' || prop === 'dbHash')
-      return undefined; // omit non-persistent attributes
+    if (prop === '_id'     || // key is maintained duplicatly as _id
+        prop === 'curHash' ||
+        prop === 'dbHash')
+      return undefined; // omit non-vital attributes
     return val;
   });
   return crc.crc32(selCritStr).toString(16);
