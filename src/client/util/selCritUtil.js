@@ -18,9 +18,10 @@ export function newStudentsSelCrit() {
   const selCrit = {
 
     _id:    null,               // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
-    key:    shortid.generate(), // the unique key identifying this selCrit instance (also used in mongo _id)
+    key:    shortid.generate(), // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
     userId: "common",           // the user the selCrit belongs to ('common' for all)
     target: "Students",
+    lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
     name:   'New Student Selection',
     desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
@@ -80,8 +81,9 @@ export function newStudentsSelCrit() {
  */
 export function hashSelCrit(selCrit) {
   const selCritStr = JSON.stringify(selCrit, (prop, val) => {
-    if (prop === '_id'     || // key is maintained duplicatly as _id
-        prop === 'curHash' ||
+    if (prop === '_id'           || // for persistence mechanism only (the 'key' attribute ALWAYS has this instance identifier)
+        prop === 'lastDbModDate' || // for persistence mechanism only
+        prop === 'curHash'       || // hashes are duplicate representations of real data
         prop === 'dbHash')
       return undefined; // omit non-vital attributes
     return val;
