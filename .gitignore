@@ -3,3 +3,4 @@ npm-debug.log*
 
 # for now do NOT publish my distribution
 dist
+src/server/Log4GeekU.js
