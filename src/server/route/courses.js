@@ -42,9 +42,9 @@ courses.get('/api/courses', (req, res, next) => {
                res.geekU.send(courses);
              })
              .catch( err => {
-               // NOTE: unsure if we ALWAYS want to cover up technical message
-               //       ... it may be due to bad interpretation of mongoFilter
-               throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
+               // communicate error ... sendError() will also log as needed
+               res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/courses"),
+                                   req);
              });
 });
 
@@ -89,7 +89,9 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
+    // communicate error ... sendError() will also log as needed
+    res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum"),
+                        req);
   });
 
 });

@@ -43,9 +43,9 @@ students.get('/api/students', (req, res, next) => {
                 res.geekU.send(students);
               })
               .catch( err => {
-                // NOTE: unsure if we ALWAYS want to cover up technical message
-                //       ... it may be due to bad interpretation of mongoFilter
-                throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
+                // communicate error ... sendError() will also log as needed
+                res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/students"),
+                                    req);
               });
 });
 
@@ -96,7 +96,9 @@ students.get('/api/students/:studentNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
+    // communicate error ... sendError() will also log as needed
+    res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum"),
+                        req);
   });
 
 });
