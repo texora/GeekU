@@ -9,6 +9,13 @@ module.exports = function(config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'phantomjs-shim'],
 
+    // instruct mocha client to only run NON-INTEGRATION tests
+    client: {
+      // NOTE: can't get mocha's --invert to work, hence the complex regexp
+    //args: ['--grep', 'INTEGRATION', '--invert'], 
+      args: ['--grep', '^((?!INTEGRATION).)*$'], // ... same as above (without --invert working)
+    },
+
     // list of files / patterns to load in the browser
     files: [
       'src/**/*.spec.js',

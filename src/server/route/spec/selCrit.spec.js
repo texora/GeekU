@@ -15,6 +15,8 @@ const headers = new Headers({
 // *** all /api/selCrit tests ...
 // ***
 
+describe('INTEGRATION /api/selCrit tests', function() {
+
 describe('/api/selCrit SETUP CLEAR', function() {
 
   before( asyncDone => {
@@ -164,5 +166,7 @@ describe('/api/selCrit test STALE SAVE', function() {
     expect(exception).toExist('stale check should have recieved exception');
     expect(exception.message).toInclude('Stale data detected');
   });
+
+});
 
 });
