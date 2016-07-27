@@ -2,7 +2,7 @@
 
 import '../../../shared/util/polyfill';
 import expect from 'expect';
-import {newStudentsSelCrit}  from '../../../client/util/selCritUtil'; // ??? move this into shared
+import {newStudentsSelCrit}  from '../../../shared/util/selCritUtil';
 
 const userId  = 'selCritUnitTester';
 const url     = 'http://localhost:8080/api/selCrit';

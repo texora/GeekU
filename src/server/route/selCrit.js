@@ -4,7 +4,7 @@ import express        from 'express';
 import assert         from 'assert';
 import * as MongoUtil from '../util/MongoUtil';
 import Log            from '../../shared/util/Log';
-import {hashSelCrit}  from '../../client/util/selCritUtil'; // ??? move this into shared
+import {hashSelCrit}  from '../../shared/util/selCritUtil';
 
 const log = new Log('GeekU.selCrit');
 

@@ -2,7 +2,7 @@
 
 import crc        from 'crc';
 import shortid    from 'shortid';
-import Log        from '../../shared/util/Log';
+import Log        from './Log';
 
 const log = new Log('selCritUtil');
 
