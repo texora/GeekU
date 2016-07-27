@@ -24,42 +24,28 @@ export function newStudentsSelCrit() {
     lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
     name:   'New Student Selection',
-    desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
+    desc:   'bla bla bla',
 
     fields: [
-      'gender',
-      'firstName',
-      'lastName',
-      'studentNum',
-
-      'graduation',
-      
-      'degree',
-      'gpa',
-      // 'birthday',
-      // 'addr',
-      // 'addr.state',
+      "gender",
+      "firstName",
+      "lastName",
+      "studentNum",
+      "graduation",
+      "degree",
+      "gpa"
     ],
-
-    sort: {
-      graduation: -1,
-      firstName: 1,
-      lastName: 1,
-    },
+    sort: [
+      "-graduation",
+      "firstName",
+      "lastName"
+    ],
     distinguishMajorSortField: true,
-
-    filter: { // all female students in MO/IN with GPA >= 3.65
-//    "gender": "F",
-      "addr.state": {
-        "$in": [
-          "Missouri",
-          "Indiana"
-        ]
-      },
-//    "gpa": {
-//      "$gte": "3.65"
-//    }
-    },
+    filter: [
+      {field: "gender",     operator: "$eq",  value: "F"},
+      {field: "addr.state", operator: "$in",  value: ["Missouri","Indiana"]},
+      {field: "gpa",        operator: "$qte", value: "3.65"}
+    ],
 
     dbHash:  null,
     curHash: null,

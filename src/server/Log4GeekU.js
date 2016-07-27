@@ -28,7 +28,6 @@ const logConfig = Log.config({
                                          <dt> DEBUG:  </dt> <dd> include service logic </dd>
                                          <dt> TRACE:  </dt> <dd> include returned payload<br/><i>CAUTION: payloads may be BIG</i> </dd>
                                     </dl>`],
-    'GeekU.selCrit': 'DEBUG', // ??? temp for now
   },
 
   excludeClientErrors: true,  // false: to see client Errors in log
