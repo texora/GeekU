@@ -77,6 +77,7 @@ export default function correlateLogsToTransaction(req, res, next) {
     namespace.set('transId', transId);
     namespace.set('userId',  userId);
     namespace.set('url',     url);
+    namespace.set('method',  req.method);
 
     // log probe of entering request
     logFlow.info(()=>'Enter Transaction');
@@ -100,7 +101,7 @@ Log.config({
   format: {
     fmtFilter: function(filterName) {
       const transId   = namespace.get('transId');
-      const transInfo = transId ? `Trans(transId: ${transId}, userId: ${namespace.get('userId')}, url: ${namespace.get('url')})`
+      const transInfo = transId ? `Trans(transId: ${transId}, userId: ${namespace.get('userId')}, url(${namespace.get('method')}): ${namespace.get('url')})`
                                 : `Trans(none)`;
       return `${filterName} ${transInfo})`;
     }
