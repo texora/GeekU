@@ -27,45 +27,22 @@ import colors                  from 'material-ui/lib/styles/colors';
  * The SelCritDetail component provides an interactive editor for the
  * selCrit.filter data content.
  *
- * The editSelCrit.extra.filter contains an optimized structure for
- * the UI, that syncs to the persistent state
- * editSelCrit.selCrit.filter.  For example:
- *
- *   appState.editSelCrit.selCrit.filter: { // the master
- *     "gender": {
- *       "$eq": "F"
- *     },
- *     "addr.state": {
- *       "$in": [
- *         "Missouri",
- *         "Indiana"
- *       ]
- *     },
- *     "gpa": {
- *       "$gte": "3.6"
- *     }
- *   }
- *  
- *   appState.editSelCrit.extra.filter: [  // temporal structure streamlining our UI components
- *     {
- *       "fieldName": "gender",
- *       "operator": "$eq",
- *       "value": "F"
- *     },
- *     {
- *       "fieldName": "addr.state",
- *       "operator": "$in",
- *       "value": [
- *         "Missouri",
- *         "Indiana"
- *       ]
- *     },
- *     {
- *       "fieldName": "gpa",
- *       "operator": "$gte",
- *       "value": "3.6"
- *     }
- *   ]
+ * ??? AFTER REFACTORS, THESE STRUCTURES ARE IDENTICAL ... USE DIRECTLY FROM selCrit and obsolete editSelCrit.extra.filter
+ * ? The editSelCrit.extra.filter contains an optimized structure for
+ * ? the UI, that syncs to the persistent state
+ * ? editSelCrit.selCrit.filter.  For example:
+ * ? 
+ * ?   appState.editSelCrit.selCrit.filter: [ // the master
+ * ?     { field: "gender",     op: "$eq",  value: "F" },
+ * ?     { field: "addr.state", op: "$in",  value: ["Missouri","Indiana"] },
+ * ?     { field: "gpa",        op: "$gte", value: "3.65" }
+ * ?   ]
+ * ?  
+ * ?   appState.editSelCrit.extra.filter: [  // temporal structure streamlining our UI components
+ * ?     { "fieldName": "gender",      "op": "$eq",   "value": "F" },
+ * ?     { "fieldName": "addr.state",  "op": "$in",   "value": ["Missouri","Indiana"] },
+ * ?     { "fieldName": "gpa",         "op": "$gte",  "value": "3.65" }
+ * ?   ]
  */
 const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
@@ -98,7 +75,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       const p = this.props;
       const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
         if (extraFilterObj.fieldName === fieldName) {
-          return {...extraFilterObj, operator: opValue};
+          return {...extraFilterObj, op: opValue};
         }
         else {
           return extraFilterObj;
@@ -181,7 +158,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
         comparison:        '',
       };
 
-      const newExtraFilterObj = { fieldName, operator: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
+      const newExtraFilterObj = { fieldName, op: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
 
       const newExtraFilter    = [...p.extraFilter, newExtraFilterObj];
 
@@ -220,9 +197,9 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
         case 'comparison':
           return (
-            <SelectField value={extraFilterObj.operator}
+            <SelectField value={extraFilterObj.op}
                          onChange={ (e, key, value) => this.handleOperatorChange(extraFilterObj.fieldName, value) }
-                         errorText={extraFilterObj.operator ? null : 'operator is required'}
+                         errorText={extraFilterObj.op ? null : 'operator is required'}
                          style={{width: '4em'}}
                          iconStyle={{fill: '#666'}}
                          hintText="operator">

@@ -19,9 +19,9 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filt
                         ? null
                         : extraFilter.map( extraFilterObj => {
                             return {
-                              field:    extraFilterObj.fieldName,
-                              operator: extraFilterObj.operator,
-                              value:    extraFilterObj.value
+                              field: extraFilterObj.fieldName,
+                              op:    extraFilterObj.op,
+                              value: extraFilterObj.value
                             };
                           });
     return [

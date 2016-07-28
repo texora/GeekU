@@ -17,7 +17,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.filter
     const extraFilter = (action.selCrit.filter || []).map( selCritFilter => {
       return {
         fieldName: selCritFilter.field,
-        operator:  selCritFilter.operator,
+        op:        selCritFilter.op,
         value:     selCritFilter.value
       };
     });

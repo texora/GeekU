@@ -100,7 +100,7 @@ export function selCrit(req, meta) {
                             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
       }
       mongoFilter[filter.field] = {
-        [filter.operator]: filter.value
+        [filter.op]: filter.value
       };
       return mongoFilter;
     }, {});

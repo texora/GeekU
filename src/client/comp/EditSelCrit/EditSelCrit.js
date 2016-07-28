@@ -221,7 +221,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         if (!p.selCrit.desc.trim()) // desc is required
           valid = false;
         for (const extraFilterObj of p.extraFilter) { // filter is missing some components
-          if (!extraFilterObj.operator ||
+          if (!extraFilterObj.op ||
               !extraFilterObj.value ||
               extraFilterObj.value.length === 0)
             valid = false;
