@@ -118,8 +118,8 @@ import UserMsg from '../UserMsg';
  *
  *     With that said, the selCrit should be synced when the save is
  *     complete, by monitoring the AT.selCrit.save.complete action.
- *     This is merely to accomidate the change to selCrit.dbHash -
- *     reflecting it's DB persistance status.
+ *     This is merely to accomidate the change to selCrit (_id, 
+ *     lastDbModDate, and dbHash) - reflecting it's DB persistance status.
  */
 const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
