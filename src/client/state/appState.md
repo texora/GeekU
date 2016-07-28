@@ -118,25 +118,18 @@ selCrit: {
     "gpa"
   ],
 
-  sort: {    // key/value of fieldName with sort order (1: ascending, -1 descending) ... DEFAULT: null/{} for NO sort
-    "graduation": -1,
-    "lastName":    1,
-    "firstName":   1
-  },
+  sort: [  // list of sort field names (optional - prefix for descending) ... DEFAULT: null/[] for NO sort
+    "-graduation",
+    "firstName",
+    "lastName"
+  ],
   distinguishMajorSortField: boolean: // supporting a visual break when values from the major-sort field changes
 
-  filter: {  // a mongo query object defining the selection criteria ... DEFAULT: null/{} for ALL students
-    "gender": "F",
-    "addr.state": {
-      "$in": [
-        "Missouri",
-        "Indiana"
-      ]
-    },
-    "gpa": {
-      "$gt": "3.65"
-    }
-  }
+  filter: [ // list of selection criteria (logically ored) ... DEFAULT: null/[] for ALL docs
+    {"field": "gender",     "operator": "$eq",  "value": "F"},
+    {"field": "addr.state", "operator": "$in",  "value": ["Missouri","Indiana"]},
+    {"field": "gpa",        "operator": "$qte", "value": "3.65"}
+  ]
 
   dbHash:  "hash",  // current hash of the selCrit in our persistent DB (null if NOT persisted)
   curHash: "hash",  // current hash of this selCrit instance (if !=== dbHash, then a save is needed to sync to DB)

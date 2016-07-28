@@ -14,15 +14,17 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
 
     // convert selCrit.sort to selectedSortOptions
     const meta = action.meta;
-    const sort = action.selCrit.sort || {};
-    const newSelectedSortOptions = [];
-    for (const fieldName in sort) {
-      newSelectedSortOptions.push({ 
-        value:  fieldName,
-        label:  meta.validFields[fieldName],
-        ascDec: sort[fieldName]
-      });
-    }
+    const newSelectedSortOptions = (action.selCrit.sort || []).map( field => {
+      const ascDec = field.charAt(0) === '-' ? -1 : +1;
+      if (ascDec === -1) {
+        field = field.substr(1); // strip first char (a negative sign "-xxx")
+      }
+      return {
+        value:  field,
+        label:  meta.validFields[field],
+        ascDec
+      };
+    });
 
     return [
       newSelectedSortOptions,

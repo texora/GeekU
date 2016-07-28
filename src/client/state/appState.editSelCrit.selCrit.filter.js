@@ -16,13 +16,14 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filt
 
     // sync selCrit.filter from extraFilter
     const newFilter = extraFilter===null || extraFilter.length===0
-                    ? null
-                    : extraFilter.reduce( (newFilter, extraFilterObj) => {
-                        newFilter[extraFilterObj.fieldName] = {
-                          [extraFilterObj.operator]: extraFilterObj.value
-                        };
-                        return newFilter;
-                      }, {});
+                        ? null
+                        : extraFilter.map( extraFilterObj => {
+                            return {
+                              field:    extraFilterObj.fieldName,
+                              operator: extraFilterObj.operator,
+                              value:    extraFilterObj.value
+                            };
+                          });
     return [
       newFilter,
       ()=>`convert action.extraFilter to selCrit.filter: ${JSON.stringify(newFilter, null, 2)}`

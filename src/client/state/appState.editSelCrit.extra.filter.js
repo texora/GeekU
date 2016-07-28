@@ -14,24 +14,13 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.filter
 
     // convert selCrit.filter to our internal "extra" filter representation
     const meta        = action.meta;
-    const filterSrc   = action.selCrit.filter || {};
-    const extraFilter = [];
-
-    for (const fieldName in filterSrc) {
-      // console.log(`xx fieldName: ${fieldName}`);
-      const fieldVal = filterSrc[fieldName];
-      // console.log(`xx fieldVal: `, fieldVal);
-      let   op    = null;  // fieldVal object has ONE property - pull it out ... ex: {$gt: '3.65'} -or- {$in: ['MO', 'IN']}
-      let   opVal = null;
-      for (const fieldProp in fieldVal) {
-        // console.log(`xx fieldProp: ${fieldProp}`);
-        op = fieldProp;
-        // console.log(`xx op: ${op}`);
-        opVal = fieldVal[fieldProp]
-      }
-      // value: react-select-options CAN BE seeded with values array ONLY ... which matches the .value options ... {value: xxx, label: xxx}
-      extraFilter.push({ fieldName, operator: op, value: opVal });
-    }
+    const extraFilter = (action.selCrit.filter || []).map( selCritFilter => {
+      return {
+        fieldName: selCritFilter.field,
+        operator:  selCritFilter.operator,
+        value:     selCritFilter.value
+      };
+    });
 
     return [
       extraFilter,

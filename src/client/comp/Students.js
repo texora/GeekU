@@ -100,7 +100,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
 
       // analyze fullName construct based on optional sort order of first/last
       // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
-      const sortFields = Object.keys(p.selCrit.sort || {}); // in precedence order
+      const sortFields = (p.selCrit.sort || []).map( sortField => sortField.charAt(0)==='-' ? sortField.substr(1) : sortField );
       function analyzeFirstNameFirst() {
         for (const field of sortFields) {
           if (field === 'firstName')

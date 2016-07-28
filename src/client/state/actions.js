@@ -295,26 +295,17 @@ function _defineThunks() {
               // 'addr',
               // 'addr.state',
             ],
-            sort: {
-              graduation: -1,
-              firstName: 1,
-              lastName: 1,
-            },
+            sort: [
+              "-graduation",
+              "firstName",
+              "lastName"
+            ],
             distinguishMajorSortField: true,
-            filter: { // all female students in MO/IN with GPA >= 3.65
-              "gender": {
-                "$eq": "F"
-              },
-              "addr.state": {
-                "$in": [
-                  "Missouri",
-                  "Indiana"
-                ]
-              },
-              "gpa": {
-                "$gte": "3.65"
-              },
-            }
+            filter: [
+              {field: "gender",     operator: "$eq",  value: "F"},
+              {field: "addr.state", operator: "$in",  value: ["Missouri","Indiana"]},
+              {field: "gpa",        operator: "$gte", value: "3.65"}
+            ],
           };
         }
         const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);

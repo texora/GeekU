@@ -42,15 +42,17 @@ export function selCrit(req, meta) {
 
   const selCrit = decodeJsonQueryStr('selCrit', req) || {};
 
-  // resolve our generated mongo fields
+  //***
+  //*** resolve our generated mongo control information
+  //***
 
-  // ... selCrit.mongoFields
+  // selCrit.mongoFields
   if (selCrit.fields && selCrit.fields.length > 0) {
 
     selCrit.mongoFields = selCrit.fields.reduce( (projection, field) => {
       field = field.trim();
       if (meta.validFields[field] === undefined) {
-        const msg = `Invalid field ('${field}') specified in request query-string parameter`
+        const msg = `Invalid field ('${field}') specified in http request query-string selCrit.fields`
         throw new Error(msg).defineClientMsg(msg)
                             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
       }
@@ -68,19 +70,40 @@ export function selCrit(req, meta) {
     selCrit.mongoFields = meta.defaultDisplayFields;
   }
 
-
-  // ... selCrit.mongoSort
-  if (selCrit.sort) {
-    selCrit.mongoSort = selCrit.sort;
+  // selCrit.mongoSort
+  if (selCrit.sort && selCrit.sort.length > 0) {
+    selCrit.mongoSort = selCrit.sort.reduce( (mongoSort, field) => {
+      field = field.trim();
+      const ascDec = field.charAt(0) === '-' ? -1 : +1;
+      if (ascDec === -1) {
+        field = field.substr(1); // strip first char (a negative sign "-xxx")
+      }
+      if (meta.validFields[field] === undefined) {
+        const msg = `Invalid field ('${field}') specified in http request query-string selCrit.sort`
+        throw new Error(msg).defineClientMsg(msg)
+                            .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      }
+      mongoSort[field] = ascDec;
+      return mongoSort;
+    }, {});
   }
   else { // fallback default ... no sort
     selCrit.mongoSort = {};
   }
 
-
-  // ... selCrit.mongoFilter
-  if (selCrit.filter) {
-    selCrit.mongoFilter = selCrit.filter;
+  // selCrit.mongoFilter
+  if (selCrit.filter && selCrit.filter.length > 0) {
+    selCrit.mongoFilter = selCrit.filter.reduce( (mongoFilter, filter) => {
+      if (meta.validFields[filter.field] === undefined) {
+        const msg = `Invalid field ('${filter.field}') specified in http request query-string selCrit.filter`
+        throw new Error(msg).defineClientMsg(msg)
+                            .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      }
+      mongoFilter[filter.field] = {
+        [filter.operator]: filter.value
+      };
+      return mongoFilter;
+    }, {});
   }
   else { // fallback default ... select all
     selCrit.mongoFilter = {};

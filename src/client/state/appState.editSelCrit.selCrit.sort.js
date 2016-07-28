@@ -15,11 +15,8 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.sort
 
     // sync selCrit.sort from selectedSortOptions
     const newSort = selectedSortOptions===null || selectedSortOptions.length===0
-                      ? null
-                      : selectedSortOptions.reduce( (sort, sortOption) => {
-                          sort[sortOption.value] = sortOption.ascDec;
-                          return sort;
-                        }, {});
+                     ? null
+                     : selectedSortOptions.map( sortOption => `${sortOption.ascDec === -1 ? '-' : ''}${sortOption.value}` );
     return [
       newSort,
       ()=>`convert selectedSortOptions to selCrit.sort: ${JSON.stringify(newSort, null, 2)}`
