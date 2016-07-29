@@ -74,14 +74,8 @@ appState: {
       // sort options, streamlining react-select
       selectedSortOptions: [ {sortOption}, { value: 'gender', label: 'Gender', ascDec: -1 }, ... ],
 
-      // filter, streamlining react-select
-      filter: [ 
-        { field: 'addr.state', op: 'valid-operator', value: text -or- react-select-options[] },
-        ...
-      ],
-
-    },
-  },
+    }
+  }
 
 }
 ```

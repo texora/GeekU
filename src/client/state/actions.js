@@ -103,7 +103,7 @@ const genesis = {
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
-  'selCrit.edit.filterChange': { params: ['extraFilter'] },
+  'selCrit.edit.filterChange': { params: ['newFilter'] },
   'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
   'selCrit.edit.close':        { params: [] },  // close dialog
   // PUBLIC AC: emitted from <EditSelCrit>

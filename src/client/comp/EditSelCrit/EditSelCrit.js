@@ -220,10 +220,10 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
           valid = false;
         if (!p.selCrit.desc.trim()) // desc is required
           valid = false;
-        for (const extraFilterObj of p.extraFilter) { // filter is missing some components
-          if (!extraFilterObj.op ||
-              !extraFilterObj.value ||
-              extraFilterObj.value.length === 0)
+        for (const filterObj of p.selCrit.filter) { // filter is missing some components
+          if (!filterObj.op ||
+              !filterObj.value ||
+              filterObj.value.length === 0)
             valid = false;
         }
         if (!valid) {
@@ -411,7 +411,6 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
         selCrit:              appState.editSelCrit.selCrit,
         selectedFieldOptions: appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedFieldOptions : null,
         selectedSortOptions:  appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedSortOptions : null,
-        extraFilter:          appState.editSelCrit.extra ? appState.editSelCrit.extra.filter : null,
       };
     }
   }); // end of ... component property injection

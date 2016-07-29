@@ -27,22 +27,13 @@ import colors                  from 'material-ui/lib/styles/colors';
  * The SelCritDetail component provides an interactive editor for the
  * selCrit.filter data content.
  *
- * ??? AFTER REFACTORS, THESE STRUCTURES ARE IDENTICAL ... USE DIRECTLY FROM selCrit and obsolete editSelCrit.extra.filter
- * ? The editSelCrit.extra.filter contains an optimized structure for
- * ? the UI, that syncs to the persistent state
- * ? editSelCrit.selCrit.filter.  For example:
- * ? 
- * ?   appState.editSelCrit.selCrit.filter: [ // the master
- * ?     { field: "gender",     op: "EQ",  value: "F" },
- * ?     { field: "addr.state", op: "IN",  value: ["Missouri","Indiana"] },
- * ?     { field: "gpa",        op: "GTE", value: "3.65" }
- * ?   ]
- * ?  
- * ?   appState.editSelCrit.extra.filter: [  // temporal structure streamlining our UI components
- * ?     { "field": "gender",      "op": "EQ",   "value": "F" },
- * ?     { "field": "addr.state",  "op": "IN",   "value": ["Missouri","Indiana"] },
- * ?     { "field": "gpa",         "op": "GTE",  "value": "3.65" }
- * ?   ]
+ * This component is based off of state found in:
+ *
+ *    appState.editSelCrit.selCrit.filter: [
+ *      { field: "gender",     op: "EQ",  value: "F" },
+ *      { field: "addr.state", op: "IN",  value: ["Missouri","Indiana"] },
+ *      { field: "gpa",        op: "GTE", value: "3.65" }
+ *    ]
  */
 const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
@@ -62,9 +53,9 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
     /**
      * handleFilterChange()
      */
-    handleFilterChange(extraFilter) {
+    handleFilterChange(newFilter) {
       const p = this.props;
-      p.dispatch( AC.selCrit.edit.filterChange(extraFilter) );
+      p.dispatch( AC.selCrit.edit.filterChange(newFilter) );
     }
 
 
@@ -73,15 +64,15 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
      */
     handleOperatorChange(field, opValue) {
       const p = this.props;
-      const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
-        if (extraFilterObj.field === field) {
-          return {...extraFilterObj, op: opValue};
+      const newFilter = p.filter.map( (filterObj) => {
+        if (filterObj.field === field) {
+          return {...filterObj, op: opValue};
         }
         else {
-          return extraFilterObj;
+          return filterObj;
         }
       });
-      this.handleFilterChange(newExtraFilter);
+      this.handleFilterChange(newFilter);
     }
 
 
@@ -90,15 +81,15 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
      */
     handleTextValueChange(field, txtValue) {
       const p = this.props;
-      const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
-        if (extraFilterObj.field === field) {
-          return {...extraFilterObj, value: txtValue}; // prune options down to strictly the value strings
+      const newFilter = p.filter.map( (filterObj) => {
+        if (filterObj.field === field) {
+          return {...filterObj, value: txtValue}; // prune options down to strictly the value strings
         }
         else {
-          return extraFilterObj;
+          return filterObj;
         }
       });
-      this.handleFilterChange(newExtraFilter);
+      this.handleFilterChange(newFilter);
     }
 
 
@@ -107,15 +98,15 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
      */
     handleSingleSelectValueChange(field, value) {
       const p = this.props;
-      const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
-        if (extraFilterObj.field === field) {
-          return {...extraFilterObj, value: value}; // prune option down to strictly the value string
+      const newFilter = p.filter.map( (filterObj) => {
+        if (filterObj.field === field) {
+          return {...filterObj, value: value}; // prune option down to strictly the value string
         }
         else {
-          return extraFilterObj;
+          return filterObj;
         }
       });
-      this.handleFilterChange(newExtraFilter);
+      this.handleFilterChange(newFilter);
     }
 
 
@@ -124,15 +115,15 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
      */
     handleMultiSelectValueChange(field, options) {
       const p = this.props;
-      const newExtraFilter = p.extraFilter.map( (extraFilterObj) => {
-        if (extraFilterObj.field === field) {
-          return {...extraFilterObj, value: options.map( (option) => option.value)}; // prune options down to strictly the value strings
+      const newFilter = p.filter.map( (filterObj) => {
+        if (filterObj.field === field) {
+          return {...filterObj, value: options.map( (option) => option.value)}; // prune options down to strictly the value strings
         }
         else {
-          return extraFilterObj;
+          return filterObj;
         }
       });
-      this.handleFilterChange(newExtraFilter);
+      this.handleFilterChange(newFilter);
     }
 
 
@@ -158,11 +149,11 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
         comparison:        '',
       };
 
-      const newExtraFilterObj = { field, op: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
+      const newFilterObj = { field, op: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
 
-      const newExtraFilter    = [...p.extraFilter, newExtraFilterObj];
+      const newFilter    = [...p.filter, newFilterObj];
 
-      this.handleFilterChange(newExtraFilter);
+      this.handleFilterChange(newFilter);
     }
 
 
@@ -172,19 +163,19 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
     handleDeleteFilter(field) {
       const p = this.props;
 
-      const indx           = p.extraFilter.findIndex( (filter) => filter.field === field );
-      const newExtraFilter = [...p.extraFilter.slice(0,indx), ...p.extraFilter.slice(indx+1)];
-      this.handleFilterChange(newExtraFilter);
+      const indx           = p.filter.findIndex( (filter) => filter.field === field );
+      const newFilter = [...p.filter.slice(0,indx), ...p.filter.slice(indx+1)];
+      this.handleFilterChange(newFilter);
     }
 
 
     /**
-     * genFilterOperatorElm()
+     * genFilterOperatorElm(filterObj)
      */
-    genFilterOperatorElm(extraFilterObj) {
+    genFilterOperatorElm(filterObj) {
       const p = this.props;
 
-      const metaSelCritField = p.meta.selCritFields[extraFilterObj.field];
+      const metaSelCritField = p.meta.selCritFields[filterObj.field];
 
       switch (metaSelCritField.type) {
 
@@ -197,9 +188,9 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
         case 'comparison':
           return (
-            <SelectField value={extraFilterObj.op}
-                         onChange={ (e, key, value) => this.handleOperatorChange(extraFilterObj.field, value) }
-                         errorText={extraFilterObj.op ? null : 'operator is required'}
+            <SelectField value={filterObj.op}
+                         onChange={ (e, key, value) => this.handleOperatorChange(filterObj.field, value) }
+                         errorText={filterObj.op ? null : 'operator is required'}
                          style={{width: '4em'}}
                          iconStyle={{fill: '#666'}}
                          hintText="operator">
@@ -213,26 +204,26 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
           );
 
         default:
-          return `UNSUPPORTED meta.selCritFields.type: '${metaSelCritField.type}' with value: ${extraFilterObj.value}`;
+          return `UNSUPPORTED meta.selCritFields.type: '${metaSelCritField.type}' with value: ${filterObj.value}`;
       }
     }
 
 
     /**
-     * genFilterValueElm()
+     * genFilterValueElm(filterObj)
      */
-    genFilterValueElm(extraFilterObj) {
+    genFilterValueElm(filterObj) {
       const p = this.props;
 
-      const metaSelCritField = p.meta.selCritFields[extraFilterObj.field];
+      const metaSelCritField = p.meta.selCritFields[filterObj.field];
 
       switch (metaSelCritField.type) {
 
         case 'singleSelect':
           return (
-            <SelectField value={extraFilterObj.value}
-                         onChange={ (e, key, value) => this.handleSingleSelectValueChange(extraFilterObj.field, value) }
-                         errorText={extraFilterObj.value ? null : 'value is required'}
+            <SelectField value={filterObj.value}
+                         onChange={ (e, key, value) => this.handleSingleSelectValueChange(filterObj.field, value) }
+                         errorText={filterObj.value ? null : 'value is required'}
                          autoWidth={true}
                          iconStyle={{fill: '#666'}}>
               { metaSelCritField.options.map( (option) => {
@@ -245,8 +236,8 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
           return <Select multi={true}
                          style={{width: '10em'}}
                          options={metaSelCritField.options}
-                         value={extraFilterObj.value}
-                         onChange={ (options) => this.handleMultiSelectValueChange(extraFilterObj.field, options) }
+                         value={filterObj.value}
+                         onChange={ (options) => this.handleMultiSelectValueChange(filterObj.field, options) }
                          placeholder={<span style={{color: colors.red900}}>value is required</span>}
                          resetValue={[]}/>;
 
@@ -255,19 +246,19 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                          allowCreate={true}
                          style={{width: '10em'}}
                          options={metaSelCritField.options}
-                         value={extraFilterObj.value}
-                         onChange={ (options) => this.handleMultiSelectValueChange(extraFilterObj.field, options) }
+                         value={filterObj.value}
+                         onChange={ (options) => this.handleMultiSelectValueChange(filterObj.field, options) }
                          placeholder={<span style={{color: colors.red900}}>value is required</span>}
                          resetValue={[]}/>;
 
         case 'comparison':
           return <TextField style={{ width: '20em' }}
-                            value={extraFilterObj.value}
-                            onChange={ (e) => this.handleTextValueChange(extraFilterObj.field, e.target.value) }
-                            errorText={extraFilterObj.value ? null : 'value is required'}/>;
+                            value={filterObj.value}
+                            onChange={ (e) => this.handleTextValueChange(filterObj.field, e.target.value) }
+                            errorText={filterObj.value ? null : 'value is required'}/>;
 
         default:
-          return `UNSUPPORTED meta.selCritFields.type: '${metaSelCritField.type}' with value: ${extraFilterObj.value}`;
+          return `UNSUPPORTED meta.selCritFields.type: '${metaSelCritField.type}' with value: ${filterObj.value}`;
       }
     }
 
@@ -289,7 +280,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                     targetOrigin={{vertical: 'top', horizontal: 'right', }}
                     anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
             { metaSelCritFields.map( (field) => { // add MenuItem's for fields that are NOT already part of the filter
-                return (p.extraFilter.find( (filter) => filter.field === field))
+                return (p.filter.find( (filter) => filter.field === field))
                        ? null
                        : <MenuItem key={field} 
                                    primaryText={p.meta.validFields[field]}
@@ -308,15 +299,15 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                        displayRowCheckbox={false}
                        showRowHover={true}
                        stripedRows={false}>
-              { p.extraFilter.map( (extraFilterObj) => {
+              { p.filter.map( (filterObj) => {
                   return (
-                    <TableRow key={extraFilterObj.field}>
-                      <TableRowColumn>{p.meta.validFields[extraFilterObj.field]}</TableRowColumn>
-                      <TableRowColumn>{this.genFilterOperatorElm(extraFilterObj)}</TableRowColumn>
-                      <TableRowColumn>{this.genFilterValueElm(extraFilterObj)}</TableRowColumn>
+                    <TableRow key={filterObj.field}>
+                      <TableRowColumn>{p.meta.validFields[filterObj.field]}</TableRowColumn>
+                      <TableRowColumn>{this.genFilterOperatorElm(filterObj)}</TableRowColumn>
+                      <TableRowColumn>{this.genFilterValueElm(filterObj)}</TableRowColumn>
                       <TableRowColumn>
                         <IconButton title="Remove field from Selection Criteria"
-                                    onTouchTap={()=> this.handleDeleteFilter(extraFilterObj.field)}>
+                                    onTouchTap={()=> this.handleDeleteFilter(filterObj.field)}>
                           <RemoveCircleOutlineIcon color={colors.deepOrangeA200}/>
                         </IconButton>
                       </TableRowColumn>
@@ -333,7 +324,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
   { // component property injection
     mapStateToProps(appState, ownProps) {
       return {
-        extraFilter: appState.editSelCrit.extra.filter,
+        filter: appState.editSelCrit.selCrit.filter,
       };
     }
   }); // end of ... component property injection

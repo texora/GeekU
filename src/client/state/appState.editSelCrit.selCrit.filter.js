@@ -12,21 +12,19 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filt
 
   [AT.selCrit.edit.filterChange](filter, action) {
 
-    const extraFilter = action.extraFilter;
-
-    // sync selCrit.filter from extraFilter
-    const newFilter = extraFilter===null || extraFilter.length===0
+    // sync selCrit.filter from action.newFilter
+    const newFilter = action.newFilter===null || action.newFilter.length===0
                         ? null
-                        : extraFilter.map( extraFilterObj => {
+                        : action.newFilter.map( newFilterObj => {
                             return {
-                              field: extraFilterObj.field,
-                              op:    extraFilterObj.op,
-                              value: extraFilterObj.value
+                              field: newFilterObj.field,
+                              op:    newFilterObj.op,
+                              value: newFilterObj.value
                             };
                           });
     return [
       newFilter,
-      ()=>`convert action.extraFilter to selCrit.filter: ${JSON.stringify(newFilter, null, 2)}`
+      ()=>`convert action.newFilter to selCrit.filter: ${JSON.stringify(newFilter, null, 2)}`
     ];
   },
 
