@@ -76,7 +76,7 @@ appState: {
 
       // filter, streamlining react-select
       filter: [ 
-        { fieldName: 'addr.state', op: '$op', value: text -or- react-select-options[] },
+        { fieldName: 'addr.state', op: 'valid-operator', value: text -or- react-select-options[] },
         ...
       ],
 
@@ -126,9 +126,9 @@ selCrit: {
   distinguishMajorSortField: boolean: // supporting a visual break when values from the major-sort field changes
 
   filter: [ // list of selection criteria (logically ored) ... DEFAULT: null/[] for ALL docs
-    { field: "gender",     op: "$eq",  value: "F"},
-    { field: "addr.state", op: "$in",  value: ["Missouri","Indiana"]},
-    { field: "gpa",        op: "$qte", value: "3.65"}
+    { field: "gender",     op: "EQ",  value: "F"},
+    { field: "addr.state", op: "IN",  value: ["Missouri","Indiana"]},
+    { field: "gpa",        op: "GTE", value: "3.65"}
   ]
 
   dbHash:  "hash",  // current hash of the selCrit in our persistent DB (null if NOT persisted)

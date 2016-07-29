@@ -33,15 +33,15 @@ import colors                  from 'material-ui/lib/styles/colors';
  * ? editSelCrit.selCrit.filter.  For example:
  * ? 
  * ?   appState.editSelCrit.selCrit.filter: [ // the master
- * ?     { field: "gender",     op: "$eq",  value: "F" },
- * ?     { field: "addr.state", op: "$in",  value: ["Missouri","Indiana"] },
- * ?     { field: "gpa",        op: "$gte", value: "3.65" }
+ * ?     { field: "gender",     op: "EQ",  value: "F" },
+ * ?     { field: "addr.state", op: "IN",  value: ["Missouri","Indiana"] },
+ * ?     { field: "gpa",        op: "GTE", value: "3.65" }
  * ?   ]
  * ?  
  * ?   appState.editSelCrit.extra.filter: [  // temporal structure streamlining our UI components
- * ?     { "fieldName": "gender",      "op": "$eq",   "value": "F" },
- * ?     { "fieldName": "addr.state",  "op": "$in",   "value": ["Missouri","Indiana"] },
- * ?     { "fieldName": "gpa",         "op": "$gte",  "value": "3.65" }
+ * ?     { "fieldName": "gender",      "op": "EQ",   "value": "F" },
+ * ?     { "fieldName": "addr.state",  "op": "IN",   "value": ["Missouri","Indiana"] },
+ * ?     { "fieldName": "gpa",         "op": "GTE",  "value": "3.65" }
  * ?   ]
  */
 const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
@@ -145,9 +145,9 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
       const metaSelCritField = p.meta.selCritFields[fieldName];
 
       const initialOperator = {
-        singleSelect:      '$eq',
-        multiSelect:       '$in',
-        multiSelectCreate: '$in',
+        singleSelect:      'EQ',
+        multiSelect:       'IN',
+        multiSelectCreate: 'IN',
         comparison:        null, // require user selection (vs. '$eq')
       };
 
@@ -203,12 +203,12 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                          style={{width: '4em'}}
                          iconStyle={{fill: '#666'}}
                          hintText="operator">
-              <MenuItem value="$eq"  primaryText="="/>
-              <MenuItem value="$gt"  primaryText=">"/>
-              <MenuItem value="$gte" primaryText=">="/>
-              <MenuItem value="$lt"  primaryText="<"/>
-              <MenuItem value="$lte" primaryText="<="/>
-              <MenuItem value="$ne"  primaryText="!="/>
+              <MenuItem value="EQ"  primaryText="="/>
+              <MenuItem value="GT"  primaryText=">"/>
+              <MenuItem value="GTE" primaryText=">="/>
+              <MenuItem value="LT"  primaryText="<"/>
+              <MenuItem value="LTE" primaryText="<="/>
+              <MenuItem value="NE"  primaryText="!="/>
             </SelectField>
           );
 

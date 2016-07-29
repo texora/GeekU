@@ -2,6 +2,7 @@
 
 import Log                   from '../../shared/util/Log';
 import {decodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
+import {selCritOps}          from '../../shared/util/selCritUtil';
 
 const log = new Log('GeekU.ProcessFlow');
 
@@ -94,13 +95,22 @@ export function selCrit(req, meta) {
   // selCrit.mongoFilter
   if (selCrit.filter && selCrit.filter.length > 0) {
     selCrit.mongoFilter = selCrit.filter.reduce( (mongoFilter, filter) => {
+      // validate field
       if (meta.validFields[filter.field] === undefined) {
         const msg = `Invalid field ('${filter.field}') specified in http request query-string selCrit.filter`
         throw new Error(msg).defineClientMsg(msg)
                             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
       }
+      // validate operator (by converting it to a mongo-op)
+      const mongoOp = selCritOps[filter.op];
+      if (!mongoOp) {
+        const msg = `Invalid operator ('${filter.op}') specified in http request query-string selCrit.filter`
+        throw new Error(msg).defineClientMsg(msg)
+                            .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+      }
+      // append this condition
       mongoFilter[filter.field] = {
-        [filter.op]: filter.value
+        [mongoOp]: filter.value
       };
       return mongoFilter;
     }, {});

@@ -302,9 +302,9 @@ function _defineThunks() {
             ],
             distinguishMajorSortField: true,
             filter: [
-              {field: "gender",     op: "$eq",  value: "F"},
-              {field: "addr.state", op: "$in",  value: ["Missouri","Indiana"]},
-              {field: "gpa",        op: "$gte", value: "3.65"}
+              {field: "gender",     op: "EQ",  value: "F"},
+              {field: "addr.state", op: "IN",  value: ["Missouri","Indiana"]},
+              {field: "gpa",        op: "GTE", value: "3.65"}
             ],
           };
         }

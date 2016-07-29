@@ -19,32 +19,32 @@ export function newStudentsSelCrit() {
 
     _id:    null,               // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
     key:    shortid.generate(), // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
-    userId: "common",           // the user the selCrit belongs to ('common' for all)
-    target: "Students",
+    userId: 'common',           // the user the selCrit belongs to ('common' for all)
+    target: 'Students',
     lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
     name:   'New Student Selection',
     desc:   'bla bla bla',
 
     fields: [
-      "gender",
-      "firstName",
-      "lastName",
-      "studentNum",
-      "graduation",
-      "degree",
-      "gpa"
+      'gender',
+      'firstName',
+      'lastName',
+      'studentNum',
+      'graduation',
+      'degree',
+      'gpa'
     ],
     sort: [
-      "-graduation",
-      "firstName",
-      "lastName"
+      '-graduation',
+      'firstName',
+      'lastName'
     ],
     distinguishMajorSortField: true,
     filter: [
-      {field: "gender",     op: "$eq",  value: "F"},
-      {field: "addr.state", op: "$in",  value: ["Missouri","Indiana"]},
-      {field: "gpa",        op: "$qte", value: "3.65"}
+      {field: 'gender',     op: 'EQ',  value: 'F'},
+      {field: 'addr.state', op: 'IN',  value: ['Missouri','Indiana']},
+      {field: 'gpa',        op: 'GTE', value: '3.65'}
     ],
 
     dbHash:  null,
@@ -76,3 +76,30 @@ export function hashSelCrit(selCrit) {
   });
   return crc.crc32(selCritStr).toString(16);
 }
+
+
+/**
+ * Concise definition of valid selCrit.filter operators, 
+ * providing a translation from neutral-op to mongo-op.
+ */
+export const selCritOps = {
+  EQ:  '$eq',
+  GT:  '$gt',
+  GTE: '$gte',
+  LT:  '$lt',
+  LTE: '$lte',
+  NE:  '$ne',
+  IN:  '$in'
+};
+
+/**
+ * All 'comparison' operators.
+ */
+export const selCritCompareOps = [
+  'EQ',
+  'GT',
+  'GTE',
+  'LT',
+  'LTE',
+  'NE'
+];
