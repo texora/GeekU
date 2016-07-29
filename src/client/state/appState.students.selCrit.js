@@ -12,10 +12,45 @@ const reductionHandler = new ReductionHandler('appState.students.selCrit', {
 
   [AT.retrieveStudents.complete](selCrit, action) {
     const nextSelCrit = action.selCrit;
-    return [
-      nextSelCrit,
-      ()=>'set selCrit from action ... ' + JSON.stringify(nextSelCrit, null, 2)
-    ];
+
+    // when content is identical, only sync with more current lastDbModDate
+    // ... retaining most-current dbHash (from seperate save)
+    // ... avoiding race conditions with concurrent:
+    //       - selCrit edit save, AND
+    //       - retrieveStudents
+    const shouldSync = !selCrit                                ||         // selCrit is not yet defined (initialization of view) -or-
+                       nextSelCrit.curHash !== selCrit.curHash ||         // NOT identical content -or-
+                       nextSelCrit.lastDbModDate > selCrit.lastDbModDate; // IDENTICAL content where nextSelCrit is more current (retaining most-current dbHash [via save])
+    if (shouldSync) {
+      return [
+        nextSelCrit,
+        ()=>'set selCrit from action ... ' + JSON.stringify(nextSelCrit, null, 2)
+      ];
+    }
+    else {
+      return [
+        selCrit,
+        ()=>'retaining current selCrit with identical content, preserving more current dbHash from prior save (race condition resolution)'
+      ];
+    }
+
+  },
+
+  [AT.selCrit.save.complete](selCrit, action) {
+    // sync any save that is the same selCrit (via key)
+    if (selCrit.key === action.selCrit.key) {
+      return [
+        action.selCrit,
+        ()=>'set selCrit from action ... ' + JSON.stringify(action.selCrit, null, 2)
+      ];
+    }
+    // no-op sync when not the same selCrit (via key)
+    else {
+      return [
+        selCrit,
+        ()=>'no change to selCrit'
+      ];
+    }
   },
 
 });

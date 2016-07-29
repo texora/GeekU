@@ -194,12 +194,9 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // retain extraActionsOnCompletionCb in self for future reference (on close)
       this.extraActionsOnCompletionCb = extraActionsOnCompletionCb;
 
-      // retain the starting selCrit.curHash, providing the ability to determine when self has changed the selCrit
-      // ... NOTE: we have to calculate it, because the appState selCrit.curHash is not defined till after
-      //           the following dispatch cycle
-      this.starting_curHash = hashSelCrit(selCrit);
+      // retain the starting curHash, providing the ability to determine when selCrit has changed (regardless of whether it is saved)
+      this.starting_curHash = selCrit.curHash;
       // console.log(`xx <EditSelCrit>.edit() initial selCrit: ${JSON.stringify(selCrit, null, 2)}`); // our hash check appears to be working!
-
 
       // dispatch the appropriate action
       p.dispatch( AC.selCrit.edit(selCrit, this.meta) );
@@ -220,7 +217,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
           valid = false;
         if (!p.selCrit.desc.trim()) // desc is required
           valid = false;
-        for (const filterObj of p.selCrit.filter) { // filter is missing some components
+        for (const filterObj of (p.selCrit.filter || [])) { // filter is missing some components
           if (!filterObj.op ||
               !filterObj.value ||
               filterObj.value.length === 0)
@@ -240,7 +237,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       const actions = [AC.selCrit.edit.close()];
 
       // issue change actions (when appropriate) ...
-      if (this.starting_curHash !== p.selCrit.curHash &&  // when selCrit has actually changed -AND-
+      if (p.selCrit.curHash !== this.starting_curHash &&  // when selCrit has actually changed -AND-
           completionType !== 'Cancel') {                  // the Cancel button was NOT used
 
         // publish our standard PUBLIC sync action
@@ -259,8 +256,8 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       }
 
       // issue save (when appropriate) ...
-      if (this.starting_curHash !== p.selCrit.dbHash && // when selCrit needs to be saved -AND-
-          completionType === 'Save') {                  // the Save button was used
+      if (p.selCrit.curHash !== p.selCrit.dbHash && // when selCrit needs to be saved -AND-
+          completionType === 'Save') {              // the Save button was used
 
         actions.push( AC.selCrit.save(p.selCrit) );
       }
@@ -338,8 +335,8 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
                                    onTouchTap={ (e) => this.handleEditComplete('Use') }/>,
                        <FlatButton label="Save"
                                    primary={true}
-                                   title={p.selCrit.dbHash===this.starting_curHash ? 'there are NO changes to save' : 'save and use changes'}
-                                   disabled={p.selCrit.dbHash===this.starting_curHash}
+                                   title={p.selCrit.dbHash===p.selCrit.curHash ? 'there are NO changes to save' : 'save and use changes'}
+                                   disabled={p.selCrit.dbHash===p.selCrit.curHash}
                                    onTouchTap={ (e) => this.handleEditComplete('Save') }/>,
                        <FlatButton label="Cancel"
                                    primary={true}

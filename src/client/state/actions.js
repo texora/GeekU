@@ -5,6 +5,7 @@ import Log                   from '../../shared/util/Log';
 import handleUnexpectedError from '../util/handleUnexpectedError';
 import {encodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
 import UserMsg               from '../comp/UserMsg';
+import {hashSelCrit}         from '../../shared/util/selCritUtil'; // ?? not needed when temp code is gone
 
 const _actionLogCache = {}; // Key: Action Type, Value: Log instance
 const _thunks = _defineThunks();
@@ -109,7 +110,10 @@ const genesis = {
   // PUBLIC AC: emitted from <EditSelCrit>
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
 
-  'selCrit.save':              { params: ['selCrit'],    thunk: _thunks['selCrit.save'] },
+  'selCrit.save':          { params: ['selCrit'],    thunk: _thunks['selCrit.save'] },
+  'selCrit.save.start':    { params: ['selCrit'] },          // ... for spinner (currently NOT USED)
+  'selCrit.save.complete': { params: ['selCrit'] },
+  'selCrit.save.fail':     { params: ['selCrit', 'error'] }, // ... for spinner (currently NOT USED)
 
 };
 
@@ -276,7 +280,8 @@ function _defineThunks() {
         // TODO: interpret selCrit ... for now: hard-code it for testing (when NOT supplied)
         if (! selCrit) {
           selCrit = {
-            key:    'TEST-KEY',
+            key:    'TEST-KEY', // may need to periodically change the key (in support of save)
+            userId: 'common',
             target: 'Students',
             name:   'MO/IN',
             desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
@@ -307,6 +312,7 @@ function _defineThunks() {
               {field: "gpa",        op: "GTE", value: "3.65"}
             ],
           };
+          selCrit.curHash=hashSelCrit(selCrit);
         }
         const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
         log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
@@ -383,8 +389,33 @@ function _defineThunks() {
       
       return (dispatch, getState) => { // function interpreted by redux-thunk middleware
 
-        // TODO: fully implement selCrit.save() ... for now just display user message
-        UserMsg.display('TODO: Save requested (but not yet implemented)');
+        // perform async save of selCrit
+        log.debug(()=>`initiating async save of selCrit key: ${selCrit.key}`);
+
+        geekUFetch('/api/selCrit', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(selCrit)
+        })
+        .then( res => {
+          // sync app with results
+          const savedSelCrit = res.payload;
+          log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
+          dispatch( AC[thunkName].complete(savedSelCrit) );
+        })
+        .catch( err => {
+          // communicate async operation failed
+          dispatch([
+            AC[thunkName].fail(selCrit, err),  // turn off our spinner (currently NOT USED)
+            handleUnexpectedError(err, `saving selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
+          ]);
+        });
+
+        // communicate async operation is in-progress
+        dispatch( AC[thunkName].start(selCrit) );
+
       };
       
     });

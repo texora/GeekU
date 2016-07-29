@@ -151,7 +151,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
 
       const newFilterObj = { field, op: initialOperator[metaSelCritField.type], value: initialValue[metaSelCritField.type]};
 
-      const newFilter    = [...p.filter, newFilterObj];
+      const newFilter    = [...(p.filter || []), newFilterObj];
 
       this.handleFilterChange(newFilter);
     }
@@ -280,7 +280,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                     targetOrigin={{vertical: 'top', horizontal: 'right', }}
                     anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
             { metaSelCritFields.map( (field) => { // add MenuItem's for fields that are NOT already part of the filter
-                return (p.filter.find( (filter) => filter.field === field))
+                return ((p.filter || []).find( (filter) => filter.field === field))
                        ? null
                        : <MenuItem key={field} 
                                    primaryText={p.meta.validFields[field]}
@@ -299,7 +299,7 @@ const SelCritDetail = ReduxUtil.wrapCompWithInjectedProps(
                        displayRowCheckbox={false}
                        showRowHover={true}
                        stripedRows={false}>
-              { p.filter.map( (filterObj) => {
+              { (p.filter || []).map( (filterObj) => {
                   return (
                     <TableRow key={filterObj.field}>
                       <TableRowColumn>{p.meta.validFields[filterObj.field]}</TableRowColumn>

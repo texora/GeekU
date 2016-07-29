@@ -28,8 +28,12 @@ const _selCrit = Redux.combineReducers({
   //       "somewhat brittle" hash algorithm.
   //       Please maintain same order as found in selCritUtil.newStudentsSelCrit().
 
+  _id:    placebo,
   key:    placebo,
   target: placebo,
+  userId: placebo,
+  target: placebo,
+  lastDbModDate: placebo,
 
   name,
   desc,
