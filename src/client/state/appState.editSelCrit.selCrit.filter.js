@@ -19,7 +19,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filt
                         ? null
                         : extraFilter.map( extraFilterObj => {
                             return {
-                              field: extraFilterObj.fieldName,
+                              field: extraFilterObj.field,
                               op:    extraFilterObj.op,
                               value: extraFilterObj.value
                             };

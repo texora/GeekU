@@ -76,7 +76,7 @@ appState: {
 
       // filter, streamlining react-select
       filter: [ 
-        { fieldName: 'addr.state', op: 'valid-operator', value: text -or- react-select-options[] },
+        { field: 'addr.state', op: 'valid-operator', value: text -or- react-select-options[] },
         ...
       ],
 

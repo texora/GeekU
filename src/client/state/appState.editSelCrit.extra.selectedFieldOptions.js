@@ -16,10 +16,10 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
     const meta   = action.meta;
     const fields = action.selCrit.fields || [];
 
-    const newSelectedFieldOptions = fields.map( (fieldName) => {
+    const newSelectedFieldOptions = fields.map( (field) => {
       return {
-        value:  fieldName,
-        label:  meta.validFields[fieldName]
+        value:  field,
+        label:  meta.validFields[field]
       };
     });
     
