@@ -24,7 +24,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filt
                           });
     return [
       newFilter,
-      ()=>`convert action.newFilter to selCrit.filter: ${JSON.stringify(newFilter, null, 2)}`
+      ()=>`convert action.newFilter to selCrit.filter: ${FMT(newFilter)}`
     ];
   },
 

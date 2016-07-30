@@ -904,7 +904,7 @@ function _fmtObj(obj) {
   // ?   }
   // ? }
   // ? return objStr;
-  // NOTE: for now we simply treat is as aJSON object ... see if this works
+  // NOTE: for now just format it a JSON object
   return JSON.stringify(obj, null, 2);
 }
 

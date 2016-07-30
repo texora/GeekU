@@ -22,7 +22,7 @@ const log = new Log('startup');
 const appStore = createAppStore();
 
 // emit our current Log Configuration
-log.info(()=>`Initial Log Configuration:\n${JSON.stringify(Log.config(), null, 2)}`);
+log.info(()=>`Initial Log Configuration:\n${FMT(Log.config())}`);
 
 // render our GeekUApp react component, along with our app-wide support components
 log.info(()=>'render our GeekUApp react component, along with our app-wide support components');

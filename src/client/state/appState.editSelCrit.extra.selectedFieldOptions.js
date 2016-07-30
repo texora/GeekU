@@ -25,14 +25,14 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
     
     return [
       newSelectedFieldOptions,
-      ()=>`convert selCrit.field to selectedFieldOptions: ${JSON.stringify(newSelectedFieldOptions, null, 2)}`
+      ()=>`convert selCrit.field to selectedFieldOptions: ${FMT(newSelectedFieldOptions)}`
     ];
   },
 
   [AT.selCrit.edit.fieldsChange](selectedFieldOptions, action) {
     return [
       action.selectedFieldOptions,
-      ()=>`set selectedFieldOptions from action.selectedFieldOptions: ${JSON.stringify(action.selectedFieldOptions, null, 2)}`
+      ()=>`set selectedFieldOptions from action.selectedFieldOptions: ${FMT(action.selectedFieldOptions)}`
     ];
   },
 

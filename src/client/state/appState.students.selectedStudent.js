@@ -13,7 +13,7 @@ const reductionHandler = new ReductionHandler('appState.students.selectedStudent
   [AT.selectStudent](selectedStudent, action) {
     return [
       action.student,
-      ()=>'set selectedStudent from action.student ... ' + JSON.stringify(action.student, null, 2)
+      ()=>'set selectedStudent from action.student ... ' + FMT(action.student)
     ];
   },
 
@@ -27,7 +27,7 @@ const reductionHandler = new ReductionHandler('appState.students.selectedStudent
   [AT.detailStudent.retrieve.complete](selectedStudent, action) {
     return [
       action.student,
-      ()=>'set selectedStudent from action.student ... ' + JSON.stringify(action.student, null, 2)
+      ()=>'set selectedStudent from action.student ... ' + FMT(action.student)
     ];
   },
 

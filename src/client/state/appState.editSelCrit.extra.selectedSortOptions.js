@@ -28,14 +28,14 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
 
     return [
       newSelectedSortOptions,
-      ()=>`convert selCrit.sort to selectedSortOptions: ${JSON.stringify(newSelectedSortOptions, null, 2)}`
+      ()=>`convert selCrit.sort to selectedSortOptions: ${FMT(newSelectedSortOptions)}`
     ];
   },
 
   [AT.selCrit.edit.sortChange](selectedSortOptions, action) {
     return [
       action.selectedSortOptions,
-      ()=>`set selectedSortOptions from action.selectedSortOptions: ${JSON.stringify(action.selectedSortOptions, null, 2)}`
+      ()=>`set selectedSortOptions from action.selectedSortOptions: ${FMT(action.selectedSortOptions)}`
     ];
   },
 

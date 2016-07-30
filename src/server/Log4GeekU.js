@@ -34,4 +34,4 @@ const logConfig = Log.config({
   
 });
 
-log.info(()=>`Current Log Configuration:\n${JSON.stringify(logConfig, null, 2)}`);
+log.info(()=>`Current Log Configuration:\n${FMT(logConfig)}`);

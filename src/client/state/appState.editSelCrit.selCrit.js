@@ -53,7 +53,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit', {
     const nextSelCrit = action.selCrit;
     return [
       nextSelCrit,
-      ()=>'set selCrit from action ... ' + JSON.stringify(nextSelCrit, null, 2)
+      ()=>'set selCrit from action ... ' + FMT(nextSelCrit)
     ];
   },
 

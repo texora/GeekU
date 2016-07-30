@@ -19,7 +19,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.fiel
                         : selectedFieldOptions.map( (fieldOption) => fieldOption.value );
     return [
       newFields,
-      ()=>`convert selectedFieldOptions to selCrit.fields: ${JSON.stringify(newFields, null, 2)}`
+      ()=>`convert selectedFieldOptions to selCrit.fields: ${FMT(newFields)}`
     ];
   },
 

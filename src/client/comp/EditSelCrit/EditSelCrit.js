@@ -196,7 +196,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
       // retain the starting curHash, providing the ability to determine when selCrit has changed (regardless of whether it is saved)
       this.starting_curHash = selCrit.curHash;
-      // console.log(`xx <EditSelCrit>.edit() initial selCrit: ${JSON.stringify(selCrit, null, 2)}`); // our hash check appears to be working!
+      // console.log(`xx <EditSelCrit>.edit() initial selCrit: ${FMT(selCrit)}`); // our hash check appears to be working!
 
       // dispatch the appropriate action
       p.dispatch( AC.selCrit.edit(selCrit, this.meta) );

@@ -133,7 +133,7 @@ selCrit.put('/api/selCrit', (req, res, next) => {
 
   // first technique that can insert/update in one operation (findOneAndReplace)
   // ... mutually exclusive of below (BOTH TESTED)
-  log.debug(()=> `selCrit save (via findOneAndReplace()) selCrit: ${JSON.stringify(selCrit, null, 2)}`);
+  log.debug(()=> `selCrit save (via findOneAndReplace()) selCrit: ${FMT(selCrit)}`);
   const filter = {
     _id: selCrit._id  // locate existing doc
   };
@@ -175,7 +175,7 @@ selCrit.put('/api/selCrit', (req, res, next) => {
   // // insert (on first save)
   // if (directive==='insert') {
   // 
-  //   log.debug(()=> `selCrit save (via INSERT) selCrit: ${JSON.stringify(selCrit, null, 2)}`);
+  //   log.debug(()=> `selCrit save (via INSERT) selCrit: ${FMT(selCrit)}`);
   //   selCritColl
   //     .insertOne(selCrit)
   //     .then( result => {
@@ -204,7 +204,7 @@ selCrit.put('/api/selCrit', (req, res, next) => {
   // // update (on subsequent saves)
   // else {
   // 
-  //   log.debug(()=> `selCrit save (via UPDATE) selCrit: ${JSON.stringify(selCrit, null, 2)}`);
+  //   log.debug(()=> `selCrit save (via UPDATE) selCrit: ${FMT(selCrit)}`);
   //   selCritColl
   //     .updateOne({_id: selCrit._id,                    // filter:
   //                 lastDbModDate: prior_lastDbModDate}, // with stale data check

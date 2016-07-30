@@ -13,7 +13,7 @@ const reductionHandler = new ReductionHandler('appState.students.detailStudent',
   [AT.detailStudent.retrieve.complete](detailStudent, action) {
     return [
       action.student,
-      ()=>'set detailStudent from action.student ... ' + JSON.stringify(action.student, null, 2)
+      ()=>'set detailStudent from action.student ... ' + FMT(action.student)
     ];
   },
 

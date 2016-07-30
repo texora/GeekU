@@ -24,7 +24,7 @@ const reductionHandler = new ReductionHandler('appState.students.selCrit', {
     if (shouldSync) {
       return [
         nextSelCrit,
-        ()=>'set selCrit from action ... ' + JSON.stringify(nextSelCrit, null, 2)
+        ()=>'set selCrit from action ... ' + FMT(nextSelCrit)
       ];
     }
     else {
@@ -41,7 +41,7 @@ const reductionHandler = new ReductionHandler('appState.students.selCrit', {
     if (selCrit.key === action.selCrit.key) {
       return [
         action.selCrit,
-        ()=>'set selCrit from action ... ' + JSON.stringify(action.selCrit, null, 2)
+        ()=>'set selCrit from action ... ' + FMT(action.selCrit)
       ];
     }
     // no-op sync when not the same selCrit (via key)

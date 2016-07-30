@@ -80,7 +80,7 @@ export default class Alert extends React.Component {
   display(directive) {
     // validate the directive parameter
     assert(directive,     '<Alert.display() missing the directive parameter');
-    assert(directive.msg, `<Alert.display() missing the directive.msg attribute for directive: ${JSON.stringify(directive, null, 2)}`);
+    assert(directive.msg, `<Alert.display() missing the directive.msg attribute for directive: ${FMT(directive)}`);
 
     // maintain our state as OPEN
     this.directives.push(directive);                   // ... retain the directive to display
