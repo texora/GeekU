@@ -92,9 +92,9 @@ const genesis = {
   'detailStudent':             { params: ['selCrit'],                 thunk: _thunks.retrieveStudents },
 
   'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: _thunks.detailStudent },
-//'detailStudent.retrieve.start':     { params: ['studentNum', 'editMode'] }, // ... currently NOT USED
+  'detailStudent.retrieve.start':     { params: ['studentNum', 'editMode'] },
   'detailStudent.retrieve.complete':  { params: ['student',    'editMode'] },
-//'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },      // ... currently NOT USED
+  'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
@@ -111,9 +111,9 @@ const genesis = {
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
 
   'selCrit.save':          { params: ['selCrit'],    thunk: _thunks['selCrit.save'] },
-  'selCrit.save.start':    { params: ['selCrit'] },          // ... for spinner (currently NOT USED)
+  'selCrit.save.start':    { params: ['selCrit'] },
   'selCrit.save.complete': { params: ['selCrit'] },
-  'selCrit.save.fail':     { params: ['selCrit', 'error'] }, // ... for spinner (currently NOT USED)
+  'selCrit.save.fail':     { params: ['selCrit', 'error'] },
 
 };
 
@@ -322,7 +322,7 @@ function _defineThunks() {
             // sync app with results
             const students = res.payload;
             log.debug(()=>`successful retrieval ... ${students.length} students returned`);
-            dispatch( AC[thunkName].complete(selCrit, students) );
+            dispatch( AC[thunkName].complete(selCrit, students) ); // mark async operation complete (typically spinner)
           })
           .catch( err => {
             // communicate async operation failed
@@ -331,12 +331,12 @@ function _defineThunks() {
             //       ... however done, it would need to be in detail only (NOT the qual message to user)
             //           ... for example: concatinate it to the err.message (only shows in detail and log)
             dispatch([
-              AC[thunkName].fail(selCrit, err),                  // turn off our spinner
+              AC[thunkName].fail(selCrit, err),                  // mark async operation FAILED complete (typically spinner)
               handleUnexpectedError(err, 'retrieving students'), // report unexpected condition to user (logging details for tech reference)
             ]);
           });
         
-        // communicate async operation is in-progress
+        // mark async operation in-progress (typically spinner)
         dispatch( AC[thunkName].start(selCrit) );
       };
   
@@ -361,18 +361,18 @@ function _defineThunks() {
             // sync app with results
             const student = res.payload;
             log.debug(()=>'successful retrieval of detailed student: ', student);
-            dispatch( AC[thunkName].retrieve.complete(student, editMode) );
+            dispatch( AC[thunkName].retrieve.complete(student, editMode) );  // mark async operation complete (typically spinner)
           })
           .catch( err => {
             // communicate async operation failed
             dispatch([
-           // AC[thunkName].retrieve.fail(studentNum, err),  // turn off our spinner (currently NOT USED)
+              AC[thunkName].retrieve.fail(studentNum, err),                               // mark async operation FAILED complete (typically spinner)
               handleUnexpectedError(err, `retrieving student detail for: ${studentNum}`), // report unexpected condition to user (logging details for tech reference)
             ]);
           });
         
-        // communicate async operation is in-progress
-        // dispatch( AC[thunkName].retrieve.start(studentNum, editMode) ); // ... currently NOT USED
+        // mark async operation in-progress (typically spinner)
+        dispatch( AC[thunkName].retrieve.start(studentNum, editMode) );
       };
       
     });
@@ -403,17 +403,17 @@ function _defineThunks() {
           // sync app with results
           const savedSelCrit = res.payload;
           log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
-          dispatch( AC[thunkName].complete(savedSelCrit) );
+          dispatch( AC[thunkName].complete(savedSelCrit) ); // mark async operation complete (typically spinner)
         })
         .catch( err => {
           // communicate async operation failed
           dispatch([
-            AC[thunkName].fail(selCrit, err),  // turn off our spinner (currently NOT USED)
+            AC[thunkName].fail(selCrit, err),                                     // mark async operation FAILED complete (typically spinner)
             handleUnexpectedError(err, `saving selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
           ]);
         });
 
-        // communicate async operation is in-progress
+        // mark async operation in-progress (typically spinner)
         dispatch( AC[thunkName].start(selCrit) );
 
       };
