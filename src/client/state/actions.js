@@ -197,6 +197,8 @@ for (const funcName in genesis) {
         runningStr += '.' + node;
         runningAT   = runningAT[node] = AT[runningStr] || {}; // NO NEED for String(runningStr);
         runningAC   = runningAC[node] = AC[runningStr] || {};
+        AT[runningStr] = runningAT;  // these two assignments are needed to maintain intermediate nodes (between thunk and action-object)
+        AC[runningStr] = runningAC;  // ... ex: the retrieve of detailStudent.retrieve.start
       }
     }
   }
