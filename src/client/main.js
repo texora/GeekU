@@ -15,6 +15,7 @@ import ReactDOM          from 'react-dom';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
 import GeekUApp          from './comp/GeekUApp';
+import {AC}              from './state/actions';
 
 const log = new Log('startup');
 
@@ -32,3 +33,6 @@ ReactDOM.render(<Provider store={appStore}>
                   </MuiThemeProvider>
                 </Provider>,
                 document.getElementById('app'));
+
+// initiate our start-up bootstrap retrievals
+appStore.dispatch( AC.retrieveFilters() );

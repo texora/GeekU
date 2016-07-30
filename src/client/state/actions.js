@@ -98,6 +98,11 @@ const genesis = {
   'detailStudent.close':              { params: [] },
   'detailStudent.changeEditMode':     { params: [] },
 
+  'retrieveFilters':          { params: [],    thunk: _thunks['retrieveFilters'] },
+  'retrieveFilters.start':    { params: [] },
+  'retrieveFilters.complete': { params: ['filters'] },
+  'retrieveFilters.fail':     { params: ['error'] },
+
   // PRIVATE AC: emitted from <EditSelCrit>
   'selCrit.edit':              { params: ['selCrit', 'meta'] }, // start a selCrit edit session
   'selCrit.edit.nameChange':   { params: ['name'] },
@@ -421,6 +426,42 @@ function _defineThunks() {
     });
   }
 
+
+  /**
+   * retrieveFilters(): an async action creator to retrieve our filters (i.e. selCrit list).
+   */
+  {
+    const {thunkName, log} = _promoteThunk('retrieveFilters', function() {
+      
+      return (dispatch, getState) => { // function interpreted by redux-thunk middleware
+        
+        // perform async retrieval of filters
+        log.debug(()=>'initiating async filters retrieval');
+
+        const url = '/api/selCrit';
+        log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
+
+        geekUFetch(url)
+          .then( res => {
+            // sync app with results
+            const filters = res.payload;
+            log.debug(()=>`successful retrieval ... ${filters.length} filters returned`);
+            dispatch( AC[thunkName].complete(filters) ); // mark async operation complete (typically spinner)
+          })
+          .catch( err => {
+            // communicate async operation failed
+            dispatch([
+              AC[thunkName].fail(err),                         // mark async operation FAILED complete (typically spinner)
+              handleUnexpectedError(err, 'retrieving filters'), // report unexpected condition to user (logging details for tech reference)
+            ]);
+          });
+        
+        // mark async operation in-progress (typically spinner)
+        dispatch( AC[thunkName].start() );
+      };
+      
+    });
+  }
 
 
   // wrapping up our internal _defineThunks() utility

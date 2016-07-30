@@ -23,8 +23,8 @@ export function newStudentsSelCrit() {
     target: 'Students',
     lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
-    name:   'New Student Selection',
-    desc:   'bla bla bla',
+    name:   '', // REQUIRED: when created within interactive edit, this will be validated
+    desc:   '', // ... dito name
 
     fields: [
       'gender',

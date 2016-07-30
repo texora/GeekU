@@ -26,6 +26,12 @@ appState: {
 
   mainPage: 'students'/'courses',
 
+  filters: [   // all active filters (list of selCrit objects) ... ordered by target/name/desc
+    selCrit-1,
+    selCrit-2, // common structure for ALL DB retrievals ... see selCrit (below) for details
+    ...
+  ],
+
   students: {      // our retrieved students
 
     selectedStudent: null/item[below],

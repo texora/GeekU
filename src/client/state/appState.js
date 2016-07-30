@@ -2,9 +2,10 @@
 
 import * as Redux from 'redux';
 
-import userMsg  from './appState.userMsg';
-import mainPage from './appState.mainPage';
-import students from './appState.students';
+import userMsg     from './appState.userMsg';
+import mainPage    from './appState.mainPage';
+import filters     from './appState.filters';
+import students    from './appState.students';
 import editSelCrit from './appState.editSelCrit';
 
 // ***
@@ -14,6 +15,7 @@ import editSelCrit from './appState.editSelCrit';
 const appState = Redux.combineReducers({
   userMsg,
   mainPage,
+  filters,
   students,
   editSelCrit,
 });

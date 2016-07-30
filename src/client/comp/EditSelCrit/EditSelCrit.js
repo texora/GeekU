@@ -15,6 +15,8 @@ const  metaXlate = {      // indexed via selCrit.target
          'Courses':  coursesMeta,
        };
 
+import {newStudentsSelCrit} from '../../../shared/util/selCritUtil';
+
 import Dialog         from 'material-ui/lib/dialog';
 import TextField      from 'material-ui/lib/text-field';
 import FlatButton     from 'material-ui/lib/flat-button';
@@ -144,7 +146,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      *       point.  In addition, it insures an <EditSelCrit> has been
      *       instantiated.
      * 
-     * @parm {SelCrit} selCrit the selCrit to edit.
+     * @parm {SelCrit} selCrit the selCrit to edit, or null to create a new selCrit.
      * @parm {function} extraActionsOnCompletionCb an optional client
      * callback, executed on edit completion, supporting additional
      * logic over-and-above the normal synchronization (ex: refresh a
@@ -167,6 +169,15 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      */
     edit(selCrit, extraActionsOnCompletionCb) {
       const p = this.props;
+
+      // create a new selCrit when not supplied
+      if (!selCrit) {
+        selCrit = newStudentsSelCrit();
+        this.forceCancelButton = true;  // a new selCrit can be canceled at any time and it will be thrown away
+      }
+      else {
+        this.forceCancelButton = false;
+      }
 
       // determine the DB meta definition we are working for
       this.meta = metaXlate[selCrit.target];
@@ -341,7 +352,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
                        <FlatButton label="Cancel"
                                    primary={true}
                                    title={p.selCrit.curHash===this.starting_curHash ? 'there are NO changes to cancel' : 'cancel changes'}
-                                   disabled={p.selCrit.curHash===this.starting_curHash}
+                                   disabled={!this.forceCancelButton && p.selCrit.curHash===this.starting_curHash}
                                    onTouchTap={ (e) => this.handleEditComplete('Cancel') }/>,
                      ]}
                      contentStyle={{
