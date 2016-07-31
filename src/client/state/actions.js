@@ -184,22 +184,12 @@ for (const funcName in genesis) {
   if (actionType.includes('.')) {
     const nodes = actionType.split('.');
     let   runningStr = '';
-    let   runningAT  = null;
-    let   runningAC  = null;
-
+    let   runningAT  = {};
+    let   runningAC  = {};
     for (const node of nodes) {
-      if (!runningStr) {  // starting federated node ... assign root-level AT/AC (if not already there)
-        runningStr += node;
-        runningAT   = AT[node] = AT[runningStr] || {}; // ... NO NEED for String(runningStr);
-        runningAC   = AC[node] = AC[runningStr] || {};
-      }
-      else {              // intermediate/end federated node
-        runningStr += '.' + node;
-        runningAT   = runningAT[node] = AT[runningStr] || {}; // NO NEED for String(runningStr);
-        runningAC   = runningAC[node] = AC[runningStr] || {};
-        AT[runningStr] = runningAT;  // these two assignments are needed to maintain intermediate nodes (between thunk and action-object)
-        AC[runningStr] = runningAC;  // ... ex: the retrieve of detailStudent.retrieve.start
-      }
+      runningStr    += (runningStr ? '.' : '') + node;
+      AT[runningStr] = runningAT = runningAT[node] = AT[runningStr] || {};
+      AC[runningStr] = runningAC = runningAC[node] = AC[runningStr] || {};
     }
   }
 
