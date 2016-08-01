@@ -701,7 +701,7 @@ levelName, and filterName.
 
 new Log(filterName)   // construct a new Log instance
 
-log(level, msgFn [, obj]): void ... log msg/obj at specified level
+log(level, msgFn [, obj]): void   // log msg/obj at specified level
 
 // CONVENIENT log() aliases (assumes default config)
 error(msgFn [, obj]): void   // log msg/obj at ERROR level
@@ -710,7 +710,7 @@ info (msgFn [, obj]): void   // log msg/obj at INFO  level
 debug(msgFn [, obj]): void   // log msg/obj at DEBUG level
 trace(msgFn [, obj]): void   // log msg/obj at TRACE level
 
-isLevelEnabled(level [, err]): boolean ...  is supplied level enabled for self's filter
+isLevelEnabled(level [, err]): boolean   // is supplied level enabled for self's filter
 
 CONVENIENT isLevelEnabled() aliases (assumes default config)
 error([err]): boolean   // is ERROR level enabled for self's filter
