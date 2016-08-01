@@ -90,13 +90,12 @@ class ReductionHandler {
     //   INSPECT: monitor reducer state changes only
     //   DEBUG:   include explicit reducer logic reasoning (regardless if state changes)
     //   TRACE:   include ALL reducer enter/exit points (NO real value - simply shows ALL appState reducers)
-    const logIt = ((state !== nextState)
-                    ? this.log.inspect    // state change - use log.inspect()
-                    : (handler)
-                        ? this.log.debug  // no state change, but app-specific logic - use log.debug()
-                        : this.log.trace) // no state change, and no app-logic = use log.trace()
-                  .bind(this.log);
-    logIt(()=> {
+    const logLevel = (state !== nextState)
+                       ? Log.INSPECT    // state change - use log.inspect()
+                       : (handler)
+                           ? Log.DEBUG  // no state change, but app-specific logic - use log.debug()
+                           : Log.TRACE; // no state change, and no app-logic = use log.trace()
+    this.log.log(logLevel, ()=> {
       const stateChangedMsg  = state !== nextState
                                 ? '(STATE CHANGED)'
                                 : '(*NO* state change)';
@@ -119,11 +118,10 @@ class ReductionHandler {
    * @param {string}  msg          the message to log
    */
   logStandardizedMsg(action, stateChanged, msg) {
-    const logIt = (stateChanged
-                 ? this.log.inspect // state change    - use log.inspect()
-                 : this.log.debug)  // no state change - use log.debug()
-                       .bind(this.log);
-    logIt(()=> {
+    const logLevel = stateChanged
+                       ? Log.INSPECT // state change    - use log.inspect()
+                       : Log.DEBUG;  // no state change - use log.debug()
+    this.log.log(logLevel, ()=> {
       const stateChangedMsg  = stateChanged
                              ? '(STATE CHANGED)'
                              : '(*NO* state change)';
