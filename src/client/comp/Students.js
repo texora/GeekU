@@ -25,7 +25,7 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import colors             from 'material-ui/lib/styles/colors';
 
 import Student            from './Student';
-import EditSelCrit        from './EditSelCrit/EditSelCrit';
+import EditSelCrit        from './EditSelCrit';
 
 
 /**

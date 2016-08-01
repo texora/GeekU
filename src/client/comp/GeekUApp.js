@@ -16,7 +16,7 @@ import Alert              from './Alert';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
-import EditSelCrit        from './EditSelCrit/EditSelCrit';
+import EditSelCrit        from './EditSelCrit';
 
 
 /**
