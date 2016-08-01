@@ -712,12 +712,13 @@ trace(msgFn [, obj]): void   // log msg/obj at TRACE level
 
 isLevelEnabled(level [, err]): boolean   // is supplied level enabled for self's filter
 
-CONVENIENT isLevelEnabled() aliases (assumes default config)
-error([err]): boolean   // is ERROR level enabled for self's filter
-warn ([err]): boolean   // is WARN  level enabled for self's filter
-info ([err]): boolean   // is INFO  level enabled for self's filter
-debug([err]): boolean   // is DEBUG level enabled for self's filter
-trace([err]): boolean   // is TRACE level enabled for self's filter
+// CONVENIENT isLevelEnabled() aliases (assumes default config)
+isDebugEnabled
+isErrorEnabled([err]): boolean   // is ERROR level enabled for self's filter
+isWarnEnabled ([err]): boolean   // is WARN  level enabled for self's filter
+isInfoEnabled ([err]): boolean   // is INFO  level enabled for self's filter
+isDebugEnabled([err]): boolean   // is DEBUG level enabled for self's filter
+isTraceEnabled([err]): boolean   // is TRACE level enabled for self's filter
 
 static post(msg, obj): void   // unconditionally emit a message probe in our log
 
