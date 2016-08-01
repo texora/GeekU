@@ -14,6 +14,7 @@
   - [Format Configuration](#format-configuration)
   - [Level Configuration](#level-configuration)
   - [Output Handler](#output-handler)
+- [Full API](#full-api)
 - [Interactive Filter Configuration](#interactive-filter-configuration)
   - [Server Filter Configuration](#server-filter-configuration)
   - [Browser Filter Configuration](#browser-filter-configuration)
@@ -690,6 +691,39 @@ string.
 
 The context paramater is a log context object containing the level,
 levelName, and filterName.
+
+
+
+
+## Full API
+
+```javascript
+
+new Log(filterName)   // construct a new Log instance
+
+log(level, msgFn [, obj]): void ... log msg/obj at specified level
+
+// CONVENIENT log() aliases (assumes default config)
+error(msgFn [, obj]): void   // log msg/obj at ERROR level
+warn (msgFn [, obj]): void   // log msg/obj at WARN  level
+info (msgFn [, obj]): void   // log msg/obj at INFO  level
+debug(msgFn [, obj]): void   // log msg/obj at DEBUG level
+trace(msgFn [, obj]): void   // log msg/obj at TRACE level
+
+isLevelEnabled(level [, err]): boolean ...  is supplied level enabled for self's filter
+
+CONVENIENT isLevelEnabled() aliases (assumes default config)
+error([err]): boolean   // is ERROR level enabled for self's filter
+warn ([err]): boolean   // is WARN  level enabled for self's filter
+info ([err]): boolean   // is INFO  level enabled for self's filter
+debug([err]): boolean   // is DEBUG level enabled for self's filter
+trace([err]): boolean   // is TRACE level enabled for self's filter
+
+static post(msg, obj): void   // unconditionally emit a message probe in our log
+
+static config([config]): cur-config  // retrieve and/or chage Log configuration
+
+```
 
 
 ## Interactive Filter Configuration
