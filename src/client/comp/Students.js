@@ -127,6 +127,10 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       let curMajorSortValue, lastMajorSortValue = null;
       const majorSortField = sortFields[0];
 
+      const selCritName = p.selCrit.curHash===p.selCrit.dbHash
+                           ? p.selCrit.name
+                           : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{p.selCrit.name}</span>;
+
       return <Paper className="app-content"
                     style={myStyle}
                     zDepth={4}>
@@ -145,7 +149,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                   title={<span>
                            <i>Students</i>
                            {p.inProgress && refreshInd}
-                           <i style={{fontSize: 12}}> ... {p.selCrit.name} {p.selCrit.desc}</i>
+                           <i style={{fontSize: 12}}>&nbsp;&nbsp;&nbsp;&nbsp; {selCritName}: {p.selCrit.desc}</i>
                          </span>}
                   iconElementLeft={<i/>}
                   iconElementRight={

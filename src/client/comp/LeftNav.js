@@ -6,6 +6,7 @@ import IconButton           from 'material-ui/lib/icon-button';
 import IconMenu             from 'material-ui/lib/menus/icon-menu';
 import MenuItem             from 'material-ui/lib/menus/menu-item';
 import MenuIcon             from 'material-ui/lib/svg-icons/navigation/menu';
+import colors               from 'material-ui/lib/styles/colors';
 import autoBindAllMethods   from '../../shared/util/autoBindAllMethods';
 import {AC}                 from '../actions';
 import EditSelCrit          from './EditSelCrit';
@@ -86,7 +87,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
             if (selCrit.target==='Students') {
               const txt = selCrit.curHash===selCrit.dbHash
                            ? selCrit.name
-                           : <span title="changes are NOT saved" style={{color: 'red', fontStyle: 'italic'}}>{selCrit.name}</span>;
+                           : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{selCrit.name}</span>;
               return <MenuItem key={selCrit.key} primaryText={txt} checked={p.studentsSelCrit && p.studentsSelCrit.key===selCrit.key} insetChildren={true} onTouchTap={ () => this.handleStudentsSelection(selCrit)}/>
             }
             else {
