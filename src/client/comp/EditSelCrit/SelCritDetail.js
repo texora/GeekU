@@ -5,7 +5,7 @@ import ReduxUtil          from '../../util/ReduxUtil';
 
 import autoBindAllMethods from '../../../shared/util/autoBindAllMethods';
 import assert             from 'assert';
-import {AC}               from '../../state/actions';
+import {AC}               from '../../actions';
 
 import AddCircleOutlineIcon    from 'material-ui/lib/svg-icons/content/add-circle-outline';
 import RemoveCircleOutlineIcon from 'material-ui/lib/svg-icons/content/remove-circle-outline'; // replaced with standard 'x'

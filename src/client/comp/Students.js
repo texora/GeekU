@@ -6,7 +6,7 @@ import ReduxUtil          from '../util/ReduxUtil';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import studentsMeta       from '../../shared/model/studentsMeta';
 
-import {AC}               from '../state/actions';
+import {AC}               from '../actions';
 
 import AppBar             from 'material-ui/lib/app-bar';
 import Avatar             from 'material-ui/lib/avatar';

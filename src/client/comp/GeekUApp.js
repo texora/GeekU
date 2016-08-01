@@ -14,7 +14,7 @@ import Students           from './Students';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
-import {AC}               from '../state/actions';
+import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit/EditSelCrit';
 

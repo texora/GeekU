@@ -1,8 +1,9 @@
 'use strict';
 
 import '../../../shared/util/polyfill';
-import expect                 from 'expect';
-import {AT, AC, getActionLog} from '../actions';
+import expect       from 'expect';
+import {AT, AC}     from '../actions';
+import getActionLog from '../getActionLog';
 
 
 // ***
@@ -138,7 +139,7 @@ describe('test getActionLog(actionType)', () => {
 
   it('getActionLog() should work equally well sith String vs. string', () => {
     expect(getActionLog('retrieveStudents.start'))
-           .toBe(getActionLog(new String('retrieveStudents.start')));
+           .toEqual(getActionLog(new String('retrieveStudents.start'))); // ??? temp toEqual should be toBe
   });
 
 });

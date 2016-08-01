@@ -5,7 +5,7 @@ import ReduxUtil          from '../../util/ReduxUtil';
 
 import autoBindAllMethods from '../../../shared/util/autoBindAllMethods';
 import assert             from 'assert';
-import {AC}               from '../../state/actions';
+import {AC}               from '../../actions';
 import {hashSelCrit}      from '../../../shared/util/selCritUtil';
 
 import studentsMeta       from '../../../shared/model/studentsMeta';

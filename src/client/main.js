@@ -15,7 +15,7 @@ import ReactDOM          from 'react-dom';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
 import GeekUApp          from './comp/GeekUApp';
-import {AC}              from './state/actions';
+import {AC}              from './actions';
 
 const log = new Log('startup');
 

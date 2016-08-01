@@ -1,7 +1,7 @@
 'use strict';
 
 import {BATCH}             from 'redux-batched-actions';
-import {getActionLog}      from '../../state/actions';
+import getActionLog        from '../../actions/getActionLog';
 import actionTypeAmplified from '../../util/actionTypeAmplified';
 
 import Log                 from '../../../shared/util/Log';

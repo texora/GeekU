@@ -1,6 +1,6 @@
 'use strict'
 
-import {AT}             from './actions';
+import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
 
 

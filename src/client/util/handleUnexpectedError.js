@@ -1,7 +1,7 @@
 'use strict';
 
 import Log        from '../../shared/util/Log';
-import {AC}       from '../state/actions';
+import {AC}       from '../actions';
 import HTTPStatus from 'http-status';
 
 const log = new Log('unexpectedError');

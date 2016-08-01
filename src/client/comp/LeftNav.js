@@ -7,7 +7,7 @@ import IconMenu             from 'material-ui/lib/menus/icon-menu';
 import MenuItem             from 'material-ui/lib/menus/menu-item';
 import MenuIcon             from 'material-ui/lib/svg-icons/navigation/menu';
 import autoBindAllMethods   from '../../shared/util/autoBindAllMethods';
-import {AC}                 from '../state/actions';
+import {AC}                 from '../actions';
 import EditSelCrit          from './EditSelCrit/EditSelCrit';
 
 

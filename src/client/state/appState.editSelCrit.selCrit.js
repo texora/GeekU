@@ -1,7 +1,7 @@
 'use strict'
 
 import * as Redux       from 'redux';
-import {AT}             from './actions';
+import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
 import {hashSelCrit}    from '../../shared/util/selCritUtil';
 

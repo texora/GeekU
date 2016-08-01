@@ -7,7 +7,7 @@ import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 
 import moment             from 'moment';
 
-import {AC}               from '../state/actions';
+import {AC}               from '../actions';
 
 import subject            from '../../shared/model/subject';
 import term               from '../../shared/model/term';

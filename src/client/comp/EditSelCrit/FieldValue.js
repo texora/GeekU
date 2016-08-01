@@ -3,7 +3,7 @@
 import React              from 'react';
 import ReduxUtil          from '../../util/ReduxUtil';
 import autoBindAllMethods from '../../../shared/util/autoBindAllMethods';
-import {AC}               from '../../state/actions';
+import {AC}               from '../../actions';
 
 import ArrowBackIcon           from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import ArrowForwardIcon        from 'material-ui/lib/svg-icons/navigation/arrow-forward';

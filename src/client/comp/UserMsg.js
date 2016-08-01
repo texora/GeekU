@@ -5,7 +5,7 @@ import ReduxUtil          from '../util/ReduxUtil';
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
-import {AC}               from '../state/actions'
+import {AC}               from '../actions'
 
 /**
  * Utility component to display a User Message (using the Material UI Snackbar).
