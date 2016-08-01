@@ -2,7 +2,7 @@
 
 import promoteThunk         from './promoteThunk';
 import {AC}                 from '../actions';
-import {hashSelCrit}        from '../../../shared/util/selCritUtil'; // ?? not needed when temp code is gone
+import SelCrit              from '../../../shared/util/SelCrit'; // ?? not needed when temp code is gone
 import {encodeJsonQueryStr} from '../../../shared/util/QueryStrUtil';
 
 
@@ -55,7 +55,7 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
           {field: "gpa",        op: "GTE", value: "3.65"}
         ],
       };
-      selCrit.curHash=hashSelCrit(selCrit);
+      selCrit.curHash=SelCrit.hash(selCrit);
     }
     const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
     log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);

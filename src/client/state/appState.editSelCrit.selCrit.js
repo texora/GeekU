@@ -3,7 +3,7 @@
 import * as Redux       from 'redux';
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import {hashSelCrit}    from '../../shared/util/selCritUtil';
+import SelCrit          from '../../shared/util/SelCrit';
 
 import placebo  from './placeboReducer';
 import name     from './appState.editSelCrit.selCrit.name';
@@ -26,7 +26,7 @@ const _selCrit = Redux.combineReducers({
 
   // NOTE: The order of these field reducers is important to accomidate our
   //       "somewhat brittle" hash algorithm.
-  //       Please maintain same order as found in selCritUtil.newStudentsSelCrit().
+  //       Please maintain same order as found in SelCrit.new().
 
   _id:    placebo,
   key:    placebo,
@@ -88,7 +88,7 @@ export default function selCrit(selCrit=null, action) {
   // when the selCrit has changed, maintain it's curHash
   if (nextSelCrit !== selCrit) {
     const fromHash = nextSelCrit.curHash;
-    const toHash   = hashSelCrit(nextSelCrit);
+    const toHash   = SelCrit.hash(nextSelCrit);
 
     nextSelCrit.curHash = toHash;
 

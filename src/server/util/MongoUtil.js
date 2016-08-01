@@ -2,7 +2,7 @@
 
 import Log                   from '../../shared/util/Log';
 import {decodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
-import {selCritOps}          from '../../shared/util/selCritUtil';
+import SelCrit               from '../../shared/util/SelCrit';
 
 const log = new Log('GeekU.ProcessFlow');
 
@@ -102,7 +102,7 @@ export function selCrit(req, meta) {
                             .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
       }
       // validate operator (by converting it to a mongo-op)
-      const mongoOp = selCritOps[filter.op];
+      const mongoOp = SelCrit.filterOps[filter.op];
       if (!mongoOp) {
         const msg = `Invalid operator ('${filter.op}') specified in http request query-string selCrit.filter`
         throw new Error(msg).defineClientMsg(msg)

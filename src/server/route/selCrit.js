@@ -4,7 +4,7 @@ import express        from 'express';
 import assert         from 'assert';
 import * as MongoUtil from '../util/MongoUtil';
 import Log            from '../../shared/util/Log';
-import {hashSelCrit}  from '../../shared/util/selCritUtil';
+import SelCrit        from '../../shared/util/SelCrit';
 
 const log = new Log('GeekU.selCrit');
 
@@ -92,7 +92,7 @@ selCrit.put('/api/selCrit', (req, res, next) => {
   //*** validate the supplied selCrit JSON object
   //***
 
-  // for now simply insure "some" of our required fields are supplied TODO: consider defining selCrit validation in selCritUtil.js ... validateSelCrit(selCrit): msg ... null for OK
+  // for now simply insure "some" of our required fields are supplied TODO: consider defining selCrit validation in SelCrit.validate(selCrit): msg ... null for OK
   if (!selCrit.key ||
       !selCrit.target ||
       !selCrit.userId ||
@@ -122,7 +122,7 @@ selCrit.put('/api/selCrit', (req, res, next) => {
 
   // reset all our hashes
   // ... by persisting the hashes, they will be accurate on retrievals
-  selCrit.dbHash = selCrit.curHash = hashSelCrit(selCrit);
+  selCrit.dbHash = selCrit.curHash = SelCrit.hash(selCrit);
 
   
   //***

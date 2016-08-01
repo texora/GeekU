@@ -6,7 +6,7 @@ import ReduxUtil          from '../../util/ReduxUtil';
 import autoBindAllMethods from '../../../shared/util/autoBindAllMethods';
 import assert             from 'assert';
 import {AC}               from '../../actions';
-import {hashSelCrit}      from '../../../shared/util/selCritUtil';
+import SelCrit            from '../../../shared/util/SelCrit';
 
 import studentsMeta       from '../../../shared/model/studentsMeta';
 import coursesMeta        from '../../../shared/model/coursesMeta';
@@ -14,8 +14,6 @@ const  metaXlate = {      // indexed via selCrit.target
          'Students': studentsMeta,
          'Courses':  coursesMeta,
        };
-
-import {newStudentsSelCrit} from '../../../shared/util/selCritUtil';
 
 import Dialog         from 'material-ui/lib/dialog';
 import TextField      from 'material-ui/lib/text-field';
@@ -172,7 +170,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
 
       // create a new selCrit when not supplied
       if (!selCrit) {
-        selCrit = newStudentsSelCrit();
+        selCrit = SelCrit.new();
         this.forceCancelButton = true;  // a new selCrit can be canceled at any time and it will be thrown away
       }
       else {
