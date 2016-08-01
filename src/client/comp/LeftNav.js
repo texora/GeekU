@@ -43,7 +43,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
             AC.changeMainPage('Students'),   // display view
             AC.retrieveStudents(newSelCrit), // with new selCrit
           ];
-        });
+        }, 'Students');
       }
 
       // use selected selCrit

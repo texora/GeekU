@@ -145,32 +145,37 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      *       instantiated.
      * 
      * @parm {SelCrit} selCrit the selCrit to edit, or null to create a new selCrit.
+     * 
      * @parm {function} extraActionsOnCompletionCb an optional client
      * callback, executed on edit completion, supporting additional
      * logic over-and-above the normal synchronization (ex: refresh a
      * retrieval based on this selCrit).
      *   API: extraActionsOnCompletionCb(selCrit): Action -or- Action[]
      * 
+     * @parm {string} target the optional mongo target collection, ONLY supplied
+     * when creating a new selCrit (selCrit param is null).
+     * 
      * @public
      */
-    static edit(selCrit, extraActionsOnCompletionCb) {
+    static edit(selCrit, extraActionsOnCompletionCb, target) {
       // validate that an <EditSelCrit> has been instantiated
       assert(_singleton, "EditSelCrit.edit() ... ERROR: NO <EditSelCrit> has been instantiated within the app.");
 
       // pass-through to our instance method
-      _singleton.edit(selCrit, extraActionsOnCompletionCb);
+      _singleton.edit(selCrit, extraActionsOnCompletionCb, target);
     }
 
 
     /**
      * edit() - internal instance method that initiates the selCrit edit session
      */
-    edit(selCrit, extraActionsOnCompletionCb) {
+    edit(selCrit, extraActionsOnCompletionCb, target) {
       const p = this.props;
 
       // create a new selCrit when not supplied
       if (!selCrit) {
-        selCrit = SelCrit.new();
+        assert(target, `EditSelCrit() invoked with null selCrit (for NEW), MUST supply a target`);
+        selCrit = SelCrit.new(target);
         this.forceCancelButton = true;  // a new selCrit can be canceled at any time and it will be thrown away
       }
       else {

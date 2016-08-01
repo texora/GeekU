@@ -63,11 +63,10 @@ describe('/api/selCrit SETUP INSERT', function() {
 
     // insert 3 selCrit test docs
     const baseKey = 'U-TEST';
-    const selCritTemplate = {...SelCrit.new(), ...{userId}};
     const insRequests = [];
     for (let i=1; i<=3; i++) {
       const key = `${baseKey}-${i}`;
-      const newSelCrit = {...SelCrit.new(), ...{key, userId, name: `name ${i}`, desc: `desc ${i}`}};
+      const newSelCrit = {...SelCrit.new('Students'), ...{key, userId, name: `name ${i}`, desc: `desc ${i}`}};
       insRequests.push(
         geekUFetch(`${url}`, {
           method: 'PUT',

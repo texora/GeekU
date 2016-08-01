@@ -17,6 +17,7 @@ import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
+import SelCrit            from '../../shared/util/SelCrit';
 
 
 /**
@@ -91,13 +92,13 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
 
     tempRetrieveStudents() {
       const p = this.props;
-      p.dispatch( AC.retrieveStudents(null) );
+      p.dispatch( AC.retrieveStudents(SelCrit.new('Students')) );
     }
 
     tempAggregateTest() {
       const p = this.props;
       // we CAN now batch actions that include thunks as well as normal action objects
-      p.dispatch([ AC.retrieveStudents(null),
+      p.dispatch([ AC.retrieveStudents(SelCrit.new('Students')),
                    AC.userMsg.display('Batching thunks FINALLY works!'),
                    AC.changeMainPage('Students') ]);
     }

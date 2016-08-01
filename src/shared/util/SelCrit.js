@@ -2,6 +2,7 @@
 
 import crc        from 'crc';
 import shortid    from 'shortid';
+import assert     from 'assert';
 import Log        from './Log';
 
 const log = new Log('SelCrit');
@@ -16,53 +17,57 @@ const SelCrit = {
   /**
    * Create a new Students selCrit object, with a unique key.
    *
-   * @param {??type} param ?? do we support some additional initialiation variation
+   * @param {string} target the targeted mongo DB collection
+   * ('Students' or 'Courses').
    *
    * @return {SelCrit} a new Students selCrit object.
    */
-  new() {
+  new(target) {
 
-    // TODO: make this truely an empty object
-    // TODO: consider param usage that can vary some things
-
+    assert(target === 'Students' || target === 'Courses',
+           `SelCrit.new() supplied target '${target}' is invalid, expecting 'Students' or 'Courses'`);
+    
     const selCrit = {
 
       _id:    null,               // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
       key:    shortid.generate(), // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
       userId: 'common',           // the user the selCrit belongs to ('common' for all)
-      target: 'Students',
+      target,                     // Students/Courses
       lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
-      name:   '', // REQUIRED: when created within interactive edit, this will be validated
-      desc:   '', // ... dito name
+      name:   `New SelCrit ${++_nextNewNum}`, // REQUIRED: when created within interactive edit, this will be validated
+      desc:   '',                             // ... dito name
 
-      fields: [
-        'gender',
-        'firstName',
-        'lastName',
-        'studentNum',
-        'graduation',
-        'degree',
-        'gpa'
-      ],
-      sort: [
-        '-graduation',
-        'firstName',
-        'lastName'
-      ],
-      distinguishMajorSortField: true,
-      filter: [
-        {field: 'gender',     op: 'EQ',  value: 'F'},
-        {field: 'addr.state', op: 'IN',  value: ['Missouri','Indiana']},
-        {field: 'gpa',        op: 'GTE', value: '3.65'}
-      ],
+      fields: [],
+   // fields: [
+   //   'gender',
+   //   'firstName',
+   //   'lastName',
+   //   'studentNum',
+   //   'graduation',
+   //   'degree',
+   //   'gpa'
+   // ],
+      sort: [],
+   // sort: [
+   //   '-graduation',
+   //   'firstName',
+   //   'lastName'
+   // ],
+      distinguishMajorSortField: false,
+      filter: [],
+   // filter: [
+   //   {field: 'gender',     op: 'EQ',  value: 'F'},
+   //   {field: 'addr.state', op: 'IN',  value: ['Missouri','Indiana']},
+   //   {field: 'gpa',        op: 'GTE', value: '3.65'}
+   // ],
 
       dbHash:  null,
       curHash: null,
     };
 
     // maintain our curHash
-    selCrit.curHash = hashSelCrit(selCrit);
+    selCrit.curHash = SelCrit.hash(selCrit);
 
     return selCrit;
   },
@@ -87,6 +92,8 @@ const SelCrit = {
     // ... target
     if (!selCrit.target.trim())
       problems.push('target is required');
+    if (selCrit.target !== 'Students' && selCrit.target !== 'Courses')
+      problems.push("target must be one of 'Students' or 'Courses'");
 
     // ... userId
     if (!selCrit.userId.trim())
@@ -180,3 +187,5 @@ const SelCrit = {
 }
 
 export default SelCrit;
+
+let _nextNewNum = 0;

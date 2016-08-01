@@ -2,9 +2,9 @@
 
 import promoteThunk          from './promoteThunk';
 import {AC}                  from '../actions';
-import SelCrit               from '../../../shared/util/SelCrit'; // ?? not needed when temp code is gone
 import {encodeJsonQueryStr}  from '../../../shared/util/QueryStrUtil';
 import handleUnexpectedError from '../../util/handleUnexpectedError';
+import assert                from 'assert';
 
 
 /**
@@ -21,43 +21,8 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
     // perform async retrieval of students
     log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
 
-    // TODO: interpret selCrit ... for now: hard-code it for testing (when NOT supplied)
-    if (! selCrit) {
-      selCrit = {
-        key:    'TEST-KEY', // may need to periodically change the key (in support of save)
-        userId: 'common',
-        target: 'Students',
-        name:   'MO/IN',
-        desc:   'from: Missouri/Indiana, ordered by: Graduation/Name',
-        fields: [
-          
-          'gender',     // these are all part of studentEssentials (grouped our display logic forces them to render together)
-          'firstName',
-          'lastName',
-          'studentNum',
+    assert(selCrit, 'AC.retrieveStudents(selCrit) ... selCrit param NOT supplied');
 
-          'graduation',
-          
-          'degree',
-          'gpa',
-          // 'birthday',
-          // 'addr',
-          // 'addr.state',
-        ],
-        sort: [
-          "-graduation",
-          "firstName",
-          "lastName"
-        ],
-        distinguishMajorSortField: true,
-        filter: [
-          {field: "gender",     op: "EQ",  value: "F"},
-          {field: "addr.state", op: "IN",  value: ["Missouri","Indiana"]},
-          {field: "gpa",        op: "GTE", value: "3.65"}
-        ],
-      };
-      selCrit.curHash=SelCrit.hash(selCrit);
-    }
     const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
     log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
 
