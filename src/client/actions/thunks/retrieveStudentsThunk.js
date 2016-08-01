@@ -1,9 +1,10 @@
 'use strict'
 
-import promoteThunk         from './promoteThunk';
-import {AC}                 from '../actions';
-import SelCrit              from '../../../shared/util/SelCrit'; // ?? not needed when temp code is gone
-import {encodeJsonQueryStr} from '../../../shared/util/QueryStrUtil';
+import promoteThunk          from './promoteThunk';
+import {AC}                  from '../actions';
+import SelCrit               from '../../../shared/util/SelCrit'; // ?? not needed when temp code is gone
+import {encodeJsonQueryStr}  from '../../../shared/util/QueryStrUtil';
+import handleUnexpectedError from '../../util/handleUnexpectedError';
 
 
 /**

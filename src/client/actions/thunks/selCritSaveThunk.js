@@ -1,8 +1,8 @@
 'use strict'
 
-import promoteThunk from './promoteThunk';
-import {AC}         from '../actions';
-
+import promoteThunk          from './promoteThunk';
+import {AC}                  from '../actions';
+import handleUnexpectedError from '../../util/handleUnexpectedError';
 
 /**
  * AC.selCrit.save(selCrit): an async action creator (thunk) that saves 
