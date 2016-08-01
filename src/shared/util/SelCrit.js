@@ -67,6 +67,7 @@ const SelCrit = {
     return selCrit;
   },
 
+
   /**
    * Validate the supplied selCrit object.
    *
@@ -113,6 +114,35 @@ const SelCrit = {
              : `Invalid selCrit ... ${problems.join(', ')}`;
   },
 
+
+  /**
+   * Return an indicator as to whether selCrit is out-of-date with otherSelCrit,
+   * considering actual content and last-modified-date (when persisted).
+   *
+   * @param {SelCrit} selCrit the base selCrit object to compare.
+   * @param {SelCrit} otherSelCrit the selCrit object to compare to.
+   *
+   * @return {boolean} true: out-of-date, false: same content
+   */
+  isOutOfDate(selCrit, otherSelCrit) {
+
+    // if the original selCrit is not yet defined, we are out-of-date
+    if (!selCrit)
+      return true;
+
+    // when not identical content, assume otherSelCrit is more current
+    if (otherSelCrit.curHash !== selCrit.curHash)
+      return true;
+
+    // when identical content if otherSelCrit is more current (retaining most-current dbHash [via save])
+    if (otherSelCrit.lastDbModDate > selCrit.lastDbModDate)
+      return true;
+
+    // otherwise, we are NOT out-of-date
+    return false;
+  },
+
+
   /**
    * Calculate the hash for the supplied selCrit object.
    *
@@ -131,6 +161,7 @@ const SelCrit = {
     });
     return crc.crc32(selCritStr).toString(16);
   },
+
 
   /**
    * Concise definition of valid selCrit.filter operators, 

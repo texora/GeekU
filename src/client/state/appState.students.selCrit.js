@@ -2,6 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
+import SelCrit          from '../../shared/util/SelCrit';
 
 
 // ***
@@ -18,10 +19,7 @@ const reductionHandler = new ReductionHandler('appState.students.selCrit', {
     // ... avoiding race conditions with concurrent:
     //       - selCrit edit save, AND
     //       - retrieveStudents
-    const shouldSync = !selCrit                                ||         // selCrit is not yet defined (initialization of view) -or-
-                       nextSelCrit.curHash !== selCrit.curHash ||         // NOT identical content -or-
-                       nextSelCrit.lastDbModDate > selCrit.lastDbModDate; // IDENTICAL content where nextSelCrit is more current (retaining most-current dbHash [via save])
-    if (shouldSync) {
+    if (SelCrit.isOutOfDate(selCrit, nextSelCrit)) {
       return [
         nextSelCrit,
         ()=>'set selCrit from action ... ' + FMT(nextSelCrit)
