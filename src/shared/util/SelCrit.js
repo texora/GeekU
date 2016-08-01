@@ -67,6 +67,51 @@ const SelCrit = {
     return selCrit;
   },
 
+  /**
+   * Validate the supplied selCrit object.
+   *
+   * @param {SelCrit} selCrit the selCrit object to validate.
+   *
+   * @return {string} a message indicating a validation problem, null for valid
+   */
+  validate(selCrit) {
+
+    // validate individual attributes
+    let problems = [];
+
+    // ... key
+    if (!selCrit.key.trim())
+      problems.push('key is required');
+
+    // ... target
+    if (!selCrit.target.trim())
+      problems.push('target is required');
+
+    // ... userId
+    if (!selCrit.userId.trim())
+      problems.push('userId is required');
+
+    // ... name
+    if (!selCrit.name.trim())
+      problems.push('name is required');
+
+    // ... desc
+    if (!selCrit.desc.trim())
+      problems.push('desc is required');
+
+    // ... filter
+    for (const filterObj of (selCrit.filter || [])) {
+      if (!filterObj.op ||
+          !filterObj.value ||
+          filterObj.value.length === 0)
+        problems.push('filter is missing some information');
+    }
+
+    // return results
+    return problems.length === 0
+             ? null // valid
+             : `Invalid selCrit ... ${problems.join(', ')}`;
+  },
 
   /**
    * Calculate the hash for the supplied selCrit object.

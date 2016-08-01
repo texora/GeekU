@@ -92,17 +92,13 @@ selCrit.put('/api/selCrit', (req, res, next) => {
   //*** validate the supplied selCrit JSON object
   //***
 
-  // for now simply insure "some" of our required fields are supplied TODO: consider defining selCrit validation in SelCrit.validate(selCrit): msg ... null for OK
-  if (!selCrit.key ||
-      !selCrit.target ||
-      !selCrit.userId ||
-      !selCrit.name ||
-      !selCrit.desc) {
-    const msg = 'ERROR: invalid selCrit JSON object supplied in PUT body (missing required fields)';
-    throw new Error(msg)
-                .defineClientMsg(msg)
+  const validationMsg = SelCrit.validate(selCrit);
+  if (validationMsg) {
+    throw new Error(validationMsg)
+                .defineClientMsg(validationMsg)
                 .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
   }
+
 
   //***
   //*** massage selCrit to conform to certain restrictions

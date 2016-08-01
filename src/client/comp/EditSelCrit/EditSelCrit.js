@@ -221,18 +221,7 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
       // apply validation - prematurely returning on errors
       // ... validation errors dynamically are shown in dialog
       if (completionType !== 'Cancel') {
-        let valid = true;
-        if (!p.selCrit.name.trim()) // name is required
-          valid = false;
-        if (!p.selCrit.desc.trim()) // desc is required
-          valid = false;
-        for (const filterObj of (p.selCrit.filter || [])) { // filter is missing some components
-          if (!filterObj.op ||
-              !filterObj.value ||
-              filterObj.value.length === 0)
-            valid = false;
-        }
-        if (!valid) {
+        if (SelCrit.validate(p.selCrit)) {
           UserMsg.display('Please resolve the highlighted validation errors.');
           return;
         }
