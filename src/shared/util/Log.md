@@ -713,7 +713,6 @@ trace(msgFn [, obj]): void   // log msg/obj at TRACE level
 isLevelEnabled(level [, err]): boolean   // is supplied level enabled for self's filter
 
 // CONVENIENT isLevelEnabled() aliases (assumes default config)
-isDebugEnabled
 isErrorEnabled([err]): boolean   // is ERROR level enabled for self's filter
 isWarnEnabled ([err]): boolean   // is WARN  level enabled for self's filter
 isInfoEnabled ([err]): boolean   // is INFO  level enabled for self's filter
