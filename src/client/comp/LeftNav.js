@@ -168,7 +168,8 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleStudentsSave(selCrit) {
-      console.log('??? handleStudentsSave()');
+      const p = this.props;
+      p.dispatch( AC.selCrit.save(selCrit) );
     }
 
     handleCoursesSave(selCrit) {
