@@ -1,15 +1,25 @@
 'use strict';
 
-import React                from 'react';
-import ReduxUtil            from '../util/ReduxUtil';
-import IconButton           from 'material-ui/lib/icon-button';
-import IconMenu             from 'material-ui/lib/menus/icon-menu';
-import MenuItem             from 'material-ui/lib/menus/menu-item';
-import MenuIcon             from 'material-ui/lib/svg-icons/navigation/menu';
-import colors               from 'material-ui/lib/styles/colors';
-import autoBindAllMethods   from '../../shared/util/autoBindAllMethods';
-import {AC}                 from '../actions';
-import EditSelCrit          from './EditSelCrit';
+import React               from 'react';
+import ReduxUtil           from '../util/ReduxUtil';
+
+import assert              from 'assert';
+import autoBindAllMethods  from '../../shared/util/autoBindAllMethods';
+
+import {AC}                from '../actions';
+import EditSelCrit         from './EditSelCrit';
+import SelCrit             from '../../shared/util/SelCrit';
+
+import AppBar              from 'material-ui/lib/app-bar';
+import CachedIcon          from 'material-ui/lib/svg-icons/action/cached';
+import Card                from 'material-ui/lib/card/card';
+import CardText            from 'material-ui/lib/card/card-text';
+import CardTitle           from 'material-ui/lib/card/card-title';
+import IconButton          from 'material-ui/lib/icon-button';
+import LeftNavMUI          from 'material-ui/lib/left-nav'; // NOTE: using LeftNavMUI because original Material UI component name (LeftNav) conflicts with ours
+import MenuItem            from 'material-ui/lib/menus/menu-item';
+import MoreVertIcon        from 'material-ui/lib/svg-icons/navigation/more-vert';
+import colors              from 'material-ui/lib/styles/colors';
 
 
 /**
@@ -20,30 +30,80 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
   class LeftNav extends React.Component { // component definition
     constructor(props, context) {
       super(props, context);
+
       autoBindAllMethods(this);
+
+      // keep track of our one-and-only instance
+      assert(!_singleton, "<LeftNav> only ONE LeftNav is needed and therefore may be instantiated within the app.");
+      _singleton = this;
+
+      // define initial state controlling our display
+      this.state = {
+        open:     false,
+        editMode: false
+      };
     }
 
-    // selCrit ... 
-    //   - 'selectView': to select view only
-    //   - null:         create/use new selCrit
-    //   - selCrit:      use supplied selCrit
+    /**
+     * Open our one-and-only LeftNav ... a public access point.
+     *
+     * @public
+     */
+    static open() {
+      // validate that an <LeftNav> has been instantiated
+      assert(_singleton, "LeftNav.display() ... ERROR: NO <LeftNav> has been instantiated within the app.");
+
+      // pass-through to our instance method
+      _singleton.open();
+    }
+
+    open() {
+      this.setState({
+        open:     true,
+        editMode: false
+      });
+    }
+
+    handleVisible(open) {
+      this.setState({open});
+    }
+
+    handleEditModeToggle() {
+      this.setState({editMode: !this.state.editMode});
+    }
+
+
+    //***
+    //*** handleSelection(selCrit) ... select the view using the supplied selCrit
+    //***
+    //***   selCrit ... 
+    //***     - target-string: create/select a new selCrit of target type ('Students' or 'Courses')
+    //***     - selCrit:       select the supplied selCrit
+    //***
+
+    // TODO: consider embedding ALL Selection logic in this one method
+    handleSelection(selCrit) {
+      if (selCrit==='Students')             this.handleStudentsSelection(null);
+      else if (selCrit==='Courses')         this.handleCoursesSelection(null);
+      else if (selCrit.target==='Students') this.handleStudentsSelection(selCrit);
+      else                                  this.handleCoursesSelection(selCrit);
+    }
+
     handleStudentsSelection(selCrit) {
       const p = this.props;
 
-      // process select view only
-      if (selCrit === 'selectView') {
-        p.dispatch( AC.changeMainPage('Students') );
-      }
+      // we always take down our LeftNav
+      this.setState({open: false})
 
       // create/use new selCrit
-      else if (!selCrit) {
+      if (!selCrit) {
         // start an edit session of a new selCrit
-        EditSelCrit.edit(selCrit, (newSelCrit) => {
+        EditSelCrit.edit('Students', (newSelCrit) => {
           return [
             AC.changeMainPage('Students'),   // display view
             AC.retrieveStudents(newSelCrit), // with new selCrit
           ];
-        }, 'Students');
+        });
       }
 
       // use selected selCrit
@@ -72,32 +132,140 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
       p.dispatch( actions );
     }
 
+
+
+    //***
+    //*** handleEdit(selCrit) ... edit the supplied selCrit
+    //***
+
+    // TODO: consider embedding ALL Edit logic in this one method
+    handleEdit(selCrit) {
+      if (selCrit.target==='Students')
+        this.handleStudentsEdit(selCrit);
+      else
+        this.handleCoursesEdit(selCrit);
+    }
+
+    handleStudentsEdit(selCrit) {
+      console.log('??? handleStudentsEdit()');
+    }
+
+    handleCoursesEdit(selCrit) {
+      console.log('??? handleCoursesEdit()');
+    }
+
+
+
+    //***
+    //*** handleSave(selCrit) ... save the supplied selCrit
+    //***
+
+    handleSave(selCrit) {
+      if (selCrit.target==='Students')
+        this.handleStudentsSave(selCrit);
+      else
+        this.handleCoursesSave(selCrit);
+    }
+
+    handleStudentsSave(selCrit) {
+      console.log('??? handleStudentsSave()');
+    }
+
+    handleCoursesSave(selCrit) {
+      console.log('??? handleCoursesSave()');
+    }
+
+
+
+    //***
+    //*** handleDelete(selCrit) ... delete the supplied selCrit
+    //***
+
+    handleDelete(selCrit) {
+      if (selCrit.target==='Students')
+        this.handleStudentsDelete(selCrit);
+      else
+        this.handleCoursesDelete(selCrit);
+    }
+
+    handleStudentsDelete(selCrit) {
+      console.log('???$$$ handleStudentsDelete()');
+    }
+
+    handleCoursesDelete(selCrit) {
+      console.log('??? handleCoursesDelete()');
+    }
+
     render() {
       const p = this.props;
 
-      // ... why is MenuIcon the opposite color of the baseTheme?
-      //     - I suspect because it is supposed to appear on the baseTheme background
-      //     - I altered to white when displayed in my toolbar (which is darker on a light background)
-      return <IconMenu iconButtonElement={ <IconButton><MenuIcon color="white"/></IconButton> }
-                       targetOrigin={{vertical: 'top', horizontal: 'left', }}
-                       anchorOrigin={{vertical: 'top', horizontal: 'left'}}>
+      return (
+        <LeftNavMUI docked={false}
+                    open={this.state.open}
+                    onRequestChange={this.handleVisible}>
+        
+          <AppBar title={this.state.editMode ? 'Edit Views' : 'Select View'}
+                  showMenuIconButton={false}
+                  iconElementRight={<IconButton onTouchTap={this.handleEditModeToggle}
+                                                title={this.state.editMode ? 'click to select view' : 'click to edit views'}>
+                                      <CachedIcon/>
+                                    </IconButton>}/>
+        
+          { ['Students', 'Courses'].map( (target) => {
+        
+            const targetSelCrit = target==='Students' ? p.studentsSelCrit : p.coursesSelCrit;
 
-        <MenuItem primaryText="Students" onTouchTap={ () => this.handleStudentsSelection('selectView')}/>
-        { p.filters.map( (selCrit) => {
-            if (selCrit.target==='Students') {
-              const txt = selCrit.curHash===selCrit.dbHash
-                           ? selCrit.name
-                           : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{selCrit.name}</span>;
-              return <MenuItem key={selCrit.key} primaryText={txt} checked={p.studentsSelCrit && p.studentsSelCrit.key===selCrit.key} insetChildren={true} onTouchTap={ () => this.handleStudentsSelection(selCrit)}/>
-            }
-            else {
-              return null;
-            }
+            return (
+              <Card key={target} initiallyExpanded={true}>
+              
+                <CardTitle title={target}
+                           titleStyle={{fontSize: 20}}
+                           actAsExpander={true}
+                           showExpandableButton={true}/>
+              
+                <CardText expandable={true}>
+                  { p.filters.map( (selCrit) => {
+                      if (selCrit.target===target) {
+                        const txt = selCrit.curHash===selCrit.dbHash
+                                     ? selCrit.name
+                                     : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{selCrit.name}</span>;
+                        if (this.state.editMode) {
+                          return (
+                            <MenuItem key={selCrit.key}
+                                      primaryText={txt}
+                                      insetChildren={true}
+                                      rightIcon={<MoreVertIcon color={colors.grey700}/>}
+                                      menuItems={[
+                                        <MenuItem primaryText="Edit"   onTouchTap={ () => this.handleEdit(selCrit) }/>,
+                                        <MenuItem primaryText="Save"   onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
+                                        <MenuItem primaryText="Delete" onTouchTap={ () => this.handleDelete(selCrit) }/>,
+                                      ]}/>
+                          );
+                        }
+                        else {
+                          return (
+                            <MenuItem key={selCrit.key}
+                                      primaryText={txt}
+                                      insetChildren={true}
+                                      checked={targetSelCrit && targetSelCrit.key===selCrit.key}
+                                      onTouchTap={ () => this.handleSelection(selCrit)}/>
+                          );
+                        }
+                      }
+                      else {
+                        return null;
+                      }
+                    })}
+              
+                  <MenuItem primaryText={<i>... New Filter</i>} insetChildren={true} onTouchTap={ () => this.handleSelection(target)}/>
+              
+                </CardText>
+              </Card>
+            );
           })}
-        <MenuItem primaryText={<i>... new</i>} insetChildren={true} onTouchTap={ () => this.handleStudentsSelection(null)}/>
-
-        <MenuItem primaryText="Courses"  onTouchTap={ () => this.handleCoursesSelection('selectView') }/>
-      </IconMenu>;
+        
+        </LeftNavMUI>
+      );
     }
   }, // end of ... component definition
 
@@ -107,6 +275,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
         filters:         appState.filters,
         mainPage:        appState.mainPage,
         studentsSelCrit: appState.students.selCrit,
+        coursesSelCrit:  null, // appState.courses.selCrit, // TODO: NOT available yet
       }
     }
   }); // end of ... component property injection
@@ -116,3 +285,6 @@ LeftNav.propTypes = {
 }
 
 export default LeftNav;
+
+// our one-and-only instance
+let _singleton = null;

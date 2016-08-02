@@ -123,6 +123,18 @@ const SelCrit = {
 
 
   /**
+   * Return an indicator as to whether selCrit is saved.
+   *
+   * @param {SelCrit} selCrit the selCrit to evaluate.
+
+   * @return {boolean} true: has been saved, false: needs to be saved
+   */
+  isSaved(selCrit) {
+    return selCrit.dbHash === selCrit.curHash;
+  },
+
+
+  /**
    * Return an indicator as to whether selCrit is out-of-date with otherSelCrit,
    * considering actual content and last-modified-date (when persisted).
    *

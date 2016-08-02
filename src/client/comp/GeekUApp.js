@@ -126,7 +126,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                       </tr>
                     </tbody>
                   </table>}
-                iconElementLeft={<LeftNav/>}
+                onLeftIconButtonTouchTap={()=>LeftNav.open()}
                 iconElementRight={
                   <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
                             targetOrigin={{vertical: 'top', horizontal: 'right', }}
@@ -142,6 +142,7 @@ const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
                     <MenuItem primaryText="Test Student Retrieval"           onTouchTap={this.tempRetrieveStudents}/>
                     <MenuItem primaryText="Aggregate Test"                   onTouchTap={this.tempAggregateTest}/>
                   </IconMenu>}/>
+        <LeftNav/>
         <Students/>
         <EditSelCrit/>
         <UserMsg/>

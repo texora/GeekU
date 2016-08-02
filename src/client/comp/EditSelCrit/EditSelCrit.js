@@ -144,7 +144,8 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      *       point.  In addition, it insures an <EditSelCrit> has been
      *       instantiated.
      * 
-     * @parm {SelCrit} selCrit the selCrit to edit, or null to create a new selCrit.
+     * @parm {SelCrit|target-string} selCrit the selCrit to edit, 
+     * or a mongo DB target string to create a new selCrit.
      * 
      * @parm {function} extraActionsOnCompletionCb an optional client
      * callback, executed on edit completion, supporting additional
@@ -152,30 +153,28 @@ const EditSelCrit = ReduxUtil.wrapCompWithInjectedProps(
      * retrieval based on this selCrit).
      *   API: extraActionsOnCompletionCb(selCrit): Action -or- Action[]
      * 
-     * @parm {string} target the optional mongo target collection, ONLY supplied
-     * when creating a new selCrit (selCrit param is null).
-     * 
      * @public
      */
-    static edit(selCrit, extraActionsOnCompletionCb, target) {
+    static edit(selCrit, extraActionsOnCompletionCb) {
       // validate that an <EditSelCrit> has been instantiated
       assert(_singleton, "EditSelCrit.edit() ... ERROR: NO <EditSelCrit> has been instantiated within the app.");
 
       // pass-through to our instance method
-      _singleton.edit(selCrit, extraActionsOnCompletionCb, target);
+      _singleton.edit(selCrit, extraActionsOnCompletionCb);
     }
 
 
     /**
      * edit() - internal instance method that initiates the selCrit edit session
      */
-    edit(selCrit, extraActionsOnCompletionCb, target) {
+    edit(selCrit, extraActionsOnCompletionCb) {
       const p = this.props;
 
-      // create a new selCrit when not supplied
-      if (!selCrit) {
-        assert(target, `EditSelCrit() invoked with null selCrit (for NEW), MUST supply a target`);
-        selCrit = SelCrit.new(target);
+      assert(selCrit, `EditSelCrit.edit() invocation missing selCrit parameter`);
+
+      // create a new selCrit when a target string is supplied
+      if (typeof selCrit === 'string') { // selCrit is a string ... 'Students'/'Courses'
+        selCrit = SelCrit.new(selCrit);
         this.forceCancelButton = true;  // a new selCrit can be canceled at any time and it will be thrown away
       }
       else {
