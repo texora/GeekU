@@ -149,7 +149,18 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleStudentsEdit(selCrit) {
-      console.log('??? handleStudentsEdit()');
+      const p = this.props;
+
+      // determine if our view is using this selCrit
+      const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
+
+      // when view is using this selCrit, refresh it (in edit() completion callback)
+      const refreshViewFn = selCritDisplayedInView
+                              ? (changedSelCrit) => AC.retrieveStudents(changedSelCrit)
+                              : null;
+
+      // start an edit session with this selCrit
+      EditSelCrit.edit(selCrit, refreshViewFn);
     }
 
     handleCoursesEdit(selCrit) {
