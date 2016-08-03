@@ -94,7 +94,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     handleStudentsSelection(selCrit) {
       const p = this.props;
 
-      // we always take down our LeftNav
+      // we always close our LeftNav
       this.setState({open: false})
 
       // create/use new selCrit
@@ -164,7 +164,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleCoursesEdit(selCrit) {
-      console.log('??? handleCoursesEdit()');
+      console.log('TODO: handleCoursesEdit()');
     }
 
 
@@ -186,7 +186,42 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleCoursesSave(selCrit) {
-      console.log('??? handleCoursesSave()');
+      console.log('TODO: handleCoursesSave()');
+    }
+
+
+
+    //***
+    //*** handleDuplicate(selCrit) ... duplicate the supplied selCrit
+    //***
+
+    handleDuplicate(selCrit) {
+      if (selCrit.target==='Students')
+        this.handleStudentsDuplicate(selCrit);
+      else
+        this.handleCoursesDuplicate(selCrit);
+    }
+
+    handleStudentsDuplicate(selCrit) {
+      const p = this.props;
+
+      // duplicate ths supplied selCrit
+      const dupSelCrit = SelCrit.duplicate(selCrit);
+
+      // close our LeftNav
+      this.setState({open: false})
+
+        // start an edit session with this selCrit
+        EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
+          return [
+            AC.changeMainPage('Students'),          // display view
+            AC.retrieveStudents(changedDupSelCrit), // with our duplicated selCrit
+          ];
+        });
+    }
+
+    handleCoursesDuplicate(selCrit) {
+      console.log('TODO: handleCoursesDuplicate()');
     }
 
 
@@ -225,7 +260,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleCoursesDelete(selCrit) {
-      console.log('??? handleCoursesDelete()');
+      console.log('TODO: handleCoursesDelete()');
     }
 
     render() {
@@ -268,9 +303,10 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
                                       insetChildren={true}
                                       rightIcon={<MoreVertIcon color={colors.grey700}/>}
                                       menuItems={[
-                                        <MenuItem primaryText="Edit"   onTouchTap={ () => this.handleEdit(selCrit) }/>,
-                                        <MenuItem primaryText="Save"   onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
-                                        <MenuItem primaryText="Delete" onTouchTap={ () => this.handleDelete(selCrit) }/>,
+                                        <MenuItem primaryText="Edit"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
+                                        <MenuItem primaryText="Save"      onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
+                                        <MenuItem primaryText="Duplicate" onTouchTap={ () => this.handleDuplicate(selCrit) }/>,
+                                        <MenuItem primaryText="Delete"    onTouchTap={ () => this.handleDelete(selCrit) }/>,
                                       ]}/>
                           );
                         }

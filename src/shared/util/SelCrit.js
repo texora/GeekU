@@ -15,12 +15,12 @@ const log = new Log('SelCrit');
 const SelCrit = {
 
   /**
-   * Create a new Students selCrit object, with a unique key.
+   * Create a new selCrit object, with a unique key.
    *
    * @param {string} target the targeted mongo DB collection
    * ('Students' or 'Courses').
    *
-   * @return {SelCrit} a new Students selCrit object.
+   * @return {SelCrit} a new selCrit object.
    */
   new(target) {
 
@@ -70,6 +70,32 @@ const SelCrit = {
     selCrit.curHash = SelCrit.hash(selCrit);
 
     return selCrit;
+  },
+
+
+  /**
+   * Duplicate the suplied selCrit object, with the appropriate adjustments.
+   *
+   * @param {SelCrit} selCrit the selCrit object to duplicate.
+   *
+   * @return {SelCrit} a new selCrit object, copied from the supplied selCrit.
+   */
+  duplicate(selCrit) {
+
+    // duplicate the suplied obj
+    const dupSelCrit = JSON.parse( JSON.stringify(selCrit) );
+
+
+    // adjust the appropriate attributes
+    dupSelCrit._id           = null;
+    dupSelCrit.key           = shortid.generate();
+    dupSelCrit.lastDbModDate = null;
+    dupSelCrit.name          = selCrit.name + ' Copy';
+    dupSelCrit.desc          = selCrit.desc + ' Copy';
+    dupSelCrit.dbHash        = null;
+    dupSelCrit.curHash       = SelCrit.hash(selCrit);
+
+    return dupSelCrit;
   },
 
 
