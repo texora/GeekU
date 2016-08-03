@@ -156,7 +156,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                     <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
                               targetOrigin={{vertical: 'top', horizontal: 'right', }}
                               anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                      <MenuItem primaryText="Filter" onTouchTap={this.handleEditSelCrit}/>
+                      <MenuItem primaryText="Modify Filter" onTouchTap={this.handleEditSelCrit} disabled={p.selCrit.key ? false : true}/>
                       <MenuItem primaryText="... more"/>
                     </IconMenu>}/>
 
