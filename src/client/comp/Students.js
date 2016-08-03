@@ -5,11 +5,13 @@ import ReduxUtil          from '../util/ReduxUtil';
 
 import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import studentsMeta       from '../../shared/model/studentsMeta';
+import SelCrit            from '../../shared/util/SelCrit';
 
 import {AC}               from '../actions';
 
 import AppBar             from 'material-ui/lib/app-bar';
 import Avatar             from 'material-ui/lib/avatar';
+import Divider            from 'material-ui/lib/divider';
 import FontIcon           from 'material-ui/lib/font-icon';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';
@@ -26,6 +28,7 @@ import colors             from 'material-ui/lib/styles/colors';
 
 import Student            from './Student';
 import EditSelCrit        from './EditSelCrit';
+import Confirm            from './Confirm';
 
 
 /**
@@ -68,6 +71,49 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     handleEditSelCrit() {
       const p = this.props;
       EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
+    }
+
+    handleSaveSelCrit() {
+      const p = this.props;
+      p.dispatch( AC.selCrit.save(p.selCrit) );
+    }
+
+    handleNewSelCrit() {
+      // start an edit session of a new 'Students' selCrit
+      EditSelCrit.edit('Students', newSelCrit => AC.retrieveStudents(newSelCrit) );
+    }
+
+    handleDuplicateSelCrit() {
+      const p = this.props;
+
+      // duplicate our selCrit
+      const dupSelCrit = SelCrit.duplicate(p.selCrit);
+
+      // start an edit session with this dup selCrit
+      EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.retrieveStudents(changedDupSelCrit) );
+    }
+
+    handleDeleteSelCrit() {
+      const p = this.props;
+
+      Confirm.display({
+        title: 'Delete Filter',
+        msg:   `Please confirm deletion of filter: ${p.selCrit.name} -  ${p.selCrit.desc}`,
+        actions: [
+          { txt: 'Delete',
+            action: () => {
+              const impactView = 'Students';
+              if (p.selCrit.dbHash) { // is persised in DB
+                p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
+              }
+              else { // is an in-memory only representation
+                p.dispatch( AC.selCrit.delete.complete(p.selCrit, impactView) );
+              }
+            } },
+          { txt: 'Cancel' },
+        ]
+      });
+
     }
 
     handleSelectStudent(student) {
@@ -136,6 +182,8 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                            ? p.selCrit.name
                            : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{p.selCrit.name}</span>;
 
+      const selCritActionEnabled = p.selCrit.key ? true : false;
+
       return <Paper className="app-content"
                     style={myStyle}
                     zDepth={4}>
@@ -161,8 +209,13 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                     <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
                               targetOrigin={{vertical: 'top', horizontal: 'right', }}
                               anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                      <MenuItem primaryText="Modify Filter" onTouchTap={this.handleEditSelCrit} disabled={p.selCrit.key ? false : true}/>
-                      <MenuItem primaryText="Refresh"       onTouchTap={this.handleRefresh}     disabled={p.selCrit.key ? false : true}/>
+                      <MenuItem primaryText="Edit Filter"      onTouchTap={this.handleEditSelCrit}      disabled={!selCritActionEnabled}/>
+                      <MenuItem primaryText="Save Filter"      onTouchTap={this.handleSaveSelCrit}      disabled={SelCrit.isSaved(p.selCrit)}/>
+                      <MenuItem primaryText="New Filter"       onTouchTap={this.handleNewSelCrit}/>
+                      <MenuItem primaryText="Duplicate Filter" onTouchTap={this.handleDuplicateSelCrit} disabled={!selCritActionEnabled}/>
+                      <MenuItem primaryText="Delete Filter"    onTouchTap={this.handleDeleteSelCrit}    disabled={!selCritActionEnabled}/>
+                      <Divider/>
+                      <MenuItem primaryText="Refresh View"     onTouchTap={this.handleRefresh}          disabled={p.selCrit.key ? false : true}/>
                     </IconMenu>}/>
 
           <Table className="page-content"

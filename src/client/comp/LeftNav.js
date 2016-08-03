@@ -204,21 +204,19 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleStudentsDuplicate(selCrit) {
-      const p = this.props;
-
       // duplicate ths supplied selCrit
       const dupSelCrit = SelCrit.duplicate(selCrit);
 
       // close our LeftNav
-      this.setState({open: false})
+      this.setState({open: false});
 
-        // start an edit session with this selCrit
-        EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-          return [
-            AC.changeMainPage('Students'),          // display view
-            AC.retrieveStudents(changedDupSelCrit), // with our duplicated selCrit
-          ];
-        });
+      // start an edit session with this selCrit
+      EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
+        return [
+          AC.changeMainPage('Students'),          // display view
+          AC.retrieveStudents(changedDupSelCrit), // with our duplicated selCrit
+        ];
+      });
     }
 
     handleCoursesDuplicate(selCrit) {
@@ -305,10 +303,10 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
                                       checked={targetSelCrit && targetSelCrit.key===selCrit.key}
                                       rightIcon={<MoreVertIcon color={colors.grey700}/>}
                                       menuItems={[
-                                        <MenuItem primaryText="Edit"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
-                                        <MenuItem primaryText="Save"      onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
-                                        <MenuItem primaryText="Duplicate" onTouchTap={ () => this.handleDuplicate(selCrit) }/>,
-                                        <MenuItem primaryText="Delete"    onTouchTap={ () => this.handleDelete(selCrit) }/>,
+                                        <MenuItem primaryText="Edit Filter"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
+                                        <MenuItem primaryText="Save Filter"      onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
+                                        <MenuItem primaryText="Duplicate Filter" onTouchTap={ () => this.handleDuplicate(selCrit) }/>,
+                                        <MenuItem primaryText="Delete Filter"    onTouchTap={ () => this.handleDelete(selCrit) }/>,
                                       ]}/>
                           );
                         }
