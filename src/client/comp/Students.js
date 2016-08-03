@@ -60,6 +60,11 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
       }
     }
 
+    handleRefresh() {
+      const p = this.props;
+      p.dispatch( AC.retrieveStudents(p.selCrit) );
+    }
+
     handleEditSelCrit() {
       const p = this.props;
       EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
@@ -157,7 +162,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
                               targetOrigin={{vertical: 'top', horizontal: 'right', }}
                               anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
                       <MenuItem primaryText="Modify Filter" onTouchTap={this.handleEditSelCrit} disabled={p.selCrit.key ? false : true}/>
-                      <MenuItem primaryText="... more"/>
+                      <MenuItem primaryText="Refresh"       onTouchTap={this.handleRefresh}     disabled={p.selCrit.key ? false : true}/>
                     </IconMenu>}/>
 
           <Table className="page-content"
