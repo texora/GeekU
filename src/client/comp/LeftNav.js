@@ -301,6 +301,7 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
                             <MenuItem key={selCrit.key}
                                       primaryText={txt}
                                       insetChildren={true}
+                                      checked={targetSelCrit && targetSelCrit.key===selCrit.key}
                                       rightIcon={<MoreVertIcon color={colors.grey700}/>}
                                       menuItems={[
                                         <MenuItem primaryText="Edit"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
