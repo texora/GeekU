@@ -72,3 +72,15 @@ if (!root.geekUFetch) {
 if (!root.FMT) {
   root.FMT = formatItem;
 }
+
+// Array.prototype.prune(callback): return a new array, pruning elements where callback returns true.
+if (!Array.prototype.prune) {
+  Array.prototype.prune = function(callback) {
+    return this.reduce( (retArr, item) => {
+      if (!callback(item)) {
+        retArr.push(item);
+      }
+      return retArr;
+    }, []);
+  };
+}
