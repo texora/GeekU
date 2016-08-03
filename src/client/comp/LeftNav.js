@@ -212,7 +212,12 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
            { txt: 'Delete',
              action: () => {
                const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? 'Students' : null;
-               p.dispatch( AC.selCrit.delete(selCrit, impactView) );
+               if (selCrit.dbHash) { // is persised in DB
+                 p.dispatch( AC.selCrit.delete(selCrit, impactView) );
+               }
+               else { // is an in-memory only representation
+                 p.dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
+               }
              } },
            { txt: 'Cancel' },
          ]
