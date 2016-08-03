@@ -20,6 +20,14 @@ const reductionHandler = new ReductionHandler('appState.filters', {
   [AT.selCrit.edit.changed]:  sharedSync,
   [AT.selCrit.save.complete]: sharedSync,
 
+  [AT.selCrit.delete.complete](filters, action) {
+    const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );
+    return [
+      prunedFilters,
+      ()=>`pruned filters with action.selCrit.key: '${action.selCrit.key}'`
+    ];
+  },
+
 });
 
 function sharedSync(filters, action) { // requires action.selCrit

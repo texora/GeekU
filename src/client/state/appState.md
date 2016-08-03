@@ -28,7 +28,7 @@ appState: {
 
   filters: [   // all active filters (list of selCrit objects) ... ordered by target/name/desc
     selCrit-1,
-    selCrit-2, // common structure for ALL DB retrievals ... see selCrit (below) for details
+    selCrit-2, // common selCrit (see selCrit (below) for details)
     ...
   ],
 
@@ -40,10 +40,8 @@ appState: {
     detailEditMode: true/false
 
     inProgress: 0,1,2, // truthy ... number of outstanding student requests
-    selCrit: {
-      // common structure for ALL DB retrievals ... see selCrit (below) for details
-    },
-    items: [
+    selCrit: {...},    // common selCrit (see selCrit (below) for details) ... null for not-yet-retrieved 
+    items: [           // empty array [] for not-yet-retrieved -or- no-results-from-retrieval
       { <studentIndx> || <studentDetail> },
       ...ditto...
     ],
@@ -57,10 +55,8 @@ appState: {
 ?   detailEditMode: true/false
 
 ?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
-?   selCrit: {
-      // common structure for ALL DB retrievals ... see selCrit (below) for details
-    },
-?   items: [
+?   selCrit: {...},    // common selCrit (see selCrit (below) for details) ... null for not-yet-retrieved
+?   items: [           // empty array [] for not-yet-retrieved -or- no-results-from-retrieval
 ?     { <courseIndx> || <courseDetail> },
       ...ditto...
     ],
@@ -69,7 +65,7 @@ appState: {
   editSelCrit: {       // structure supporting ANY selCrit edit
 
     selCrit: { // the selCrit object being edited, null for none (i.e. edit NOT in-progress)
-      // ... content contains common selCrit structure ... see selCrit (below) for details
+      // ... content contains common selCrit (see selCrit (below) for details)
     },
 
     extra: { // additional temporal structure streamlining various UI components

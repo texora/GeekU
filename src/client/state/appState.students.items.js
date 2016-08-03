@@ -26,6 +26,23 @@ const reductionHandler = new ReductionHandler('appState.students.items', {
     ];
   },
 
+  [AT.selCrit.delete.complete](items, action) {
+    // sync when our view has been impacted by selCrit deletion
+    if (action.impactView==='Students') {
+      return [
+        [],
+        ()=>'clear items ([]) becase our view is based on deleted selCrit'
+      ];
+    }
+    // no-sync when our view is not impacted by selCrit deletion
+    else {
+      return [
+        items,
+        ()=>'no change to items because our view is NOT based on deleted selCrit'
+      ];
+    }
+  },
+
 });
 
 export default function items(items=[], action) {

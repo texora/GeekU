@@ -1,9 +1,11 @@
 'use strict'
 
 import selCritSaveThunk      from './thunks/selCritSaveThunk';
+import selCritDeleteThunk    from './thunks/selCritDeleteThunk';
 import retrieveStudentsThunk from './thunks/retrieveStudentsThunk';
 import detailStudentThunk    from './thunks/detailStudentThunk';
 import retrieveFiltersThunk  from './thunks/retrieveFiltersThunk';
+
 
 import userMsgDisplayAC      from './creators/userMsgDisplayAC';
 
@@ -110,6 +112,11 @@ const genesis = {
   'selCrit.save.start':    { params: ['selCrit'] },
   'selCrit.save.complete': { params: ['selCrit'] },
   'selCrit.save.fail':     { params: ['selCrit', 'error'] },
+
+  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: view impacted by this selCrit (if any) ... 'Students'/'Courses'/null
+  'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },
+  'selCrit.delete.complete': { params: ['selCrit', 'impactView'] },
+  'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'error'] },
 
 };
 

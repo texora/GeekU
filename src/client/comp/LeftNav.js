@@ -190,7 +190,10 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
     }
 
     handleStudentsDelete(selCrit) {
-      console.log('???$$$ handleStudentsDelete()');
+      const p = this.props;
+      // ???$$$ obtain user confirmation
+      const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? 'Students' : null;
+      p.dispatch( AC.selCrit.delete(selCrit, impactView) );
     }
 
     handleCoursesDelete(selCrit) {
