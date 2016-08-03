@@ -7,8 +7,10 @@ import assert              from 'assert';
 import autoBindAllMethods  from '../../shared/util/autoBindAllMethods';
 
 import {AC}                from '../actions';
-import EditSelCrit         from './EditSelCrit';
 import SelCrit             from '../../shared/util/SelCrit';
+
+import Confirm             from './Confirm';
+import EditSelCrit         from './EditSelCrit';
 
 import AppBar              from 'material-ui/lib/app-bar';
 import CachedIcon          from 'material-ui/lib/svg-icons/action/cached';
@@ -191,9 +193,19 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
 
     handleStudentsDelete(selCrit) {
       const p = this.props;
-      // ???$$$ obtain user confirmation
-      const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? 'Students' : null;
-      p.dispatch( AC.selCrit.delete(selCrit, impactView) );
+
+       Confirm.display({
+         title: 'Delete Filter',
+         msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,
+         actions: [
+           { txt: 'Delete',
+             action: () => {
+               const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? 'Students' : null;
+               p.dispatch( AC.selCrit.delete(selCrit, impactView) );
+             } },
+           { txt: 'Cancel' },
+         ]
+       });
     }
 
     handleCoursesDelete(selCrit) {
