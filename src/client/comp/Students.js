@@ -305,7 +305,7 @@ const Students = ReduxUtil.wrapCompWithInjectedProps(
     mapStateToProps(appState, ownProps) {
       return {
         inProgress:      appState.students.inProgress ? true : false,
-        selCrit:         appState.students.selCrit || {},
+        selCrit:         appState.students.selCrit || {desc: 'please select a filter from the Left Nav menu'},
         students:        appState.students.items,
         selectedStudent: appState.students.selectedStudent,
         studentsShown:   appState.mainPage==='Students',
