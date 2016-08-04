@@ -1,7 +1,7 @@
 'use strict';
 
 import React              from 'react';
-import ReduxUtil          from '../util/ReduxUtil';
+import * as ReactRedux    from 'react-redux';
 import AppBar             from 'material-ui/lib/app-bar';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';
@@ -23,142 +23,142 @@ import SelCrit            from '../../shared/util/SelCrit';
 /**
  * Top-Level GeekUApp component.
  */
-const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
 
-  class GeekUApp extends React.Component { // component definition
-    constructor(props, context) {
-      super(props, context);
-      autoBindAllMethods(this);
-    }
+@ReactRedux.connect( (appState, ownProps) => {
+  return {
+    mainPage:        appState.mainPage,
+    selectedStudent: appState.students.selectedStudent,
+  }
+})
 
-    handleMainPageChange(page) {
-      const p = this.props;
-      p.dispatch( AC.changeMainPage(page) );
-    }
+@autoBindAllMethods
 
-    tempAlert() {
-      const p = this.props;
-      const directive1 = {
-        title: 'Test Alert 1',
-        msg:   'This is a test of our Alert Dialog!',
-        actions: [  
-          {txt: 'Option 1',  action: () => p.dispatch( AC.userMsg.display('User chose Option 1') ) },
-          {txt: 'Option 2',  action: () => p.dispatch( AC.userMsg.display('User chose Option 2') ) },
-          {txt: 'Alert A', action: () => Alert.display(directiveA) },
-          {txt: 'Cancel' },
-        ]
-      };
-      const directiveA = {
-        title: 'Test Alert A',
-        msg:   'This is a test of our Alert Dialog!',
-        actions: [  
-          {txt: 'Option A', action: () => p.dispatch( AC.userMsg.display('User chose Option A') ) },
-          {txt: 'Option B', action: () => p.dispatch( AC.userMsg.display('User chose Option B') ) },
-          {txt: 'Cancel' },
-        ]
-      };
-      const directiveX = {
-        title: 'Test Alert X',
-        msg:   'This is a test of our Alert Dialog!',
-        actions: [  
-          {txt: 'Option X', action: () => p.dispatch( AC.userMsg.display('User chose Option X') ) },
-          {txt: 'Option Y', action: () => p.dispatch( AC.userMsg.display('User chose Option Y') ) },
-          {txt: 'Cancel' },
-        ]
-      };
-      Alert.display(directive1);
-      Alert.display(directiveX); // test multiple concurrent alerts
-      Alert.display({msg: <span style={{color: 'red'}}>This is a simple Alert</span>});
-    }
+export default class GeekUApp extends React.Component {
 
-    tempSampleMsg() {
-      const p = this.props;
-      p.dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`) );
-    }
+  constructor(props, context) {
+    super(props, context);
+    autoBindAllMethods(this);
+  }
 
-    tempSampleMultiMsg() {
-      const p = this.props;
-      p.dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]);
-    }
+  handleMainPageChange(page) {
+    const p = this.props;
+    p.dispatch( AC.changeMainPage(page) );
+  }
 
-    tempSampleMsgWithUserAction() {
-      const p = this.props;
-      p.dispatch( AC.userMsg.display('Msg with User Action!', 
-                                     {
-                                       txt:      'details',
-                                       callback: () => alert('here are the details: bla bla bla POOP')
-                                     }) );
-    }
+  tempAlert() {
+    const p = this.props;
+    const directive1 = {
+      title: 'Test Alert 1',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option 1',  action: () => p.dispatch( AC.userMsg.display('User chose Option 1') ) },
+        {txt: 'Option 2',  action: () => p.dispatch( AC.userMsg.display('User chose Option 2') ) },
+        {txt: 'Alert A', action: () => Alert.display(directiveA) },
+        {txt: 'Cancel' },
+      ]
+    };
+    const directiveA = {
+      title: 'Test Alert A',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option A', action: () => p.dispatch( AC.userMsg.display('User chose Option A') ) },
+        {txt: 'Option B', action: () => p.dispatch( AC.userMsg.display('User chose Option B') ) },
+        {txt: 'Cancel' },
+      ]
+    };
+    const directiveX = {
+      title: 'Test Alert X',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option X', action: () => p.dispatch( AC.userMsg.display('User chose Option X') ) },
+        {txt: 'Option Y', action: () => p.dispatch( AC.userMsg.display('User chose Option Y') ) },
+        {txt: 'Cancel' },
+      ]
+    };
+    Alert.display(directive1);
+    Alert.display(directiveX); // test multiple concurrent alerts
+    Alert.display({msg: <span style={{color: 'red'}}>This is a simple Alert</span>});
+  }
 
-    tempRetrieveStudents() {
-      const p = this.props;
-      p.dispatch( AC.retrieveStudents(SelCrit.new('Students')) );
-    }
+  tempSampleMsg() {
+    const p = this.props;
+    p.dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`) );
+  }
 
-    tempAggregateTest() {
-      const p = this.props;
-      // we CAN now batch actions that include thunks as well as normal action objects
-      p.dispatch([ AC.retrieveStudents(SelCrit.new('Students')),
-                   AC.userMsg.display('Batching thunks FINALLY works!'),
-                   AC.changeMainPage('Students') ]);
-    }
-  
-    render() {
-      const p = this.props;
+  tempSampleMultiMsg() {
+    const p = this.props;
+    p.dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]);
+  }
 
-      // studentNum is used as a back-up if name is NOT retrieved (studentNum is ALWAYS returned)
-      const selectedStudentName = p.selectedStudent ? `(${p.selectedStudent.firstName || p.selectedStudent.lastName || p.selectedStudent.studentNum})` : '';
+  tempSampleMsgWithUserAction() {
+    const p = this.props;
+    p.dispatch( AC.userMsg.display('Msg with User Action!', 
+                                   {
+                                     txt:      'details',
+                                     callback: () => alert('here are the details: bla bla bla POOP')
+                                   }) );
+  }
 
-      return <div className="app">
-        <AppBar className="app-header"
-                title={
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td><i>GeekU</i></td>
-                        <td>
-                          <Tabs value={p.mainPage}
-                                onChange={this.handleMainPageChange}>
-                            <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
-                            <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
-                          </Tabs>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>}
-                onLeftIconButtonTouchTap={()=>LeftNav.open()}
-                iconElementRight={
-                  <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
-                            targetOrigin={{vertical: 'top', horizontal: 'right', }}
-                            anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                    <MenuItem primaryText="Refresh"/>
-                    <MenuItem primaryText="Help"/>
-                    <MenuItem primaryText="Sign Out"/>
+  tempRetrieveStudents() {
+    const p = this.props;
+    p.dispatch( AC.retrieveStudents(SelCrit.new('Students')) );
+  }
 
-                    <MenuItem primaryText="Sample Alerts"                    onTouchTap={this.tempAlert}/>
-                    <MenuItem primaryText="Sample Message"                   onTouchTap={this.tempSampleMsg}/>
-                    <MenuItem primaryText="Sample Multi-Message"             onTouchTap={this.tempSampleMultiMsg}/>
-                    <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
-                    <MenuItem primaryText="Test Student Retrieval"           onTouchTap={this.tempRetrieveStudents}/>
-                    <MenuItem primaryText="Aggregate Test"                   onTouchTap={this.tempAggregateTest}/>
-                  </IconMenu>}/>
-        <LeftNav/>
-        <Students/>
-        <EditSelCrit/>
-        <UserMsg/>
-        <Alert/>
-      </div>;
-    }
-  }, // end of ... component definition
+  tempAggregateTest() {
+    const p = this.props;
+    // we CAN now batch actions that include thunks as well as normal action objects
+    p.dispatch([ AC.retrieveStudents(SelCrit.new('Students')),
+                 AC.userMsg.display('Batching thunks FINALLY works!'),
+                 AC.changeMainPage('Students') ]);
+  }
 
-  { // component property injection
-    mapStateToProps(appState, ownProps) {
-      return {
-        mainPage:        appState.mainPage,
-        selectedStudent: appState.students.selectedStudent,
-      }
-    }
-  }); // end of ... component property injection
+  render() {
+    const p = this.props;
+
+    // studentNum is used as a back-up if name is NOT retrieved (studentNum is ALWAYS returned)
+    const selectedStudentName = p.selectedStudent ? `(${p.selectedStudent.firstName || p.selectedStudent.lastName || p.selectedStudent.studentNum})` : '';
+
+    return <div className="app">
+      <AppBar className="app-header"
+              title={
+                <table>
+                  <tbody>
+                    <tr>
+                      <td><i>GeekU</i></td>
+                      <td>
+                        <Tabs value={p.mainPage}
+                              onChange={this.handleMainPageChange}>
+                          <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                          <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
+                        </Tabs>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>}
+              onLeftIconButtonTouchTap={()=>LeftNav.open()}
+              iconElementRight={
+                <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
+                          targetOrigin={{vertical: 'top', horizontal: 'right', }}
+                          anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                  <MenuItem primaryText="Refresh"/>
+                  <MenuItem primaryText="Help"/>
+                  <MenuItem primaryText="Sign Out"/>
+
+                  <MenuItem primaryText="Sample Alerts"                    onTouchTap={this.tempAlert}/>
+                  <MenuItem primaryText="Sample Message"                   onTouchTap={this.tempSampleMsg}/>
+                  <MenuItem primaryText="Sample Multi-Message"             onTouchTap={this.tempSampleMultiMsg}/>
+                  <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
+                  <MenuItem primaryText="Test Student Retrieval"           onTouchTap={this.tempRetrieveStudents}/>
+                  <MenuItem primaryText="Aggregate Test"                   onTouchTap={this.tempAggregateTest}/>
+                </IconMenu>}/>
+      <LeftNav/>
+      <Students/>
+      <EditSelCrit/>
+      <UserMsg/>
+      <Alert/>
+    </div>;
+  }
+}
 
 // define expected props
 GeekUApp.propTypes = {
