@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+import autobind           from 'autobind-decorator';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
 import {AC}               from '../actions'
@@ -27,7 +27,7 @@ import {AC}               from '../actions'
   };
 })
 
-@autoBindAllMethods
+@autobind
 
 export default class UserMsg extends React.Component {
 
@@ -60,7 +60,7 @@ export default class UserMsg extends React.Component {
    */
   static display(msg, userAction) {
     // validate that an <UserMsg> has been instantiated
-    assert(_singleton, "UserMsg.edit() ... ERROR: NO <UserMsg> has been instantiated within the app.");
+    assert(_singleton, "UserMsg.display() ... ERROR: NO <UserMsg> has been instantiated within the app.");
 
     // pass-through to our instance method
     _singleton.display(msg, userAction);
