@@ -149,15 +149,19 @@ const SelCrit = {
 
 
   /**
-   * Return an indicator as to whether selCrit is saved.
+   * Return an indicator as to whether the current content of 
+   * selCrit has been saved.
    *
    * @param {SelCrit} selCrit the selCrit to evaluate.
 
    * @return {boolean} true: has been saved, false: needs to be saved
    */
+  // ??? diff name: isCurrentContentSaved() ... or the negative needsSaving()
   isSaved(selCrit) {
     return selCrit.dbHash === selCrit.curHash;
   },
+
+  // ??? new: isPersisted() ... based on selCrit.dbHash ? true : false
 
 
   /**
@@ -167,8 +171,10 @@ const SelCrit = {
    * @param {SelCrit} selCrit the base selCrit object to compare.
    * @param {SelCrit} otherSelCrit the selCrit object to compare to.
    *
-   * @return {boolean} true: out-of-date, false: same content
+   * @return {boolean} true: out-of-date (otherSelCrit is newer), false: otherSelCrit is newer)
    */
+  // ??? diff name: isStale() or isNewer() is selCrit newer than otherSelCrit
+  // ??? makes an assumption that if they are out-of-date, one is newer ??? really need to maintain an in-memory version indicator (or lastModDate/lastMemModDate)
   isOutOfDate(selCrit, otherSelCrit) {
 
     // if the original selCrit is not yet defined, we are out-of-date
@@ -197,8 +203,9 @@ const SelCrit = {
    */
   hash(selCrit) {
     const selCritStr = JSON.stringify(selCrit, (prop, val) => {
-      if (prop === '_id'           || // for persistence mechanism only (the 'key' attribute ALWAYS has this instance identifier)
+      if (prop === '_id'           || // for persistence mechanism only (the 'key' attribute ALWAYS identifies this instance)
           prop === 'lastDbModDate' || // for persistence mechanism only
+          // ??? lastModDate
           prop === 'curHash'       || // hashes are duplicate representations of real data
           prop === 'dbHash')
         return undefined; // omit non-vital attributes
