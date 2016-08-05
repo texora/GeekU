@@ -71,7 +71,11 @@ function autoBindAllMethods(target) {
       log.debug(()=>'in AutoBindClassDecorator (extended constructor)');
 
       // invoke our original constructor (which we are wrapping)
-      targetClass.constructor.apply(this, ...args);
+      console.log('??? in autoBindAllMethods() DECORATOR ... invoking original constructor');
+      // ??? targetClass.constructor.apply(this, ...args);
+      // ??? is this better?
+      targetClass.apply(this, ...args);
+      console.log('??? in autoBindAllMethods() DECORATOR ... back from original constructor invokation');
 
       _autoBindAllMethods(this);
     }
