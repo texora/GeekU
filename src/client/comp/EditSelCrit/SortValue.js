@@ -2,25 +2,28 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autoBindAllMethods from '../../../shared/util/autoBindAllMethods';
+import autobind           from 'autobind-decorator';
 import {AC}               from '../../actions';
 
 import ArrowBackIcon           from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import ArrowForwardIcon        from 'material-ui/lib/svg-icons/navigation/arrow-forward';
 import FilterListIcon          from 'material-ui/lib/svg-icons/content/filter-list';
 
+import OptionDragHandle        from './OptionDragHandle';
+import OptionDropHandle        from './OptionDropHandle';
 
 /**
  * SortValue custom control for sort selection in react-select <Select>
  */
 
+// NOTE: redux connection MUST be first to have props supplied to DnD higher-level-comps
 @ReactRedux.connect( (appState, ownProps) => {
   return {
     selectedSortOptions: appState.editSelCrit.extra.selectedSortOptions,
   }
 })
 
-@autoBindAllMethods
+@autobind
 
 export default class SortValue extends React.Component {
 
@@ -47,9 +50,9 @@ export default class SortValue extends React.Component {
   
 
   /**
-   * handleReposition()
+   * handleSwapPosition()
    */
-  handleReposition(sortOption, offset) {
+  handleSwapPosition(sortOption, offset) {
     const p = this.props;
 
     // adjust array copy (immutable) by swapping the specified entry with it's adjacent entry
@@ -62,6 +65,29 @@ export default class SortValue extends React.Component {
     selectedSortOptions[indxB] = p.selectedSortOptions[indxA];
 
     p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
+  }
+
+  
+  /**
+   * handleReposition()
+   */
+  handleReposition(moveIndex,    // move selected options [moveIndex]
+                   afterValue) { // to afterValue (null for start)
+    const p = this.props;
+
+    const moveOpt = p.selectedSortOptions[moveIndex];
+    const newOpts = [];
+    if (!afterValue) {
+      newOpts.push(moveOpt);
+    }
+    for (const opt of p.selectedSortOptions) {
+      if (opt.value !== moveOpt.value)
+        newOpts.push(opt);
+      if (opt.value === afterValue)
+        newOpts.push(moveOpt);
+    }
+
+    p.dispatch( AC.selCrit.edit.sortChange(newOpts) );
   }
 
 
@@ -81,7 +107,7 @@ export default class SortValue extends React.Component {
   /**
    * render()
    */
-	render () {
+  render() {
     const p = this.props;
 
     const sortOption = p.value; // value (the options entry with value/label) is the only property of interest
@@ -100,19 +126,49 @@ export default class SortValue extends React.Component {
       iconAscDecStyle.transform = 'rotate(180deg)';
     }
 
-		return <div className="Select-value">
-			<span className="Select-value-icon" title="Remove"
-            onMouseDown={(e)=> {e.stopPropagation(); this.handleRemove(sortOption);}}>x</span>
-			<span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
-            onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(sortOption, -1);}}><ArrowBackIcon style={iconStyle}/></span>
+    const dndHighlightStyle = {
+        border: p.isDragOver ? '2px solid red' : ''
+     };
+
+    const optionIndex = p.selectedSortOptions.findIndex( option => option.value===sortOption.value);
+
+    return (
+      <span>
+        {optionIndex===0 && 
+          <OptionDropHandle dndItemType="editSelCrit_orderByField"
+                            dropAfterIndex={-1}
+                            handleRepositionFn={this.handleReposition}/>
+        }
+
+        <div className="Select-value" style={dndHighlightStyle}>
+          <span className="Select-value-icon" title="Remove"
+                onMouseDown={(e)=> {e.stopPropagation(); this.handleRemove(sortOption);}}>x</span>
+
+          {/* swap position arrow replaced with DnD
+          <span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
+                onMouseDown={(e)=> {e.stopPropagation(); this.handleSwapPosition(sortOption, -1);}}><ArrowBackIcon style={iconStyle}/></span>
+          */}
       
-			<span className="Select-value-label">{sortOption.label}</span>
-			<span className="Select-value-icon" style={iconContainerStyle} title="Toggle Ascending/Descending"
-            onMouseDown={(e)=> {e.stopPropagation(); this.handleAscDecToggle(sortOption);}}><FilterListIcon style={{...iconStyle, ...iconAscDecStyle}}/></span>
+          <span className="Select-value-label">{sortOption.label}</span>
+          <span className="Select-value-icon" style={iconContainerStyle} title="Toggle Ascending/Descending"
+                onMouseDown={(e)=> {e.stopPropagation(); this.handleAscDecToggle(sortOption);}}><FilterListIcon style={{...iconStyle, ...iconAscDecStyle}}/></span>
       
- 			<span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
-            onMouseDown={(e)=> {e.stopPropagation(); this.handleReposition(sortOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
-    </div>;
+          {/* swap position arrow replaced with DnD
+          <span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
+                onMouseDown={(e)=> {e.stopPropagation(); this.handleSwapPosition(sortOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
+          */}
+
+          <OptionDragHandle dndItemType="editSelCrit_orderByField"
+                            option={sortOption}
+                            optionIndex={optionIndex}/>
+        </div>
+
+        <OptionDropHandle dndItemType="editSelCrit_orderByField"
+                          dropAfterIndex={optionIndex}
+                          afterOption={sortOption}
+                          handleRepositionFn={this.handleReposition}/>
+      </span>
+    );
   }
   
 }

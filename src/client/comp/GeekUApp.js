@@ -2,6 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
+import autobind           from 'autobind-decorator';
 import AppBar             from 'material-ui/lib/app-bar';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';
@@ -13,16 +14,20 @@ import Tabs               from 'material-ui/lib/tabs/tabs';
 import Students           from './Students';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
 import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
 import SelCrit            from '../../shared/util/SelCrit';
 
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend        from 'react-dnd-html5-backend';
+
 
 /**
  * Top-Level GeekUApp component.
  */
+
+@DragDropContext(HTML5Backend)
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
@@ -31,13 +36,12 @@ import SelCrit            from '../../shared/util/SelCrit';
   }
 })
 
-@autoBindAllMethods
+@autobind
 
 export default class GeekUApp extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    autoBindAllMethods(this);
   }
 
   handleMainPageChange(page) {
@@ -95,7 +99,7 @@ export default class GeekUApp extends React.Component {
     p.dispatch( AC.userMsg.display('Msg with User Action!', 
                                    {
                                      txt:      'details',
-                                     callback: () => alert('here are the details: bla bla bla POOP')
+                                     callback: () => alert('here are the details: bla bla bla')
                                    }) );
   }
 

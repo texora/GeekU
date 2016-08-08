@@ -44,8 +44,6 @@ const logConfig = Log.config({
                                           <dt> DEBUG:   </dt> <dd> include explicit reducer logic action reasoning (regardless if state changes) </dd>
                                           <dt> TRACE:   </dt> <dd> include ALL reducer enter/exit points (<i>NO real value - simply shows ALL appState reducers</i>) </dd>
                                      </dl> ... may apply lower (ex: 'appState.userMsg')`],
-
-    'autoBindAllMethods': 'none',
   },
 
   excludeClientErrors: false,  // false: to see client Errors in log
