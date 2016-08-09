@@ -27,10 +27,11 @@ import OptionDropHandle        from './OptionDropHandle';
 
 export default class SortValue extends React.Component {
 
+  static dndItemType = 'editSelCrit_orderByField'
+
   constructor(props, context) {
     super(props, context);
   }
-
 
   /**
    * handleAscDecToggle()
@@ -135,7 +136,7 @@ export default class SortValue extends React.Component {
     return (
       <span>
         {optionIndex===0 && 
-          <OptionDropHandle dndItemType="editSelCrit_orderByField"
+          <OptionDropHandle dndItemType={SortValue.dndItemType}
                             dropAfterIndex={-1}
                             handleRepositionFn={this.handleReposition}/>
         }
@@ -156,7 +157,7 @@ export default class SortValue extends React.Component {
           <span className="Select-value-label">{sortOption.label}</span>
           */}
 
-          <OptionDragHandle dndItemType="editSelCrit_orderByField"
+          <OptionDragHandle dndItemType={SortValue.dndItemType}
                             option={sortOption}
                             optionIndex={optionIndex}/>
           
@@ -167,7 +168,7 @@ export default class SortValue extends React.Component {
 
         </div>
 
-        <OptionDropHandle dndItemType="editSelCrit_orderByField"
+        <OptionDropHandle dndItemType={SortValue.dndItemType}
                           dropAfterIndex={optionIndex}
                           afterOption={sortOption}
                           handleRepositionFn={this.handleReposition}/>
