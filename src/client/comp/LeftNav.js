@@ -17,7 +17,7 @@ import ArrowBackIcon       from 'material-ui/lib/svg-icons/navigation/arrow-back
 import Card                from 'material-ui/lib/card/card';
 import CardText            from 'material-ui/lib/card/card-text';
 import CardTitle           from 'material-ui/lib/card/card-title';
-import EditIcon            from 'material-ui/lib/svg-icons/image/edit';
+import ConfigIcon          from 'material-ui/lib/svg-icons/action/settings';
 import IconButton          from 'material-ui/lib/icon-button';
 import LeftNavMUI          from 'material-ui/lib/left-nav'; // NOTE: using LeftNavMUI because original Material UI component name (LeftNav) conflicts with ours
 import MenuItem            from 'material-ui/lib/menus/menu-item';
@@ -270,11 +270,11 @@ const LeftNav = ReduxUtil.wrapCompWithInjectedProps(
                     open={this.state.open}
                     onRequestChange={this.handleVisible}>
         
-          <AppBar title={this.state.editMode ? 'Edit Views' : 'Select View'}
+          <AppBar title={this.state.editMode ? 'Configure Views' : 'Select View'}
                   showMenuIconButton={false}
                   iconElementRight={<IconButton onTouchTap={this.handleEditModeToggle}
-                                                title={this.state.editMode ? 'change mode to select view/filter' : 'change mode to edit view filters'}>
-                                      {this.state.editMode ? <ArrowBackIcon/> : <EditIcon color={colors.red900}/>}
+                                                title={this.state.editMode ? 'go back to select view/filter' : 'change mode to configure view filters'}>
+                                      {this.state.editMode ? <ArrowBackIcon/> : <ConfigIcon/>}
                                     </IconButton>}/>
         
           { ['Students', 'Courses'].map( (target) => {
