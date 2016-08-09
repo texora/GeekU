@@ -44,7 +44,7 @@ const log = new Log('DnD');
               // NOTE: canDrop() not really needed ... because we pro-actively visibly promote ONLY drop-zones
               //       ... normally this is used to highlight displayed components that are droppable
               // canDrop(p, monitor) {
-              //   return droppable(monitor.getItem(), p.dropAfterIndex);
+              //   return droppable(monitor.getItem(), p.dropAfterIndex, p.draggedItemType, p.dndItemType);
               // }
             },
             (connect, monitor) => {  // our DnD Collecting function ... props that are injected on our component
@@ -54,7 +54,8 @@ const log = new Log('DnD');
               
               return {
                 connectDropTarget: connect.dropTarget(), // function to connect my drop target node
-                draggedItem: monitor.getItem(),
+                draggedItem:       monitor.getItem(),
+                draggedItemType:   monitor.getItemType(),
               };
             })
 
@@ -73,7 +74,7 @@ const log = new Log('DnD');
         backgroundColor: 'yellow'
       };
       // because this is a dedicated icon for drop purposes, we can completely hide it if we are NOT droppable
-      if (!droppable(p.draggedItem, p.dropAfterIndex)) {
+      if (!droppable(p.draggedItem, p.dropAfterIndex, p.draggedItemType, p.dndItemType)) {
 
         // option 1: retain consistent spacing by using visibility (hidden visibility sttill takes space)
         iconContainerStyle.visibility = 'hidden'; // space still taken
@@ -118,8 +119,9 @@ const iconStyle = {
 export default OptionDropHandle;
 
 
-function droppable(draggedItem, dropAfterIndex) {
+function droppable(draggedItem, dropAfterIndex, draggedItemType, dndItemType) {
   return draggedItem && 
+         draggedItemType === dndItemType &&
          draggedItem.optionIndex   !== dropAfterIndex &&
          draggedItem.optionIndex-1 !== dropAfterIndex;
 }
