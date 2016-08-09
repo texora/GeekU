@@ -148,19 +148,23 @@ export default class SortValue extends React.Component {
           <span className="Select-value-icon" style={iconContainerStyle} title="Move Left"
                 onMouseDown={(e)=> {e.stopPropagation(); this.handleSwapPosition(sortOption, -1);}}><ArrowBackIcon style={iconStyle}/></span>
           */}
-      
-          <span className="Select-value-label">{sortOption.label}</span>
+
           <span className="Select-value-icon" style={iconContainerStyle} title="Toggle Ascending/Descending"
                 onMouseDown={(e)=> {e.stopPropagation(); this.handleAscDecToggle(sortOption);}}><FilterListIcon style={{...iconStyle, ...iconAscDecStyle}}/></span>
       
-          {/* swap position arrow replaced with DnD
-          <span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
-                onMouseDown={(e)=> {e.stopPropagation(); this.handleSwapPosition(sortOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
+          {/* now accomplished by OptionDragHandle (below)
+          <span className="Select-value-label">{sortOption.label}</span>
           */}
 
           <OptionDragHandle dndItemType="editSelCrit_orderByField"
                             option={sortOption}
                             optionIndex={optionIndex}/>
+          
+          {/* swap position arrow replaced with DnD
+          <span className="Select-value-icon" style={iconContainerStyle} title="Move Right"
+          onMouseDown={(e)=> {e.stopPropagation(); this.handleSwapPosition(sortOption, +1);}}><ArrowForwardIcon style={iconStyle}/></span>
+          */}
+
         </div>
 
         <OptionDropHandle dndItemType="editSelCrit_orderByField"

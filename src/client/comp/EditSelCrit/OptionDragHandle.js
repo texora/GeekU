@@ -47,21 +47,25 @@ export default class OptionDragHandle extends React.Component {
     super(props, context);
   }
 
-  componentDidMount() {
-    const p = this.props;
-    // TODO: drag preview only works with images (within componentDidMount()) ... use react-dnd-text-dragpreview (may still NOT work in IE)
-    p.connectDragPreview(<span>WowZee WowZee WooWoo</span>);
-  }
+  // TODO: drag preview only works with images (within componentDidMount()) ... use react-dnd-text-dragpreview (may still NOT work in IE)
+  // componentDidMount() {
+  //   const p = this.props;
+  //   p.connectDragPreview(<span>WowZee WowZee WooWoo</span>);
+  // }
 
   render () {
     const p = this.props;
 
-    return p.connectDragSource(
-      <span className="Select-value-icon"
-            style={iconContainerStyle}
-            title="Drag to re-position"
-            onMouseDown={ e => e.stopPropagation() }>
-        <DragHandleIcon style={iconStyle}/>
+    return p.connectDragPreview(
+      <span>
+        <span className="Select-value-label">{p.option.label}</span>
+        {p.connectDragSource(
+          <span className="Select-value-icon"
+                style={iconContainerStyle}
+                title="Drag to re-position"
+                onMouseDown={ e => e.stopPropagation() }>
+            <DragHandleIcon style={iconStyle}/>
+          </span>)}
       </span>
     );
   }
