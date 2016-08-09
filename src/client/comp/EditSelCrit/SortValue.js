@@ -16,7 +16,6 @@ import OptionDropHandle        from './OptionDropHandle';
  * SortValue custom control for sort selection in react-select <Select>
  */
 
-// NOTE: redux connection MUST be first to have props supplied to DnD higher-level-comps
 @ReactRedux.connect( (appState, ownProps) => {
   return {
     selectedSortOptions: appState.editSelCrit.extra.selectedSortOptions,
@@ -27,11 +26,16 @@ import OptionDropHandle        from './OptionDropHandle';
 
 export default class SortValue extends React.Component {
 
+  static propTypes = { // expected component props
+  }
+
   static dndItemType = 'editSelCrit_orderByField'
+
 
   constructor(props, context) {
     super(props, context);
   }
+
 
   /**
    * handleAscDecToggle()
@@ -177,9 +181,5 @@ export default class SortValue extends React.Component {
   }
   
 }
-
-// define expected props
-SortValue.propTypes = {
-};
 
 export default SortValue;

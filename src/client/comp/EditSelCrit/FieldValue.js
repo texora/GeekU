@@ -16,7 +16,6 @@ import OptionDropHandle        from './OptionDropHandle';
  * FieldValue custom control for field selection in react-select <Select>
  */
 
-// NOTE: redux connection MUST be first to have props supplied to DnD higher-level-comps
 @ReactRedux.connect( (appState, ownProps) => {
   return {
     selectedFieldOptions: appState.editSelCrit.extra.selectedFieldOptions,
