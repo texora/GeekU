@@ -43,6 +43,12 @@ const log = new Log('DnD');
 
 export default class OptionDragHandle extends React.Component {
 
+  static propTypes = { // expected component props
+    dndItemType: React.PropTypes.string.isRequired, // the DnD itemType on which behalf we are working
+    option:      React.PropTypes.object.isRequired, // the 'react-select' option we are working on behalf of (value/label attributes)
+    optionIndex: React.PropTypes.number.isRequired  // the zero-based index offset of the option we are working on behalf of
+  }
+
   constructor(props, context) {
     super(props, context);
   }
@@ -72,13 +78,6 @@ export default class OptionDragHandle extends React.Component {
   
 }
 
-// define expected props
-OptionDragHandle.propTypes = {
-  dndItemType: React.PropTypes.string.isRequired, // the DnD itemType on which behalf we are working
-  option:      React.PropTypes.object.isRequired, // the 'react-select' option we are working on behalf of (value/label attributes)
-  optionIndex: React.PropTypes.number.isRequired  // the zero-based index offset of the option we are working on behalf of
-};
-
 const iconContainerStyle = {
   padding: '1'
 };
@@ -87,5 +86,3 @@ const iconStyle = {
   width:  12,
   height: 12,
 };
-
-export default OptionDragHandle;

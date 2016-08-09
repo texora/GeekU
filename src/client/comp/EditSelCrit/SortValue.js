@@ -181,5 +181,3 @@ export default class SortValue extends React.Component {
   }
   
 }
-
-export default SortValue;

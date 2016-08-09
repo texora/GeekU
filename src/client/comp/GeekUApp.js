@@ -40,6 +40,9 @@ import HTML5Backend        from 'react-dnd-html5-backend';
 
 export default class GeekUApp extends React.Component {
 
+  static propTypes = { // expected component props
+  }
+
   constructor(props, context) {
     super(props, context);
   }
@@ -163,9 +166,3 @@ export default class GeekUApp extends React.Component {
     </div>;
   }
 }
-
-// define expected props
-GeekUApp.propTypes = {
-}
-
-export default GeekUApp;

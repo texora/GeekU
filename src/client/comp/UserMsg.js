@@ -31,6 +31,9 @@ import {AC}               from '../actions'
 
 export default class UserMsg extends React.Component {
 
+  static propTypes = { // expected component props
+  }
+
   constructor(props, context) {
     super(props, context);
 
@@ -94,11 +97,5 @@ export default class UserMsg extends React.Component {
 
 }
 
-// define expected props
-UserMsg.propTypes =  {
-}
-
 // keep track of our one-and-only instance
 let _singleton = null;
-
-export default UserMsg;

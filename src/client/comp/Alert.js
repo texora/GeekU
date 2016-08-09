@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import assert             from 'assert';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+import autobind           from 'autobind-decorator';
 import Dialog             from 'material-ui/lib/dialog';
 import FlatButton         from 'material-ui/lib/flat-button';
 
@@ -36,12 +36,14 @@ import FlatButton         from 'material-ui/lib/flat-button';
  *        });
  *    
  */
+@autobind
 export default class Alert extends React.Component {
+
+  static propTypes = { // expected component props
+  }
 
   constructor(...args) {
     super(...args);
-
-    autoBindAllMethods(this);
 
     // keep track of our one-and-only instance
     assert(!_singleton, "<Alert> only ONE Alert is needed and therefore may be instantiated within the app.");
@@ -125,9 +127,6 @@ export default class Alert extends React.Component {
   }
 }
 
-// define expected props
-Alert.propTypes = {
-}
 
 // keep track of our one-and-only instance
 let _singleton = null;

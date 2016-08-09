@@ -155,5 +155,3 @@ export default class FieldValue extends React.Component {
   }
   
 }
-
-export default FieldValue;

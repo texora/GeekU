@@ -1,9 +1,10 @@
 'use strict';
 
 import React              from 'react';
-import ReduxUtil          from '../util/ReduxUtil';
+import * as ReactRedux    from 'react-redux';
 
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+import autobind           from 'autobind-decorator';
+
 import studentsMeta       from '../../shared/model/studentsMeta';
 import SelCrit            from '../../shared/util/SelCrit';
 
@@ -34,350 +35,346 @@ import Confirm            from './Confirm';
 /**
  * The Students component displays a list of students.
  */
-const Students = ReduxUtil.wrapCompWithInjectedProps(
 
-  class Students extends React.Component { // component definition
-    constructor(props, context) {
-      super(props, context);
-      autoBindAllMethods(this);
+@ReactRedux.connect( (appState, ownProps) => {
+  return {
+    inProgress:      appState.students.inProgress ? true : false,
+    selCrit:         appState.students.selCrit || {desc: 'please select a filter from the Left Nav menu'},
+    students:        appState.students.items,
+    selectedStudent: appState.students.selectedStudent,
+    studentsShown:   appState.mainPage==='Students',
 
-      // define our initial local component state
-      this.state = { 
-        hoveredStudent: null,
-      };
+    detailStudent:   appState.students.detailStudent,
+  }
+})
+
+@autobind
+
+export default class Students extends React.Component {
+
+  static propTypes = { // expected component props
+  }
+
+  constructor(props, context) {
+    super(props, context);
+
+    // define our initial local component state
+    this.state = { 
+      hoveredStudent: null,
+    };
+  }
+
+  /**
+   * Handle changes to hoveredStudent.
+   * @param {Student} hoveredStudent the student that is being overed over (null for none).
+   */
+  handleHover(hoveredStudent) {
+    // optimize the number of setState() invocations
+    // ... hover events happen in rapid succession
+    // ... setState() is NOT guaranteed to be synchronous
+    // ... utilize our own separate lastSetHoveredStudent setting to:
+    //     - KEY: reduce the number of setState() invocations by 50%
+    if (hoveredStudent !== this.lastSetHoveredStudent) {
+      this.lastSetHoveredStudent = hoveredStudent;
+      this.setState({hoveredStudent});
+    }
+  }
+
+  handleRefresh() {
+    const p = this.props;
+    p.dispatch( AC.retrieveStudents(p.selCrit) );
+  }
+
+  handleEditSelCrit() {
+    const p = this.props;
+    EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
+  }
+
+  handleSaveSelCrit() {
+    const p = this.props;
+    p.dispatch( AC.selCrit.save(p.selCrit) );
+  }
+
+  handleNewSelCrit() {
+    // start an edit session of a new 'Students' selCrit
+    EditSelCrit.edit('Students', newSelCrit => AC.retrieveStudents(newSelCrit) );
+  }
+
+  handleDuplicateSelCrit() {
+    const p = this.props;
+
+    // duplicate our selCrit
+    const dupSelCrit = SelCrit.duplicate(p.selCrit);
+
+    // start an edit session with this dup selCrit
+    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.retrieveStudents(changedDupSelCrit) );
+  }
+
+  handleDeleteSelCrit() {
+    const p = this.props;
+
+    Confirm.display({
+      title: 'Delete Filter',
+      msg:   `Please confirm deletion of filter: ${p.selCrit.name} -  ${p.selCrit.desc}`,
+      actions: [
+        { txt: 'Delete',
+          action: () => {
+            const impactView = 'Students';
+            if (p.selCrit.dbHash) { // is persised in DB
+              p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
+            }
+            else { // is an in-memory only representation
+              p.dispatch( AC.selCrit.delete.complete(p.selCrit, impactView) );
+            }
+          } },
+        { txt: 'Cancel' },
+      ]
+    });
+
+  }
+
+  handleSelectStudent(student) {
+    const p = this.props;
+    if (student) {
+      p.dispatch( AC.selectStudent(student) );
+    }
+  }
+
+  handleDetailStudent(studentNum, editMode) {
+    const p = this.props;
+    p.dispatch( AC.detailStudent(studentNum, editMode) );
+  }
+
+  render() {
+    const p = this.props;
+
+    const myStyle = {
+      margin:    '15px auto', // 15px spacing top/bottom, center left/right
+      textAlign: 'left',
+      width:     '97%',       // ColWidth: HONORED (adding to inline <div> style),
+      // 'auto' has NO impact
+      // '90%' is honored
+      // 'max-content'/'fit-content' works on chrome NOT IE
+      // 'available' still big
+      // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
+    };
+
+    // we actually hide the students if NOT displayed as an attempted optimization for large list
+    // ... one side-benefit is that we retain scrolling state from previous renderings
+    //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
+    if (!p.studentsShown) {
+      myStyle.display = 'none';
     }
 
-    /**
-     * Handle changes to hoveredStudent.
-     * @param {Student} hoveredStudent the student that is being overed over (null for none).
-     */
-    handleHover(hoveredStudent) {
-      // optimize the number of setState() invocations
-      // ... hover events happen in rapid succession
-      // ... setState() is NOT guaranteed to be synchronous
-      // ... utilize our own separate lastSetHoveredStudent setting to:
-      //     - KEY: reduce the number of setState() invocations by 50%
-      if (hoveredStudent !== this.lastSetHoveredStudent) {
-        this.lastSetHoveredStudent = hoveredStudent;
-        this.setState({hoveredStudent});
+    // analyze fullName construct based on optional sort order of first/last
+    // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
+    const sortFields = (p.selCrit.sort || []).map( sortField => sortField.charAt(0)==='-' ? sortField.substr(1) : sortField );
+    function analyzeFirstNameFirst() {
+      for (const field of sortFields) {
+        if (field === 'firstName')
+          return true;
+        if (field === 'lastName')
+          return false;
       }
+      return true; // default
     }
+    const displayFirstNameFirst = analyzeFirstNameFirst();
 
-    handleRefresh() {
-      const p = this.props;
-      p.dispatch( AC.retrieveStudents(p.selCrit) );
-    }
+    // define the order that our columns are displayed (based on selCrit)
+    const displayFieldOrder = p.selCrit.fields && p.selCrit.fields.length > 0
+            ? p.selCrit.fields
+            : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
 
-    handleEditSelCrit() {
-      const p = this.props;
-      EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
-    }
+    // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
+    const fieldsInDisplay = displayFieldOrder.reduce( (obj, field) => {
+      obj[field] = true;
+      return obj;
+    }, {});
 
-    handleSaveSelCrit() {
-      const p = this.props;
-      p.dispatch( AC.selCrit.save(p.selCrit) );
-    }
+    // setup control structures supporting a visual break when values from the major-sort field changes
+    let curMajorSortValue, lastMajorSortValue = null;
+    const majorSortField = sortFields[0];
 
-    handleNewSelCrit() {
-      // start an edit session of a new 'Students' selCrit
-      EditSelCrit.edit('Students', newSelCrit => AC.retrieveStudents(newSelCrit) );
-    }
+    const selCritName = p.selCrit.curHash===p.selCrit.dbHash
+                         ? p.selCrit.name
+                         : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{p.selCrit.name}</span>;
 
-    handleDuplicateSelCrit() {
-      const p = this.props;
+    const selCritActionEnabled = p.selCrit.key ? true : false;
 
-      // duplicate our selCrit
-      const dupSelCrit = SelCrit.duplicate(p.selCrit);
+    return <Paper className="app-content"
+                  style={myStyle}
+                  zDepth={4}>
 
-      // start an edit session with this dup selCrit
-      EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.retrieveStudents(changedDupSelCrit) );
-    }
+      <Paper className="page"
+             style={{
+               textAlign: 'left',
+               width:     '100%',
+             }}
+             zDepth={1}>
 
-    handleDeleteSelCrit() {
-      const p = this.props;
+        <AppBar className="page-header"
+                style={{
+                  backgroundColor: colors.blueGrey700, // also like lime900
+                }}
+                title={<span>
+                         <i>Students</i>
+                         {p.inProgress && refreshInd}
+                         <i style={{fontSize: 12}}>&nbsp;&nbsp;&nbsp;&nbsp; {selCritName}: {p.selCrit.desc}</i>
+                       </span>}
+                iconElementLeft={<i/>}
+                iconElementRight={
+                  <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
+                            targetOrigin={{vertical: 'top', horizontal: 'right', }}
+                            anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                    <MenuItem primaryText="Edit Filter"      onTouchTap={this.handleEditSelCrit}      disabled={!selCritActionEnabled}/>
+                    <MenuItem primaryText="Save Filter"      onTouchTap={this.handleSaveSelCrit}      disabled={SelCrit.isSaved(p.selCrit)}/>
+                    <MenuItem primaryText="New Filter"       onTouchTap={this.handleNewSelCrit}/>
+                    <MenuItem primaryText="Duplicate Filter" onTouchTap={this.handleDuplicateSelCrit} disabled={!selCritActionEnabled}/>
+                    <MenuItem primaryText="Delete Filter"    onTouchTap={this.handleDeleteSelCrit}    disabled={!selCritActionEnabled}/>
+                    <Divider/>
+                    <MenuItem primaryText="Refresh View"     onTouchTap={this.handleRefresh}          disabled={p.selCrit.key ? false : true}/>
+                  </IconMenu>}/>
 
-      Confirm.display({
-        title: 'Delete Filter',
-        msg:   `Please confirm deletion of filter: ${p.selCrit.name} -  ${p.selCrit.desc}`,
-        actions: [
-          { txt: 'Delete',
-            action: () => {
-              const impactView = 'Students';
-              if (p.selCrit.dbHash) { // is persised in DB
-                p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
-              }
-              else { // is an in-memory only representation
-                p.dispatch( AC.selCrit.delete.complete(p.selCrit, impactView) );
-              }
-            } },
-          { txt: 'Cancel' },
-        ]
-      });
-
-    }
-
-    handleSelectStudent(student) {
-      const p = this.props;
-      if (student) {
-        p.dispatch( AC.selectStudent(student) );
-      }
-    }
-
-    handleDetailStudent(studentNum, editMode) {
-      const p = this.props;
-      p.dispatch( AC.detailStudent(studentNum, editMode) );
-    }
-
-    render() {
-      const p = this.props;
-
-      const myStyle = {
-        margin:    '15px auto', // 15px spacing top/bottom, center left/right
-        textAlign: 'left',
-        width:     '97%',       // ColWidth: HONORED (adding to inline <div> style),
-        // 'auto' has NO impact
-        // '90%' is honored
-        // 'max-content'/'fit-content' works on chrome NOT IE
-        // 'available' still big
-        // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
-      };
-
-      // we actually hide the students if NOT displayed as an attempted optimization for large list
-      // ... one side-benefit is that we retain scrolling state from previous renderings
-      //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
-      if (!p.studentsShown) {
-        myStyle.display = 'none';
-      }
-
-      // analyze fullName construct based on optional sort order of first/last
-      // ... 'Bridges, Kevin' or 'Kevin Bridges' (DEFAULT)
-      const sortFields = (p.selCrit.sort || []).map( sortField => sortField.charAt(0)==='-' ? sortField.substr(1) : sortField );
-      function analyzeFirstNameFirst() {
-        for (const field of sortFields) {
-          if (field === 'firstName')
-            return true;
-          if (field === 'lastName')
-            return false;
-        }
-        return true; // default
-      }
-      const displayFirstNameFirst = analyzeFirstNameFirst();
-
-      // define the order that our columns are displayed (based on selCrit)
-      const displayFieldOrder = p.selCrit.fields && p.selCrit.fields.length > 0
-              ? p.selCrit.fields
-              : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
-
-      // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
-      const fieldsInDisplay = displayFieldOrder.reduce( (obj, field) => {
-        obj[field] = true;
-        return obj;
-      }, {});
-
-      // setup control structures supporting a visual break when values from the major-sort field changes
-      let curMajorSortValue, lastMajorSortValue = null;
-      const majorSortField = sortFields[0];
-
-      const selCritName = p.selCrit.curHash===p.selCrit.dbHash
-                           ? p.selCrit.name
-                           : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{p.selCrit.name}</span>;
-
-      const selCritActionEnabled = p.selCrit.key ? true : false;
-
-      return <Paper className="app-content"
-                    style={myStyle}
-                    zDepth={4}>
-
-        <Paper className="page"
+        <Table className="page-content"
+               height={'inherit'}
+               fixedHeader={false}
+               selectable={true}
+               multiSelectable={false}
+               onRowSelection={(selectedRows)=>this.handleSelectStudent(selectedRows.length===0 ? null : p.students[selectedRows[0]])}
+               onRowHover={(rowNum)=> this.handleHover(p.students[rowNum])}
+               onRowHoverExit={(rowNum)=> this.handleHover(null)}
                style={{
-                 textAlign: 'left',
-                 width:     '100%',
-               }}
-               zDepth={1}>
+                   width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
+                 }}>
+          <TableBody deselectOnClickaway={false}
+                     displayRowCheckbox={false}
+                     showRowHover={true}
+                     stripedRows={false}>
 
-          <AppBar className="page-header"
-                  style={{
-                    backgroundColor: colors.blueGrey700, // also like lime900
-                  }}
-                  title={<span>
-                           <i>Students</i>
-                           {p.inProgress && refreshInd}
-                           <i style={{fontSize: 12}}>&nbsp;&nbsp;&nbsp;&nbsp; {selCritName}: {p.selCrit.desc}</i>
-                         </span>}
-                  iconElementLeft={<i/>}
-                  iconElementRight={
-                    <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
-                              targetOrigin={{vertical: 'top', horizontal: 'right', }}
-                              anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                      <MenuItem primaryText="Edit Filter"      onTouchTap={this.handleEditSelCrit}      disabled={!selCritActionEnabled}/>
-                      <MenuItem primaryText="Save Filter"      onTouchTap={this.handleSaveSelCrit}      disabled={SelCrit.isSaved(p.selCrit)}/>
-                      <MenuItem primaryText="New Filter"       onTouchTap={this.handleNewSelCrit}/>
-                      <MenuItem primaryText="Duplicate Filter" onTouchTap={this.handleDuplicateSelCrit} disabled={!selCritActionEnabled}/>
-                      <MenuItem primaryText="Delete Filter"    onTouchTap={this.handleDeleteSelCrit}    disabled={!selCritActionEnabled}/>
-                      <Divider/>
-                      <MenuItem primaryText="Refresh View"     onTouchTap={this.handleRefresh}          disabled={p.selCrit.key ? false : true}/>
-                    </IconMenu>}/>
+            { p.students.map( (student, studentIndx) => {
 
-          <Table className="page-content"
-                 height={'inherit'}
-                 fixedHeader={false}
-                 selectable={true}
-                 multiSelectable={false}
-                 onRowSelection={(selectedRows)=>this.handleSelectStudent(selectedRows.length===0 ? null : p.students[selectedRows[0]])}
-                 onRowHover={(rowNum)=> this.handleHover(p.students[rowNum])}
-                 onRowHoverExit={(rowNum)=> this.handleHover(null)}
-                 style={{
-                     width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
-                   }}>
-            <TableBody deselectOnClickaway={false}
-                       displayRowCheckbox={false}
-                       showRowHover={true}
-                       stripedRows={false}>
+                // NOTE: student.studentNum is always emitted (enforced by server)
 
-              { p.students.map( (student, studentIndx) => {
+                if (studentIndx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
+                  return '';
+                }
 
-                  // NOTE: student.studentNum is always emitted (enforced by server)
+                const genderColor = student.gender==='M' ? colors.blue900 : colors.pink300;
+                const genderDisp  = fieldsInDisplay.gender // gendor-icon - alternative to Avatar (simply too expensive for LARGE lists)
+                                      ? <FontIcon className="material-icons" color={genderColor}>person</FontIcon>
+                                      : null;
 
-                  if (studentIndx > 100) { // TODO: ?? temporally narrow entries till we figure out how to handle big lists or make them unneeded
-                    return '';
+                
+                // format fullName based on optional sort order of first/last ... 'Bridges, Kevin' ... or 'Kevin Bridges'
+                let fullName = '';
+                if (displayFirstNameFirst) {
+                  if (fieldsInDisplay.firstName) {
+                    fullName += student.firstName;
                   }
-
-                  const genderColor = student.gender==='M' ? colors.blue900 : colors.pink300;
-                  const genderDisp  = fieldsInDisplay.gender // gendor-icon - alternative to Avatar (simply too expensive for LARGE lists)
-                                        ? <FontIcon className="material-icons" color={genderColor}>person</FontIcon>
-                                        : null;
-
-                  
-                  // format fullName based on optional sort order of first/last ... 'Bridges, Kevin' ... or 'Kevin Bridges'
-                  let fullName = '';
-                  if (displayFirstNameFirst) {
-                    if (fieldsInDisplay.firstName) {
-                      fullName += student.firstName;
-                    }
-                    if (fieldsInDisplay.lastName) {
-                      fullName += (fullName ? ' ' : '') + student.lastName;
-                    }
+                  if (fieldsInDisplay.lastName) {
+                    fullName += (fullName ? ' ' : '') + student.lastName;
                   }
-                  else {
-                    if (fieldsInDisplay.lastName) {
-                      fullName += student.lastName;
-                    }
-                    if (fieldsInDisplay.firstName) {
-                      fullName += (fullName ? ', ' : '') + student.firstName;
-                    }
+                }
+                else {
+                  if (fieldsInDisplay.lastName) {
+                    fullName += student.lastName;
                   }
+                  if (fieldsInDisplay.firstName) {
+                    fullName += (fullName ? ', ' : '') + student.firstName;
+                  }
+                }
 
-                  // group studentEssentials in one field ... displays much better in <TableRow>
-                  const studentEssentials = <TableRowColumn key={`${student.studentNum}-studentEssentials`}>
-                                              {genderDisp}
-                                              {fullName}
-                                              {fieldsInDisplay.studentNum ? <i>{` (${student.studentNum})`}</i> : <i/>}
-                                            </TableRowColumn>;
+                // group studentEssentials in one field ... displays much better in <TableRow>
+                const studentEssentials = <TableRowColumn key={`${student.studentNum}-studentEssentials`}>
+                                            {genderDisp}
+                                            {fullName}
+                                            {fieldsInDisplay.studentNum ? <i>{` (${student.studentNum})`}</i> : <i/>}
+                                          </TableRowColumn>;
 
 
-                  // define the control buttons to use when row is 'hovered' over
-                  const hoverControls = <TableRowColumn key={`${student.studentNum}-hoverControls`}>
-                                          <i style={{
-                                               cursor:     'pointer',
-                                               // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
-                                               visibility: this.state.hoveredStudent===student ? 'visible' : 'hidden',
-                                             }}>
-                                            <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailStudent(student.studentNum, false)}>portrait</FontIcon>
-                                            <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailStudent(student.studentNum, true)}>edit</FontIcon>
-                                          </i>
-                                        </TableRowColumn>;
+                // define the control buttons to use when row is 'hovered' over
+                const hoverControls = <TableRowColumn key={`${student.studentNum}-hoverControls`}>
+                                        <i style={{
+                                             cursor:     'pointer',
+                                             // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
+                                             visibility: this.state.hoveredStudent===student ? 'visible' : 'hidden',
+                                           }}>
+                                          <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailStudent(student.studentNum, false)}>portrait</FontIcon>
+                                          <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailStudent(student.studentNum, true)}>edit</FontIcon>
+                                        </i>
+                                      </TableRowColumn>;
 
-                  // maintain indicator as to whether studentEssentials have been displayed (only do once per row)
-                  let studentEssentialsDisplayed = false;
+                // maintain indicator as to whether studentEssentials have been displayed (only do once per row)
+                let studentEssentialsDisplayed = false;
 
-                  // provide a visual break when the major-sort field changes
-                  curMajorSortValue = majorSortField ? student[majorSortField] : null;
-                  const majorSortBreakStyle = p.selCrit.distinguishMajorSortField && curMajorSortValue !== lastMajorSortValue && studentIndx !== 0
-                                                ? {borderTop: '2px solid'}
-                                                : {};
-                  lastMajorSortValue = curMajorSortValue;
-                  
-                  return (
-                    <TableRow key={student.studentNum}
-                              style={majorSortBreakStyle}
-                              selected={student===p.selectedStudent}>
+                // provide a visual break when the major-sort field changes
+                curMajorSortValue = majorSortField ? student[majorSortField] : null;
+                const majorSortBreakStyle = p.selCrit.distinguishMajorSortField && curMajorSortValue !== lastMajorSortValue && studentIndx !== 0
+                                              ? {borderTop: '2px solid'}
+                                              : {};
+                lastMajorSortValue = curMajorSortValue;
+                
+                return (
+                  <TableRow key={student.studentNum}
+                            style={majorSortBreakStyle}
+                            selected={student===p.selectedStudent}>
 
-                      { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit
+                    { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit
 
-                          // our fieldDisplayCntl provides additional control on how each field is displayed
-                          const fieldDisplayCntl = _fieldDisplayCntl[field];
+                        // our fieldDisplayCntl provides additional control on how each field is displayed
+                        const fieldDisplayCntl = _fieldDisplayCntl[field];
 
-                          // never displayed (rare)
-                          if (!fieldDisplayCntl) {
+                        // never displayed (rare)
+                        if (!fieldDisplayCntl) {
+                          return null;
+                        }
+
+                        // display as part of our studentEssentials aggregate
+                        else if (fieldDisplayCntl==='#studentEssentials#') {
+                          if (studentEssentialsDisplayed) {
                             return null;
                           }
+                          studentEssentialsDisplayed = true;
+                          return [
+                            studentEssentials,
+                            hoverControls
+                          ];
+                        }
 
-                          // display as part of our studentEssentials aggregate
-                          else if (fieldDisplayCntl==='#studentEssentials#') {
-                            if (studentEssentialsDisplayed) {
-                              return null;
-                            }
-                            studentEssentialsDisplayed = true;
-                            return [
-                              studentEssentials,
-                              hoverControls
-                            ];
-                          }
+                        // display through hybrid function (ex: 'addr' handled by formatting entire address)
+                        else if (typeof fieldDisplayCntl === 'function') {
 
-                          // display through hybrid function (ex: 'addr' handled by formatting entire address)
-                          else if (typeof fieldDisplayCntl === 'function') {
+                          const fieldValue = fieldDisplayCntl(student);
+                          
+                          return fieldValue
+                                   ? <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldValue}</TableRowColumn>
+                                   : null;
+                        }
 
-                            const fieldValue = fieldDisplayCntl(student);
-                            
-                            return fieldValue
-                                     ? <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldValue}</TableRowColumn>
-                                     : null;
-                          }
+                        // plain display of unformatted field (with optional label)
+                        else {
+                          const fieldLabel = typeof fieldDisplayCntl === 'string' ? <i>{fieldDisplayCntl}</i> : '';
 
-                          // plain display of unformatted field (with optional label)
-                          else {
-                            const fieldLabel = typeof fieldDisplayCntl === 'string' ? <i>{fieldDisplayCntl}</i> : '';
+                          const fieldValue = student[field]
+                                                // normal case
+                                              ? student[field]
+                                                // handle dotted fields (ex: 'addr.state') by dereferencing (ex: student['addr']['state'])
+                                              : field.split('.').reduce( (obj, node) => obj ? obj[node] : null, student);
 
-                            const fieldValue = student[field]
-                                                  // normal case
-                                                ? student[field]
-                                                  // handle dotted fields (ex: 'addr.state') by dereferencing (ex: student['addr']['state'])
-                                                : field.split('.').reduce( (obj, node) => obj ? obj[node] : null, student);
+                          return <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldLabel} {fieldValue}</TableRowColumn>
+                        }
+                      })}
 
-                            return <TableRowColumn key={`${student.studentNum}-${field}`}>{fieldLabel} {fieldValue}</TableRowColumn>
-                          }
-                        })}
-
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </Paper>
-        { p.detailStudent   && <Student/> }
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
       </Paper>
-    }
-  }, // end of ... component definition
-
-  { // component property injection
-    mapStateToProps(appState, ownProps) {
-      return {
-        inProgress:      appState.students.inProgress ? true : false,
-        selCrit:         appState.students.selCrit || {desc: 'please select a filter from the Left Nav menu'},
-        students:        appState.students.items,
-        selectedStudent: appState.students.selectedStudent,
-        studentsShown:   appState.mainPage==='Students',
-
-        detailStudent:   appState.students.detailStudent,
-      }
-    }
-  }); // end of ... component property injection
-
-// define expected props
-Students.propTypes = {
+      { p.detailStudent   && <Student/> }
+    </Paper>
+  }
 }
-
-export default Students;
 
 
  

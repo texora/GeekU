@@ -60,64 +60,60 @@ const log = new Log('DnD');
             })
 
 
-  export default class OptionDropHandle extends React.Component {
+export default class OptionDropHandle extends React.Component {
 
-    constructor(p, context) {
-      super(p, context);
-    }
-
-    render () {
-      const p = this.props;
-
-      const iconContainerStyle = {
-        padding:         '1',
-        backgroundColor: 'yellow'
-      };
-      // because this is a dedicated icon for drop purposes, we can completely hide it if we are NOT droppable
-      if (!droppable(p.draggedItem, p.dropAfterIndex, p.draggedItemType, p.dndItemType)) {
-
-        // option 1: retain consistent spacing by using visibility (hidden visibility sttill takes space)
-        iconContainerStyle.visibility = 'hidden'; // space still taken
-
-        // option 2: collapse when un-used (display: none)
-        // iconContainerStyle.display    = 'none';
-        // TODO: hmmmm For some reason this technique causes the endDrag to fire immediatly
-        //            - the weird thing is the first item CAN be dragged
-        //            - IT WORKS IN IE (so it appears to be Chrome Specific)
-        //            - May be a Chrome BUG:
-        //              ... https://github.com/gaearon/react-dnd/issues/245
-        //                  Chrome wont pick up the element if its position has changed
-        //                  in ui,(previous element height changed and dragged element
-        //                  position changes). As a temporary workaround you can add a
-        //                  react-transition to that element so that the style will be applied
-        //                  gradually.
-      }
-
-      return p.connectDropTarget(
-        <span className="Select-value-icon"
-              style={iconContainerStyle}>
-          <DropHandleIcon color={colors.red900} style={iconStyle}/>
-        </span>
-      );
-    }
-    
+  static propTypes = { // expected component props
+    dndItemType:        React.PropTypes.string.isRequired,  // the DnD itemType on which behalf we are working
+    dropAfterIndex:     React.PropTypes.number.isRequired,  // the zero-based index to drop AFTER (-1 for the start)
+    afterOption:        React.PropTypes.object,             // the 'react-select' option representing dropAfterIndex (null for start)
+    handleRepositionFn: React.PropTypes.func.isRequired     // re-position function(move-selected-options-index, to-after-value-null-for-start)
   }
 
-// define expected props
-OptionDropHandle.propTypes = {
-  dndItemType:        React.PropTypes.string.isRequired,  // the DnD itemType on which behalf we are working
-  dropAfterIndex:     React.PropTypes.number.isRequired,  // the zero-based index to drop AFTER (-1 for the start)
-  afterOption:        React.PropTypes.object,             // the 'react-select' option representing dropAfterIndex (null for start)
-  handleRepositionFn: React.PropTypes.func.isRequired     // re-position function(move-selected-options-index, to-after-value-null-for-start)
-};
+  constructor(p, context) {
+    super(p, context);
+  }
+
+  render () {
+    const p = this.props;
+
+    const iconContainerStyle = {
+      padding:         '1',
+      backgroundColor: 'yellow'
+    };
+    // because this is a dedicated icon for drop purposes, we can completely hide it if we are NOT droppable
+    if (!droppable(p.draggedItem, p.dropAfterIndex, p.draggedItemType, p.dndItemType)) {
+
+      // option 1: retain consistent spacing by using visibility (hidden visibility sttill takes space)
+      iconContainerStyle.visibility = 'hidden'; // space still taken
+
+      // option 2: collapse when un-used (display: none)
+      // iconContainerStyle.display    = 'none';
+      // TODO: hmmmm For some reason this technique causes the endDrag to fire immediatly
+      //            - the weird thing is the first item CAN be dragged
+      //            - IT WORKS IN IE (so it appears to be Chrome Specific)
+      //            - May be a Chrome BUG:
+      //              ... https://github.com/gaearon/react-dnd/issues/245
+      //                  Chrome wont pick up the element if its position has changed
+      //                  in ui,(previous element height changed and dragged element
+      //                  position changes). As a temporary workaround you can add a
+      //                  react-transition to that element so that the style will be applied
+      //                  gradually.
+    }
+
+    return p.connectDropTarget(
+      <span className="Select-value-icon"
+            style={iconContainerStyle}>
+        <DropHandleIcon color={colors.red900} style={iconStyle}/>
+      </span>
+    );
+  }
+  
+}
 
 const iconStyle = {
   width:  12,
   height: 12
 };
-
-export default OptionDropHandle;
-
 
 function droppable(draggedItem, dropAfterIndex, draggedItemType, dndItemType) {
   return draggedItem && 
