@@ -164,16 +164,18 @@ export default class LeftNav extends React.Component {
   handleStudentsEdit(selCrit) {
     const p = this.props;
 
-    // determine if our view is using this selCrit
-    const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
-
-    // when view is using this selCrit, refresh it (in edit() completion callback)
-    const refreshViewFn = selCritDisplayedInView
-                            ? (changedSelCrit) => AC.retrieveStudents(changedSelCrit)
-                            : null;
-
-    // start an edit session with this selCrit
-    EditSelCrit.edit(selCrit, refreshViewFn);
+    // start an edit session with supplied selCrit
+    EditSelCrit.edit(selCrit, selCrit => {
+      // on edit change ... issue re-retrieval IF view is currently based on this selCrit
+      const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
+      if (selCritDisplayedInView) {
+        return AC.retrieveStudents(selCrit);
+      }
+      else {
+        return null;
+      }
+      
+    });
   }
 
   handleCoursesEdit(selCrit) {
@@ -195,7 +197,13 @@ export default class LeftNav extends React.Component {
 
   handleStudentsSave(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(selCrit) );
+    p.dispatch( AC.selCrit.save(selCrit) ) // SAVE selCrit
+     .then( savedSelCrit => {              // SYNC our view when using same selCrit
+        const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === savedSelCrit.key;
+        if (selCritDisplayedInView) {
+          p.dispatch( AC.retrieveStudents(savedSelCrit) )
+        }
+      });
   }
 
   handleCoursesSave(selCrit) {
@@ -291,7 +299,7 @@ export default class LeftNav extends React.Component {
       
         { ['Students', 'Courses'].map( (target) => {
       
-          const targetSelCrit = target==='Students' ? p.studentsSelCrit : p.coursesSelCrit;
+          const selectedSelCrit = target==='Students' ? p.studentsSelCrit : p.coursesSelCrit;
 
           return (
             <Card key={target} initiallyExpanded={true}>
@@ -312,7 +320,7 @@ export default class LeftNav extends React.Component {
                           <MenuItem key={selCrit.key}
                                     primaryText={txt}
                                     insetChildren={true}
-                                    checked={targetSelCrit && targetSelCrit.key===selCrit.key}
+                                    checked={selectedSelCrit && selectedSelCrit.key===selCrit.key}
                                     rightIcon={<MoreVertIcon color={colors.grey700}/>}
                                     menuItems={[
                                       <MenuItem primaryText="Edit Filter"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
@@ -327,7 +335,7 @@ export default class LeftNav extends React.Component {
                           <MenuItem key={selCrit.key}
                                     primaryText={txt}
                                     insetChildren={true}
-                                    checked={targetSelCrit && targetSelCrit.key===selCrit.key}
+                                    checked={selectedSelCrit && selectedSelCrit.key===selCrit.key}
                                     onTouchTap={ () => this.handleSelection(selCrit)}/>
                         );
                       }

@@ -17,7 +17,10 @@ const [selCritSaveThunk, thunkName, log] = promoteThunk('selCrit.save', (selCrit
     // perform async save of selCrit
     log.debug(()=>`initiating async save of selCrit key: ${selCrit.key}`);
 
-    geekUFetch('/api/selCrit', {
+    // mark async operation in-progress (typically spinner)
+    dispatch( AC[thunkName].start(selCrit) );
+
+    return geekUFetch('/api/selCrit', { // return this promise supporting chaining of promises within our dispatch
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -29,6 +32,7 @@ const [selCritSaveThunk, thunkName, log] = promoteThunk('selCrit.save', (selCrit
       const savedSelCrit = res.payload;
       log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
       dispatch( AC[thunkName].complete(savedSelCrit) ); // mark async operation complete (typically spinner)
+      return savedSelCrit; // return supports promise chaining
     })
     .catch( err => {
       // communicate async operation failed
@@ -37,9 +41,6 @@ const [selCritSaveThunk, thunkName, log] = promoteThunk('selCrit.save', (selCrit
         handleUnexpectedError(err, `saving selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
       ]);
     });
-
-    // mark async operation in-progress (typically spinner)
-    dispatch( AC[thunkName].start(selCrit) );
 
   };
   

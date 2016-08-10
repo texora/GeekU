@@ -27,7 +27,6 @@ const thunkBatchHandler = ({dispatch, getState}) => next => action => {
     const allActionObjects = [];
 
     // maintain any thunk return value(s)
-    // ... TODO: this return value has NOT been used/tested - it may need work (if we decide to utilize thunk composition)
     const thunkReturnVals    = []; // ex: promise(s) returned from thunk(s)
     function evalThunkReturnVals() {
       switch (thunkReturnVals.length) {

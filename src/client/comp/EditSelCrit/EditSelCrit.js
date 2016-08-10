@@ -64,7 +64,7 @@ import UserMsg from '../UserMsg';
  *   selCrit objects may reside in a variety of different places
  *   ... for example:
  *        - in the LefNav menu [to choose], and 
- *        - driving the dispay content in a view).
+ *        - driving the dispay content in a view.
  *
  *   These instances must be synced to reflect the latest changes.
  *   Each selCrit object has a unique key (selCrit.key), that
@@ -73,24 +73,28 @@ import UserMsg from '../UserMsg';
  *   have a selCrit that is temporary (not saved at all), or you
  *   may decide to temporarly modify a persistant selCrit.
  * 
- *   - ACTION: AT.selCrit.edit.changed ... action contains: selCrit
+ *   - ACTION: AT.selCrit.edit.changed .... WITH: action.selCrit
+ *   - ACTION: AT.selCrit.save.complete ... WITH: action.selCrit
  * 
- *     To facilate this external synchronization, the edit completion
- *     process will emit the AT.selCrit.edit.changed action, and
- *     should be PUBLICALLY monitored by various reducers.
+ *     To facilate this external synchronization, one of these
+ *     (mutually exclusive) actions will be emitted, when the selCrit
+ *     has changed, and should be PUBLICALLY monitored by various
+ *     reducers.
  *
- *     This action is intelligently emitted ONLY if a change has
- *     actually occured (within the edit session).
- * 
- *     This action indicates that the supplied selCrit has been
- *     modified within the app (in memory irrespective to it's DB save
- *     status).  
+ *     The 'edit.changed' action indicates an in-memory change (with
+ *     no save), while the 'save.complete' action indicates a change
+ *     has been saved (persisted).
  *
- *     This is a public trigger to sync the supplied selCrit where
+ *     These actions are intelligently emitted ONLY when a selCrit
+ *     change actually occurs.  
+
+ *     They are mutually exclusive, because the sync reducer
+ *     monitoring logic should be identical.
+ *
+ *     These are public triggers to sync the supplied selCrit where
  *     appropriate (matching selCrit.key).  As an example, the LeftNav
- *     contains a variety of selCrit objects that may be selected to
- *     view, and should be updated.
- *
+ *     contains a variety of selCrit objects (for view selection), and
+ *     should be synced.
  * 
  *   - PARAM: extraActionsOnCompletionCb ... see edit() JavaDoc below
  * 
@@ -102,24 +106,8 @@ import UserMsg from '../UserMsg';
  *     above the in-memory syncing the selCrit ... namely an
  *     additional action to re-retrieve DB results from the newly
  *     modified selCrit.  This additional work CANNOT be acomplished
- *     by monnitoring the AT.selCrit.edit.changed action, because this
- *     would require a reducer to issue actions (an anti-pattern
- *     side-effect).
- * 
- *   - AT.selCrit.save ... action contains: selCrit
- * 
- *     In addition, the edit session may be completed through a save
- *     operation.  When this occurs, the AT.selCrit.save action is emitted.
- * 
- *     This action is emitted in addition to the other
- *     complete-related actions (discussed here), and is NOT really of
- *     PUBLIC concern.  In other words, the app should sync changes by
- *     monioring the actions discussed above.
- *
- *     With that said, the selCrit should be synced when the save is
- *     complete, by monitoring the AT.selCrit.save.complete action.
- *     This is merely to accomidate the change to selCrit (_id, 
- *     lastDbModDate, and dbHash) - reflecting it's DB persistance status.
+ *     by monnitoring various action types, because this would require
+ *     a reducer to issue actions (an anti-pattern side-effect).
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
@@ -154,14 +142,14 @@ export default class EditSelCrit extends React.Component {
    *       point.  In addition, it insures an <EditSelCrit> has been
    *       instantiated.
    * 
-   * @parm {SelCrit|target-string} selCrit the selCrit to edit, 
+   * @param {SelCrit|target-string} selCrit the selCrit to edit, 
    * or a mongo DB target string to create a new selCrit.
    * 
-   * @parm {function} extraActionsOnCompletionCb an optional client
+   * @param {function} extraActionsOnCompletionCb an optional client
    * callback, executed on edit completion, supporting additional
    * logic over-and-above the normal synchronization (ex: refresh a
-   * retrieval based on this selCrit).
-   *   API: extraActionsOnCompletionCb(selCrit): Action -or- Action[]
+   * view based on this selCrit).
+   *   API: extraActionsOnCompletionCb(selCrit): Action -or- Action[] -or- null
    * 
    * @public
    */
@@ -176,6 +164,8 @@ export default class EditSelCrit extends React.Component {
 
   /**
    * edit() - internal instance method that initiates the selCrit edit session
+   *
+   * NOTE: Please refer to static edit() method (above) for full definition and param doc.
    */
   edit(selCrit, extraActionsOnCompletionCb) {
     const p = this.props;
@@ -184,8 +174,12 @@ export default class EditSelCrit extends React.Component {
 
     // create a new selCrit when a target string is supplied
     if (typeof selCrit === 'string') { // selCrit is a string ... 'Students'/'Courses'
+
+      // re-define selCrit as a new one (of supplied target type)
       selCrit = SelCrit.new(selCrit);
-      this.forceCancelButton = true;  // a new selCrit can be canceled at any time and it will be thrown away
+
+      // a new selCrit can be canceled at any time and it will be thrown away
+      this.forceCancelButton = true;
     }
     else {
       this.forceCancelButton = false;
@@ -193,6 +187,7 @@ export default class EditSelCrit extends React.Component {
 
     // determine the DB meta definition we are working for
     this.meta = metaXlate[selCrit.target];
+    assert(this.meta, `EditSelCrit.edit() an invalid target ('${selCrit.target}') was specified (no meta definition)`);
 
     // define the total set of fieldOptions promoted to the user
     // ... derived from meta.validFields
@@ -242,40 +237,53 @@ export default class EditSelCrit extends React.Component {
     }
 
     //***
-    //*** emit the appropriate action(s)
+    //*** emit the appropriate action(s), once our selCrit has been fully resolved
     //***
 
-    // we always issue a close (to take down our dialog)
-    const actions = [AC.selCrit.edit.close()];
+    // FIRST, apply save (when requested) so as to have an up-to-date selCrit (with new dbHash, etc.)
+    let resolveSelCritPromise = null;
+    if (completionType === 'Save') { // ... the Save button was clicked
+      resolveSelCritPromise = p.dispatch( AC.selCrit.save(p.selCrit) );
+    }
+    else { // ... use modified selCrit (un-saved)
+      resolveSelCritPromise = Promise.resolve(p.selCrit);
+    }
 
-    // issue change actions (when appropriate) ...
-    if (p.selCrit.curHash !== this.starting_curHash &&  // when selCrit has actually changed -AND-
-        completionType !== 'Cancel') {                  // the Cancel button was NOT used
+    // emit appropriate actions, once the selCrit has been fully resolved ...
+    resolveSelCritPromise.then( selCrit => {
 
-      // publish our standard PUBLIC sync action
-      actions.push( AC.selCrit.edit.changed(p.selCrit) );
+      // we always issue a close (to take down our dialog)
+      const actions = [AC.selCrit.edit.close()];
 
+      if (completionType !== 'Cancel') { // no other actions required when Cancel clicked
+
+        // issue selCrit sync actions, when selCrit has actually changed
+        if (selCrit.curHash !== this.starting_curHash || // when selCrit has changed from our starting point -OR-
+            completionType === 'Save') {                 // save updates selCrit (at minimum: dbHash, etc.)
+        
+          // publish our standard selCrit sync action
+          // NOTE: when Save has been involved, the sync will occur via AT.selCrit.save.complete (above)
+          if (completionType !== 'Save') {
+            actions.push( AC.selCrit.edit.changed(selCrit) );
+          }
+          
           // apply invoker-based 'extra' synchronization (ex: refresh a retrieval based on this selCrit)
-      if (this.extraActionsOnCompletionCb) {
-        const extraActions = this.extraActionsOnCompletionCb(p.selCrit); 
-        if (extraActions) {
-          if (Array.isArray(extraActions))
-            actions.push(...extraActions);
-          else
-            actions.push(extraActions);
+          if (this.extraActionsOnCompletionCb) {
+            const extraActions = this.extraActionsOnCompletionCb(selCrit); 
+
+            if (extraActions) {
+              if (Array.isArray(extraActions))
+                actions.push(...extraActions);
+              else
+                actions.push(extraActions);
+            }
+          }
         }
       }
-    }
 
-    // issue save (when appropriate) ...
-    if (p.selCrit.curHash !== p.selCrit.dbHash && // when selCrit needs to be saved -AND-
-        completionType === 'Save') {              // the Save button was used
-
-      actions.push( AC.selCrit.save(p.selCrit) );
-    }
-
-    // publish the appropriate actions
-    p.dispatch( actions );
+      // publish the appropriate actions
+      p.dispatch( actions );
+    });
 
   }
 

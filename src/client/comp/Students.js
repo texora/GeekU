@@ -87,12 +87,15 @@ export default class Students extends React.Component {
 
   handleEditSelCrit() {
     const p = this.props;
-    EditSelCrit.edit(p.selCrit, (modifiedSelCrit) => AC.retrieveStudents(modifiedSelCrit));
+    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.retrieveStudents(changedSelCrit));
   }
 
   handleSaveSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(p.selCrit) );
+    p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
+     .then( savedSelCrit => {                // SYNC our view
+       p.dispatch( AC.retrieveStudents(savedSelCrit) )
+     });
   }
 
   handleNewSelCrit() {
