@@ -22,16 +22,20 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
     log.debug(()=>'initiating async students retrieval using selCrit: ', selCrit);
 
     assert(selCrit, 'AC.retrieveStudents(selCrit) ... selCrit param NOT supplied');
+    
+    // mark async operation in-progress (typically spinner)
+    dispatch( AC[thunkName].start(selCrit) );
 
     const url = '/api/students?' + encodeJsonQueryStr('selCrit', selCrit, log);
     log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
 
-    geekUFetch(url)
+    return geekUFetch(url) // return this promise supporting chaining of promises within our dispatch
     .then( res => {
       // sync app with results
       const students = res.payload;
       log.debug(()=>`successful retrieval ... ${students.length} students returned`);
       dispatch( AC[thunkName].complete(selCrit, students) ); // mark async operation complete (typically spinner)
+      return students; // return supports promise chaining
     })
     .catch( err => {
       // communicate async operation failed
@@ -44,9 +48,6 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
         handleUnexpectedError(err, 'retrieving students'), // report unexpected condition to user (logging details for tech reference)
       ]);
     });
-    
-    // mark async operation in-progress (typically spinner)
-    dispatch( AC[thunkName].start(selCrit) );
 
   };
   

@@ -18,7 +18,10 @@ const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (sel
     // perform async delete of selCrit
     log.debug(()=>`initiating async delete of selCrit key: ${selCrit.key}`);
 
-    geekUFetch(`/api/selCrit/${selCrit.key}`, {
+    // mark async operation in-progress (typically spinner)
+    dispatch( AC[thunkName].start(selCrit, impactView) );
+
+    return geekUFetch(`/api/selCrit/${selCrit.key}`, { // return this promise supporting chaining of promises within our dispatch
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -29,6 +32,7 @@ const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (sel
       // sync app with results
       log.debug(()=>`successful delete of selCrit key: ${selCrit.key}`);
       dispatch( AC[thunkName].complete(selCrit, impactView) ); // mark async operation complete (typically spinner)
+      return selCrit.key; // return supports promise chaining
     })
     .catch( err => {
       // communicate async operation failed
@@ -37,9 +41,6 @@ const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (sel
         handleUnexpectedError(err, `deleting selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
       ]);
     });
-
-    // mark async operation in-progress (typically spinner)
-    dispatch( AC[thunkName].start(selCrit, impactView) );
 
   };
   

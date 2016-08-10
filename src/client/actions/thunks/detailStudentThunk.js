@@ -20,13 +20,17 @@ const [detailStudentThunk, thunkName, log] = promoteThunk('detailStudent', (stud
 
     // perform async retrieval of student
     log.debug(()=>`initiating async detail student num: ${studentNum}`);
+    
+    // mark async operation in-progress (typically spinner)
+    dispatch( AC[thunkName].retrieve.start(studentNum, editMode) );
 
-    geekUFetch(`/api/students/${studentNum}`)
+    return geekUFetch(`/api/students/${studentNum}`) // return this promise supporting chaining of promises within our dispatch
     .then( res => {
       // sync app with results
       const student = res.payload;
       log.debug(()=>'successful retrieval of detailed student: ', student);
       dispatch( AC[thunkName].retrieve.complete(student, editMode) );  // mark async operation complete (typically spinner)
+      return student; // return supports promise chaining
     })
     .catch( err => {
       // communicate async operation failed
@@ -35,9 +39,6 @@ const [detailStudentThunk, thunkName, log] = promoteThunk('detailStudent', (stud
         handleUnexpectedError(err, `retrieving student detail for: ${studentNum}`), // report unexpected condition to user (logging details for tech reference)
       ]);
     });
-    
-    // mark async operation in-progress (typically spinner)
-    dispatch( AC[thunkName].retrieve.start(studentNum, editMode) );
   };
   
 });

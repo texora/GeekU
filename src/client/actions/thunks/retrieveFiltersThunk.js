@@ -15,16 +15,20 @@ const [retrieveFiltersThunk, thunkName, log] = promoteThunk('retrieveFilters', (
 
     // perform async retrieval of filters
     log.debug(()=>'initiating async filters retrieval');
+    
+    // mark async operation in-progress (typically spinner)
+    dispatch( AC[thunkName].start() );
 
     const url = '/api/selCrit';
     log.debug(()=>`launch retrieval ... encoded URL: '${url}'`);
 
-    geekUFetch(url)
+    return geekUFetch(url) // return this promise supporting chaining of promises within our dispatch
     .then( res => {
       // sync app with results
       const filters = res.payload;
       log.debug(()=>`successful retrieval ... ${filters.length} filters returned`);
       dispatch( AC[thunkName].complete(filters) ); // mark async operation complete (typically spinner)
+      return filters; // return supports promise chaining
     })
     .catch( err => {
       // communicate async operation failed
@@ -33,9 +37,6 @@ const [retrieveFiltersThunk, thunkName, log] = promoteThunk('retrieveFilters', (
         handleUnexpectedError(err, 'retrieving filters'), // report unexpected condition to user (logging details for tech reference)
       ]);
     });
-    
-    // mark async operation in-progress (typically spinner)
-    dispatch( AC[thunkName].start() );
 
   };
   
