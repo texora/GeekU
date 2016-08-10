@@ -156,12 +156,36 @@ const SelCrit = {
 
    * @return {boolean} true: has been saved, false: needs to be saved
    */
-  // ??? diff name: isCurrentContentSaved() ... or the negative needsSaving()
-  isSaved(selCrit) {
+  isCurrentContentSaved(selCrit) {
     return selCrit.dbHash === selCrit.curHash;
   },
 
-  // ??? new: isPersisted() ... based on selCrit.dbHash ? true : false
+  /**
+   * Return an indicator as to whether the current content of 
+   * selCrit needs to be saved. 
+   *
+   * Opposite of isCurrentContentSaved()
+   *
+   * @param {SelCrit} selCrit the selCrit to evaluate.
+
+   * @return {boolean} true: needs to be saved, false: has been saved
+   */
+  needsSaving(selCrit) {
+    return selCrit.dbHash !== selCrit.curHash;
+  },
+
+  /**
+   * Return an indicator as to whether the supplied selCrit has ever
+   * been persisted (irrespective to whether it currently needs to be
+   * saved).
+   *
+   * @param {SelCrit} selCrit the selCrit to evaluate.
+
+   * @return {boolean} true: has been persisted, false: never been persisted
+   */
+  isPersisted(selCrit) {
+    return selCrit.dbHash ? true : false;
+  },
 
 
   /**

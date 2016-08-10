@@ -355,8 +355,8 @@ export default class EditSelCrit extends React.Component {
                                  onTouchTap={ (e) => this.handleEditComplete('Use') }/>,
                      <FlatButton label="Save"
                                  primary={true}
-                                 title={p.selCrit.dbHash===p.selCrit.curHash ? 'there are NO changes to save' : 'save and use changes'}
-                                 disabled={p.selCrit.dbHash===p.selCrit.curHash}
+                                 title={SelCrit.isCurrentContentSaved(p.selCrit) ? 'there are NO changes to save' : 'save and use changes'}
+                                 disabled={SelCrit.isCurrentContentSaved(p.selCrit)}
                                  onTouchTap={ (e) => this.handleEditComplete('Save') }/>,
                      <FlatButton label="Cancel"
                                  primary={true}

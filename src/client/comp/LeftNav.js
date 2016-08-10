@@ -266,7 +266,7 @@ export default class LeftNav extends React.Component {
          { txt: 'Delete',
            action: () => {
              const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? 'Students' : null;
-             if (selCrit.dbHash) { // is persised in DB
+             if (SelCrit.isPersisted(selCrit)) { // is persised in DB
                p.dispatch( AC.selCrit.delete(selCrit, impactView) );
              }
              else { // is an in-memory only representation
@@ -312,7 +312,7 @@ export default class LeftNav extends React.Component {
               <CardText expandable={true}>
                 { p.filters.map( (selCrit) => {
                     if (selCrit.target===target) {
-                      const txt = selCrit.curHash===selCrit.dbHash
+                      const txt = SelCrit.isCurrentContentSaved(selCrit)
                                    ? selCrit.name
                                    : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{selCrit.name}</span>;
                       if (this.state.editMode) {
@@ -324,7 +324,7 @@ export default class LeftNav extends React.Component {
                                     rightIcon={<MoreVertIcon color={colors.grey700}/>}
                                     menuItems={[
                                       <MenuItem primaryText="Edit Filter"      onTouchTap={ () => this.handleEdit(selCrit) }/>,
-                                      <MenuItem primaryText="Save Filter"      onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isSaved(selCrit)}/>,
+                                      <MenuItem primaryText="Save Filter"      onTouchTap={ () => this.handleSave(selCrit) } disabled={SelCrit.isCurrentContentSaved(selCrit)}/>,
                                       <MenuItem primaryText="Duplicate Filter" onTouchTap={ () => this.handleDuplicate(selCrit) }/>,
                                       <MenuItem primaryText="Delete Filter"    onTouchTap={ () => this.handleDelete(selCrit) }/>,
                                     ]}/>

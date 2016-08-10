@@ -123,7 +123,7 @@ export default class Students extends React.Component {
         { txt: 'Delete',
           action: () => {
             const impactView = 'Students';
-            if (p.selCrit.dbHash) { // is persised in DB
+            if (SelCrit.isPersisted(p.selCrit)) { // is persised in DB
               p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
             }
             else { // is an in-memory only representation
@@ -198,7 +198,7 @@ export default class Students extends React.Component {
     let curMajorSortValue, lastMajorSortValue = null;
     const majorSortField = sortFields[0];
 
-    const selCritName = p.selCrit.curHash===p.selCrit.dbHash
+    const selCritName = SelCrit.isCurrentContentSaved(p.selCrit)
                          ? p.selCrit.name
                          : <span title="filter changes are NOT saved" style={{color: colors.deepOrangeA200, fontStyle: 'italic'}}>{p.selCrit.name}</span>;
 
@@ -230,7 +230,7 @@ export default class Students extends React.Component {
                             targetOrigin={{vertical: 'top', horizontal: 'right', }}
                             anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
                     <MenuItem primaryText="Edit Filter"      onTouchTap={this.handleEditSelCrit}      disabled={!selCritActionEnabled}/>
-                    <MenuItem primaryText="Save Filter"      onTouchTap={this.handleSaveSelCrit}      disabled={SelCrit.isSaved(p.selCrit)}/>
+                    <MenuItem primaryText="Save Filter"      onTouchTap={this.handleSaveSelCrit}      disabled={SelCrit.isCurrentContentSaved(p.selCrit)}/>
                     <MenuItem primaryText="New Filter"       onTouchTap={this.handleNewSelCrit}/>
                     <MenuItem primaryText="Duplicate Filter" onTouchTap={this.handleDuplicateSelCrit} disabled={!selCritActionEnabled}/>
                     <MenuItem primaryText="Delete Filter"    onTouchTap={this.handleDeleteSelCrit}    disabled={!selCritActionEnabled}/>
