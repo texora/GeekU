@@ -3,7 +3,7 @@ import {BATCH} from 'redux-batched-actions';
 /**
  * Return a human readable action type that drills into various
  * details as needed.
- * @param action {Redux-Action} the action to detail the type for.
+ * @param action {Redux-Action} the action (or action[]) to detail the type for.
  * @return the amplified action type (for human consumption)
  * @public
  */
