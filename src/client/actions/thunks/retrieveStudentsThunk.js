@@ -35,7 +35,7 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
       const students = res.payload;
       log.debug(()=>`successful retrieval ... ${students.length} students returned`);
       dispatch( AC[thunkName].complete(selCrit, students) ); // mark async operation complete (typically spinner)
-      return students; // return supports promise chaining
+      return students; // return supports subsequent promise chaining [if any]
     })
     .catch( err => {
       // communicate async operation failed
@@ -47,6 +47,7 @@ const [retrieveStudentsThunk, thunkName, log] = promoteThunk('retrieveStudents',
         AC[thunkName].fail(selCrit, err),                  // mark async operation FAILED complete (typically spinner)
         handleUnexpectedError(err, 'retrieving students'), // report unexpected condition to user (logging details for tech reference)
       ]);
+      return Promise.reject(err); // return supports subsequent promise chaining (insuring subsequent .then() clauses [if any] are NOT invoked) ... same as: throw err
     });
 
   };

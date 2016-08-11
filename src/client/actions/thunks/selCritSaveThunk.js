@@ -32,7 +32,7 @@ const [selCritSaveThunk, thunkName, log] = promoteThunk('selCrit.save', (selCrit
       const savedSelCrit = res.payload;
       log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
       dispatch( AC[thunkName].complete(savedSelCrit) ); // mark async operation complete (typically spinner)
-      return savedSelCrit; // return supports promise chaining
+      return savedSelCrit; // return supports subsequent promise chaining [if any]
     })
     .catch( err => {
       // communicate async operation failed
@@ -40,6 +40,7 @@ const [selCritSaveThunk, thunkName, log] = promoteThunk('selCrit.save', (selCrit
         AC[thunkName].fail(selCrit, err),                                     // mark async operation FAILED complete (typically spinner)
         handleUnexpectedError(err, `saving selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
       ]);
+      return Promise.reject(err); // return supports subsequent promise chaining (insuring subsequent .then() clauses [if any] are NOT invoked) ... same as: throw err
     });
 
   };

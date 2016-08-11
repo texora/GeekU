@@ -28,7 +28,7 @@ const [retrieveFiltersThunk, thunkName, log] = promoteThunk('retrieveFilters', (
       const filters = res.payload;
       log.debug(()=>`successful retrieval ... ${filters.length} filters returned`);
       dispatch( AC[thunkName].complete(filters) ); // mark async operation complete (typically spinner)
-      return filters; // return supports promise chaining
+      return filters; // return supports subsequent promise chaining [if any]
     })
     .catch( err => {
       // communicate async operation failed
@@ -36,6 +36,7 @@ const [retrieveFiltersThunk, thunkName, log] = promoteThunk('retrieveFilters', (
         AC[thunkName].fail(err),                         // mark async operation FAILED complete (typically spinner)
         handleUnexpectedError(err, 'retrieving filters'), // report unexpected condition to user (logging details for tech reference)
       ]);
+      return Promise.reject(err); // return supports subsequent promise chaining (insuring subsequent .then() clauses [if any] are NOT invoked) ... same as: throw err
     });
 
   };

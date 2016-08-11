@@ -32,7 +32,7 @@ const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (sel
       // sync app with results
       log.debug(()=>`successful delete of selCrit key: ${selCrit.key}`);
       dispatch( AC[thunkName].complete(selCrit, impactView) ); // mark async operation complete (typically spinner)
-      return selCrit.key; // return supports promise chaining
+      return selCrit.key; // return supports subsequent promise chaining [if any]
     })
     .catch( err => {
       // communicate async operation failed
@@ -40,6 +40,7 @@ const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (sel
         AC[thunkName].fail(selCrit, impactView, err),                           // mark async operation FAILED complete (typically spinner)
         handleUnexpectedError(err, `deleting selCrit for key: ${selCrit.key}`), // report unexpected condition to user (logging details for tech reference)
       ]);
+      return Promise.reject(err); // return supports subsequent promise chaining (insuring subsequent .then() clauses [if any] are NOT invoked) ... same as: throw err
     });
 
   };
