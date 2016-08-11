@@ -1,8 +1,9 @@
 'use strict';
 
+import React      from 'react';
 import Log        from '../../shared/util/Log';
 import {AC}       from '../actions';
-import HTTPStatus from 'http-status';
+import Alert      from '../comp/Alert';
 
 const log = new Log('unexpectedError');
 
@@ -32,30 +33,57 @@ const log = new Log('unexpectedError');
  */
 export default function handleUnexpectedError(err, qualMsg='') {
 
-  // log the details of the error (with traceback) for tech review
-  const userMsg = `An unexpected error occurred ${qualMsg}.`;
-  log.error(()=> userMsg, err);
+  // stale data is NOT unexpected ... guide the user more delicately
+  if (err.message.includes('Stale data detected')) {
 
-  // setup the DETAIL callback for our userMsg userAction
-  const detailAction = (event) => {
+    // log the details of the error (with traceback) for tech review
+    const userMsg = `Your data is "out of date" ... ${qualMsg}.`;
+    log.error(()=> userMsg, err);
+    
+    // create/return action providing user communication
+    return AC.userMsg.display('Your data is "out of date" ... refresh and try again.',
+                              {
+                                txt:      'details',
+                                callback: () => { // display more detail to user
+                                  Alert.display({
+                                    title: 'Stale Data',
+                                    msg:   <div>
+                                             {userMsg}
+                                             <br/><br/>
+                                             Someone has modified it since you last retrieved it.
+                                             <br/><br/>
+                                             Please refresh the data and try your operation again.
+                                           </div>
+                                  });
+                                }
+                              });
+  }
 
-    // format the detailed message to display in our detailAction
-    // ... NOTE: err.message will contain any applicable server logId (to report to tech support)
-    let detailedMsg =  `${userMsg}
-  
-    ${err.clientMsg}
-    ${err.message}
+  // an unexpected error
+  else {
 
-If this problem persists, please contact your tech support.`;
-
-    // show user the details
-    alert(`${detailedMsg}`);
-  };
-
-  // create/return the redux action to provide user communication
-  return AC.userMsg.display(userMsg, 
-                            {
-                              txt:      'details',
-                              callback: detailAction,
-                            });
+    // log the details of the error (with traceback) for tech review
+    const userMsg = `An unexpected error occurred ${qualMsg}.`;
+    log.error(()=> userMsg, err);
+    
+    // create/return action providing user communication
+    return AC.userMsg.display(userMsg, 
+                              {
+                                txt:      'details',
+                                callback: () => { // display more detail to user
+                                  Alert.display({
+                                    title: 'Unexpected Error',
+                                           // NOTE: err.message (below) containd applicable server logId (if any) to report to tech support
+                                    msg:   <div>
+                                             {userMsg}
+                                             <ul>
+                                               {err.clientMsg}<br/>
+                                               {err.message}
+                                             </ul>
+                                             If this problem persists, please contact your tech support.
+                                           </div>
+                                  });
+                                }
+                              });
+  }
 }
