@@ -101,7 +101,8 @@ export default class LeftNav extends React.Component {
     if (selCrit==='Students')             this.handleStudentsSelection(null);
     else if (selCrit==='Courses')         this.handleCoursesSelection(null);
     else if (selCrit.target==='Students') this.handleStudentsSelection(selCrit);
-    else                                  this.handleCoursesSelection(selCrit);
+    else if (selCrit.target==='Courses')  this.handleCoursesSelection(selCrit);
+    else throw new Error(`LeftNav.handleSelection() INVALID selCrit supplied: ${FMT(selCrit)}`);
   }
 
   handleStudentsSelection(selCrit) {
@@ -126,10 +127,8 @@ export default class LeftNav extends React.Component {
       const actions = [ AC.changeMainPage('Students') ];
 
       // refresh view when it is NOT reflective of this selCrit
-      if (!p.studentsSelCrit ||                            // view not yet retrieved -or-
-          p.studentsSelCrit.key     !== selCrit.key ||     // view currently has different selCrit -or-
-          p.studentsSelCrit.curHash !== selCrit.curHash) { // view currently has different version of selCrit
-            actions.push(AC.retrieveStudents(selCrit));
+      if (!SelCrit.isEqual(p.studentsSelCrit, selCrit)) {
+        actions.push(AC.retrieveStudents(selCrit));
       }
 
       p.dispatch( actions );

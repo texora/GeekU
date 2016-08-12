@@ -160,6 +160,7 @@ const SelCrit = {
     return selCrit.dbHash === selCrit.curHash;
   },
 
+
   /**
    * Return an indicator as to whether the current content of 
    * selCrit needs to be saved. 
@@ -173,6 +174,7 @@ const SelCrit = {
   needsSaving(selCrit) {
     return selCrit.dbHash !== selCrit.curHash;
   },
+
 
   /**
    * Return an indicator as to whether the supplied selCrit has ever
@@ -207,6 +209,24 @@ const SelCrit = {
     return crc.crc32(selCritStr).toString(16);
   },
 
+
+  /**
+   * Return an indicator as to whether the two supplied selCrit
+   * objects are equivalent, considering application data content.
+   *
+   * @param {SelCrit} scA the first selCrit object to compare.
+   * @param {SelCrit} scB the second selCrit object to compare.
+   *
+   * @return {boolean} true: supplied selCrit objects are equivalent,
+   * false: not equivalent.
+   */
+  isEqual(scA, scB) {
+    // our hash covers all application data
+    // NOTE: OR semantics covers unsupplied objs
+    //       - NOT-EQUAL when one obj supplied and the other NOT
+    //       - EQUAL when both have not been supplied (NOTE: equates null/undefined, but that is OK)
+    return (scA || {}).curHash === (scB || {}).curHash;
+  },
 
   /**
    * Concise definition of valid selCrit.filter operators, 
