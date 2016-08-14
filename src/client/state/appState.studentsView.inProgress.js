@@ -5,13 +5,13 @@ import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
-// *** appState.students.inProgress reducer
+// *** appState.studentsView.inProgress reducer
 // ***
 
-const reductionHandler = new ReductionHandler('appState.students.inProgress', {
-  [AT.retrieveStudents.start]    (inProgress, action) { return addIn(inProgress, +1); },
-  [AT.retrieveStudents.complete] (inProgress, action) { return addIn(inProgress, -1); },
-  [AT.retrieveStudents.fail]     (inProgress, action) { return addIn(inProgress, -1); },
+const reductionHandler = new ReductionHandler('appState.studentsView.inProgress', {
+  [AT.selectStudentsView.retrieveStart]    (inProgress, action) { return addIn(inProgress, +1); },
+  [AT.selectStudentsView.retrieveComplete] (inProgress, action) { return addIn(inProgress, -1); },
+  [AT.selectStudentsView.retrieveFail]     (inProgress, action) { return addIn(inProgress, -1); },
 });
 
 function addIn(val, additive) {

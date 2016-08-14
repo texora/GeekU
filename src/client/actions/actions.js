@@ -1,15 +1,14 @@
 'use strict'
 
-import selCritSaveThunk      from './thunks/selCritSaveThunk';
-import selCritDeleteThunk    from './thunks/selCritDeleteThunk';
-import retrieveStudentsThunk from './thunks/retrieveStudentsThunk';
-import detailStudentThunk    from './thunks/detailStudentThunk';
-import retrieveFiltersThunk  from './thunks/retrieveFiltersThunk';
-
-
-import userMsgDisplayAC      from './creators/userMsgDisplayAC';
-
-import generate_AT_AC        from './generate_AT_AC';
+import detailStudentThunk      from './thunks/detailStudentThunk';
+import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
+import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
+import selCritSaveThunk        from './thunks/selCritSaveThunk';
+import selectStudentsViewThunk from './thunks/selectStudentsViewThunk';
+                               
+import userMsgDisplayAC        from './creators/userMsgDisplayAC';
+                               
+import generate_AT_AC          from './generate_AT_AC';
 
 
 /**
@@ -57,10 +56,11 @@ import generate_AT_AC        from './generate_AT_AC';
  *    - The Action Creators (AC) 
  *      * Concisely defines all the actions you can perform within the app
  *      * Promotes and validates the exact set of expected parameters
+ *        TODO: currently validation is disabled till we provide a means of defining optional/defaulted params
  *        ... at least the number of parameters
  *        ... the parameter types are NOT validated, but the name gives a hint of expectations
  *        ... here is an example error that is thrown if number of params are incorrect:
- *            ERROR: Action Creator AC.retrieveStudents.complete(selCrit) expecting 2 parameters, but received 1
+ *            ERROR: Action Creator AC.selCrit.edit(selCrit) expecting 2 parameters, but received 1
  *      * Correctly constructs the action every time
  *   
  *    - The Action Types (AT):
@@ -71,17 +71,33 @@ import generate_AT_AC        from './generate_AT_AC';
 
 const genesis = {
 
+  // ***
+  // *** display a user message via Material UI Snackbar
+  // ***
+  //       AC.userMsg.display(msg [,userAction])
+  //          ... see: userMsgDisplayAC.js for full documentation
   'userMsg.display':           { params: ['msg', 'userAction'],       ac: userMsgDisplayAC },
   'userMsg.close':             { params: [] },
 
-  'changeMainPage':            { params: ['mainPage'] }, // mainPage: 'Students'/'Courses'
 
-  'retrieveStudents':          { params: ['selCrit'],                 thunk: retrieveStudentsThunk },
-  'retrieveStudents.start':    { params: ['selCrit'] },
-  'retrieveStudents.complete': { params: ['selCrit', 'items'] },
-  'retrieveStudents.fail':     { params: ['selCrit', 'error'] },
+  // ***
+  // *** activate the Students View (optionally retrieving students via selCrit directive)
+  // ***
+  //       AC.selectStudentsView([selCrit])
+  //          - SelCrit obj: activate the Students View ... conditionally retrieving Students when different selCrit (or out-of-date)
+  //          - null:        activate the Students View (in it's current state) ... NO Students retrieval
+  //          - 'refresh':   NO activate ... simply refresh Students retrieval (with same selCrit)
+  //          ... see: selectStudentsViewThunk.js for full documentation
+  'selectStudentsView':                  { params: ['selCrit'], thunk: selectStudentsViewThunk },
+  'selectStudentsView.activate':         { params: [] },
+  'selectStudentsView.retrieveStart':    { params: ['selCrit'] },          // conditionally emitted when retrieval needed
+  'selectStudentsView.retrieveComplete': { params: ['selCrit', 'items'] }, // ditto
+  'selectStudentsView.retrieveFail':     { params: ['selCrit', 'error'] }, // ditto
 
-  'selectStudent':             { params: ['student'] }, // null for de-select
+  'selectStudent': { params: ['student'] }, // student: null for de-select
+
+  // TODO: needed for tab selectsion ... eventually fully flesh out
+  'selectCoursesView.activate':         { params: [] },
 
   // TODO: suspect this is a code smell - the detailStudent has mixed-in the retrieval (retrieval prob should be a seperate AC)
   'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: detailStudentThunk },

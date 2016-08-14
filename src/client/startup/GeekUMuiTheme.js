@@ -47,7 +47,7 @@ const muiThemeOverrides = {
     // ? desktopSubheaderHeight: 24, // ... this one impacts Snackbar height
     // ? desktopToolbarHeight: 8,
 
-    iconSize: 24, // ?? was using 15, the 24 makes spacing of toolbar icons better
+    iconSize: 24, // was using 15, the 24 makes spacing of toolbar icons better
 
     // from: material-ui/lib/styles/baseThemes/lightBaseTheme.js ...
     // iconSize: 24,

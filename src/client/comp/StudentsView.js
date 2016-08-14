@@ -33,24 +33,24 @@ import Confirm            from './Confirm';
 
 
 /**
- * The Students component displays a list of students.
+ * The StudentsView component implements the view displaying a student list.
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    inProgress:      appState.students.inProgress ? true : false,
-    selCrit:         appState.students.selCrit || {desc: 'please select a filter from the Left Nav menu'},
-    students:        appState.students.items,
-    selectedStudent: appState.students.selectedStudent,
-    studentsShown:   appState.mainPage==='Students',
+    inProgress:      appState.studentsView.inProgress ? true : false,
+    selCrit:         appState.studentsView.selCrit || {desc: 'please select a filter from the Left Nav menu'},
+    students:        appState.studentsView.items,
+    selectedStudent: appState.studentsView.selectedStudent,
+    studentsShown:   appState.selectedView==='Students',
 
-    detailStudent:   appState.students.detailStudent,
+    detailStudent:   appState.studentsView.detailStudent,
   }
 })
 
 @autobind
 
-export default class Students extends React.Component {
+export default class StudentsView extends React.Component {
 
   static propTypes = { // expected component props
   }
@@ -82,25 +82,25 @@ export default class Students extends React.Component {
 
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.retrieveStudents(p.selCrit) );
+    p.dispatch( AC.selectStudentsView('refresh') );
   }
 
   handleEditSelCrit() {
     const p = this.props;
-    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.retrieveStudents(changedSelCrit));
+    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.selectStudentsView(changedSelCrit));
   }
 
   handleSaveSelCrit() {
     const p = this.props;
     p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
      .then( savedSelCrit => {                // SYNC our view
-       p.dispatch( AC.retrieveStudents(savedSelCrit) )
+       p.dispatch( AC.selectStudentsView(savedSelCrit) )
      });
   }
 
   handleNewSelCrit() {
     // start an edit session of a new 'Students' selCrit
-    EditSelCrit.edit('Students', newSelCrit => AC.retrieveStudents(newSelCrit) );
+    EditSelCrit.edit('Students', newSelCrit => AC.selectStudentsView(newSelCrit) );
   }
 
   handleDuplicateSelCrit() {
@@ -110,7 +110,7 @@ export default class Students extends React.Component {
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
 
     // start an edit session with this dup selCrit
-    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.retrieveStudents(changedDupSelCrit) );
+    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.selectStudentsView(changedDupSelCrit) );
   }
 
   handleDeleteSelCrit() {

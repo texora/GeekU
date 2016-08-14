@@ -5,12 +5,12 @@ import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
-// *** appState.students.selCrit reducer
+// *** appState.studentsView.selCrit reducer
 // ***
 
-const reductionHandler = new ReductionHandler('appState.students.selCrit', {
+const reductionHandler = new ReductionHandler('appState.studentsView.selCrit', {
 
-  [AT.retrieveStudents.complete](selCrit, action) {
+  [AT.selectStudentsView.retrieveComplete](selCrit, action) {
     return [
       action.selCrit,
       ()=>`set selCrit from action ... ${FMT(action.selCrit)}`

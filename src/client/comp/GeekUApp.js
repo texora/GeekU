@@ -11,7 +11,7 @@ import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
 import Paper              from 'material-ui/lib/paper';
 import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
-import Students           from './Students';
+import StudentsView       from './StudentsView';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
 import {AC}               from '../actions';
@@ -31,8 +31,8 @@ import HTML5Backend        from 'react-dnd-html5-backend';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    mainPage:        appState.mainPage,
-    selectedStudent: appState.students.selectedStudent,
+    selectedView:        appState.selectedView,
+    selectedStudent: appState.studentsView.selectedStudent,
   }
 })
 
@@ -47,9 +47,9 @@ export default class GeekUApp extends React.Component {
     super(props, context);
   }
 
-  handleMainPageChange(page) {
+  handleSelectedView(page) {
     const p = this.props;
-    p.dispatch( AC.changeMainPage(page) );
+    p.dispatch( page === 'Students' ? AC.selectStudentsView() : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
   }
 
   tempAlert() {
@@ -106,19 +106,6 @@ export default class GeekUApp extends React.Component {
                                    }) );
   }
 
-  tempRetrieveStudents() {
-    const p = this.props;
-    p.dispatch( AC.retrieveStudents(SelCrit.new('Students')) );
-  }
-
-  tempAggregateTest() {
-    const p = this.props;
-    // we CAN now batch actions that include thunks as well as normal action objects
-    p.dispatch([ AC.retrieveStudents(SelCrit.new('Students')),
-                 AC.userMsg.display('Batching thunks FINALLY works!'),
-                 AC.changeMainPage('Students') ]);
-  }
-
   render() {
     const p = this.props;
 
@@ -133,8 +120,8 @@ export default class GeekUApp extends React.Component {
                     <tr>
                       <td><i>GeekU</i></td>
                       <td>
-                        <Tabs value={p.mainPage}
-                              onChange={this.handleMainPageChange}>
+                        <Tabs value={p.selectedView}
+                              onChange={this.handleSelectedView}>
                           <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
                           <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
                         </Tabs>
@@ -155,11 +142,9 @@ export default class GeekUApp extends React.Component {
                   <MenuItem primaryText="Sample Message"                   onTouchTap={this.tempSampleMsg}/>
                   <MenuItem primaryText="Sample Multi-Message"             onTouchTap={this.tempSampleMultiMsg}/>
                   <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
-                  <MenuItem primaryText="Test Student Retrieval"           onTouchTap={this.tempRetrieveStudents}/>
-                  <MenuItem primaryText="Aggregate Test"                   onTouchTap={this.tempAggregateTest}/>
                 </IconMenu>}/>
       <LeftNav/>
-      <Students/>
+      <StudentsView/>
       <EditSelCrit/>
       <UserMsg/>
       <Alert/>

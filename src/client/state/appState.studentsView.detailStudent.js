@@ -5,10 +5,10 @@ import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
-// *** appState.students.detailStudent reducer
+// *** appState.studentsView.detailStudent reducer
 // ***
 
-const reductionHandler = new ReductionHandler('appState.students.detailStudent', {
+const reductionHandler = new ReductionHandler('appState.studentsView.detailStudent', {
 
   [AT.detailStudent.retrieve.complete](detailStudent, action) {
     return [

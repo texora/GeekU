@@ -228,6 +228,28 @@ const SelCrit = {
     return (scA || {}).curHash === (scB || {}).curHash;
   },
 
+
+  /**
+   * Return an indicator as to whether the two supplied selCrit
+   * objects are fully equivalent, considering BOTH application
+   * data content AND persistance status.
+   *
+   * @param {SelCrit} scA the first selCrit object to compare.
+   * @param {SelCrit} scB the second selCrit object to compare.
+   *
+   * @return {boolean} true: supplied selCrit objects are equivalent,
+   * false: not equivalent.
+   */
+  isFullyEqual(scA, scB) {
+    // utilize BOTH hashes considering BOTH application data content AND persistance status
+    // NOTE: OR semantics covers unsupplied objs
+    //       - NOT-EQUAL when one obj supplied and the other NOT
+    //       - EQUAL when both have not been supplied (NOTE: equates null/undefined, but that is OK)
+    scA = scA || {};
+    scB = scB || {};
+    return scA.curHash === scB.curHash && scA.dbHash === scB.dbHash;
+  },
+
   /**
    * Concise definition of valid selCrit.filter operators, 
    * providing a translation from neutral-op to mongo-op.

@@ -5,10 +5,10 @@ import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
-// *** appState.students.selectedStudent reducer
+// *** appState.studentsView.selectedStudent reducer
 // ***
 
-const reductionHandler = new ReductionHandler('appState.students.selectedStudent', {
+const reductionHandler = new ReductionHandler('appState.studentsView.selectedStudent', {
 
   [AT.selectStudent](selectedStudent, action) {
     return [
@@ -17,7 +17,7 @@ const reductionHandler = new ReductionHandler('appState.students.selectedStudent
     ];
   },
 
-  [AT.retrieveStudents.complete] (selectedStudent, action) {
+  [AT.selectStudentsView.retrieveComplete] (selectedStudent, action) {
     return [
       null,
       ()=>'de-selecting selectedStudent on new retrieval'

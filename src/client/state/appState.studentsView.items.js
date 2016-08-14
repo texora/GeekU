@@ -5,12 +5,12 @@ import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
-// *** appState.students.items reducer
+// *** appState.studentsView.items reducer
 // ***
 
-const reductionHandler = new ReductionHandler('appState.students.items', {
+const reductionHandler = new ReductionHandler('appState.studentsView.items', {
 
-  [AT.retrieveStudents.complete](items, action) {
+  [AT.selectStudentsView.retrieveComplete](items, action) {
     return [
       action.items,
       ()=>`set items from action: ${action.items.length} students`

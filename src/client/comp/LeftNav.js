@@ -32,8 +32,8 @@ import colors              from 'material-ui/lib/styles/colors';
 @ReactRedux.connect( (appState, ownProps) => {
   return {
     filters:         appState.filters,
-    mainPage:        appState.mainPage,
-    studentsSelCrit: appState.students.selCrit,
+    selectedView:        appState.selectedView,
+    studentsSelCrit: appState.studentsView.selCrit,
     coursesSelCrit:  null, // appState.courses.selCrit, // TODO: NOT available yet
   }
 })
@@ -115,23 +115,13 @@ export default class LeftNav extends React.Component {
     if (!selCrit) {
       // start an edit session of a new selCrit
       EditSelCrit.edit('Students', (newSelCrit) => {
-        return [
-          AC.changeMainPage('Students'),   // display view
-          AC.retrieveStudents(newSelCrit), // with new selCrit
-        ];
+        return AC.selectStudentsView(newSelCrit);
       });
     }
 
     // use selected selCrit
     else {
-      const actions = [ AC.changeMainPage('Students') ];
-
-      // refresh view when it is NOT reflective of this selCrit
-      if (!SelCrit.isEqual(p.studentsSelCrit, selCrit)) {
-        actions.push(AC.retrieveStudents(selCrit));
-      }
-
-      p.dispatch( actions );
+      p.dispatch( AC.selectStudentsView(selCrit) );
     }
 
   }
@@ -139,7 +129,7 @@ export default class LeftNav extends React.Component {
   handleCoursesSelection() {
     const p = this.props;
 
-    const actions = [ AC.changeMainPage('Courses') ];
+    const actions = [ AC.selectCoursesView.activate() ];
 
     // TODO: add this with courses are supported
 
@@ -168,7 +158,7 @@ export default class LeftNav extends React.Component {
       // on edit change ... issue re-retrieval IF view is currently based on this selCrit
       const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
       if (selCritDisplayedInView) {
-        return AC.retrieveStudents(selCrit);
+        return AC.selectStudentsView(selCrit); // side-effect of refactor is it will select view too :-(
       }
       else {
         return null;
@@ -200,7 +190,7 @@ export default class LeftNav extends React.Component {
      .then( savedSelCrit => {              // SYNC our view when using same selCrit
         const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === savedSelCrit.key;
         if (selCritDisplayedInView) {
-          p.dispatch( AC.retrieveStudents(savedSelCrit) )
+          p.dispatch( AC.selectStudentsView(savedSelCrit) ) // side-effect of refactor is it will select view too :-(
         }
       });
   }
@@ -231,10 +221,7 @@ export default class LeftNav extends React.Component {
 
     // start an edit session with this selCrit
     EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-      return [
-        AC.changeMainPage('Students'),          // display view
-        AC.retrieveStudents(changedDupSelCrit), // with our duplicated selCrit
-      ];
+      return AC.selectStudentsView(changedDupSelCrit);
     });
   }
 

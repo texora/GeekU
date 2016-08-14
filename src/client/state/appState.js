@@ -2,11 +2,11 @@
 
 import * as Redux from 'redux';
 
-import userMsg     from './appState.userMsg';
-import mainPage    from './appState.mainPage';
-import filters     from './appState.filters';
-import students    from './appState.students';
-import editSelCrit from './appState.editSelCrit';
+import userMsg      from './appState.userMsg';
+import selectedView from './appState.selectedView';
+import studentsView from './appState.studentsView';
+import filters      from './appState.filters';
+import editSelCrit  from './appState.editSelCrit';
 
 // ***
 // *** our app's top-level reducer
@@ -14,9 +14,9 @@ import editSelCrit from './appState.editSelCrit';
 
 const appState = Redux.combineReducers({
   userMsg,
-  mainPage,
+  selectedView,
+  studentsView,
   filters,
-  students,
   editSelCrit,
 });
 export default appState;

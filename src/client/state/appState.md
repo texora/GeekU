@@ -24,15 +24,9 @@ appState: {
       }
   ],
 
-  mainPage: 'students'/'courses',
+  selectedView: 'Students'/'Courses',
 
-  filters: [   // all active filters (list of selCrit objects) ... ordered by target/name/desc
-    selCrit-1,
-    selCrit-2, // common selCrit (see selCrit (below) for details)
-    ...
-  ],
-
-  students: {      // our retrieved students
+  studentsView: {      // our retrieved students
 
     selectedStudent: null/item[below],
 
@@ -61,6 +55,12 @@ appState: {
       ...ditto...
     ],
   },
+
+  filters: [   // all active filters (list of selCrit objects) ... ordered by target/name/desc
+    selCrit-1,
+    selCrit-2, // common selCrit (see selCrit (below) for details)
+    ...
+  ],
 
   editSelCrit: {       // structure supporting ANY selCrit edit
 
@@ -91,7 +91,7 @@ retrieval/sort functionality.  It contains a number of fields, some
 for user consumption, and others are machine-interpretable directives
 (fields, sort, filter).
 
-The following example is taken from a students collection and
+The following example is taken from a Students collection and
 retrieves female students from MO/IN with a GPA over 3.65:
 
 ```javascript

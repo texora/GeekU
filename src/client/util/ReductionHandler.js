@@ -48,7 +48,7 @@ class ReductionHandler {
    * 
    * For example:
    *   {
-   *     [AT.retrieveStudents.complete](items, action) {
+   *     [AT.selectStudentsView.retrieveComplete](items, action) {
    *       return [
    *         action.items,
    *         ()=>`set items from action: ${action.items.length} students`

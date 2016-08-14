@@ -42,8 +42,8 @@ import Alert              from './Alert';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    student:   appState.students.detailStudent,
-    editMode:  appState.students.detailEditMode,
+    student:   appState.studentsView.detailStudent,
+    editMode:  appState.studentsView.detailEditMode,
   }
 })
 
