@@ -1,14 +1,14 @@
 'use strict'
 
-import {AT}            from './actions';
-import ReduxSubReducer from '../util/ReduxSubReducer';
+import {AT}             from '../actions';
+import ReductionHandler from '../util/ReductionHandler';
 
 
 // ***
 // *** appState.userMsg reducer
 // ***
 
-const subReducer = new ReduxSubReducer('appState.userMsg', {
+const reductionHandler = new ReductionHandler('appState.userMsg', {
 
   [AT.userMsg.display](userMsg, action) {
     return [
@@ -29,5 +29,5 @@ const subReducer = new ReduxSubReducer('appState.userMsg', {
 });
 
 export default function userMsg(userMsg=[], action) {
-  return subReducer.resolve(userMsg, action);
+  return reductionHandler.reduce(userMsg, action);
 }

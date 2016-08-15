@@ -6,53 +6,46 @@ import * as MongoUtil from '../util/MongoUtil';
 
 const courses = express.Router();
 
-
 //***************************************************************************************************
-//*** retrieve a list of courses: /api/courses[? fields=f1,f2,f3 & filter={mongoQuery}]
+//*** retrieve a list of courses: /api/courses[?query-string ... see below]
 //***
-//***   - use optional "fields" query string to fine tune fields to emit
-//***     * specify comma delimited list of field names
-//***       ... see: coursesMeta.validFields for valid field names
-//***     * DEFAULT: coursesMeta.defaultDisplayFields will be emitted
+//***   - by default, all courses will be retrieved, in random order, emitting fields defined in
+//***     coursesMeta.defaultDisplayFields.
 //***
-//***   - use optional "filter" query string to supply selection criteria
-//***     * specify a JSON structure conforming to the MongoDB query structure
-//***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
-//***       ... ex:  /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-//***                ... returns info from two courses (CS-1110 and CS-1112)
-//***       ... ex:  /api/courses?filter={"subjDesc":"Applied & Engineering Physics"}
-//***                ... returns courses from the "Applied & Engineering Physics" field of study
-//***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
-//***     * DEFAULT: return ALL courses
+//***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
+//***
+//***     This is a common structure for ALL DB retrievals
+//***      ... see: src/client/state/appState.md for details
+//***
+//***     NOTE: Client's should always protect the data (above) by using the
+//***           encodeJsonQueryStr(queryName, jsonObj) utility.
+//***           ... src/shared/util/QueryStrUtil.js
 //***
 //***************************************************************************************************
 
 courses.get('/api/courses', (req, res, next) => {
 
-  // define our fields to display (a mongo projection) 
-  // tweaked from the optional client-supplied "fields" query string
-  // ... ex: /api/courses?fields=a,b,c
-  const displayFields = MongoUtil.mongoFields(coursesMeta.validFields,
-                                              coursesMeta.defaultDisplayFields,
-                                              req.query.fields);
+  // define our optional top-level selCrit from the request object
+  const selCrit = MongoUtil.selCrit(req, coursesMeta);
 
-  // define our mongo query object
-  // tweaked from the optional client-supplied "query" query string
-  // ... ex: /api/courses?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-  const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
+  // force courseNum to always be emitted
+  if (!selCrit.mongoFields.courseNum) {
+    selCrit.mongoFields.courseNum = true;
+  }
 
   // perform retrieval
   const coursesColl = req.geekU.db.collection('Courses');
-  coursesColl.find(mongoQuery, displayFields)
-  .toArray()
-  .then( courses => {
-    res.geekU.send(courses);
-  })
-  .catch( err => {
-    // NOTE: unsure if we ALWAYS want to cover up technical message
-    //       ... it may be due to bad interpretation of mongoQuery
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses");
-  });
+  coursesColl.find(selCrit.mongoFilter, selCrit.mongoFields)
+             .sort(selCrit.mongoSort)
+             .toArray()
+             .then( courses => {
+               res.geekU.send(courses);
+             })
+             .catch( err => {
+               // communicate error ... sendError() will also log as needed
+               res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/courses"),
+                                   req);
+             });
 });
 
 
@@ -96,7 +89,9 @@ courses.get('/api/courses/:courseNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum");
+    // communicate error ... sendError() will also log as needed
+    res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/courses/:courseNum"),
+                        req);
   });
 
 });

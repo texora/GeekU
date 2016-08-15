@@ -52,12 +52,11 @@ describe('Log Tests', () => {
   describe('Test out-of-box settings', () => {
 
     let log = new Log('parent.child');
-    testOutput(log, false, 'TRACE');
-    testOutput(log, false, 'DEBUG');
-    testOutput(log, true,  'INFO');
-    testOutput(log, true,  'WARN');
     testOutput(log, true,  'ERROR');
-    testOutput(log, true,  'FATAL');
+    testOutput(log, true,  'WARN');
+    testOutput(log, true,  'INFO');
+    testOutput(log, false, 'DEBUG');
+    testOutput(log, false, 'TRACE');
   });
 
   describe('Test filter inheritance', () => {
@@ -72,12 +71,11 @@ describe('Log Tests', () => {
       });
     });
 
-    testOutput(log, false, 'TRACE');
-    testOutput(log, true,  'DEBUG');
-    testOutput(log, true,  'INFO');
-    testOutput(log, true,  'WARN');
     testOutput(log, true,  'ERROR');
-    testOutput(log, true,  'FATAL');
+    testOutput(log, true,  'WARN');
+    testOutput(log, true,  'INFO');
+    testOutput(log, true,  'DEBUG');
+    testOutput(log, false, 'TRACE');
   });
 
   describe('Test more complex filter inheritance', () => {
@@ -88,26 +86,24 @@ describe('Log Tests', () => {
     before( () => {
       Log.config({
         filter: {
-          'root':         Log.FATAL,
+          'root':         Log.ERROR,
           'parent':       null,
-          'parent.child': Log.ERROR
+          'parent.child': Log.WARN
         }
       });
     });
 
-    testOutput(logChild, false, 'TRACE');
-    testOutput(logChild, false, 'DEBUG');
-    testOutput(logChild, false, 'INFO');
-    testOutput(logChild, false, 'WARN');
     testOutput(logChild, true,  'ERROR');
-    testOutput(logChild, true,  'FATAL');
+    testOutput(logChild, true,  'WARN');
+    testOutput(logChild, false, 'INFO');
+    testOutput(logChild, false, 'DEBUG');
+    testOutput(logChild, false, 'TRACE');
 
-    testOutput(logParent, false, 'TRACE');
-    testOutput(logParent, false, 'DEBUG');
-    testOutput(logParent, false, 'INFO');
+    testOutput(logParent, true,  'ERROR');
     testOutput(logParent, false, 'WARN');
-    testOutput(logParent, false, 'ERROR');
-    testOutput(logParent, true,  'FATAL');
+    testOutput(logParent, false, 'INFO');
+    testOutput(logParent, false, 'DEBUG');
+    testOutput(logParent, false, 'TRACE');
   });
 
   // TODO: test Error veto of probe WITH excludeClientErrors

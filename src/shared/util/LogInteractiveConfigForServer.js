@@ -61,7 +61,7 @@ logConfig.get('/log/config', (req, res, next) => {
           <td>Level</td>
         </tr>`;
 
-  const logLevelsReversSeverity = config.logLevels.concat().reverse();
+  const logLevelsReversSeverity = config.logLevels.concat();
   for (const filterName in config.filter) {
     const filterLevel = config.filter[filterName];
     const filterNote  = Log.filter(filterName).note;
@@ -273,7 +273,7 @@ dd {
   text-align:left;
   padding:7px;
   font-size:12px;
-  font-family:Helvetica;
+  font-family:monospace;
   font-weight:bold;
   color:#000000;
 }

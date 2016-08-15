@@ -47,7 +47,7 @@ const muiThemeOverrides = {
     // ? desktopSubheaderHeight: 24, // ... this one impacts Snackbar height
     // ? desktopToolbarHeight: 8,
 
-    iconSize: 15,
+    iconSize: 24, // was using 15, the 24 makes spacing of toolbar icons better
 
     // from: material-ui/lib/styles/baseThemes/lightBaseTheme.js ...
     // iconSize: 24,
@@ -68,7 +68,7 @@ const muiThemeOverrides = {
   // fontFamily: 'Roboto, sans-serif',
 
   palette: {
-    primary1Color:       colors.teal900,  // x teal500
+    primary1Color:       colors.teal900,        // x teal500
     primary2Color:       colors.amber700,       // x teal700
     // primary3Color:       colors.grey400,
     accent1Color:        colors.deepOrangeA200, // x deepOrangeA200
@@ -76,7 +76,7 @@ const muiThemeOverrides = {
     // accent3Color:        colors.grey500,
     // textColor:           colors.darkBlack,
     // alternateTextColor:  colors.white,
-    canvasColor:         colors.teal100,
+    canvasColor:         colors.white,          // x NO LIKE teal100
     // borderColor:         colors.grey300,
     pickerHeaderColor:   colors.teal900,  // x teal500
     // shadowColor:         colors.fullBlack,

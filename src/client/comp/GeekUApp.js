@@ -1,7 +1,8 @@
 'use strict';
 
 import React              from 'react';
-import ReduxUtil          from '../util/ReduxUtil';
+import * as ReactRedux    from 'react-redux';
+import autobind           from 'autobind-decorator';
 import AppBar             from 'material-ui/lib/app-bar';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';
@@ -10,107 +11,143 @@ import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
 import Paper              from 'material-ui/lib/paper';
 import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
-import UserMsg            from '../comp/UserMsg';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
-import {AC}               from '../state/actions';
+import StudentsView       from './StudentsView';
+import UserMsg            from './UserMsg';
+import Alert              from './Alert';
+import {AC}               from '../actions';
+import LeftNav            from './LeftNav';
+import EditSelCrit        from './EditSelCrit';
+import SelCrit            from '../../shared/util/SelCrit';
+
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend        from 'react-dnd-html5-backend';
+
 
 /**
  * Top-Level GeekUApp component.
  */
-const GeekUApp = ReduxUtil.wrapCompWithInjectedProps(
 
-  class GeekUApp extends React.Component { // component definition
-    constructor(props, context) {
-      super(props, context);
-      autoBindAllMethods(this);
-    }
-  
-    render() {
-      const { sampleMessageFn, sampleMultiMessageFn, retrieveStudentsFn, aggregateTestFn, sampleMessageWithUserActionFn } = this.props
+@DragDropContext(HTML5Backend)
 
-      return <div className="page">
-        <AppBar className="page-header"
-                title={
-                  <span>
-                    <i>GeekU</i>
-                      {/* 
-                      <Tabs style={{
-                      width: '90%'
-                      }}>
-                      <Tab label="Students (Jane)"/>
-                      <Tab label="Courses (CS-101)"/>
-                      </Tabs>
-                      */}
-                  </span>}
-                iconElementRight={
-                  <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
-                            targetOrigin={{vertical: 'top', horizontal: 'right', }}
-                            anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
-                    <MenuItem primaryText="Refresh"/>
-                    <MenuItem primaryText="Help"/>
-                    <MenuItem primaryText="Sign Out"/>
-                    <MenuItem primaryText="Sample Message"                   onTouchTap={sampleMessageFn}/>
-                    <MenuItem primaryText="Sample Multi-Message"             onTouchTap={sampleMultiMessageFn}/>
-                    <MenuItem primaryText="Sample Message with User Action"  onTouchTap={sampleMessageWithUserActionFn}/>
-                    <MenuItem primaryText="Test Student Retrieval"           onTouchTap={retrieveStudentsFn}/>
-                    <MenuItem primaryText="Aggregate Test"                   onTouchTap={aggregateTestFn}/>
-                  </IconMenu>}/>
-        <UserMsg/>
-      </div>;
-    }
-  }, // end of ... component definition
+@ReactRedux.connect( (appState, ownProps) => {
+  return {
+    selectedView:        appState.selectedView,
+    selectedStudent: appState.studentsView.selectedStudent,
+  }
+})
 
-  { // component property injection
-    mapStateToProps(appState, ownProps) {
-      return {
-      }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        sampleMessageFn: () => { dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`)) },
-        sampleMultiMessageFn: () => { dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]) },
-        sampleMessageWithUserActionFn: () => { dispatch( sampleMessageWithUserAction() )},
-        retrieveStudentsFn: () => { dispatch( AC.retrieveStudents({l8tr: 'ToDo'}) ) },
-        aggregateTestFn: () => { dispatch( aggregateTest() ) },
-      }
-    }
-  }); // end of ... component property injection
+@autobind
 
-// define expected props
-GeekUApp.propTypes = {
-  sampleMessageFn:               React.PropTypes.func, // .isRequired - injected via self's wrapper
-  sampleMultiMessageFn:          React.PropTypes.func, // .isRequired - injected via self's wrapper
-  sampleMessageWithUserActionFn: React.PropTypes.func, // .isRequired - injected via self's wrapper
-  retrieveStudentsFn:            React.PropTypes.func, // .isRequired - injected via self's wrapper
-  aggregateTestFn:               React.PropTypes.func, // .isRequired - injected via self's wrapper
-}
+export default class GeekUApp extends React.Component {
 
+  static propTypes = { // expected component props
+  }
 
-export default GeekUApp;
+  constructor(props, context) {
+    super(props, context);
+  }
 
-function aggregateTest() {
-  const selCrit = {
-    l8tr: 'Aggregate Test',
-  };
+  handleSelectedView(page) {
+    const p = this.props;
+    p.dispatch( page === 'Students' ? AC.selectStudentsView() : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
+  }
 
-  // here is the redux-batched-updates enhanced reducer ( THIS WORKS ... FINALLY )
-  return [
-    AC.retrieveStudents.complete(selCrit, [7, 8, 9]),
-    AC.userMsg.display('It FINALLY Works!'),
-  ];
+  tempAlert() {
+    const p = this.props;
+    const directive1 = {
+      title: 'Test Alert 1',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option 1',  action: () => p.dispatch( AC.userMsg.display('User chose Option 1') ) },
+        {txt: 'Option 2',  action: () => p.dispatch( AC.userMsg.display('User chose Option 2') ) },
+        {txt: 'Alert A', action: () => Alert.display(directiveA) },
+        {txt: 'Cancel' },
+      ]
+    };
+    const directiveA = {
+      title: 'Test Alert A',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option A', action: () => p.dispatch( AC.userMsg.display('User chose Option A') ) },
+        {txt: 'Option B', action: () => p.dispatch( AC.userMsg.display('User chose Option B') ) },
+        {txt: 'Cancel' },
+      ]
+    };
+    const directiveX = {
+      title: 'Test Alert X',
+      msg:   'This is a test of our Alert Dialog!',
+      actions: [  
+        {txt: 'Option X', action: () => p.dispatch( AC.userMsg.display('User chose Option X') ) },
+        {txt: 'Option Y', action: () => p.dispatch( AC.userMsg.display('User chose Option Y') ) },
+        {txt: 'Cancel' },
+      ]
+    };
+    Alert.display(directive1);
+    Alert.display(directiveX); // test multiple concurrent alerts
+    Alert.display({msg: <span style={{color: 'red'}}>This is a simple Alert</span>});
+  }
 
-  // test a batch of actions that include an async action
-  // ERROR: GeekU Development Error - GeekU action batching does NOT support thunks (retrieveStudents), because batching is handled at the reducer-level, rather than the dispatching-level
-  return [
-    AC.retrieveStudents(selCrit),
-    AC.userMsg.display('Finally It Worked'),
-  ];
-}
+  tempSampleMsg() {
+    const p = this.props;
+    p.dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`) );
+  }
 
-function sampleMessageWithUserAction() {
-  return AC.userMsg.display('Msg with User Action!', 
-                            {
-                              txt:      'details',
-                              callback: () => alert('here are the details: bla bla bla POOP')
-                            });
+  tempSampleMultiMsg() {
+    const p = this.props;
+    p.dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]);
+  }
+
+  tempSampleMsgWithUserAction() {
+    const p = this.props;
+    p.dispatch( AC.userMsg.display('Msg with User Action!', 
+                                   {
+                                     txt:      'details',
+                                     callback: () => alert('here are the details: bla bla bla')
+                                   }) );
+  }
+
+  render() {
+    const p = this.props;
+
+    // studentNum is used as a back-up if name is NOT retrieved (studentNum is ALWAYS returned)
+    const selectedStudentName = p.selectedStudent ? `(${p.selectedStudent.firstName || p.selectedStudent.lastName || p.selectedStudent.studentNum})` : '';
+
+    return <div className="app">
+      <AppBar className="app-header"
+              title={
+                <table>
+                  <tbody>
+                    <tr>
+                      <td><i>GeekU</i></td>
+                      <td>
+                        <Tabs value={p.selectedView}
+                              onChange={this.handleSelectedView}>
+                          <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                          <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
+                        </Tabs>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>}
+              onLeftIconButtonTouchTap={()=>LeftNav.open()}
+              iconElementRight={
+                <IconMenu iconButtonElement={ <IconButton><MoreVertIcon/></IconButton> }
+                          targetOrigin={{vertical: 'top', horizontal: 'right', }}
+                          anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                  <MenuItem primaryText="Refresh"/>
+                  <MenuItem primaryText="Help"/>
+                  <MenuItem primaryText="Sign Out"/>
+
+                  <MenuItem primaryText="Sample Alerts"                    onTouchTap={this.tempAlert}/>
+                  <MenuItem primaryText="Sample Message"                   onTouchTap={this.tempSampleMsg}/>
+                  <MenuItem primaryText="Sample Multi-Message"             onTouchTap={this.tempSampleMultiMsg}/>
+                  <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
+                </IconMenu>}/>
+      <LeftNav/>
+      <StudentsView/>
+      <EditSelCrit/>
+      <UserMsg/>
+      <Alert/>
+    </div>;
+  }
 }

@@ -1,64 +1,101 @@
 'use strict';
 
 import React              from 'react';
-import ReduxUtil          from '../util/ReduxUtil';
-import autoBindAllMethods from '../../shared/util/autoBindAllMethods';
+import * as ReactRedux    from 'react-redux';
+import autobind           from 'autobind-decorator';
 import Snackbar           from 'material-ui/lib/snackbar';
-import {AC}               from '../state/actions'
+import assert             from 'assert';
+import {AC}               from '../actions'
+
 
 /**
  * Utility component to display a User Message (using the Material UI Snackbar).
  */
-const UserMsg = ReduxUtil.wrapCompWithInjectedProps(
 
-  class UserMsg extends React.Component { // component definition
+@ReactRedux.connect( (appState, ownProps) => {
+  const open       =  appState.userMsg.length>0;
+  const userMsg    =  appState.userMsg[0];
+  const msg        =  open ? userMsg.msg : '';
+  const userAction =  open ? userMsg.userAction : null;
+  const actionTxt  =  userAction ? userAction.txt      : null;
+  const actionFn   =  userAction ? userAction.callback : null;
+  return {
+    open,
+    msg,
+    actionTxt,
+    actionFn,
+  };
+})
 
-    constructor(props, context) {
-      super(props, context);
-      autoBindAllMethods(this);
-    }
+@autobind
 
-    render() {
-      const { open, msg, actionTxt, actionFn, closeFn } = this.props
-      return <Snackbar open={open}
-                       message={msg}
-                       action={actionTxt}
-                       onActionTouchTap={actionFn}
-                       autoHideDuration={4000}
-                       onRequestClose={closeFn}/>;
-    }
+export default class UserMsg extends React.Component {
 
-  }, // end of ... component definition
+  static propTypes = { // expected component props
+  }
 
-  { // component property injection
-    mapStateToProps(appState, ownProps) {
-      const open       =  appState.userMsg.length>0;
-      const userMsg    =  appState.userMsg[0];
-      const msg        =  open ? userMsg.msg : '';
-      const userAction =  open ? userMsg.userAction : null;
-      const actionTxt  =  userAction ? userAction.txt      : null;
-      const actionFn   =  userAction ? userAction.callback : null;
-      return {
-        open,
-        msg,
-        actionTxt,
-        actionFn,
-      }
-    },
-    mapDispatchToProps(dispatch, ownProps) {
-      return {
-        closeFn: (reason) => { if (reason==='timeout') dispatch( AC.userMsg.close() ) }, // reason can be: 'timeout' or 'clickaway'
-      }
-    }
-  }); // end of ... component property injection
+  constructor(props, context) {
+    super(props, context);
 
-// define expected props
-UserMsg.propTypes =  {
-  open:       React.PropTypes.bool,    // .isRequired - injected via self's wrapper
-  msg:        React.PropTypes.string,  // .isRequired - injected via self's wrapper
-  actionTxt:  React.PropTypes.string,  //               injected via self's wrapper
-  actionFn:   React.PropTypes.func,    //               injected via self's wrapper
-  closeFn:    React.PropTypes.func     // .isRequired - injected via self's wrapper
+    // keep track of our one-and-only instance
+    assert(!_singleton, "<UserMsg> only ONE UserMsg is needed and therefore may be instantiated within the app.");
+    _singleton = this;
+  }
+
+
+  /**
+   * Display a user message programmatically.
+   *
+   * NOTE: An alternate technique to activate a user message is through
+   *       the Action Creator AC.userMsg.display(msg, userAction).  This 
+   *       may be preferred when:
+   *         a) additional actions need to be 'batched' with the user
+   *            message, and
+   *         b) when you have access to the dispatcher.
+   *
+   * @param {string} msg the message to display.
+   * @param {Obj} userAction an optional structure defining a user click action:
+   *                userAction: {  // optional action that can be activated by the user
+   *                  txt:      '',
+   *                  callback: function(event)
+   *                }
+   * @public
+   */
+  static display(msg, userAction) {
+    // validate that an <UserMsg> has been instantiated
+    assert(_singleton, "UserMsg.display() ... ERROR: NO <UserMsg> has been instantiated within the app.");
+
+    // pass-through to our instance method
+    _singleton.display(msg, userAction);
+  }
+
+
+  /**
+   * display() - internal instance method that activates the user message.
+   */
+  display(msg, userAction) {
+    const p = this.props;
+    p.dispatch( AC.userMsg.display(msg, userAction) );
+  }
+
+
+  handleClose(reason) { // reason can be: 'timeout' or 'clickaway'
+    const p = this.props;
+    if (reason==='timeout')
+      p.dispatch( AC.userMsg.close() );
+  }
+
+  render() {
+    const p = this.props;
+    return <Snackbar open={p.open}
+                     message={p.msg}
+                     action={p.actionTxt}
+                     onActionTouchTap={p.actionFn}
+                     autoHideDuration={4000}
+                     onRequestClose={this.handleClose}/>;
+  }
+
 }
 
-export default UserMsg;
+// keep track of our one-and-only instance
+let _singleton = null;

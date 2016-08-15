@@ -15,6 +15,7 @@ import ReactDOM          from 'react-dom';
 import MuiThemeProvider  from 'material-ui/lib/MuiThemeProvider';
 import {Provider}        from 'react-redux';
 import GeekUApp          from './comp/GeekUApp';
+import {AC}              from './actions';
 
 const log = new Log('startup');
 
@@ -22,7 +23,7 @@ const log = new Log('startup');
 const appStore = createAppStore();
 
 // emit our current Log Configuration
-log.info(()=>`Initial Log Configuration:\n${JSON.stringify(Log.config(), null, 2)}`);
+log.info(()=>`Initial Log Configuration:\n${FMT(Log.config())}`);
 
 // render our GeekUApp react component, along with our app-wide support components
 log.info(()=>'render our GeekUApp react component, along with our app-wide support components');
@@ -32,3 +33,6 @@ ReactDOM.render(<Provider store={appStore}>
                   </MuiThemeProvider>
                 </Provider>,
                 document.getElementById('app'));
+
+// initiate our start-up bootstrap retrievals
+appStore.dispatch( AC.retrieveFilters() );

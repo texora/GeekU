@@ -8,51 +8,45 @@ const students = express.Router();
 
 
 //***************************************************************************************************
-//*** retrieve a list of students: /api/students[? fields=f1,f2,f3 & filter={mongoQuery}]
+//*** retrieve a list of students: /api/students[?query-string ... see below]
 //***
-//***   - use optional "fields" query string to fine tune fields to emit
-//***     * specify comma delimited list of field names
-//***       ... see: studentsMeta.validFields for valid field names
-//***     * DEFAULT: studentsMeta.defaultDisplayFields will be emitted
+//***   - by default, all students will be retrieved, in random order, emitting fields defined in
+//***     studentsMeta.defaultDisplayFields.
 //***
-//***   - use optional "filter" query string to supply selection criteria
-//***     * specify a JSON structure conforming to the MongoDB query structure
-//***       ... see: https://docs.mongodb.org/manual/tutorial/query-documents/
-//***       ... ex:  /api/students?filter={"_id":{"$in":["S-001002","S-001989"]}}
-//***                ... returns info from two students (S-001002 AND S-001989)
-//***       ... ex:  /api/students?filter={"gender":"M","addr.state": "Missouri"}
-//***                ... returns all male students from Missouri
-//***                    NOTE: always protect data (like the "&" above) by using UrlEncode()
-//***     * DEFAULT: return ALL students
+//***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
+//***
+//***     This is a common structure for ALL DB retrievals
+//***      ... see: src/client/state/appState.md for details
+//***
+//***     NOTE: Client's should always protect the data (above) by using the
+//***           encodeJsonQueryStr(queryName, jsonObj) utility.
+//***           ... src/shared/util/QueryStrUtil.js
 //***
 //***************************************************************************************************
 
 students.get('/api/students', (req, res, next) => {
 
-  // define our fields to display (a mongo projection) 
-  // tweaked from the optional client-supplied "fields" query string
-  // ... ex: /api/students?fields=a,b,c
-  const displayFields = MongoUtil.mongoFields(studentsMeta.validFields,
-                                              studentsMeta.defaultDisplayFields,
-                                              req.query.fields);
+  // define our optional top-level selCrit from the request object
+  const selCrit = MongoUtil.selCrit(req, studentsMeta);
 
-  // define our mongo query object
-  // tweaked from the optional client-supplied "query" query string
-  // ... ex: /api/students?filter={"_id":{"$in":["CS-1110","CS-1112"]}}
-  const mongoQuery = MongoUtil.mongoQuery(req.query.filter);
+  // force studentNum to always be emitted
+  if (!selCrit.mongoFields.studentNum) {
+    selCrit.mongoFields.studentNum = true;
+  }
 
   // perform retrieval
   const studentsColl = req.geekU.db.collection('Students');
-  studentsColl.find(mongoQuery, displayFields)
-             .toArray()
-             .then( students => {
-               res.geekU.send(students);
-             })
-             .catch( err => {
-               // NOTE: unsure if we ALWAYS want to cover up technical message
-               //       ... it may be due to bad interpretation of mongoQuery
-               throw err.defineClientMsg("Issue encountered in DB processing of /api/students");
-             });
+  studentsColl.find(selCrit.mongoFilter, selCrit.mongoFields)
+              .sort(selCrit.mongoSort)
+              .toArray()
+              .then( students => {
+                res.geekU.send(students);
+              })
+              .catch( err => {
+                // communicate error ... sendError() will also log as needed
+                res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/students"),
+                                    req);
+              });
 });
 
 
@@ -102,7 +96,9 @@ students.get('/api/students/:studentNum', (req, res, next) => {
     }
   })
   .catch( err => {
-    throw err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum");
+    // communicate error ... sendError() will also log as needed
+    res.geekU.sendError(err.defineClientMsg("Issue encountered in DB processing of /api/students/:studentNum"),
+                        req);
   });
 
 });

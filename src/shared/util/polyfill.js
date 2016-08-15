@@ -14,6 +14,10 @@ import './ErrorExtensionPolyfill';
 // fetch polyfill ... serves BOTH browser and node
 import 'isomorphic-fetch';
 
+import formatItem from './formatItem';
+
+const root = typeof(window) === 'undefined' ? global : window;
+
 // geekUFetch: a better fetch interpreting the specifics of GeekU Service API
 //  - is isomorphic (works BOTH in browser/node)
 //  - interprets the specific structure of the GeekU app
@@ -23,8 +27,6 @@ import 'isomorphic-fetch';
 //        in catastrophic cases (setup request, or network error, etc.).
 //    ... So if the service request completes, the then(resp) clause is invoked!
 //    ... We interpret this and throw appropriate errors filled with app specific details!
-
-const root = typeof(window) === 'undefined' ? global : window;
 
 if (!root.geekUFetch) {
   root.geekUFetch = function(...args) {
@@ -60,5 +62,25 @@ if (!root.geekUFetch) {
         resp.payload = jsonPayload.payload;
         return resp;
       });
+  };
+}
+
+// FMT(item): Format the supplied item, suitable for human comsumption.  A
+//            variety of different data types are supported.
+//            Convenient global alias of formatItem(item), because it is so heavly used.
+
+if (!root.FMT) {
+  root.FMT = formatItem;
+}
+
+// Array.prototype.prune(callback): return a new array, pruning elements where callback returns true.
+if (!Array.prototype.prune) {
+  Array.prototype.prune = function(callback) {
+    return this.reduce( (retArr, item) => {
+      if (!callback(item)) {
+        retArr.push(item);
+      }
+      return retArr;
+    }, []);
   };
 }

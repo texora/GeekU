@@ -1,8 +1,9 @@
 'use strict';
 
 import '../../../shared/util/polyfill';
-import expect                 from 'expect';
-import {AT, AC, getActionLog} from '../actions';
+import expect       from 'expect';
+import {AT, AC}     from '../actions';
+import getActionLog from '../getActionLog';
 
 
 // ***
@@ -83,36 +84,62 @@ describe('action-creator tests: AC.userMsg', () => {
 
 describe('insure AT/AC constants utilize federated namespace', () => {
 
-  it("AT.retrieveStudents.start same-as AT['retrieveStudents.start']", () => {
-    expect(AT.retrieveStudents.start)
-             .toBe(AT['retrieveStudents.start']);
+  // NOTE: Utilize a AT/AC that has an intermediate placeholder node
+  //       ... detailStudent:                    thunk
+  //           detailStudent.retrieve:           intermediate placeholder node
+  //           detailStudent.retrieve.start:     action-object
+  //           detailStudent.retrieve.complete:  action-object
+  //           detailStudent.retrieve.fail:      action-object
+
+  it("AT.detailStudent same-as AT['detailStudent'] (a thunk)", () => {
+    expect(AT.detailStudent)
+             .toBe(AT['detailStudent'])
+             .toBeA('object') // a String object
+             .toEqual('detailStudent');
   });
 
-  it("AT.retrieveStudents.start same-as 'retrieveStudents.start'", () => {
-    expect(AT.retrieveStudents.start)
-             .toEqual('retrieveStudents.start')
-             .toNotBe('retrieveStudents.start');
+  it("AC.detailStudent same-as AC['detailStudent'] (a thunk)", () => {
+    expect(AC.detailStudent)
+             .toBe(AC['detailStudent'])
+             .toBeA('function'); // a thunk
   });
 
-  it("AC.retrieveStudents.start same-as AC['retrieveStudents.start']", () => {
-    expect(AC.retrieveStudents.start)
-             .toBe(AC['retrieveStudents.start']);
+  it("AT.detailStudent.retrieve same-as AT['detailStudent.retrieve'] (an intermediate node)", () => {
+    expect(AT.detailStudent.retrieve)
+             .toBe(AT['detailStudent.retrieve'])
+             .toBeA('object');  // an intermediate node
   });
 
-  it("AT.retrieveStudents same-as 'retrieveStudents' (dual usage intermediate node)", () => {
-    expect(AT.retrieveStudents)
-             .toEqual('retrieveStudents')
-             .toNotBe('retrieveStudents');
+  it("AC.detailStudent.retrieve same-as AC['detailStudent.retrieve'] (an intermediate node)", () => {
+    expect(AC.detailStudent.retrieve)
+             .toBe(AC['detailStudent.retrieve'])
+             .toBeA('object');  // an intermediate node
   });
+
+  // check ALL 3 of the bottom nodes
+  for (const node of ['start', 'complete', 'fail']) {
+    it(`AT.detailStudent.retrieve.${node} same-as AT['detailStudent.retrieve.${node}'] (an action-object)`, () => {
+      expect(AT.detailStudent.retrieve[node])
+               .toBe(AT[`detailStudent.retrieve.${node}`])
+               .toBeA('object') // a String object
+               .toEqual(`detailStudent.retrieve.${node}`);
+    });
+
+    it(`AC.detailStudent.retrieve.${node} same-as AC['detailStudent.retrieve.${node}'] (an action-object)`, () => {
+      expect(AC.detailStudent.retrieve[node])
+               .toBe(AC[`detailStudent.retrieve.${node}`])
+               .toBeA('function');  // an action-creator
+    });
+  }
 
 });
 
 
 describe('test getActionLog(actionType)', () => {
 
-  it('getActionLog() should work equally well sith String vs. string', () => {
-    expect(getActionLog('retrieveStudents.start'))
-           .toBe(getActionLog(new String('retrieveStudents.start')));
+  it('getActionLog() should work equally well with String vs. string', () => {
+    expect(getActionLog('selCrit.edit.close'))
+      .toBe(getActionLog(new String('selCrit.edit.close')));
   });
 
 });

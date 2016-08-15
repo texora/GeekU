@@ -14,6 +14,7 @@
   - [Format Configuration](#format-configuration)
   - [Level Configuration](#level-configuration)
   - [Output Handler](#output-handler)
+- [Full API](#full-api)
 - [Interactive Filter Configuration](#interactive-filter-configuration)
   - [Server Filter Configuration](#server-filter-configuration)
   - [Browser Filter Configuration](#browser-filter-configuration)
@@ -48,12 +49,11 @@ Log levels define the severity of a probe.  By default the following
 levels exist in order of severity:
 
 ```javascript
-  Log.TRACE
-  Log.DEBUG
-  Log.INFO
-  Log.WARN
   Log.ERROR
-  Log.FATAL
+  Log.WARN
+  Log.INFO
+  Log.DEBUG
+  Log.TRACE
 ```
 
 The set of Log levels are configurable, so you can choose different
@@ -459,13 +459,11 @@ format:
   },
 
   logLevels: [      // log levels (in order of severity) ... out-of-box levels shown
-    "TRACE",
-    "DEBUG",
-    "INFO",
-    "WARN",
-    "ERROR",
-    "FATAL",
-    "OFF"
+    'ERROR',
+    'WARN',
+    '*INFO',
+    'DEBUG',
+    'TRACE',
   ],
 
   outputHandler: function(msgProbe, context): void  // output handler of completed msg probe (defaults to console.log())
@@ -607,26 +605,26 @@ Log.config({
 
 **Before:**
 ```
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
-      Enter Transaction
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow:
+        Enter Transaction
 
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
-      Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow:
+        Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
 
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow:
-      Exit Transaction
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow:
+        Exit Transaction
 ```
 
 **After:**
 ```
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
-      Enter Transaction
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+        Enter Transaction
 
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
-      Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+        Success - Sending Payload  (NOTE: To see payload enable Log: TRACE)
 
-FLOW  2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
-      Exit Transaction
+DEBUG   2016-04-26 13:42:10 GeekU.ProcessFlow Trans(transId: 417sBjdxb, userId: kbridges, url: /api/courses/CS-1132)):
+        Exit Transaction
 ```
 
 
@@ -657,17 +655,17 @@ aspects will be dynamically introduced:
 ```
 
 The following example basically defines the out-of-box levels, but
-replaces FATAL with VERBOSE:
+introduces a new INSPECT level:
 
 ```javascript
 Log.config({ 
   logLevels: [
-    'TRACE',
-    'DEBUG',
-    '*INFO',
-    'WARN',
     'ERROR',
-    'VERBOSE'
+    'WARN',
+    '*INFO',
+    'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
+    'DEBUG',
+    'TRACE',
   ]
 });
 ```
@@ -693,6 +691,39 @@ string.
 
 The context paramater is a log context object containing the level,
 levelName, and filterName.
+
+
+
+
+## Full API
+
+```javascript
+
+new Log(filterName)   // construct a new Log instance
+
+log(level, msgFn [, obj]): void   // log msg/obj at specified level
+
+// CONVENIENT log() aliases (assumes default config)
+error(msgFn [, obj]): void   // log msg/obj at ERROR level
+warn (msgFn [, obj]): void   // log msg/obj at WARN  level
+info (msgFn [, obj]): void   // log msg/obj at INFO  level
+debug(msgFn [, obj]): void   // log msg/obj at DEBUG level
+trace(msgFn [, obj]): void   // log msg/obj at TRACE level
+
+isLevelEnabled(level [, err]): boolean   // is supplied level enabled for self's filter
+
+// CONVENIENT isLevelEnabled() aliases (assumes default config)
+isErrorEnabled([err]): boolean   // is ERROR level enabled for self's filter
+isWarnEnabled ([err]): boolean   // is WARN  level enabled for self's filter
+isInfoEnabled ([err]): boolean   // is INFO  level enabled for self's filter
+isDebugEnabled([err]): boolean   // is DEBUG level enabled for self's filter
+isTraceEnabled([err]): boolean   // is TRACE level enabled for self's filter
+
+static post(msg, obj): void   // unconditionally emit a message probe in our log
+
+static config([config]): cur-config  // retrieve and/or chage Log configuration
+
+```
 
 
 ## Interactive Filter Configuration
