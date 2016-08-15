@@ -49,7 +49,7 @@ export default class GeekUApp extends React.Component {
 
   handleSelectedView(page) {
     const p = this.props;
-    p.dispatch( page === 'Students' ? AC.selectStudentsView() : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
+    p.dispatch( page === 'Students' ? AC.selectStudentsView(null, 'activate') : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
   }
 
   tempAlert() {

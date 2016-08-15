@@ -81,14 +81,17 @@ const genesis = {
 
 
   // ***
-  // *** activate the Students View (optionally retrieving students via selCrit directive)
+  // *** retrieve and/or activate the Students View
   // ***
-  //       AC.selectStudentsView([selCrit])
-  //          - SelCrit obj: activate the Students View ... conditionally retrieving Students when different selCrit (or out-of-date)
-  //          - null:        activate the Students View (in it's current state) ... NO Students retrieval
-  //          - 'refresh':   NO activate ... simply refresh Students retrieval (with same selCrit)
-  //          ... see: selectStudentsViewThunk.js for full documentation
-  'selectStudentsView':                  { params: ['selCrit'], thunk: selectStudentsViewThunk },
+  //       AC.selectStudentsView(retrieve, activate)
+  //        * retrieve:        the retrieval directive, one of:
+  //          - null:          no retrieval at all (DEFAULT)
+  //          - selCrit:       conditionally retrieve Students when different from StudentsView selCrit (or out-of-date)
+  //          - 'refresh':     unconditionally refresh StudentsView with latest Students (using view's current selCrit)
+  //        * activate:        the activate directive, one of:
+  //          - 'activate':    activate/visualize StudentsView (DEFAULT for all but 'refresh' retrieval)
+  //          - 'no-activate': DO NOT activate                 (DEFAULT for 'refresh' retrieval)
+  'selectStudentsView':                  { params: ['retrieve', 'activate'], thunk: selectStudentsViewThunk },
   'selectStudentsView.activate':         { params: [] },
   'selectStudentsView.retrieveStart':    { params: ['selCrit'] },          // conditionally emitted when retrieval needed
   'selectStudentsView.retrieveComplete': { params: ['selCrit', 'items'] }, // ditto

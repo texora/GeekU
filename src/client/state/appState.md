@@ -100,7 +100,7 @@ selCrit: {
   _id:    "shortId",            // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
   key:    "shortId",            // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
   userId: "common",             // the user the selCrit belongs to ('common' for all)
-  target: "Students"/"Courses", // identifies the targeted mongo collection
+  target: "Students"/"Courses", // identifies the targeted mongo collection (also referred to as itemsType in client view)
   lastDbModDate: date,          // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
   name:   "Female students from MO/IN with GPA over 3.65",

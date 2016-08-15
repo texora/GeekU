@@ -9,38 +9,56 @@ import assert                from 'assert';
 
 
 /**
- * AC.selectStudentsView(selCrit): activate the Students View,
- * optionally retrieving students via selCrit directive.
+ * AC.selectStudentsView(retrieve, activate): retrieve and/or activate the Students View.
  *
- * @param {object or string} selCrit the OPTIONAL selection criteria
- * used to reflect in the Students View.
- *  - SelCrit obj: activate the Students View ... conditionally retrieving Students when different selCrit (or out-of-date)
- *  - null:        activate the Students View (in it's current state) ... NO Students retrieval
- *  - 'refresh':   NO activate ... simply refresh Students retrieval (with same selCrit)
+ * @param {SelCrit or string} retrieve the retrieval directive, one of:
+ *   - null:      no retrieval at all (DEFAULT)
+ *   - selCrit:   conditionally retrieve Students when different from StudentsView selCrit (or out-of-date)
+ *   - 'refresh': unconditionally refresh StudentsView with latest Students (using view's current selCrit)
+ *
+ * @param {string} activate the activate directive, one of:
+ *   - 'activate':    activate/visualize StudentsView (DEFAULT for all but 'refresh' retrieval)
+ *   - 'no-activate': DO NOT activate                 (DEFAULT for 'refresh' retrieval)
  */
-const [selectStudentsViewThunk, thunkName, log] = promoteThunk('selectStudentsView', (selCrit) => {
+const [selectStudentsViewThunk, thunkName, log] = promoteThunk('selectStudentsView', (retrieve=null,
+                                                                                      activate=selCrit!=='refresh' ? 'activate' : 'no-activate') => {
   
   return (dispatch, getState) => { // function interpreted by redux-thunk middleware
 
     const appState = getState();
 
-    // adjust the supplied selCrit in support of various directives
-    log.debug(()=>`analyzing/adjusting supplied selCrit: ${FMT(selCrit)}`);
-    const shouldActivate = selCrit !== 'refresh'; // only time we do not activate is on a refresh request
-    selCrit = (selCrit === 'refresh')
-                ? appState.studentsView.selCrit // refresh current view (can be null if never retrieved)
-                : SelCrit.isFullyEqual(selCrit, appState.studentsView.selCrit)
-                    ? null     // same selCrit as in view (no retrieval needed)
-                    : selCrit; // a different selCrit from our view
+    log.debug(()=>`Entering AC.selectStudentsView(retrieve: ${FMT(retrieve)}, activate: ${FMT(activate)})`);
 
-    // when NO retrieval is necessary, simply activate our view (conditionally), and we are done
+    // validate supplied parameters
+    assert(retrieve === null      ||
+           retrieve === 'refresh' ||
+           retrieve.target,
+           `AC.selectStudentsView() Invalid retrieve param: ${FMT(retrieve)}`);
+
+    assert(activate === 'activate' ||
+           activate === 'no-activate',
+           `AC.selectStudentsView() Invalid activate param: ${FMT(activate)}`);
+
+
+    // interpret activate directive
+    const shouldActivate = activate === 'activate';
+
+
+    // interpret the retrieval directive
+    const selCrit = (retrieve === 'refresh')
+                      ? appState.studentsView.selCrit // refresh current view (can be null if never retrieved)
+                      : SelCrit.isFullyEqual(retrieve, appState.studentsView.selCrit)
+                          ? null      // same selCrit as in view (no retrieval needed)
+                          : retrieve; // a different selCrit from our view
+
+    // when NO retrieval is necessary, simply activate our view, and we are done
     if (!selCrit) {
       if (shouldActivate) {
-        log.debug(()=>'no retrieval necessary, simply activate our view');
+        log.debug(()=>'no retrieval necessary, simply activating our view');
         dispatch( AC[thunkName].activate() );
       }
       else {
-        log.debug(()=>'no retrieval or activation necessary, no-oping');
+        throw new Error(`ERROR: AC.selectStudentsView() parameters define NOTHING to do (i.e. retrieve or activate) ... retrieve: ${FMT(retrieve)}, activate: ${FMT(activate)}`);
       }
       return Promise.resolve(); // supports promise chaining (from dispatch invocation)
     }

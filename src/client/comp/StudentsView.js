@@ -82,25 +82,25 @@ export default class StudentsView extends React.Component {
 
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.selectStudentsView('refresh') );
+    p.dispatch( AC.selectStudentsView('refresh', 'no-activate') );
   }
 
   handleEditSelCrit() {
     const p = this.props;
-    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.selectStudentsView(changedSelCrit));
+    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.selectStudentsView(changedSelCrit, 'no-activate'));
   }
 
   handleSaveSelCrit() {
     const p = this.props;
     p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
      .then( savedSelCrit => {                // SYNC our view
-       p.dispatch( AC.selectStudentsView(savedSelCrit) )
+       p.dispatch( AC.selectStudentsView(savedSelCrit, 'no-activate') )
      });
   }
 
   handleNewSelCrit() {
     // start an edit session of a new 'Students' selCrit
-    EditSelCrit.edit('Students', newSelCrit => AC.selectStudentsView(newSelCrit) );
+    EditSelCrit.edit('Students', newSelCrit => AC.selectStudentsView(newSelCrit, 'no-activate'));
   }
 
   handleDuplicateSelCrit() {
@@ -110,7 +110,7 @@ export default class StudentsView extends React.Component {
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
 
     // start an edit session with this dup selCrit
-    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.selectStudentsView(changedDupSelCrit) );
+    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.selectStudentsView(changedDupSelCrit, 'no-activate'));
   }
 
   handleDeleteSelCrit() {

@@ -115,13 +115,13 @@ export default class LeftNav extends React.Component {
     if (!selCrit) {
       // start an edit session of a new selCrit
       EditSelCrit.edit('Students', (newSelCrit) => {
-        return AC.selectStudentsView(newSelCrit);
+        return AC.selectStudentsView(newSelCrit, 'activate');
       });
     }
 
     // use selected selCrit
     else {
-      p.dispatch( AC.selectStudentsView(selCrit) );
+      p.dispatch( AC.selectStudentsView(selCrit, 'activate') );
     }
 
   }
@@ -158,7 +158,7 @@ export default class LeftNav extends React.Component {
       // on edit change ... issue re-retrieval IF view is currently based on this selCrit
       const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
       if (selCritDisplayedInView) {
-        return AC.selectStudentsView(selCrit); // side-effect of refactor is it will select view too :-(
+        return AC.selectStudentsView(selCrit, 'no-activate');
       }
       else {
         return null;
@@ -190,7 +190,7 @@ export default class LeftNav extends React.Component {
      .then( savedSelCrit => {              // SYNC our view when using same selCrit
         const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === savedSelCrit.key;
         if (selCritDisplayedInView) {
-          p.dispatch( AC.selectStudentsView(savedSelCrit) ) // side-effect of refactor is it will select view too :-(
+          p.dispatch( AC.selectStudentsView(savedSelCrit, 'no-activate') )
         }
       });
   }
@@ -221,7 +221,7 @@ export default class LeftNav extends React.Component {
 
     // start an edit session with this selCrit
     EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-      return AC.selectStudentsView(changedDupSelCrit);
+      return AC.selectStudentsView(changedDupSelCrit, 'activate');
     });
   }
 
