@@ -24,8 +24,39 @@ appState: {
       }
   ],
 
+  // ??? NEW
+  itemsView: {
+
+    // ?? WAS: ../selectedView (AND is NO caps AND NO plural)
+    activeView: 'student'/'course', // an itemType, identifying which of the following views are visable in the main page
+
+    // ?? WAS: ./studentsView
+    student: {  // branch supporting StudentsView (i.e. items are Students)
+
+      // ?? WAS: selectedStudent
+      selectedItem: null/item[below],
+
+      // ?? WAS: detailStudent
+      detailItem:  null/item[below], // when supplied, the details of this item is displayed in a modal dialog
+      detailEditMode: true/false,    // is detail item dialog in a read-only or edit mode
+
+      inProgress: 0,1,2, // truthy ... number of outstanding async requests for this itemsView
+      selCrit: {...},    // common selCrit (see selCrit (below)) ... null for not-yet-retrieved 
+      items: [           // empty array [] for not-yet-retrieved -or- no-results-from-retrieval
+        { <itemShort> || <itemDetail> },
+        ...ditto...
+      ]
+    },
+
+    course: {  // branch supporting CoursesView (i.e. items are Courses)
+      ... identical to student branch (above)
+    },
+  },
+
+  // ??? OBSOLETE ... now itemsView.activeView
   selectedView: 'Students'/'Courses',
 
+  // ??? OBSOLETE ... now itemsView.student
   studentsView: {      // our retrieved students
 
     selectedStudent: null/item[below],
@@ -41,19 +72,8 @@ appState: {
     ],
   },
 
+  // ??? OBSOLETE ... now itemsView.course
 ? courses: {       // our retrieved courses
-
-?   selectedCourse: null/item[below],
-
-?   detailCourse:   null/item[below],
-?   detailEditMode: true/false
-
-?   inProgress: 0,1,2, // truethy ... number of outstanding course requests
-?   selCrit: {...},    // common selCrit (see selCrit (below) for details) ... null for not-yet-retrieved
-?   items: [           // empty array [] for not-yet-retrieved -or- no-results-from-retrieval
-?     { <courseIndx> || <courseDetail> },
-      ...ditto...
-    ],
   },
 
   filters: [   // all active filters (list of selCrit objects) ... ordered by target/name/desc
@@ -100,7 +120,7 @@ selCrit: {
   _id:    "shortId",            // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
   key:    "shortId",            // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
   userId: "common",             // the user the selCrit belongs to ('common' for all)
-  target: "Students"/"Courses", // identifies the targeted mongo collection (also referred to as itemsType in client view)
+  target: "Students"/"Courses", // identifies the targeted mongo collection (?? also referred to as itemType in client view)
   lastDbModDate: date,          // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
   name:   "Female students from MO/IN with GPA over 3.65",
