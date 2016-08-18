@@ -18,6 +18,7 @@ import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
 import SelCrit            from '../../shared/util/SelCrit';
+import itemTypes          from '../../shared/model/itemTypes';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend        from 'react-dnd-html5-backend';
@@ -31,8 +32,8 @@ import HTML5Backend        from 'react-dnd-html5-backend';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    selectedView:        appState.selectedView,
-    selectedStudent: appState.studentsView.selectedStudent,
+    activeView:      appState.itemsView.activeView,
+    selectedStudent: appState.itemsView.student.selectedItem,
   }
 })
 
@@ -47,9 +48,9 @@ export default class GeekUApp extends React.Component {
     super(props, context);
   }
 
-  handleSelectedView(page) {
+  handleSelectedView(itemTypeAsPage) {
     const p = this.props;
-    p.dispatch( page === 'Students' ? AC.selectStudentsView(null, 'activate') : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
+    p.dispatch( AC.itemsView(itemTypeAsPage, null, 'activate') );
   }
 
   tempAlert() {
@@ -120,10 +121,10 @@ export default class GeekUApp extends React.Component {
                     <tr>
                       <td><i>GeekU</i></td>
                       <td>
-                        <Tabs value={p.selectedView}
+                        <Tabs value={p.activeView}
                               onChange={this.handleSelectedView}>
-                          <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
-                          <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
+                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                          <Tab value={itemTypes.course}  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
                         </Tabs>
                       </td>
                     </tr>

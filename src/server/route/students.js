@@ -1,7 +1,7 @@
 'use strict';
 
 import express        from 'express';
-import studentsMeta   from '../../shared/model/studentsMeta';
+import itemTypes      from '../../shared/model/itemTypes';
 import * as MongoUtil from '../util/MongoUtil';
 
 const students = express.Router();
@@ -11,7 +11,7 @@ const students = express.Router();
 //*** retrieve a list of students: /api/students[?query-string ... see below]
 //***
 //***   - by default, all students will be retrieved, in random order, emitting fields defined in
-//***     studentsMeta.defaultDisplayFields.
+//***     meta.defaultDisplayFields.
 //***
 //***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
 //***
@@ -27,7 +27,7 @@ const students = express.Router();
 students.get('/api/students', (req, res, next) => {
 
   // define our optional top-level selCrit from the request object
-  const selCrit = MongoUtil.selCrit(req, studentsMeta);
+  const selCrit = MongoUtil.selCrit(req, itemTypes.meta.student);
 
   // force studentNum to always be emitted
   if (!selCrit.mongoFields.studentNum) {

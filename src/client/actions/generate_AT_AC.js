@@ -42,11 +42,11 @@ export default function generate_AT_AC(genesis) {
 
       // validate proper number of params passed in
       const paramNames = genesis[funcName].params;
-      // TODO: currently validation is disabled till we provide a means of defining optional/defaulted params
-      // ? if (paramNames.length !== args.length) {
-      // ?   // ex: ERROR: Action Creator AC.userMsg.display(msg) expecting 1 parameters, but received 2
-      // ?   throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);
-      // ? }
+      // TODO: currently validation is disabled (NOT) till we provide a means of defining optional/defaulted params
+      if (paramNames.length !== args.length) {
+        // ex: ERROR: Action Creator AC.userMsg.display(msg) expecting 1 parameters, but received 2
+        throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);
+      }
 
       // interpret function-based action creators (interpreted by thunk middleware)
       if (genesis[funcName].thunk) {

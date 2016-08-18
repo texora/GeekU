@@ -3,8 +3,7 @@
 import * as Redux from 'redux';
 
 import userMsg      from './appState.userMsg';
-import selectedView from './appState.selectedView';
-import studentsView from './appState.studentsView';
+import itemsView    from './appState.itemsView';
 import filters      from './appState.filters';
 import editSelCrit  from './appState.editSelCrit';
 
@@ -14,8 +13,7 @@ import editSelCrit  from './appState.editSelCrit';
 
 const appState = Redux.combineReducers({
   userMsg,
-  selectedView,
-  studentsView,
+  itemsView,
   filters,
   editSelCrit,
 });

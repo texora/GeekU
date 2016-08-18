@@ -3,6 +3,7 @@
 import crc        from 'crc';
 import shortid    from 'shortid';
 import assert     from 'assert';
+import itemTypes  from '../model/itemTypes';
 import Log        from './Log';
 
 const log = new Log('SelCrit');
@@ -17,22 +18,22 @@ const SelCrit = {
   /**
    * Create a new selCrit object, with a unique key.
    *
-   * @param {string} target the targeted mongo DB collection
-   * ('Students' or 'Courses').
+   * @param {string} itemType the itemType for which this selCrit will operate
+   * ... one of itemTypes constants (ex: 'student' or 'course').
    *
    * @return {SelCrit} a new selCrit object.
    */
-  new(target) {
+  new(itemType) {
 
-    assert(target === 'Students' || target === 'Courses',
-           `SelCrit.new() supplied target '${target}' is invalid, expecting 'Students' or 'Courses'`);
+    assert(itemTypes.meta.allTypes.includes(itemType),
+           `SelCrit.new() supplied itemType '${itemType}' is invalid, expecting one of ${itemTypes.meta.allTypes}`);
     
     const selCrit = {
 
       _id:    null,               // the mongo db ID ... when persisted: same as key ... when NOT persisted: null
       key:    shortid.generate(), // the unique key identifying each selCrit instance (see _id) ... NOTE: selCrit objects can be temporal (NOT persisted), so key is important
       userId: 'common',           // the user the selCrit belongs to ('common' for all)
-      target,                     // Students/Courses
+      itemType,                   // 'student'/'course'
       lastDbModDate: null,        // the last DB modified date/time (used for persistence stale check) ... when NOT persisted: null
 
       name:   `New SelCrit ${++_nextNewNum}`, // REQUIRED: when created within interactive edit, this will be validated
@@ -100,6 +101,18 @@ const SelCrit = {
 
 
   /**
+   * Return an indicator as to whether th supplied obj is a SelCrit object.
+   *
+   * @param {SelCrit} obj the object to evaluate.
+   *
+   * @return {boolean} true: is SelCrit, false: is NOT SelCrit
+   */
+  isSelCrit(obj) {
+    // ... cheap duck type checking
+    return obj.key && obj.itemType && obj.userId && obj.name && obj.desc;
+  },
+
+  /**
    * Validate the supplied selCrit object.
    *
    * @param {SelCrit} selCrit the selCrit object to validate.
@@ -115,11 +128,12 @@ const SelCrit = {
     if (!selCrit.key.trim())
       problems.push('key is required');
 
-    // ... target
-    if (!selCrit.target.trim())
-      problems.push('target is required');
-    if (selCrit.target !== 'Students' && selCrit.target !== 'Courses')
-      problems.push("target must be one of 'Students' or 'Courses'");
+    // ... itemType
+    if (!selCrit.itemType.trim())
+      problems.push('itemType is required');
+    // TODO: WHY ON SERVER CODE is Array.prototype.includes() is NOT THERE?
+    if (itemTypes.meta.allTypes.indexOf(selCrit.itemType) < 0)
+      problems.push(`invalid itemType '${selCrit.itemType}' must be one of ${itemTypes.meta.allTypes}`);
 
     // ... userId
     if (!selCrit.userId.trim())
@@ -198,15 +212,21 @@ const SelCrit = {
    * @return {string} the hash representing the supplied selCrit object.
    */
   hash(selCrit) {
-    const selCritStr = JSON.stringify(selCrit, (prop, val) => {
-      if (prop === '_id'           || // for persistence mechanism only (the 'key' attribute ALWAYS identifies this instance)
-          prop === 'lastDbModDate' || // for persistence mechanism only
-          prop === 'curHash'       || // hashes are duplicate representations of real data
-          prop === 'dbHash')
-        return undefined; // omit non-vital attributes
-      return val;
-    });
-    return crc.crc32(selCritStr).toString(16);
+    // hash is defined on app-level fields in a consistent order
+    // ... NOT persistence-fields (_id, lastDbModDate)
+    // ... NOT hashes:            (curHash, dbHash)
+    let hash = crc.crc32("SelCrit:hash");
+    hash = crc.crc32(selCrit.key,      hash);
+    hash = crc.crc32(selCrit.userId,   hash);
+    hash = crc.crc32(selCrit.itemType, hash);
+    hash = crc.crc32(selCrit.name,     hash);
+    hash = crc.crc32(selCrit.desc,     hash);
+    hash = crc.crc32(JSON.stringify(selCrit.fields), hash);
+    hash = crc.crc32(JSON.stringify(selCrit.sort),   hash);
+    hash = crc.crc32(JSON.stringify(selCrit.distinguishMajorSortField), hash);
+    hash = crc.crc32(JSON.stringify(selCrit.filter), hash);
+    hash = hash.toString(16);
+    return hash;
   },
 
 

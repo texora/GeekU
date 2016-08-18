@@ -44,7 +44,7 @@ class ReductionHandler {
    * action.type.
    * 
    * Each handler function has the following signature:
-   *   function(state, action): [nextState, logMsgFn]
+   *   function(state, action): [nextState, logMsgFn] || undefined (for use same state)
    * 
    * For example:
    *   {
@@ -80,7 +80,7 @@ class ReductionHandler {
     // resolve our next state
     const handler = this.handlers[action.type];
     const [nextState, logMsgFn] = handler
-                                   ? handler(state, action) 
+                                   ? handler(state, action) || [state, ()=>'no state change in handler'] // ... interpret undefined return as same state
                                    : [state, null];
 
 

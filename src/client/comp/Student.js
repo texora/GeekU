@@ -11,6 +11,7 @@ import {AC}               from '../actions';
 
 import subject            from '../../shared/model/subject';
 import term               from '../../shared/model/term';
+import itemTypes          from '../../shared/model/itemTypes';
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import AutoComplete       from 'material-ui/lib/auto-complete';
@@ -42,8 +43,8 @@ import Alert              from './Alert';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    student:   appState.studentsView.detailStudent,
-    editMode:  appState.studentsView.detailEditMode,
+    student:   appState.itemsView.student.detailItem,
+    editMode:  appState.itemsView.student.detailEditMode,
   }
 })
 

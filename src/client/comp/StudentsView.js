@@ -5,8 +5,8 @@ import * as ReactRedux    from 'react-redux';
 
 import autobind           from 'autobind-decorator';
 
-import studentsMeta       from '../../shared/model/studentsMeta';
 import SelCrit            from '../../shared/util/SelCrit';
+import itemTypes          from '../../shared/model/itemTypes';
 
 import {AC}               from '../actions';
 
@@ -27,6 +27,7 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 
 import colors             from 'material-ui/lib/styles/colors';
 
+import ItemsView          from './ItemsView';
 import Student            from './Student';
 import EditSelCrit        from './EditSelCrit';
 import Confirm            from './Confirm';
@@ -38,19 +39,20 @@ import Confirm            from './Confirm';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    inProgress:      appState.studentsView.inProgress ? true : false,
-    selCrit:         appState.studentsView.selCrit || {desc: 'please select a filter from the Left Nav menu'},
-    students:        appState.studentsView.items,
-    selectedStudent: appState.studentsView.selectedStudent,
-    studentsShown:   appState.selectedView==='Students',
+    inProgress:      appState.itemsView.student.inProgress ? true : false,
+    selCrit:         appState.itemsView.student.selCrit || {desc: 'please select a filter from the Left Nav menu'},
 
-    detailStudent:   appState.studentsView.detailStudent,
+    items:           appState.itemsView.student.items,
+    selectedItem:    appState.itemsView.student.selectedItem,
+    itemsViewShown:  appState.itemsView.activeView===itemTypes.student,
+
+    detailItem:      appState.itemsView.student.detailItem,
   }
 })
 
 @autobind
 
-export default class StudentsView extends React.Component {
+export default class StudentsView extends ItemsView {
 
   static propTypes = { // expected component props
   }
@@ -63,6 +65,8 @@ export default class StudentsView extends React.Component {
       hoveredStudent: null,
     };
   }
+
+  // ??? incrementally PUSH up common functionality
 
   /**
    * Handle changes to hoveredStudent.
@@ -82,25 +86,25 @@ export default class StudentsView extends React.Component {
 
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.selectStudentsView('refresh', 'no-activate') );
+    p.dispatch( AC.itemsView(itemTypes.student, 'refresh', 'no-activate') );
   }
 
   handleEditSelCrit() {
     const p = this.props;
-    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.selectStudentsView(changedSelCrit, 'no-activate'));
+    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.itemsView(itemTypes.student, changedSelCrit, 'no-activate'));
   }
 
   handleSaveSelCrit() {
     const p = this.props;
     p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
      .then( savedSelCrit => {                // SYNC our view
-       p.dispatch( AC.selectStudentsView(savedSelCrit, 'no-activate') )
+       p.dispatch( AC.itemsView(itemTypes.student, savedSelCrit, 'no-activate') )
      });
   }
 
   handleNewSelCrit() {
     // start an edit session of a new 'Students' selCrit
-    EditSelCrit.edit('Students', newSelCrit => AC.selectStudentsView(newSelCrit, 'no-activate'));
+    EditSelCrit.edit('Students', newSelCrit => AC.itemsView(itemTypes.student, newSelCrit, 'no-activate'));
   }
 
   handleDuplicateSelCrit() {
@@ -110,7 +114,7 @@ export default class StudentsView extends React.Component {
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
 
     // start an edit session with this dup selCrit
-    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.selectStudentsView(changedDupSelCrit, 'no-activate'));
+    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.itemsView(itemTypes.student, changedDupSelCrit, 'no-activate'));
   }
 
   handleDeleteSelCrit() {
@@ -122,7 +126,7 @@ export default class StudentsView extends React.Component {
       actions: [
         { txt: 'Delete',
           action: () => {
-            const impactView = 'Students';
+            const impactView = itemTypes.student;
             if (SelCrit.isPersisted(p.selCrit)) { // is persised in DB
               p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
             }
@@ -139,7 +143,7 @@ export default class StudentsView extends React.Component {
   handleSelectStudent(student) {
     const p = this.props;
     if (student) {
-      p.dispatch( AC.selectStudent(student) );
+      p.dispatch( AC.selectItem(itemTypes.student, student) );
     }
   }
 
@@ -165,7 +169,7 @@ export default class StudentsView extends React.Component {
     // we actually hide the students if NOT displayed as an attempted optimization for large list
     // ... one side-benefit is that we retain scrolling state from previous renderings
     //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
-    if (!p.studentsShown) {
+    if (!p.itemsViewShown) {
       myStyle.display = 'none';
     }
 
@@ -186,7 +190,7 @@ export default class StudentsView extends React.Component {
     // define the order that our columns are displayed (based on selCrit)
     const displayFieldOrder = p.selCrit.fields && p.selCrit.fields.length > 0
             ? p.selCrit.fields
-            : Object.keys(studentsMeta.defaultDisplayFields); // default found in student meta data
+            : Object.keys(itemTypes.meta.student.defaultDisplayFields); // default found in student meta data
 
     // define a map of all fields to display ... ex: { 'lastName': true, 'firstName': true }
     const fieldsInDisplay = displayFieldOrder.reduce( (obj, field) => {
@@ -243,8 +247,8 @@ export default class StudentsView extends React.Component {
                fixedHeader={false}
                selectable={true}
                multiSelectable={false}
-               onRowSelection={(selectedRows)=>this.handleSelectStudent(selectedRows.length===0 ? null : p.students[selectedRows[0]])}
-               onRowHover={(rowNum)=> this.handleHover(p.students[rowNum])}
+               onRowSelection={(selectedRows)=>this.handleSelectStudent(selectedRows.length===0 ? null : p.items[selectedRows[0]])}
+               onRowHover={(rowNum)=> this.handleHover(p.items[rowNum])}
                onRowHoverExit={(rowNum)=> this.handleHover(null)}
                style={{
                    width: 'auto', // ColWidth: HONORED at this level and changes table width (from 'fixed')
@@ -254,7 +258,7 @@ export default class StudentsView extends React.Component {
                      showRowHover={true}
                      stripedRows={false}>
 
-            { p.students.map( (student, studentIndx) => {
+            { p.items.map( (student, studentIndx) => {
 
                 // NOTE: student.studentNum is always emitted (enforced by server)
 
@@ -320,7 +324,7 @@ export default class StudentsView extends React.Component {
                 return (
                   <TableRow key={student.studentNum}
                             style={majorSortBreakStyle}
-                            selected={student===p.selectedStudent}>
+                            selected={student===p.selectedItem}>
 
                     { displayFieldOrder.map( (field) => { // columns are ordered based on the definition in selCrit
 
@@ -374,7 +378,7 @@ export default class StudentsView extends React.Component {
           </TableBody>
         </Table>
       </Paper>
-      { p.detailStudent   && <Student/> }
+      { p.detailItem   && <Student/> }
     </Paper>
   }
 }

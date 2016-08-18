@@ -41,7 +41,15 @@ const log = new Log('GeekU.ProcessFlow');
  */
 export function selCrit(req, meta) {
 
-  const selCrit = decodeJsonQueryStr('selCrit', req) || {};
+  const selCrit = decodeJsonQueryStr('selCrit', req) || {itemType: meta.itemType};
+
+  // validate selCrit is of proper type
+  if (selCrit.itemType !== meta.itemType) {
+    const msg = `Invalid itemType ('${selCrit.itemType}') specified in http request query-string selCrit.itemType ... expecting: '${meta.itemType}'`
+    throw new Error(msg).defineClientMsg(msg)
+                        .defineCause(Error.Cause.RECOGNIZED_CLIENT_ERROR);
+  }
+
 
   //***
   //*** resolve our generated mongo control information

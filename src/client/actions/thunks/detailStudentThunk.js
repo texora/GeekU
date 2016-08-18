@@ -3,6 +3,7 @@
 import promoteThunk          from './promoteThunk';
 import {AC}                  from '../actions';
 import handleUnexpectedError from '../../util/handleUnexpectedError';
+import itemTypes             from '../../../shared/model/itemTypes';
 
 
 /**
@@ -35,7 +36,7 @@ const [detailStudentThunk, thunkName, log] = promoteThunk('detailStudent', (stud
     .catch( err => {
       // communicate async operation failed
       dispatch([
-        AC[thunkName].retrieve.fail(studentNum, err),                               // mark async operation FAILED complete (typically spinner)
+        AC[thunkName].retrieve.fail(studentNum, err),            // mark async operation FAILED complete (typically spinner)
         handleUnexpectedError(err, `retrieving student detail for: ${studentNum}`), // report unexpected condition to user (logging details for tech reference)
       ]);
       return Promise.reject(err); // return supports subsequent promise chaining (insuring subsequent .then() clauses [if any] are NOT invoked) ... same as: throw err

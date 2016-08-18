@@ -23,16 +23,10 @@ import distinguishMajorSortField from './appState.editSelCrit.selCrit.distinguis
 //         2) the individual fields being edited (e.g. selCrit.filter, etc.)
 
 const _selCrit = Redux.combineReducers({
-
-  // NOTE: The order of these field reducers is important to accomidate our
-  //       "somewhat brittle" hash algorithm.
-  //       Please maintain same order as found in SelCrit.new().
-
-  _id:    placebo,
-  key:    placebo,
-  target: placebo,
-  userId: placebo,
-  target: placebo,
+  _id:      placebo,
+  key:      placebo,
+  userId:   placebo,
+  itemType: placebo,
   lastDbModDate: placebo,
 
   name,

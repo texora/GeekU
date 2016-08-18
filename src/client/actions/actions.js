@@ -4,7 +4,7 @@ import detailStudentThunk      from './thunks/detailStudentThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 import selCritSaveThunk        from './thunks/selCritSaveThunk';
-import selectStudentsViewThunk from './thunks/selectStudentsViewThunk';
+import itemsViewThunk          from './thunks/itemsViewThunk';
                                
 import userMsgDisplayAC        from './creators/userMsgDisplayAC';
                                
@@ -81,26 +81,25 @@ const genesis = {
 
 
   // ***
-  // *** retrieve and/or activate the Students View
+  // *** retrieve and/or activate the Items View for the specified itemType
   // ***
-  //       AC.selectStudentsView(retrieve, activate)
-  //        * retrieve:        the retrieval directive, one of:
-  //          - null:          no retrieval at all (DEFAULT)
-  //          - selCrit:       conditionally retrieve Students when different from StudentsView selCrit (or out-of-date)
-  //          - 'refresh':     unconditionally refresh StudentsView with latest Students (using view's current selCrit)
-  //        * activate:        the activate directive, one of:
-  //          - 'activate':    activate/visualize StudentsView (DEFAULT for all but 'refresh' retrieval)
-  //          - 'no-activate': DO NOT activate                 (DEFAULT for 'refresh' retrieval)
-  'selectStudentsView':                  { params: ['retrieve', 'activate'], thunk: selectStudentsViewThunk },
-  'selectStudentsView.activate':         { params: [] },
-  'selectStudentsView.retrieveStart':    { params: ['selCrit'] },          // conditionally emitted when retrieval needed
-  'selectStudentsView.retrieveComplete': { params: ['selCrit', 'items'] }, // ditto
-  'selectStudentsView.retrieveFail':     { params: ['selCrit', 'error'] }, // ditto
+  //       AC.itemsView(itemType, retrieve, activate)
+  //          ... see: itemsViewThunk.js for full documentation
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * retrieve:    the retrieval directive, one of:
+  //          - null:        no retrieval at all (DEFAULT)
+  //          - selCrit:     conditionally retrieve items when different from ItemsView selCrit (or out-of-date)
+  //          - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+  //        * activate:    the activate directive, one of:
+  //          - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
+  //          - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
+  'itemsView':                  { params: ['itemType', 'retrieve', 'activate'], thunk: itemsViewThunk },
+  'itemsView.activate':         { params: ['itemType'] },
+  'itemsView.retrieveStart':    { params: ['itemType', 'selCrit'] },          // conditionally emitted when retrieval needed
+  'itemsView.retrieveComplete': { params: ['itemType', 'selCrit', 'items'] }, // ditto
+  'itemsView.retrieveFail':     { params: ['itemType', 'selCrit', 'error'] }, // ditto
 
-  'selectStudent': { params: ['student'] }, // student: null for de-select
-
-  // TODO: needed for tab selectsion ... eventually fully flesh out
-  'selectCoursesView.activate':         { params: [] },
+  'selectItem': { params: ['itemType', 'item'] }, // item: null for de-select
 
   // TODO: suspect this is a code smell - the detailStudent has mixed-in the retrieval (retrieval prob should be a seperate AC)
   'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: detailStudentThunk },
@@ -132,7 +131,7 @@ const genesis = {
   'selCrit.save.complete': { params: ['selCrit'] },
   'selCrit.save.fail':     { params: ['selCrit', 'error'] },
 
-  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: view impacted by this selCrit (if any) ... 'Students'/'Courses'/null
+  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
   'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },
   'selCrit.delete.complete': { params: ['selCrit', 'impactView'] },
   'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'error'] },

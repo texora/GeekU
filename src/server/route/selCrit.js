@@ -24,7 +24,7 @@ selCrit.get('/api/selCrit', (req, res, next) => {
 
   const mongoQuery      = {userId};   // for supplied userId
   const mongoProjection = {};         // all fields
-  const mongoSort       = {target: 1, name: 1, desc: 1};
+  const mongoSort       = {itemType: 1, name: 1, desc: 1};
 
   // perform retrieval
   const selCritColl = req.geekU.db.collection('SelCrit');

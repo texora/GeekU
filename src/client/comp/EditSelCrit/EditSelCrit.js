@@ -7,13 +7,7 @@ import autobind           from 'autobind-decorator';
 import assert             from 'assert';
 import {AC}               from '../../actions';
 import SelCrit            from '../../../shared/util/SelCrit';
-
-import studentsMeta       from '../../../shared/model/studentsMeta';
-import coursesMeta        from '../../../shared/model/coursesMeta';
-const  metaXlate = {      // indexed via selCrit.target
-         'Students': studentsMeta,
-         'Courses':  coursesMeta,
-       };
+import itemTypes          from '../../../shared/model/itemTypes';
 
 import Dialog         from 'material-ui/lib/dialog';
 import TextField      from 'material-ui/lib/text-field';
@@ -30,8 +24,7 @@ import UserMsg from '../UserMsg';
 /**
  * The EditSelCrit component edits a supplied selCrit object, through
  * an interactive modal dialog.  Because the selCrit is a generic
- * object, any selCrit.target is supported (for example: Students,
- * Courses, etc.).
+ * object, any selCrit.itemType is supported ('student','course', etc).
  *
  * An edit session is initiated through the edit() static method.  The
  * incentive for this programmatic interface is an edit session can be
@@ -142,8 +135,8 @@ export default class EditSelCrit extends React.Component {
    *       point.  In addition, it insures an <EditSelCrit> has been
    *       instantiated.
    * 
-   * @param {SelCrit|target-string} selCrit the selCrit to edit, 
-   * or a mongo DB target string to create a new selCrit.
+   * @param {SelCrit|itemType-string} selCrit the selCrit to edit, 
+   * or a itemType string to create a new selCrit.
    * 
    * @param {function} extraActionsOnCompletionCb an optional client
    * callback, executed on edit completion, supporting additional
@@ -172,10 +165,10 @@ export default class EditSelCrit extends React.Component {
 
     assert(selCrit, `EditSelCrit.edit() invocation missing selCrit parameter`);
 
-    // create a new selCrit when a target string is supplied
-    if (typeof selCrit === 'string') { // selCrit is a string ... 'Students'/'Courses'
+    // create a new selCrit when a itemType string is supplied
+    if (typeof selCrit === 'string') { // selCrit is a string ... 'student'/'course'
 
-      // re-define selCrit as a new one (of supplied target type)
+      // re-define selCrit as a new one (of supplied itemType)
       selCrit = SelCrit.new(selCrit);
 
       // a new selCrit can be canceled at any time and it will be thrown away
@@ -186,8 +179,8 @@ export default class EditSelCrit extends React.Component {
     }
 
     // determine the DB meta definition we are working for
-    this.meta = metaXlate[selCrit.target];
-    assert(this.meta, `EditSelCrit.edit() an invalid target ('${selCrit.target}') was specified (no meta definition)`);
+    this.meta = itemTypes.meta[selCrit.itemType];
+    assert(this.meta, `EditSelCrit.edit() an invalid itemType ('${selCrit.itemType}') was specified (no meta definition)`);
 
     // define the total set of fieldOptions promoted to the user
     // ... derived from meta.validFields
@@ -344,7 +337,7 @@ export default class EditSelCrit extends React.Component {
 
     // NOTE: non-modal dialog: outer click same as 'Use' button
     return <Dialog modal={false}
-                   title={`${p.selCrit.target} Filter`}
+                   title={`${itemTypes.meta[p.selCrit.itemType].label.plural} Filter`}
                    open={true}
                    autoScrollBodyContent={true}
                    onRequestClose={ (buttonClicked) => this.handleEditComplete('Use')}

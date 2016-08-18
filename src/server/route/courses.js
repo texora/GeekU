@@ -1,7 +1,7 @@
 'use strict';
 
 import express        from 'express';
-import coursesMeta    from '../../shared/model/coursesMeta';
+import itemTypes      from '../../shared/model/itemTypes';
 import * as MongoUtil from '../util/MongoUtil';
 
 const courses = express.Router();
@@ -10,7 +10,7 @@ const courses = express.Router();
 //*** retrieve a list of courses: /api/courses[?query-string ... see below]
 //***
 //***   - by default, all courses will be retrieved, in random order, emitting fields defined in
-//***     coursesMeta.defaultDisplayFields.
+//***     meta.defaultDisplayFields.
 //***
 //***   - use optional "selCrit" query-string to fine tune retrieval/sort functionality.
 //***
@@ -26,7 +26,7 @@ const courses = express.Router();
 courses.get('/api/courses', (req, res, next) => {
 
   // define our optional top-level selCrit from the request object
-  const selCrit = MongoUtil.selCrit(req, coursesMeta);
+  const selCrit = MongoUtil.selCrit(req, itemTypes.meta.course);
 
   // force courseNum to always be emitted
   if (!selCrit.mongoFields.courseNum) {
