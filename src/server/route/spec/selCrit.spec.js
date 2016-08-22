@@ -1,8 +1,9 @@
 'use strict';
 
 import '../../../shared/util/polyfill';
-import expect   from 'expect';
-import SelCrit  from '../../../shared/util/SelCrit';
+import expect    from 'expect';
+import SelCrit   from '../../../shared/util/SelCrit';
+import itemTypes from '../../../shared/model/itemTypes';
 
 const userId  = 'selCritUnitTester';
 const url     = 'http://localhost:8080/api/selCrit';
@@ -66,7 +67,7 @@ describe('/api/selCrit SETUP INSERT', function() {
     const insRequests = [];
     for (let i=1; i<=3; i++) {
       const key = `${baseKey}-${i}`;
-      const newSelCrit = {...SelCrit.new('Students'), ...{key, userId, name: `name ${i}`, desc: `desc ${i}`}};
+      const newSelCrit = {...SelCrit.new(itemTypes.student), ...{key, userId, name: `name ${i}`, desc: `desc ${i}`}};
       insRequests.push(
         geekUFetch(`${url}`, {
           method: 'PUT',
