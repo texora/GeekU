@@ -25,7 +25,7 @@ const SelCrit = {
    */
   new(itemType) {
 
-    assert(itemTypes.meta.allTypes.includes(itemType),
+    assert(itemTypes.meta.allTypes.indexOf(itemType) !== -1,
            `SelCrit.new() supplied itemType '${itemType}' is invalid, expecting one of ${itemTypes.meta.allTypes}`);
     
     const selCrit = {
@@ -131,7 +131,6 @@ const SelCrit = {
     // ... itemType
     if (!selCrit.itemType.trim())
       problems.push('itemType is required');
-    // TODO: WHY ON SERVER CODE is Array.prototype.includes() is NOT THERE?
     if (itemTypes.meta.allTypes.indexOf(selCrit.itemType) < 0)
       problems.push(`invalid itemType '${selCrit.itemType}' must be one of ${itemTypes.meta.allTypes}`);
 
