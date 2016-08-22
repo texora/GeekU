@@ -26,6 +26,8 @@ const itemTypes = {
 
       itemType: 'course',
 
+      keyField: 'courseNum',
+
       // labels for human consumption
       label: {
         singular: 'Course',
@@ -74,6 +76,8 @@ const itemTypes = {
     student: {
 
       itemType: 'student',
+
+      keyField: 'studentNum',
 
       // labels for human consumption
       label: {
