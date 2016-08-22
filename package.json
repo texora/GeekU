@@ -37,8 +37,11 @@
     "test-watch": "karma start",
     "testInt:COMMENT": "reset test server to run integration tests only",
     "testInt": "karma run -- --grep INTEGRATION",
-    "testAll:COMMENT": "reset test server to ALL NON integration tests NOTE: can't get mochas --invert to work, hence complex regexp. NO WORKY here (like karma.conf.js) ...  -- --grep ^((?!INTEGRATION).)*$",
+    "testUnit:COMMENT": "reset test server to run unit tests only NOTE: DOES NOT WORK - can't get mocha --invert to work, and can't inject complex reg ex here ...  -- --grep ^((?!INTEGRATION).)*$",
+    "testUnit": "karma run -- --grep INTEGRATION --invert",
+    "testAll:COMMENT": "reset test server to ALL tests",
     "testAll": "karma run",
+
     "lint:COMMENT": "lint our source code",
     "lint": "eslint --ext .js src",
     "TODO1": "lint process broken due to bug in dependency hell",
