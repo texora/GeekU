@@ -63,9 +63,14 @@ const itemTypes = {
       },
 
       // control structure driving interactive selCrit constraints
-      // TODO: add selCritFields to support interactive filter editing
-      // selCritFields: {
-      // }
+      selCritFields: {
+        'academicGroup': {type: 'multiSelect',  options: subject.academicGroups().map( (academicGroup) => { return {value: academicGroup, label: academicGroup} })},
+        'subjDesc':      {type: 'comparison'},
+      //'subjDesc':      {type: 'multiSelect',  options: subject.subjects()      .map( (subjDesc)      => { return {value: subjDesc,      label: subjDesc} })},
+        'courseNum':     {type: 'comparison'},
+        'courseTitle':   {type: 'comparison'},
+      },
+
     },
 
 

@@ -61,7 +61,7 @@ export default class StudentsView extends ItemsView {
   /**
    * Handle the "detail item dialog" request.
    *
-   * @param {string} studendNum the studentNum to detail.
+   * @param {string} studentNum the studentNum to detail.
    * @param {boolean} editMode an indicator as to whether the item
    * dialog should start out in edit-mode (true) or view-mode (false).
    *
