@@ -32,9 +32,8 @@ import colors              from 'material-ui/lib/styles/colors';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    filters:         appState.filters,
-    studentsSelCrit: appState.itemsView.student.selCrit,
-    coursesSelCrit:  null, // appState.courses.selCrit, // TODO: NOT available yet
+    filters:    appState.filters,
+    itemsView:  appState.itemsView,
   }
 })
 
@@ -88,126 +87,85 @@ export default class LeftNav extends React.Component {
   }
 
 
-  //***
-  //*** handleSelection(selCrit) ... select the view using the supplied selCrit
-  //***
-  //***   selCrit ... 
-  //***     - itemType-string: create/select a new selCrit of itemType ('student' or 'course')
-  //***     - selCrit:         select the supplied selCrit
-  //***
-
-  // TODO: consider embedding ALL Selection logic in this one method
+  /**
+   * Select the view to display the supplied selCrit.
+   * 
+   * @param {SelCrit -or- itemType-string} selCrit the selCrit to
+   * select (in the view):
+   *   - itemType-string: create/select a new selCrit of itemType
+   *   - selCrit:         select the supplied selCrit
+   */
   handleSelection(selCrit) {
-    if (selCrit===itemTypes.student)               this.handleStudentsSelection(null);
-    else if (selCrit===itemTypes.course)           this.handleCoursesSelection(null);
-    else if (selCrit.itemType===itemTypes.student) this.handleStudentsSelection(selCrit);
-    else if (selCrit.itemType===itemTypes.course)  this.handleCoursesSelection(selCrit);
-    else throw new Error(`LeftNav.handleSelection() INVALID selCrit supplied: ${FMT(selCrit)}`);
-  }
-
-  handleStudentsSelection(selCrit) {
     const p = this.props;
 
-    // we always close our LeftNav
-    this.setState({open: false})
+    // for selCrit object ... select it
+    if (SelCrit.isSelCrit(selCrit)) {
+      p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'activate') );
+    }
 
-    // create/use new selCrit
-    if (!selCrit) {
-      // start an edit session of a new selCrit
-      EditSelCrit.edit(itemTypes.student, (newSelCrit) => {
-        return AC.itemsView(itemTypes.student, newSelCrit, 'activate');
+    // for itemType-string ... create a new selCrit of the specified itemType (via edit) and select it
+    else if (typeof selCrit === 'string') {
+      const itemType = selCrit;
+      assert(itemTypes[itemType], `LeftNav.handleSelection() INVALID itemType-string: ${FMT(itemType)}`);
+      EditSelCrit.edit(itemType, (newSelCrit) => {
+        return AC.itemsView(itemType, newSelCrit, 'activate');
       });
     }
 
-    // use selected selCrit
+    // invalid param
     else {
-      p.dispatch( AC.itemsView(itemTypes.student, selCrit, 'activate') );
+      throw new TypeError(`LeftNav.handleSelection() INVALID selCrit param: ${FMT(selCrit)}`);
     }
 
-  }
-  
-  handleCoursesSelection() {
-    const p = this.props;
-    // TODO: add this when courses are supported
+    // we always close our LeftNav
+    this.setState({open: false})
   }
 
 
-
-  //***
-  //*** handleEdit(selCrit) ... edit the supplied selCrit
-  //***
-
-  // TODO: consider embedding ALL Edit logic in this one method
+  /**
+   * Edit the supplied selCrit.
+   * 
+   * @param {SelCrit} selCrit the selCrit to edit.
+   */
   handleEdit(selCrit) {
-    if (selCrit.itemType===itemTypes.student)
-      this.handleStudentsEdit(selCrit);
-    else
-      this.handleCoursesEdit(selCrit);
-  }
-
-  handleStudentsEdit(selCrit) {
     const p = this.props;
 
-    // start an edit session with supplied selCrit
+    // start an edit session with the supplied selCrit
     EditSelCrit.edit(selCrit, selCrit => {
       // on edit change ... issue re-retrieval IF view is currently based on this selCrit
-      const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key;
-      if (selCritDisplayedInView) {
-        return AC.itemsView(itemTypes.student, selCrit, 'no-activate');
-      }
-      else {
-        return null;
-      }
-      
+      const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
+      const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
+      return selCritDisplayedInView
+               ? AC.itemsView(selCrit.itemType, selCrit, 'no-activate')
+               : null;
     });
   }
 
-  handleCoursesEdit(selCrit) {
-    console.log('TODO: handleCoursesEdit()');
-  }
 
-
-
-  //***
-  //*** handleSave(selCrit) ... save the supplied selCrit
-  //***
-
+  /**
+   * Save the supplied selCrit.
+   * 
+   * @param {SelCrit} selCrit the selCrit to save.
+   */
   handleSave(selCrit) {
-    if (selCrit.itemType===itemTypes.student)
-      this.handleStudentsSave(selCrit);
-    else
-      this.handleCoursesSave(selCrit);
-  }
-
-  handleStudentsSave(selCrit) {
     const p = this.props;
     p.dispatch( AC.selCrit.save(selCrit) ) // SAVE selCrit
-     .then( savedSelCrit => {              // SYNC our view when using same selCrit
-        const selCritDisplayedInView = p.studentsSelCrit && p.studentsSelCrit.key === savedSelCrit.key;
-        if (selCritDisplayedInView) {
-          p.dispatch( AC.itemsView(itemTypes.student, savedSelCrit, 'no-activate') )
-        }
+     .then( selCrit => {                   // SYNC our view when using same selCrit
+       const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
+       const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
+       if (selCritDisplayedInView) {
+         p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') )
+       }
      });
   }
 
-  handleCoursesSave(selCrit) {
-    console.log('TODO: handleCoursesSave()');
-  }
 
-
-
-  //***
-  //*** handleDuplicate(selCrit) ... duplicate the supplied selCrit
-  //***
-
+  /**
+   * Duplicate the supplied selCrit.
+   * 
+   * @param {SelCrit} selCrit the selCrit to duplicate.
+   */
   handleDuplicate(selCrit) {
-    if (selCrit.itemType===itemTypes.student)
-      this.handleStudentsDuplicate(selCrit);
-    else
-      this.handleCoursesDuplicate(selCrit);
-  }
-
-  handleStudentsDuplicate(selCrit) {
     // duplicate ths supplied selCrit
     const dupSelCrit = SelCrit.duplicate(selCrit);
 
@@ -216,52 +174,41 @@ export default class LeftNav extends React.Component {
 
     // start an edit session with this selCrit
     EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-      return AC.itemsView(itemTypes.student, changedDupSelCrit, 'activate');
+      return AC.itemsView(changedDupSelCrit.itemType, changedDupSelCrit, 'activate');
     });
   }
 
-  handleCoursesDuplicate(selCrit) {
-    console.log('TODO: handleCoursesDuplicate()');
-  }
 
-
-
-  //***
-  //*** handleDelete(selCrit) ... delete the supplied selCrit
-  //***
-
+  /**
+   * Delete the supplied selCrit.
+   * 
+   * @param {SelCrit} selCrit the selCrit to delete.
+   */
   handleDelete(selCrit) {
-    if (selCrit.itemType===itemTypes.student)
-      this.handleStudentsDelete(selCrit);
-    else
-      this.handleCoursesDelete(selCrit);
-  }
-
-  handleStudentsDelete(selCrit) {
     const p = this.props;
 
-     Confirm.display({
-       title: 'Delete Filter',
-       msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,
-       actions: [
-         { txt: 'Delete',
-           action: () => {
-             const impactView = (p.studentsSelCrit && p.studentsSelCrit.key === selCrit.key) ? itemTypes.student : null;
-             if (SelCrit.isPersisted(selCrit)) { // is persised in DB
-               p.dispatch( AC.selCrit.delete(selCrit, impactView) );
-             }
-             else { // is an in-memory only representation
-               p.dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
-             }
-           } },
-         { txt: 'Cancel' },
-       ]
-     });
+    Confirm.display({
+      title: 'Delete Filter',
+      msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,
+      actions: [
+        { txt: 'Delete',
+          action: () => {
+            const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
+            const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
+            const impactView             = selCritDisplayedInView ? selCrit.itemType : null;
+            if (SelCrit.isPersisted(selCrit)) { // is persised in DB
+              p.dispatch( AC.selCrit.delete(selCrit, impactView) );
+            }
+            else { // is an in-memory only representation
+              p.dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
+            }
+          }
+        },
+        { txt: 'Cancel' },
+      ]
+    });
   }
 
-  handleCoursesDelete(selCrit) {
-    console.log('TODO: handleCoursesDelete()');
-  }
 
   render() {
     const p = this.props;
@@ -280,10 +227,10 @@ export default class LeftNav extends React.Component {
       
         { itemTypes.meta.allTypes.map( (itemType) => {
       
-          const selectedSelCrit = itemType===itemTypes.student ? p.studentsSelCrit : p.coursesSelCrit;
+          const selectedSelCrit = p.itemsView[itemType].selCrit;
 
           return (
-            <Card key={itemType} initiallyExpanded={true}>
+            <Card key={itemType} initiallyExpanded={false}>
             
               <CardTitle title={itemTypes.meta[itemType].label.plural}
                          titleStyle={{fontSize: 20}}
