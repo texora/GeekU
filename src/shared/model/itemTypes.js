@@ -34,6 +34,9 @@ const itemTypes = {
         plural:   'Courses',
       },
 
+      // special note (if any) for Display Fields
+      displayFieldsNote: '',
+
       // Mongo DB collection name
       mongoColName: 'Courses',
 
@@ -89,6 +92,9 @@ const itemTypes = {
         singular: 'Student',
         plural:   'Students',
       },
+
+      // special note (if any) for Display Fields
+      displayFieldsNote: '(note that Students Gender/Name/StudentNum will always be grouped together in the display)',
 
       // Mongo DB collection name
       mongoColName: 'Students',

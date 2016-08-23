@@ -379,7 +379,7 @@ export default class EditSelCrit extends React.Component {
       <br/>
 
       <div style={{width: '100%'}}>
-        <span style={{color: 'grey'}}>Display Fields <i>(note that Students Gender/Name/StudentNum are always grouped together)</i>:</span><br/>
+        <span style={{color: 'grey'}}>Display Fields <i>{this.meta.displayFieldsNote }</i>:</span><br/>
         <Select multi={true}
                 options={this.fieldOptions}
                 matchProp="label"
