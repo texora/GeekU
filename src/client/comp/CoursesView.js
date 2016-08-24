@@ -15,7 +15,7 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import colors             from 'material-ui/lib/styles/colors';
 
 import ItemsView          from './ItemsView';
-// import CourseDialog       from './CourseDialog'; // ?? when defined
+import CourseDialog       from './CourseDialog';
 
 
 /**
@@ -66,8 +66,7 @@ export default class CoursesView extends ItemsView {
    * DERIVATION-HOOK
    */
   renderDetailDialog() {
-    return null; // ??? temp for now
-    // return <CourseDialog/>;
+    return <CourseDialog/>;
   }
 
 }
