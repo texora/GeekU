@@ -23,21 +23,20 @@ export default function selectedItem(_itemType) {
     },
   
     [AT.itemsView.retrieveComplete] (selectedItem, action) {
+      // TODO: we could keep the selected item, if it is contained in the new retrieval (action.items)
       return [
         null,
         ()=>'de-selecting selectedItem on new retrieval'
       ];
     },
   
-    [AT.detailStudent.retrieve.complete](selectedItem, action) {
-      // TODO: conditional check is a hack ... suspect will be cleaned up if/when we refactor the detail stuff
-      if (action.itemType === itemTypes.student) {
-        // TODO: seems like this needs to check to see if same studentNum (suspect it works only because editing detail ALWAYS selects it too)
-        return [
-          action.student,
-          ()=>'set selectedItem from action.student ... ' + FMT(action.student)
-        ];
-      }
+    [AT.detailItem.retrieveComplete](selectedItem, action) {
+      // NOTE: currently NO need to check if item retrieved is same (itemNum) as what is selected
+      //       because activating the detailItem dialog also selects it
+      return [
+        action.item,
+        ()=>'sync selectedItem from action.item ... ' + FMT(action.item)
+      ];
     },
   
     [AT.selCrit.delete.complete](selectedItem, action) {

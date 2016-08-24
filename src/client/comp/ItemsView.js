@@ -189,14 +189,16 @@ export default class ItemsView extends React.Component {
   /**
    * Handle the "detail item dialog" request.
    *
-   * @param {string} itemKey the key for the item to detail.
+   * @param {Item} item the item to detail.
    * @param {boolean} editMode an indicator as to whether the item
    * dialog should start out in edit-mode (true) or view-mode (false).
-   *
-   * DERIVATION-HOOK (abstract)
    */
-  handleDetailItemDialog(itemKey, editMode) {
-    throw new TypeError("ERROR: ItemsView.handleDetailItemDialog() method is abstract and MUST be overridden in concrete derivations!");
+  handleDetailItemDialog(item, editMode) {
+    const p = this.props;
+
+    const itemNum  = item[this.meta().keyField];
+
+    p.dispatch( AC.detailItem(this.meta().itemType, itemNum, editMode) );
   }
 
 
@@ -366,8 +368,8 @@ export default class ItemsView extends React.Component {
                                             // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
                                             visibility: this.state.hoveredItem===item ? 'visible' : 'hidden',
                                           }}>
-                                         <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailItemDialog(item[this.meta().keyField], false)}>portrait</FontIcon>
-                                         <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailItemDialog(item[this.meta().keyField], true)}>edit</FontIcon>
+                                         <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailItemDialog(item, false)}>portrait</FontIcon>
+                                         <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailItemDialog(item, true)}>edit</FontIcon>
                                        </i>
                                      </TableRowColumn>;
 

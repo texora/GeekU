@@ -15,7 +15,7 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import colors             from 'material-ui/lib/styles/colors';
 
 import ItemsView          from './ItemsView';
-import Student            from './Student';
+import StudentDialog      from './StudentDialog';
 
 
 /**
@@ -55,21 +55,6 @@ export default class StudentsView extends ItemsView {
    */
   meta() {
     return itemTypes.meta.student;
-  }
-
-
-  /**
-   * Handle the "detail item dialog" request.
-   *
-   * @param {string} studentNum the studentNum to detail.
-   * @param {boolean} editMode an indicator as to whether the item
-   * dialog should start out in edit-mode (true) or view-mode (false).
-   *
-   * DERIVATION-HOOK
-   */
-  handleDetailItemDialog(studentNum, editMode) {
-    const p = this.props;
-    p.dispatch( AC.detailStudent(studentNum, editMode) );
   }
 
 
@@ -223,7 +208,7 @@ export default class StudentsView extends ItemsView {
    * DERIVATION-HOOK
    */
   renderDetailDialog() {
-    return <Student/>;
+    return <StudentDialog/>;
   }
 
 }

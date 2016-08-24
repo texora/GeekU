@@ -15,17 +15,17 @@ export default function detailItem(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.detailItem`, {
 
-    [AT.detailStudent.retrieve.complete](detailItem, action) {
+    [AT.detailItem.retrieveComplete](detailItem, action) {
       return [
-        action.student,
-        ()=>'set detailStudent from action.student ... ' + FMT(action.student)
+        action.item,
+        ()=>'set detailItem from action.item ... ' + FMT(action.item)
       ];
     },
 
-    [AT.detailStudent.close](detailItem, action) {
+    [AT.detailItem.close](detailItem, action) {
       return [
         null,
-        ()=>'clearing detailStudent'
+        ()=>'clearing detailItem'
       ];
     },
     

@@ -23,25 +23,14 @@ export default function items(_itemType) {
       ];
     },
 
-    [AT.detailStudent.retrieve.complete](items, action) {
-      // TODO: conditional check is a hack ... suspect will be cleaned up if/when we refactor the detail stuff
-      if (action.itemType === itemTypes.student) {
-        return [
-          items.map( (student) => {
-            return action.student.studentNum===student.studentNum ? action.student : student
-          }),
-          ()=>`patching detail student into items[] from action.student: ${action.student.studentNum}`
-        ];
-      }
-      // TODO: not right ... needs to be under AT.detailCourse (SEE TODO above)
-      else if (action.itemType === itemTypes.course) {
-        return [
-          items.map( (course) => {
-            return action.course.courseNum===course.courseNum ? action.course : course
-          }),
-          ()=>`patching detail course into items[] from action.course: ${action.course.courseNum}`
-        ];
-      }
+    [AT.detailItem.retrieveComplete](items, action) {
+      const keyField = itemTypes.meta[action.itemType].keyField;
+      return [
+        items.map( (item) => {
+          return action.item[keyField]===item[keyField] ? action.item : item
+        }),
+        ()=>`patching detail item into items[] from action.item: ${action.item[keyField]}`
+      ];
     },
 
     [AT.selCrit.delete.complete](items, action) {

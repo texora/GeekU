@@ -13,6 +13,8 @@ import subject            from '../../shared/model/subject';
 import term               from '../../shared/model/term';
 import itemTypes          from '../../shared/model/itemTypes';
 
+const  myItemType         = itemTypes.meta.student.itemType;
+
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import AutoComplete       from 'material-ui/lib/auto-complete';
 import SelectField        from 'material-ui/lib/select-field';
@@ -38,7 +40,7 @@ import colors             from 'material-ui/lib/styles/colors';
 import Alert              from './Alert';
 
 /**
- * The Student component displays a dialog of the details of a given student.
+ * The StudentDialog component displays a dialog of the details of a given student.
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
@@ -50,7 +52,7 @@ import Alert              from './Alert';
 
 @autobind
 
-export default class Student extends React.Component {
+export default class StudentDialog extends React.Component {
 
   static propTypes = { // expected component props
   }
@@ -84,23 +86,23 @@ export default class Student extends React.Component {
   // unconditionally close self
   close() {
     const p = this.props;
-    p.dispatch( AC.detailStudent.close() );
+    p.dispatch( AC.detailItem.close(myItemType) );
   }
 
   changeEditMode() {
     const p = this.props;
-    p.dispatch( AC.detailStudent.changeEditMode() );
+    p.dispatch( AC.detailItem.changeEditMode(myItemType) );
   }
 
   saveEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailStudent.close(),
+    p.dispatch([ AC.detailItem.close(myItemType),
                  AC.userMsg.display('TODO: Save Complete') ]);
   }
 
   cancelEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailStudent.close(),
+    p.dispatch([ AC.detailItem.close(myItemType),
                  AC.userMsg.display('Edit Canceled') ]);
   }
 

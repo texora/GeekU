@@ -1,6 +1,6 @@
 'use strict'
 
-import detailStudentThunk      from './thunks/detailStudentThunk';
+import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 import selCritSaveThunk        from './thunks/selCritSaveThunk';
@@ -99,15 +99,30 @@ const genesis = {
   'itemsView.retrieveComplete': { params: ['itemType', 'selCrit', 'items'] }, // ditto
   'itemsView.retrieveFail':     { params: ['itemType', 'selCrit', 'error'] }, // ditto
 
-  'selectItem': { params: ['itemType', 'item'] }, // item: null for de-select
 
-  // TODO: suspect this is a code smell - the detailStudent has mixed-in the retrieval (retrieval prob should be a seperate AC)
-  'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: detailStudentThunk },
-  'detailStudent.retrieve.start':     { params: ['studentNum', 'editMode'] },
-  'detailStudent.retrieve.complete':  { params: ['student',    'editMode'] },
-  'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },
-  'detailStudent.close':              { params: [] },
-  'detailStudent.changeEditMode':     { params: [] },
+  // ***
+  // *** select item
+  // ***
+  //       AC.selectItem(itemType, item)
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * item:        the item to select (null for de-select)
+  'selectItem': { params: ['itemType', 'item'] },
+
+
+  // ***
+  // *** detail item, after fresh retrieval, in a visual Dialog for either view/edit
+  // ***
+  //       AC.detaiItem(itemNum, itemType, editMode)
+  //          ... see: detailItemThunk.js for full documentation
+  //        * itemNum:     the item key ... 'studentNum'/'courseNum'
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * editMode:    true: edit, false: view
+  'detailItem':                  { params: ['itemType', 'itemNum', 'editMode'],  thunk: detailItemThunk },
+  'detailItem.retrieveStart':    { params: ['itemType', 'itemNum', 'editMode'] },
+  'detailItem.retrieveComplete': { params: ['itemType', 'item',    'editMode'] },
+  'detailItem.retrieveFail':     { params: ['itemType', 'itemNum', 'editMode', 'err'] },
+  'detailItem.close':            { params: ['itemType'] },
+  'detailItem.changeEditMode':   { params: ['itemType'] },
 
   'retrieveFilters':          { params: [],    thunk: retrieveFiltersThunk },
   'retrieveFilters.start':    { params: [] },

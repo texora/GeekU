@@ -85,49 +85,48 @@ describe('action-creator tests: AC.userMsg', () => {
 describe('insure AT/AC constants utilize federated namespace', () => {
 
   // NOTE: Utilize a AT/AC that has an intermediate placeholder node
-  //       ... detailStudent:                    thunk
-  //           detailStudent.retrieve:           intermediate placeholder node
-  //           detailStudent.retrieve.start:     action-object
-  //           detailStudent.retrieve.complete:  action-object
-  //           detailStudent.retrieve.fail:      action-object
+  //       ... selCrit:                intermediate placeholder node
+  //           selCrit.save:           thunk
+  //           selCrit.save.start:     action-object
+  //           selCrit.save.complete:  action-object
+  //           selCrit.save.fail:      action-object
 
-  it("AT.detailStudent same-as AT['detailStudent'] (a thunk)", () => {
-    expect(AT.detailStudent)
-             .toBe(AT['detailStudent'])
-             .toBeA('object') // a String object
-             .toEqual('detailStudent');
+  it("AT.selCrit same-as AT['selCrit'] (an intermediate node)", () => {
+    expect(AT.selCrit)
+             .toBe(AT['selCrit'])
+             .toBeA('object');  // an intermediate node
+  });
+  
+  it("AC.selCrit same-as AC['selCrit'] (an intermediate node)", () => {
+    expect(AC.selCrit)
+             .toBe(AC['selCrit'])
+             .toBeA('object');  // an intermediate node
   });
 
-  it("AC.detailStudent same-as AC['detailStudent'] (a thunk)", () => {
-    expect(AC.detailStudent)
-             .toBe(AC['detailStudent'])
+  it("AC.selCrit.save same-as AC['selCrit.save'] (a thunk)", () => {
+    expect(AC.selCrit.save)
+             .toBe(AC['selCrit.save'])
              .toBeA('function'); // a thunk
   });
 
-  it("AT.detailStudent.retrieve same-as AT['detailStudent.retrieve'] (an intermediate node)", () => {
-    expect(AT.detailStudent.retrieve)
-             .toBe(AT['detailStudent.retrieve'])
-             .toBeA('object');  // an intermediate node
-  });
-
-  it("AC.detailStudent.retrieve same-as AC['detailStudent.retrieve'] (an intermediate node)", () => {
-    expect(AC.detailStudent.retrieve)
-             .toBe(AC['detailStudent.retrieve'])
-             .toBeA('object');  // an intermediate node
+  it("AT.selCrit.save same-as AT['selCrit.save'] (a thunk)", () => {
+    expect(AT.selCrit.save)
+             .toBe(AT['selCrit.save'])
+             .toBeA('object');
   });
 
   // check ALL 3 of the bottom nodes
   for (const node of ['start', 'complete', 'fail']) {
-    it(`AT.detailStudent.retrieve.${node} same-as AT['detailStudent.retrieve.${node}'] (an action-object)`, () => {
-      expect(AT.detailStudent.retrieve[node])
-               .toBe(AT[`detailStudent.retrieve.${node}`])
+    it(`AT.selCrit.save.${node} same-as AT['selCrit.save.${node}'] (an action-object)`, () => {
+      expect(AT.selCrit.save[node])
+               .toBe(AT[`selCrit.save.${node}`])
                .toBeA('object') // a String object
-               .toEqual(`detailStudent.retrieve.${node}`);
+               .toEqual(`selCrit.save.${node}`);
     });
 
-    it(`AC.detailStudent.retrieve.${node} same-as AC['detailStudent.retrieve.${node}'] (an action-object)`, () => {
-      expect(AC.detailStudent.retrieve[node])
-               .toBe(AC[`detailStudent.retrieve.${node}`])
+    it(`AC.selCrit.save.${node} same-as AC['selCrit.save.${node}'] (an action-object)`, () => {
+      expect(AC.selCrit.save[node])
+               .toBe(AC[`selCrit.save.${node}`])
                .toBeA('function');  // an action-creator
     });
   }
