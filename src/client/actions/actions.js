@@ -124,27 +124,46 @@ const genesis = {
   'detailItem.close':            { params: ['itemType'] },
   'detailItem.changeEditMode':   { params: ['itemType'] },
 
+
+  // ***
+  // *** retrieve filters (i.e. list of selCrit)
+  // ***
+
   'retrieveFilters':          { params: [],    thunk: retrieveFiltersThunk },
   'retrieveFilters.start':    { params: [] },
   'retrieveFilters.complete': { params: ['filters'] },
   'retrieveFilters.fail':     { params: ['error'] },
 
-  // PRIVATE AC: emitted from <EditSelCrit>
-  'selCrit.edit':              { params: ['selCrit', 'meta'] }, // start a selCrit edit session
+
+  // ***
+  // *** edit specified selCrit
+  // ***
+  //       AC.selCrit.edit(selCrit) ... action emitted from: EditSelCrit.edit(selCrit)
+  //        * selCrit: the selCrit object to edit
+  'selCrit.edit':              { params: ['selCrit'] },
   'selCrit.edit.nameChange':   { params: ['name'] },
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
   'selCrit.edit.filterChange': { params: ['newFilter'] },
   'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
-  'selCrit.edit.close':        { params: [] },  // close dialog
-  // PUBLIC AC: emitted from <EditSelCrit>
+  'selCrit.edit.close':        { params: [] },          // close EditSelCrit dialog
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+
+
+  // ***
+  // *** save specified selCrit
+  // ***
 
   'selCrit.save':          { params: ['selCrit'],    thunk: selCritSaveThunk },
   'selCrit.save.start':    { params: ['selCrit'] },
   'selCrit.save.complete': { params: ['selCrit'] },
   'selCrit.save.fail':     { params: ['selCrit', 'error'] },
+
+
+  // ***
+  // *** delete specified selCrit
+  // ***
 
   'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
   'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },

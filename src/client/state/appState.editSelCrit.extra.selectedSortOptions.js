@@ -2,6 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
+import itemTypes        from '../../shared/model/itemTypes';
 
 
 // ***
@@ -13,7 +14,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
   [AT.selCrit.edit](selectedSortOptions, action) {
 
     // convert selCrit.sort to selectedSortOptions
-    const meta = action.meta;
+    const meta                   = itemTypes.meta[action.selCrit.itemType];
     const newSelectedSortOptions = (action.selCrit.sort || []).map( field => {
       const ascDec = field.charAt(0) === '-' ? -1 : +1;
       if (ascDec === -1) {

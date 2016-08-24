@@ -210,7 +210,7 @@ export default class EditSelCrit extends React.Component {
     // console.log(`xx <EditSelCrit>.edit() initial selCrit: ${FMT(selCrit)}`); // our hash check appears to be working!
 
     // dispatch the appropriate action
-    p.dispatch( AC.selCrit.edit(selCrit, this.meta) );
+    p.dispatch( AC.selCrit.edit(selCrit) );
   }
 
 

@@ -2,6 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
+import itemTypes        from '../../shared/model/itemTypes';
 
 
 // ***
@@ -13,7 +14,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
   [AT.selCrit.edit](selectedFieldOptions, action) {
 
     // convert selCrit.fields to selectedFieldOptions
-    const meta   = action.meta;
+    const meta   = itemTypes.meta[action.selCrit.itemType];
     const fields = action.selCrit.fields || [];
 
     const newSelectedFieldOptions = fields.map( (field) => {
