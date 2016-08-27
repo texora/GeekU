@@ -87,8 +87,8 @@ export default function selCrit(selCrit=null, action) {
     nextSelCrit.curHash = toHash;
 
     reductionHandler.logStandardizedMsg(action,
-                                  fromHash !== toHash,
-                                  `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
+                                        fromHash !== toHash,
+                                        `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
   }
 
   return nextSelCrit;
