@@ -19,7 +19,7 @@ export default function items(_itemType) {
     [AT.itemsView.retrieveComplete](items, action) {
       return [
         action.items,
-        ()=>`set items from action: ${action.items.length} itemTypes.meta[action.itemType].label.plural`
+        ()=>`set items from action: ${action.items.length} ${itemTypes.meta[action.itemType].label.plural}`
       ];
     },
 
