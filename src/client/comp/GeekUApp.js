@@ -11,6 +11,7 @@ import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
 import Paper              from 'material-ui/lib/paper';
 import Tab                from 'material-ui/lib/tabs/tab';
 import Tabs               from 'material-ui/lib/tabs/tabs';
+import CoursesView        from './CoursesView';
 import StudentsView       from './StudentsView';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
@@ -18,6 +19,7 @@ import {AC}               from '../actions';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
 import SelCrit            from '../../shared/util/SelCrit';
+import itemTypes          from '../../shared/model/itemTypes';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend        from 'react-dnd-html5-backend';
@@ -31,8 +33,9 @@ import HTML5Backend        from 'react-dnd-html5-backend';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    selectedView:        appState.selectedView,
-    selectedStudent: appState.studentsView.selectedStudent,
+    activeView:      appState.itemsView.activeView,
+    selectedStudent: appState.itemsView.student.selectedItem,
+    selectedCourse:  appState.itemsView.course.selectedItem,
   }
 })
 
@@ -47,9 +50,9 @@ export default class GeekUApp extends React.Component {
     super(props, context);
   }
 
-  handleSelectedView(page) {
+  handleSelectedView(itemTypeAsPage) {
     const p = this.props;
-    p.dispatch( page === 'Students' ? AC.selectStudentsView() : AC.selectCoursesView.activate() ); // TODO: only using .activate() on Courses, because the full thunk is not yet written
+    p.dispatch( AC.itemsView(itemTypeAsPage, null, 'activate') );
   }
 
   tempAlert() {
@@ -111,6 +114,7 @@ export default class GeekUApp extends React.Component {
 
     // studentNum is used as a back-up if name is NOT retrieved (studentNum is ALWAYS returned)
     const selectedStudentName = p.selectedStudent ? `(${p.selectedStudent.firstName || p.selectedStudent.lastName || p.selectedStudent.studentNum})` : '';
+    const selectedCourseNum   = p.selectedCourse  ? `(${p.selectedCourse.courseNum})` : '';
 
     return <div className="app">
       <AppBar className="app-header"
@@ -120,10 +124,10 @@ export default class GeekUApp extends React.Component {
                     <tr>
                       <td><i>GeekU</i></td>
                       <td>
-                        <Tabs value={p.selectedView}
+                        <Tabs value={p.activeView}
                               onChange={this.handleSelectedView}>
-                          <Tab value="Students" style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
-                          <Tab value="Courses"  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i></i></span>}/>
+                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                          <Tab value={itemTypes.course}  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i>{selectedCourseNum}</i></span>}/>
                         </Tabs>
                       </td>
                     </tr>
@@ -144,6 +148,7 @@ export default class GeekUApp extends React.Component {
                   <MenuItem primaryText="Sample Message with User Action"  onTouchTap={this.tempSampleMsgWithUserAction}/>
                 </IconMenu>}/>
       <LeftNav/>
+      <CoursesView/>
       <StudentsView/>
       <EditSelCrit/>
       <UserMsg/>

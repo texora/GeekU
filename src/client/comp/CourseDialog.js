@@ -5,27 +5,22 @@ import * as ReactRedux    from 'react-redux';
 
 import autobind from 'autobind-decorator';
 
-import moment             from 'moment';
-
 import {AC}               from '../actions';
 
-import subject            from '../../shared/model/subject';
 import term               from '../../shared/model/term';
+import itemTypes          from '../../shared/model/itemTypes';
+
+const  myItemType         = itemTypes.meta.course.itemType;
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import AutoComplete       from 'material-ui/lib/auto-complete';
 import SelectField        from 'material-ui/lib/select-field';
 import MenuItem           from 'material-ui/lib/menus/menu-item';
-import Avatar             from 'material-ui/lib/avatar';
-import DatePicker         from 'material-ui/lib/date-picker/date-picker';
 import Dialog             from 'material-ui/lib/dialog';
-import Divider            from 'material-ui/lib/divider';
 import EditIcon           from 'material-ui/lib/svg-icons/image/edit';
 import FlatButton         from 'material-ui/lib/flat-button';
 import IconButton         from 'material-ui/lib/icon-button';
 import Paper              from 'material-ui/lib/paper';
-import RadioButton        from 'material-ui/lib/radio-button';
-import RadioButtonGroup   from 'material-ui/lib/radio-button-group';
 import Table              from 'material-ui/lib/table/table';
 import TableBody          from 'material-ui/lib/table/table-body';
 import TableRow           from 'material-ui/lib/table/table-row';
@@ -34,22 +29,23 @@ import TextField          from 'material-ui/lib/text-field';
 
 import colors             from 'material-ui/lib/styles/colors';
 
-import Alert              from './Alert';
+import Confirm            from './Confirm';
+
 
 /**
- * The Student component displays a dialog of the details of a given student.
+ * The CourseDialog component displays a dialog of the details of a given course.
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    student:   appState.studentsView.detailStudent,
-    editMode:  appState.studentsView.detailEditMode,
+    course:   appState.itemsView.course.detailItem,
+    editMode: appState.itemsView.course.detailEditMode,
   }
 })
 
 @autobind
 
-export default class Student extends React.Component {
+export default class CourseDialog extends React.Component {
 
   static propTypes = { // expected component props
   }
@@ -65,8 +61,8 @@ export default class Student extends React.Component {
 
     // obtain user confirmation when unsaved changes exist
     if (unsavedChanges) {
-      Alert.display({
-        title: 'Student Edit',
+      Confirm.display({
+        title: 'Course Edit',
         msg:   'You have un-saved changes ... if you leave, your changes will NOT be saved!',
         actions: [
           { txt: 'Discard Changes', action: () => this.close() }, 
@@ -83,23 +79,23 @@ export default class Student extends React.Component {
   // unconditionally close self
   close() {
     const p = this.props;
-    p.dispatch( AC.detailStudent.close() );
+    p.dispatch( AC.detailItem.close(myItemType) );
   }
 
   changeEditMode() {
     const p = this.props;
-    p.dispatch( AC.detailStudent.changeEditMode() );
+    p.dispatch( AC.detailItem.changeEditMode(myItemType) );
   }
 
   saveEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailStudent.close(),
+    p.dispatch([ AC.detailItem.close(myItemType),
                  AC.userMsg.display('TODO: Save Complete') ]);
   }
 
   cancelEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailStudent.close(),
+    p.dispatch([ AC.detailItem.close(myItemType),
                  AC.userMsg.display('Edit Canceled') ]);
   }
 
@@ -120,166 +116,26 @@ export default class Student extends React.Component {
                     }}/>,
     ];
 
-
-    const contentForm = p.editMode ?
-      <div style={{
-             padding: '0px 15px 0px 15px',
-           }}>
-        <TextField floatingLabelText="First"
-                   style={{ width: '15em' }}
-                   defaultValue={p.student.firstName}/>
-        &emsp;
-        <TextField floatingLabelText="Last"
-                   style={{ width: '15em' }}
-                   defaultValue={p.student.lastName}/>
-        <br/>
-        <TextField floatingLabelText="Email"
-                   style={{ width: '15em' }}
-                   defaultValue={p.student.email}
-                   hintText="yourMail@gmail.com"/>
-        &emsp;
-        <TextField floatingLabelText="Phone"
-                   style={{ width: '15em' }}
-                   defaultValue={p.student.phone}
-                   hintText="618.555.1212"/>
-        <br/>
-        <TextField floatingLabelText="Address"
-                   style={{ width: '15em' }}
-                   defaultValue={p.student.addr.line1}
-                   hintText="line 1"/>
-        <br/>
-        <TextField style={{ width: '15em' }}
-                   defaultValue={p.student.addr.line2}
-                   hintText="line 2"/>
-        <br/>
-        <TextField floatingLabelText="City"
-                   style={{ width: '10em' }}
-                   defaultValue={p.student.addr.city}/>
-        &emsp;
-        <AutoComplete floatingLabelText="State"
-                      style={{ width: '10em' }}
-                      filter={AutoComplete.caseInsensitiveFilter}
-                      searchText={p.student.addr.state}
-                      dataSource={['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']}
-
-                      openOnFocus={true}
-                      onFocus={()=>console.log('xxx AutoComplete FOCUS')}
-                      onBlur={()=> console.log('xxx AutoComplete BLUR')}
-
-                      onNewRequest={(txt, indx)=>     console.log(`xxx onNewRequest  txt: '${txt}', indx: ${indx}`)}
-                      onUpdateInput={(txt, dataArr)=> console.log(`xxx onUpdateInput txt: '${txt}'`)}
-
-                      />
-        &emsp;
-        &emsp;
-        &emsp;
-        {/*
-          AutoComplete CRAPPIENESS ...
-          - this component is REALLY BAD ... definitly NOT production ready
-          - NO WORK: openOnFocus={true}
-          - NO WORK: onFocus={()=>console.log('xxx AutoComplete now has focus')}
-          - NO WORK: maxSearchResults={5}
-          - can't figure out how to FORCE selection (it accepts free-formed entered text)
-          - open={true} causes weird error
-              ... popover.js:278 Uncaught TypeError: Cannot read property 'getBoundingClientRect' of null
-          - keyboard focus tab order goes into oblivia after selection
-          - popup is ALL OVER THE PLACE - JUMPY JUMPY (sometimes on top of screen)
-          - doesn't support async data source (that I can tell)
-        */}
-        <TextField floatingLabelText="Zip"
-                   style={{ width: '4em' }}
-                   defaultValue={p.student.addr.zip}/>
-      </div>
-    : <div style={{
-             padding: '0px 15px 0px 15px',
-           }}>
-        {p.student.email}
-        <Divider/>
-        {p.student.phone}
-        <Divider/>
-        {p.student.addr.line1}<br/>
-        {p.student.addr.line2 ? <span>{p.student.addr.line2}<br/></span> : <i/>}
-        {p.student.addr.city}, {p.student.addr.state}  {p.student.addr.zip}<br/>
-      </div>;
-
-    const profileForm = p.editMode ?
-      <div style={{
-             padding: '0px 15px 0px 15px',
-           }}>
-
-        <div style={{
-               display:        'flex',
-               flexFlow:       'row nowrap',
-               justifyContent: 'space-between',
-               alignItems:     'center',
+    const contentForm = p.editMode
+      ? <div style={{
+               padding: '0px 15px 0px 15px',
              }}>
-
-          <RadioButtonGroup name="gender"
-                            defaultSelected={p.student.gender}
-                            style={{ width: '10em' }}>
-            <RadioButton value='M'
-                         label='Male'/>
-            <RadioButton value='F'
-                         label='Female'/>
-          </RadioButtonGroup>
-
-          <DatePicker floatingLabelText="Birthday"
-                      autoOk={true}
-                      style={{ width: '8em' }}
-                      textFieldStyle={{ width: '8em' }}
-                      minDate={moment().subtract(200, 'years').toDate() /* we have some really old dates in our data */}
-                      formatDate={(date)=> moment(date).format('YYYY-MM-DD')}
-                      defaultDate={moment(p.student.birthday, 'YYYY-MM-DD').toDate()}
-                      />
-          {/*
-            DatePicker CRAPPIENESS ...
-            - no way to simply enter date as a string
-            - it is a MONSTOR BIG dialog ... container="inline" is TOO BIG for my dialog
-          */}
-
-          <AutoComplete floatingLabelText="Degree"
-                        style={{ width: '4em' }}
-                        filter={AutoComplete.caseInsensitiveFilter}
-                        searchText={p.student.degree}
-                        dataSource={subject.subjects()}
-
-                        openOnFocus={true}
-                        onFocus={()=>console.log('xxx degree: AutoComplete FOCUS')}
-                        onBlur={()=> console.log('xxx degree: AutoComplete BLUR')}
-
-                        onNewRequest={(txt, indx)=>     console.log(`xxx degree: onNewRequest  txt: '${txt}', indx: ${indx}`)}
-                        onUpdateInput={(txt, dataArr)=> console.log(`xxx degree: onUpdateInput txt: '${txt}'`)}
-                        />
-
-          <TextField floatingLabelText="GPA"
-                     style={{ width: '4em' }}
-                     type='number'
-                     disabled={true}
-                     defaultValue={p.student.gpa}/>
-
-          <AutoComplete floatingLabelText="Graduation"
-                        style={{ width: '6em' }}
-                        filter={AutoComplete.caseInsensitiveFilter}
-                        searchText={p.student.graduation}
-                        dataSource={term.terms()}
-
-                        openOnFocus={true}
-                        onFocus={()=>console.log('xxx graduation: AutoComplete FOCUS')}
-                        onBlur={()=> console.log('xxx graduation: AutoComplete BLUR')}
-
-                        onNewRequest={(txt, indx)=>     console.log(`xxx graduation: onNewRequest  txt: '${txt}', indx: ${indx}`)}
-                        onUpdateInput={(txt, dataArr)=> console.log(`xxx graduation: onUpdateInput txt: '${txt}'`)}
-                        />
+          <TextField floatingLabelText="Title"
+                     style={{ width: '15em' }}
+                     defaultValue={p.course.courseTitle}/>
+          <br/>
+          <TextField floatingLabelText="Description"
+                     style={{ width: '15em' }}
+                     defaultValue={p.course.courseDesc}/>
         </div>
-      </div>
-    : <div style={{
-             padding: '0px 15px 0px 15px',
-           }}>
-        {p.student.gender==='M' ? 'Male' : 'Female'} ... <i>Birthday</i>: {p.student.birthday}
-        <br/>
-        <i>Degree</i>: {p.student.degree} ... <i>GPA</i>: {p.student.gpa} ... <i>Graduation</i>: {p.student.graduation}
-      </div>;
-
+      : <div style={{
+               padding: '0px 15px 0px 15px',
+             }}>
+          {p.course.courseTitle}
+          <br/>
+          <br/>
+          {p.course.courseDesc}
+        </div>;
 
     return (
       <Dialog modal={false}
@@ -347,9 +203,7 @@ export default class Student extends React.Component {
                 </IconButton>
               }
             </div>
-            <Avatar src={`https://robohash.org/${p.student.firstName + p.student.lastName}.bmp?size=100x100&set=set2&bgset=any`}
-                    size={100}/>
-            <h2>{p.student.firstName} {p.student.lastName}</h2>
+            <h2>{p.course.courseNum}</h2>
           </div>
 
           {/* right panel */}
@@ -363,7 +217,7 @@ export default class Student extends React.Component {
                  justifyContent: 'spece-between',
                }}>
 
-            {/* general student info */}
+            {/* general course info */}
             <Paper style={{
                      width:     '100%',
                      padding:   '10px 15px',
@@ -371,12 +225,8 @@ export default class Student extends React.Component {
                    }}
                  zDepth={4}>
 
-              <b>Contact</b>: {p.student.studentNum}
+              <b>Course</b>: {p.course.courseNum}
               {contentForm}
-
-              <br/>
-              <b>Profile</b>:
-              {profileForm}
 
             </Paper>
 
@@ -387,7 +237,7 @@ export default class Student extends React.Component {
                &nbsp;
             </div>
 
-            {/* enrollment student info */}
+            {/* enrollment course info */}
             <Paper style={{
                      width:     '100%',
                      padding:   '10px 15px',
@@ -406,10 +256,10 @@ export default class Student extends React.Component {
                            displayRowCheckbox={false}
                            showRowHover={true}
                            stripedRows={false}>
-                  { p.student.enrollment.map( (enroll, indx) => {
+                  { p.course.enrollment.map( (enroll, indx) => {
                       return (
-                        <TableRow key={p.student.studentNum+enroll.term+enroll.courseNum}>
-                          <TableRowColumn>{enroll.course.courseNum}</TableRowColumn>
+                        <TableRow key={p.course.courseNum+enroll.term+enroll.student.studentNum}>
+                          <TableRowColumn>{enroll.student.firstName} {enroll.student.lastName} ({enroll.student.studentNum})</TableRowColumn>
                           <TableRowColumn>
                             { !p.editMode ? enroll.grade || '' // xxx this stupid SelectField (CRAPPIENESS) CAN ONLY be controlled ... NO defaultValue semantics
                             : <SelectField floatingLabelText="Grade"
@@ -438,7 +288,6 @@ export default class Student extends React.Component {
                                             onUpdateInput={(txt, dataArr)=> console.log(`xxx term: onUpdateInput txt: '${txt}'`)}
                                             />}
                           </TableRowColumn>
-                          <TableRowColumn>{enroll.course.courseTitle}</TableRowColumn>
                         </TableRow>
                       );
                     })}

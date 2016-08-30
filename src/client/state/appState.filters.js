@@ -63,9 +63,9 @@ export default function filters(filters=[], action) {
   // when our state has changed, maintain it's sort order
   if (nextState !== filters) {
     nextState.sort( (sc1, sc2) => {
-      return sc1.target.localeCompare(sc2.target) ||
-             sc1.name  .localeCompare(sc2.name)   ||
-             sc1.desc  .localeCompare(sc2.desc);
+      return sc1.itemType.localeCompare(sc2.itemType) ||
+             sc1.name    .localeCompare(sc2.name)   ||
+             sc1.desc    .localeCompare(sc2.desc);
     });
   }
 

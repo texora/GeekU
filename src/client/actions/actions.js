@@ -1,10 +1,10 @@
 'use strict'
 
-import detailStudentThunk      from './thunks/detailStudentThunk';
+import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 import selCritSaveThunk        from './thunks/selCritSaveThunk';
-import selectStudentsViewThunk from './thunks/selectStudentsViewThunk';
+import itemsViewThunk          from './thunks/itemsViewThunk';
                                
 import userMsgDisplayAC        from './creators/userMsgDisplayAC';
                                
@@ -81,55 +81,91 @@ const genesis = {
 
 
   // ***
-  // *** activate the Students View (optionally retrieving students via selCrit directive)
+  // *** retrieve and/or activate the Items View for the specified itemType
   // ***
-  //       AC.selectStudentsView([selCrit])
-  //          - SelCrit obj: activate the Students View ... conditionally retrieving Students when different selCrit (or out-of-date)
-  //          - null:        activate the Students View (in it's current state) ... NO Students retrieval
-  //          - 'refresh':   NO activate ... simply refresh Students retrieval (with same selCrit)
-  //          ... see: selectStudentsViewThunk.js for full documentation
-  'selectStudentsView':                  { params: ['selCrit'], thunk: selectStudentsViewThunk },
-  'selectStudentsView.activate':         { params: [] },
-  'selectStudentsView.retrieveStart':    { params: ['selCrit'] },          // conditionally emitted when retrieval needed
-  'selectStudentsView.retrieveComplete': { params: ['selCrit', 'items'] }, // ditto
-  'selectStudentsView.retrieveFail':     { params: ['selCrit', 'error'] }, // ditto
+  //       AC.itemsView(itemType, retrieve, activate)
+  //          ... see: itemsViewThunk.js for full documentation
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * retrieve:    the retrieval directive, one of:
+  //          - null:        no retrieval at all (DEFAULT)
+  //          - selCrit:     conditionally retrieve items when different from ItemsView selCrit (or out-of-date)
+  //          - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+  //        * activate:    the activate directive, one of:
+  //          - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
+  //          - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
+  'itemsView':                  { params: ['itemType', 'retrieve', 'activate'], thunk: itemsViewThunk },
+  'itemsView.activate':         { params: ['itemType'] },
+  'itemsView.retrieveStart':    { params: ['itemType', 'selCrit'] },          // conditionally emitted when retrieval needed
+  'itemsView.retrieveComplete': { params: ['itemType', 'selCrit', 'items'] }, // ditto
+  'itemsView.retrieveFail':     { params: ['itemType', 'selCrit', 'error'] }, // ditto
 
-  'selectStudent': { params: ['student'] }, // student: null for de-select
 
-  // TODO: needed for tab selectsion ... eventually fully flesh out
-  'selectCoursesView.activate':         { params: [] },
+  // ***
+  // *** select item
+  // ***
+  //       AC.selectItem(itemType, item)
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * item:        the item to select (null for de-select)
+  'selectItem': { params: ['itemType', 'item'] },
 
-  // TODO: suspect this is a code smell - the detailStudent has mixed-in the retrieval (retrieval prob should be a seperate AC)
-  'detailStudent':                    { params: ['studentNum', 'editMode'],  thunk: detailStudentThunk },
-  'detailStudent.retrieve.start':     { params: ['studentNum', 'editMode'] },
-  'detailStudent.retrieve.complete':  { params: ['student',    'editMode'] },
-  'detailStudent.retrieve.fail':      { params: ['studentNum', 'err'] },
-  'detailStudent.close':              { params: [] },
-  'detailStudent.changeEditMode':     { params: [] },
+
+  // ***
+  // *** detail item, after fresh retrieval, in a visual Dialog for either view/edit
+  // ***
+  //       AC.detaiItem(itemNum, itemType, editMode)
+  //          ... see: detailItemThunk.js for full documentation
+  //        * itemNum:     the item key ... 'studentNum'/'courseNum'
+  //        * itemType:    the itemType ... 'student'/'course'
+  //        * editMode:    true: edit, false: view
+  'detailItem':                  { params: ['itemType', 'itemNum', 'editMode'],  thunk: detailItemThunk },
+  'detailItem.retrieveStart':    { params: ['itemType', 'itemNum', 'editMode'] },
+  'detailItem.retrieveComplete': { params: ['itemType', 'item',    'editMode'] },
+  'detailItem.retrieveFail':     { params: ['itemType', 'itemNum', 'editMode', 'err'] },
+  'detailItem.close':            { params: ['itemType'] },
+  'detailItem.changeEditMode':   { params: ['itemType'] },
+
+
+  // ***
+  // *** retrieve filters (i.e. list of selCrit)
+  // ***
 
   'retrieveFilters':          { params: [],    thunk: retrieveFiltersThunk },
   'retrieveFilters.start':    { params: [] },
   'retrieveFilters.complete': { params: ['filters'] },
   'retrieveFilters.fail':     { params: ['error'] },
 
-  // PRIVATE AC: emitted from <EditSelCrit>
-  'selCrit.edit':              { params: ['selCrit', 'meta'] }, // start a selCrit edit session
+
+  // ***
+  // *** edit specified selCrit
+  // ***
+  //       AC.selCrit.edit(selCrit) ... action emitted from: EditSelCrit.edit(selCrit)
+  //        * selCrit: the selCrit object to edit
+  'selCrit.edit':              { params: ['selCrit'] },
   'selCrit.edit.nameChange':   { params: ['name'] },
   'selCrit.edit.descChange':   { params: ['desc'] },
   'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
   'selCrit.edit.filterChange': { params: ['newFilter'] },
   'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
-  'selCrit.edit.close':        { params: [] },  // close dialog
-  // PUBLIC AC: emitted from <EditSelCrit>
+  'selCrit.edit.close':        { params: [] },          // close EditSelCrit dialog
   'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+
+
+  // ***
+  // *** save specified selCrit
+  // ***
 
   'selCrit.save':          { params: ['selCrit'],    thunk: selCritSaveThunk },
   'selCrit.save.start':    { params: ['selCrit'] },
   'selCrit.save.complete': { params: ['selCrit'] },
   'selCrit.save.fail':     { params: ['selCrit', 'error'] },
 
-  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: view impacted by this selCrit (if any) ... 'Students'/'Courses'/null
+
+  // ***
+  // *** delete specified selCrit
+  // ***
+
+  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
   'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },
   'selCrit.delete.complete': { params: ['selCrit', 'impactView'] },
   'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'error'] },

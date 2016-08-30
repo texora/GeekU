@@ -9,7 +9,8 @@ import handleUnexpectedError from '../../util/handleUnexpectedError';
  * that deletes the supplied selCrit.
  *
  * @param {object} selCrit the selection criteria to delete.
- * @param {string} impactView view impacted by this selCrit (if any) ... 'Students'/'Courses'/null
+ * @param {string} impactView the itemType of our impacted view if any
+ * (null indicates NO view was impacted) ... 'student'/'course'/null
  */
 const [selCritDeleteThunk, thunkName, log] = promoteThunk('selCrit.delete', (selCrit, impactView) => {
   

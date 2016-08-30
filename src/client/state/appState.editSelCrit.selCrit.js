@@ -23,16 +23,10 @@ import distinguishMajorSortField from './appState.editSelCrit.selCrit.distinguis
 //         2) the individual fields being edited (e.g. selCrit.filter, etc.)
 
 const _selCrit = Redux.combineReducers({
-
-  // NOTE: The order of these field reducers is important to accomidate our
-  //       "somewhat brittle" hash algorithm.
-  //       Please maintain same order as found in SelCrit.new().
-
-  _id:    placebo,
-  key:    placebo,
-  target: placebo,
-  userId: placebo,
-  target: placebo,
+  _id:      placebo,
+  key:      placebo,
+  userId:   placebo,
+  itemType: placebo,
   lastDbModDate: placebo,
 
   name,
@@ -93,8 +87,8 @@ export default function selCrit(selCrit=null, action) {
     nextSelCrit.curHash = toHash;
 
     reductionHandler.logStandardizedMsg(action,
-                                  fromHash !== toHash,
-                                  `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
+                                        fromHash !== toHash,
+                                        `value-added-logic (because selCrit changed): setting selCrit.curHash FROM: '${fromHash}', TO: '${toHash}'`);
   }
 
   return nextSelCrit;
