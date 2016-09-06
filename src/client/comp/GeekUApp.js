@@ -127,8 +127,8 @@ export default class GeekUApp extends React.Component {
                       <td>
                         <Tabs value={p.activeView}
                               onChange={this.handleSelectedView}>
-                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
                           <Tab value={itemTypes.course}  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i>{selectedCourseNum}</i></span>}/>
+                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
                         </Tabs>
                       </td>
                     </tr>
