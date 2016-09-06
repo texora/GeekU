@@ -6,8 +6,10 @@ import * as ReactRedux    from 'react-redux';
 import autobind           from 'autobind-decorator';
 
 import itemTypes          from '../../shared/model/itemTypes';
+const  myItemType         = itemTypes.course;
 
 import {AC}               from '../actions';
+import selectors          from '../state';
 
 import FontIcon           from 'material-ui/lib/font-icon';
 import TableRowColumn     from 'material-ui/lib/table/table-row-column';
@@ -23,15 +25,18 @@ import CourseDialog       from './CourseDialog';
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
+
+
   return {
-    inProgress:      appState.itemsView.course.inProgress ? true : false,
-    selCrit:         appState.itemsView.course.selCrit || {desc: 'please select a filter from the Left Nav menu'},
+    // NOTE: some of thes properties may only be used by our base class (ItemsView)
+    itemsViewShown:  selectors.getActiveView            (appState) === myItemType,
 
-    items:           appState.itemsView.course.items,
-    selectedItem:    appState.itemsView.course.selectedItem,
-    itemsViewShown:  appState.itemsView.activeView===itemTypes.course,
+    selectedItem:    selectors.getItemsViewSelectedItem (appState, myItemType),
+    detailItem:      selectors.getItemsViewDetailItem   (appState, myItemType),
 
-    detailItem:      appState.itemsView.course.detailItem,
+    inProgress:      selectors.isItemsViewInProgress    (appState, myItemType),
+    selCrit:         selectors.getItemsViewSelCrit      (appState, myItemType),
+    items:           selectors.getItemsViewItems        (appState, myItemType),
   }
 })
 
@@ -54,7 +59,7 @@ export default class CoursesView extends ItemsView {
    * DERIVATION-HOOK
    */
   meta() {
-    return itemTypes.meta.course;
+    return itemTypes.meta[myItemType];
   }
 
 

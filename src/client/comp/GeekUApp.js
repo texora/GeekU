@@ -16,6 +16,7 @@ import StudentsView       from './StudentsView';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
 import {AC}               from '../actions';
+import selectors          from '../state';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
 import SelCrit            from '../../shared/util/SelCrit';
@@ -33,9 +34,9 @@ import HTML5Backend        from 'react-dnd-html5-backend';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    activeView:      appState.itemsView.activeView,
-    selectedStudent: appState.itemsView.student.selectedItem,
-    selectedCourse:  appState.itemsView.course.selectedItem,
+    activeView:      selectors.getActiveView(appState),
+    selectedStudent: selectors.getItemsViewSelectedItem(appState, itemTypes.student),
+    selectedCourse:  selectors.getItemsViewSelectedItem(appState, itemTypes.course),
   }
 })
 

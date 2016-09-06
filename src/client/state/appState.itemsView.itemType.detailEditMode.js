@@ -36,3 +36,10 @@ export default function detailEditMode(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewDetailEditMode = (detailEditMode) => detailEditMode;

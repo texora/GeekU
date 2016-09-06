@@ -6,6 +6,7 @@ import autobind           from 'autobind-decorator';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
 import {AC}               from '../actions'
+import selectors          from '../state'
 
 
 /**
@@ -13,12 +14,14 @@ import {AC}               from '../actions'
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
-  const open       =  appState.userMsg.length>0;
-  const userMsg    =  appState.userMsg[0];
-  const msg        =  open ? userMsg.msg : '';
-  const userAction =  open ? userMsg.userAction : null;
-  const actionTxt  =  userAction ? userAction.txt      : null;
-  const actionFn   =  userAction ? userAction.callback : null;
+
+  const activeUserMsg = selectors.getActiveUserMsg(appState);
+  const open          = activeUserMsg !== null;
+  const msg           = open ? activeUserMsg.msg : '';
+  const userAction    = open ? activeUserMsg.userAction : null;
+  const actionTxt     = userAction ? userAction.txt      : null;
+  const actionFn      = userAction ? userAction.callback : null;
+
   return {
     open,
     msg,

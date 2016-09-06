@@ -6,6 +6,7 @@ import * as ReactRedux    from 'react-redux';
 import autobind           from 'autobind-decorator';
 import assert             from 'assert';
 import {AC}               from '../../actions';
+import selectors          from '../../state';
 
 import AddCircleOutlineIcon    from 'material-ui/lib/svg-icons/content/add-circle-outline';
 import RemoveCircleOutlineIcon from 'material-ui/lib/svg-icons/content/remove-circle-outline'; // replaced with standard 'x'
@@ -38,7 +39,7 @@ import colors                  from 'material-ui/lib/styles/colors';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    filter: appState.editSelCrit.selCrit.filter,
+    filter: selectors.getEditSelCrit(appState).selCrit.filter,
   };
 })
 

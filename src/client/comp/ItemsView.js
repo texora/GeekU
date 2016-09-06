@@ -45,14 +45,14 @@ export default class ItemsView extends React.Component {
 
     dispatch:        React.PropTypes.func.isRequired,
 
-    inProgress:      React.PropTypes.bool.isRequired,
-    selCrit:         React.PropTypes.object.isRequired,
-
-    items:           React.PropTypes.array.isRequired,
-    selectedItem:    React.PropTypes.object.isRequired,
     itemsViewShown:  React.PropTypes.bool.isRequired,
 
+    selectedItem:    React.PropTypes.object.isRequired,
     detailItem:      React.PropTypes.object.isRequired,
+
+    inProgress:      React.PropTypes.bool.isRequired,
+    selCrit:         React.PropTypes.object.isRequired,
+    items:           React.PropTypes.array.isRequired,
   }
 
 

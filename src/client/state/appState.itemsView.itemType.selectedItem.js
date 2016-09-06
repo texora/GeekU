@@ -64,3 +64,10 @@ export default function selectedItem(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewSelectedItem = (selectedItem) => selectedItem;

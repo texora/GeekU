@@ -4,6 +4,7 @@ import React              from 'react';
 import * as ReactRedux    from 'react-redux';
 import autobind           from 'autobind-decorator';
 import {AC}               from '../../actions';
+import selectors          from '../../state';
 
 import ArrowBackIcon           from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import ArrowForwardIcon        from 'material-ui/lib/svg-icons/navigation/arrow-forward';
@@ -18,7 +19,7 @@ import OptionDropHandle        from './OptionDropHandle';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    selectedFieldOptions: appState.editSelCrit.extra.selectedFieldOptions,
+    selectedFieldOptions: selectors.getEditSelCrit(appState).extra.selectedFieldOptions,
   }
 })
 

@@ -8,12 +8,12 @@ import autobind from 'autobind-decorator';
 import moment             from 'moment';
 
 import {AC}               from '../actions';
+import selectors          from '../state';
 
 import subject            from '../../shared/model/subject';
 import term               from '../../shared/model/term';
 import itemTypes          from '../../shared/model/itemTypes';
-
-const  myItemType         = itemTypes.meta.student.itemType;
+const  myItemType         = itemTypes.student;
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
 import AutoComplete       from 'material-ui/lib/auto-complete';
@@ -45,8 +45,8 @@ import Alert              from './Alert';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    student:   appState.itemsView.student.detailItem,
-    editMode:  appState.itemsView.student.detailEditMode,
+    student:  selectors.getItemsViewDetailItem     (appState, myItemType),
+    editMode: selectors.getItemsViewDetailEditMode (appState, myItemType),
   }
 })
 

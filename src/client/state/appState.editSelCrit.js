@@ -16,3 +16,10 @@ const editSelCrit = Redux.combineReducers({
 });
 
 export default editSelCrit;
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getEditSelCrit = (editSelCrit) => editSelCrit;

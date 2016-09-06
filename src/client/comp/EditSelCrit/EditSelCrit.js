@@ -6,6 +6,7 @@ import * as ReactRedux    from 'react-redux';
 import autobind           from 'autobind-decorator';
 import assert             from 'assert';
 import {AC}               from '../../actions';
+import selectors          from '../../state';
 import SelCrit            from '../../../shared/util/SelCrit';
 import itemTypes          from '../../../shared/model/itemTypes';
 
@@ -104,10 +105,11 @@ import UserMsg from '../UserMsg';
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
+  const extra = selectors.getEditSelCrit(appState).extra;
   return {
-    selCrit:              appState.editSelCrit.selCrit,
-    selectedFieldOptions: appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedFieldOptions : null,
-    selectedSortOptions:  appState.editSelCrit.extra ? appState.editSelCrit.extra.selectedSortOptions : null,
+    selCrit:              selectors.getEditSelCrit(appState).selCrit,
+    selectedFieldOptions: extra ? extra.selectedFieldOptions : null,
+    selectedSortOptions:  extra ? extra.selectedSortOptions  : null,
   };
 })
 

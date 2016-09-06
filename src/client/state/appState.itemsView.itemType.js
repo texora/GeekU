@@ -2,12 +2,12 @@
 
 import * as Redux from 'redux';
 
-import selectedItem    from './appState.itemsView.itemType.selectedItem';
-import detailItem      from './appState.itemsView.itemType.detailItem';
-import detailEditMode  from './appState.itemsView.itemType.detailEditMode';
-import inProgress      from './appState.itemsView.itemType.inProgress';
-import selCrit         from './appState.itemsView.itemType.selCrit';
-import items           from './appState.itemsView.itemType.items';
+import selectedItem,   * as fromSelectedItem    from './appState.itemsView.itemType.selectedItem';
+import detailItem,     * as fromDetailedItem    from './appState.itemsView.itemType.detailItem';
+import detailEditMode, * as fromDetailEditMode  from './appState.itemsView.itemType.detailEditMode';
+import inProgress,     * as fromInProgress      from './appState.itemsView.itemType.inProgress';
+import selCrit,        * as fromSelCrit         from './appState.itemsView.itemType.selCrit';
+import items,          * as fromItems           from './appState.itemsView.itemType.items';
 
 // ***
 // *** appState.itemsView.itemType reducer (function wrapper)
@@ -45,3 +45,15 @@ export default function itemType(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewSelectedItem   = (itemType) => fromSelectedItem   .getItemsViewSelectedItem   (itemType.selectedItem);
+export const getItemsViewDetailItem     = (itemType) => fromDetailedItem   .getItemsViewDetailItem     (itemType.detailItem);
+export const getItemsViewDetailEditMode = (itemType) => fromDetailEditMode .getItemsViewDetailEditMode (itemType.detailEditMode);
+export const isItemsViewInProgress      = (itemType) => fromInProgress     .isItemsViewInProgress      (itemType.inProgress);
+export const getItemsViewSelCrit        = (itemType) => fromSelCrit        .getItemsViewSelCrit        (itemType.selCrit);
+export const getItemsViewItems          = (itemType) => fromItems          .getItemsViewItems          (itemType.items);
