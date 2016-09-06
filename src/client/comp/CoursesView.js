@@ -25,8 +25,6 @@ import CourseDialog       from './CourseDialog';
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
-
-
   return {
     // NOTE: some of thes properties may only be used by our base class (ItemsView)
     itemsViewShown:  selectors.getActiveView            (appState) === myItemType,
