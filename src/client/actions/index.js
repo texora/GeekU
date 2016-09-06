@@ -1,5 +1,5 @@
 'use strict'
 
-// alias to actions.js preventing duplicate actions/actions imports
+// convience alias to actions.js preventing duplicate actions/actions in imports
 import {AT, AC} from './actions';
 export {AT, AC};

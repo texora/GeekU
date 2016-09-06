@@ -45,14 +45,14 @@ export default class ItemsView extends React.Component {
 
     dispatch:        React.PropTypes.func.isRequired,
 
-    inProgress:      React.PropTypes.bool.isRequired,
-    selCrit:         React.PropTypes.object.isRequired,
-
-    items:           React.PropTypes.array.isRequired,
-    selectedItem:    React.PropTypes.object.isRequired,
     itemsViewShown:  React.PropTypes.bool.isRequired,
 
+    selectedItem:    React.PropTypes.object.isRequired,
     detailItem:      React.PropTypes.object.isRequired,
+
+    inProgress:      React.PropTypes.bool.isRequired,
+    selCrit:         React.PropTypes.object.isRequired,
+    items:           React.PropTypes.array.isRequired,
   }
 
 
@@ -271,9 +271,7 @@ export default class ItemsView extends React.Component {
       // ... can't even read/understand code: node_modules/material-ui/lib/paper.js
     };
 
-    // we actually hide the ItemsView if NOT displayed as an attempted optimization for large list
-    // ... one side-benefit is that we retain scrolling state from previous renderings
-    //     TODO: doesn't seem to help - in fact it even takes longer to take it down ... hmmmm
+    // we actually hide our view when NOT displayed to maintain the scrolling position from previous renderings
     if (!p.itemsViewShown) {
       myStyle.display = 'none';
     }
@@ -349,7 +347,6 @@ export default class ItemsView extends React.Component {
                      stripedRows={false}>
 
             { p.items.map( (item, itemIndx) => {
-
 
                 // NOTE: item keys are always emitted (enforced by server)
 

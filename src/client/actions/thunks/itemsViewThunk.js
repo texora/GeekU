@@ -2,13 +2,25 @@
 
 import promoteThunk          from './promoteThunk';
 import {AC}                  from '../actions';
+
+// import selectors             from '../../state';
+// ??? ABOVE import causes obsecure error in spec testing ... cannot import here BECAUSE NOT SURE WHY
+//     KJB: ONLY impacts spec testing UNSURE WHY
+//     PhantomJS 2.1.1 (Windows 7 0.0.0) ERROR
+//     TypeError: undefined is not an object (evaluating '_actions.AT.userMsg')
+//       at C:/data/devGitHub/GeekU/src/client/actions/spec/actions.spec.js:59777
+//     
+//     Finished in 0.661 secs / 0 secs
+//     
+//     SUMMARY:
+//     x 0 tests completed
+
 import {encodeJsonQueryStr}  from '../../../shared/util/QueryStrUtil';
 import SelCrit               from '../../../shared/util/SelCrit';
 import itemTypes             from '../../../shared/model/itemTypes';
 
 import handleUnexpectedError from '../../util/handleUnexpectedError';
 import assert                from 'assert';
-
 
 /**
  * AC.itemsView(retrieve, activate): retrieve and/or activate the Items View for the specified itemType.
@@ -55,6 +67,8 @@ const [itemsViewThunk, thunkName, log] = promoteThunk('itemsView', (itemType,
 
 
     // interpret the retrieval directive
+    // ??? OLD: appState.itemsView[itemType].selCrit
+    // ??? NEW: selectors.getItemsViewSelCrit(appState, itemType) ??? can't do ... unsure why ... see selectors import (above)
     const selCrit = (retrieve === 'refresh')
                       ? appState.itemsView[itemType].selCrit // refresh current view (can be null if never retrieved)
                       : SelCrit.isFullyEqual(retrieve, appState.itemsView[itemType].selCrit)

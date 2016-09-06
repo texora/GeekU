@@ -6,8 +6,10 @@ import * as ReactRedux    from 'react-redux';
 import autobind           from 'autobind-decorator';
 
 import itemTypes          from '../../shared/model/itemTypes';
+const  myItemType         = itemTypes.student;
 
 import {AC}               from '../actions';
+import selectors          from '../state';
 
 import FontIcon           from 'material-ui/lib/font-icon';
 import TableRowColumn     from 'material-ui/lib/table/table-row-column';
@@ -24,14 +26,15 @@ import StudentDialog      from './StudentDialog';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    inProgress:      appState.itemsView.student.inProgress ? true : false,
-    selCrit:         appState.itemsView.student.selCrit || {desc: 'please select a filter from the Left Nav menu'},
+    // NOTE: some of thes properties may only be used by our base class (ItemsView)
+    itemsViewShown:  selectors.getActiveView            (appState) === myItemType,
 
-    items:           appState.itemsView.student.items,
-    selectedItem:    appState.itemsView.student.selectedItem,
-    itemsViewShown:  appState.itemsView.activeView===itemTypes.student,
+    selectedItem:    selectors.getItemsViewSelectedItem (appState, myItemType),
+    detailItem:      selectors.getItemsViewDetailItem   (appState, myItemType),
 
-    detailItem:      appState.itemsView.student.detailItem,
+    inProgress:      selectors.isItemsViewInProgress    (appState, myItemType),
+    selCrit:         selectors.getItemsViewSelCrit      (appState, myItemType),
+    items:           selectors.getItemsViewItems        (appState, myItemType),
   }
 })
 
@@ -54,7 +57,7 @@ export default class StudentsView extends ItemsView {
    * DERIVATION-HOOK
    */
   meta() {
-    return itemTypes.meta.student;
+    return itemTypes.meta[myItemType];
   }
 
 

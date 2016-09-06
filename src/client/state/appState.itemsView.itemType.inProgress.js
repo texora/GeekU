@@ -33,3 +33,10 @@ function addIn(val, additive) {
     newVal = 0; // never let it go negative ... even if we have something out of sync
   return [newVal, ()=>`setting inProgress to: ${newVal}`];
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const isItemsViewInProgress = (inProgress) => inProgress ? true : false;

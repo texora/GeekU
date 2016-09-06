@@ -7,6 +7,7 @@ import assert              from 'assert';
 import autobind            from 'autobind-decorator';
 
 import {AC}                from '../actions';
+import selectors           from '../state';
 import SelCrit             from '../../shared/util/SelCrit';
 import itemTypes           from '../../shared/model/itemTypes';
 
@@ -32,8 +33,8 @@ import colors              from 'material-ui/lib/styles/colors';
 
 @ReactRedux.connect( (appState, ownProps) => {
   return {
-    filters:    appState.filters,
-    itemsView:  appState.itemsView,
+    filters: selectors.getFilters(appState),
+    appState,
   }
 })
 
@@ -132,10 +133,8 @@ export default class LeftNav extends React.Component {
 
     // start an edit session with the supplied selCrit
     EditSelCrit.edit(selCrit, selCrit => {
-      // on edit change ... issue re-retrieval IF view is currently based on this selCrit
-      const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
-      const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
-      return selCritDisplayedInView
+      // on edit change ... SYNC view when using same selCrit
+      return selectors.isSelCritActiveInView(p.appState, selCrit)
                ? AC.itemsView(selCrit.itemType, selCrit, 'no-activate')
                : null;
     });
@@ -150,10 +149,8 @@ export default class LeftNav extends React.Component {
   handleSave(selCrit) {
     const p = this.props;
     p.dispatch( AC.selCrit.save(selCrit) ) // SAVE selCrit
-     .then( selCrit => {                   // SYNC our view when using same selCrit
-       const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
-       const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
-       if (selCritDisplayedInView) {
+     .then( selCrit => {                   // SYNC view when using same selCrit
+       if (selectors.isSelCritActiveInView(p.appState, selCrit)) {
          p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') )
        }
      });
@@ -193,9 +190,7 @@ export default class LeftNav extends React.Component {
       actions: [
         { txt: 'Delete',
           action: () => {
-            const viewsSelCrit           = p.itemsView[selCrit.itemType].selCrit;
-            const selCritDisplayedInView = viewsSelCrit && viewsSelCrit.key === selCrit.key;
-            const impactView             = selCritDisplayedInView ? selCrit.itemType : null;
+            const impactView = selectors.isSelCritActiveInView(p.appState, selCrit) ? selCrit.itemType : null;
             if (SelCrit.isPersisted(selCrit)) { // is persised in DB
               p.dispatch( AC.selCrit.delete(selCrit, impactView) );
             }
@@ -227,7 +222,7 @@ export default class LeftNav extends React.Component {
       
         { itemTypes.meta.allTypes.map( (itemType) => {
       
-          const selectedSelCrit = p.itemsView[itemType].selCrit;
+          const selectedSelCrit = selectors.getItemsViewSelCrit(p.appState, itemType);
 
           return (
             <Card key={itemType} initiallyExpanded={false}>

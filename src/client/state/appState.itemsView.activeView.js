@@ -22,3 +22,10 @@ const reductionHandler = new ReductionHandler('appState.itemsView.activeView', {
 export default function activeView(activeView='', action) {
   return reductionHandler.reduce(activeView, action);
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getActiveView = (activeView) => activeView;

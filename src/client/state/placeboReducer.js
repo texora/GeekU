@@ -1,7 +1,7 @@
 'use strict'
 
 // ***
-// *** appState.placebo reducer
+// *** placebo reducer
 // ***
 
 export default function placebo(state=null, action) {

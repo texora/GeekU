@@ -36,3 +36,10 @@ export default function detailItem(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewDetailItem = (detailItem) => detailItem;

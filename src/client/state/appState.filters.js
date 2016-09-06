@@ -71,3 +71,10 @@ export default function filters(filters=[], action) {
 
   return nextState;
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getFilters = (filters) => filters;

@@ -47,3 +47,10 @@ export default function selCrit(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewSelCrit = (selCrit) => selCrit || {name: 'please', desc: 'select a filter from the Left Nav menu'};

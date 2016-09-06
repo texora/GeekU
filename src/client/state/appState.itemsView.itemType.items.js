@@ -58,3 +58,10 @@ export default function items(_itemType) {
   }
 
 }
+
+
+//***
+//*** Selectors ...
+//***
+
+export const getItemsViewItems = (items) => items;
