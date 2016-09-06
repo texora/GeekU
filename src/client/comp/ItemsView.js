@@ -3,7 +3,7 @@
 import React    from 'react';
 import autobind from 'autobind-decorator';
 
-import SelCrit            from '../../shared/util/SelCrit';
+import SelCrit            from '../../shared/domain/SelCrit';
 
 import {AC}               from '../actions';
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import express        from 'express';
-import itemTypes      from '../../shared/model/itemTypes';
+import itemTypes      from '../../shared/domain/itemTypes';
 import * as MongoUtil from '../util/MongoUtil';
 
 const courses = express.Router();

@@ -19,8 +19,8 @@ import {AC}               from '../actions';
 import selectors          from '../state';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
-import SelCrit            from '../../shared/util/SelCrit';
-import itemTypes          from '../../shared/model/itemTypes';
+import SelCrit            from '../../shared/domain/SelCrit';
+import itemTypes          from '../../shared/domain/itemTypes';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend        from 'react-dnd-html5-backend';

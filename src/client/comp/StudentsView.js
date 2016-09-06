@@ -5,7 +5,7 @@ import * as ReactRedux    from 'react-redux';
 
 import autobind           from 'autobind-decorator';
 
-import itemTypes          from '../../shared/model/itemTypes';
+import itemTypes          from '../../shared/domain/itemTypes';
 const  myItemType         = itemTypes.student;
 
 import {AC}               from '../actions';

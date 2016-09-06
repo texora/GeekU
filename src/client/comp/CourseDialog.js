@@ -8,8 +8,8 @@ import autobind from 'autobind-decorator';
 import {AC}               from '../actions';
 import selectors          from '../state';
 
-import term               from '../../shared/model/term';
-import itemTypes          from '../../shared/model/itemTypes';
+import term               from '../../shared/domain/term';
+import itemTypes          from '../../shared/domain/itemTypes';
 const  myItemType         = itemTypes.course;
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';

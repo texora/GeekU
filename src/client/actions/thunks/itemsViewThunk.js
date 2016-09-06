@@ -16,8 +16,8 @@ import {AC}                  from '../actions';
 //     x 0 tests completed
 
 import {encodeJsonQueryStr}  from '../../../shared/util/QueryStrUtil';
-import SelCrit               from '../../../shared/util/SelCrit';
-import itemTypes             from '../../../shared/model/itemTypes';
+import SelCrit               from '../../../shared/domain/SelCrit';
+import itemTypes             from '../../../shared/domain/itemTypes';
 
 import handleUnexpectedError from '../../util/handleUnexpectedError';
 import assert                from 'assert';

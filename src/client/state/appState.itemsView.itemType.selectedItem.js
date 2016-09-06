@@ -2,7 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/model/itemTypes';
+import itemTypes        from '../../shared/domain/itemTypes';
 
 // ***
 // *** appState.itemsView.itemType.selectedItem reducer (function wrapper)

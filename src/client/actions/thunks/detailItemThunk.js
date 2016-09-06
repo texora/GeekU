@@ -3,7 +3,7 @@
 import promoteThunk          from './promoteThunk';
 import {AC}                  from '../actions';
 import handleUnexpectedError from '../../util/handleUnexpectedError';
-import itemTypes             from '../../../shared/model/itemTypes';
+import itemTypes             from '../../../shared/domain/itemTypes';
 
 
 /**

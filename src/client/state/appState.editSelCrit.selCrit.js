@@ -3,7 +3,7 @@
 import * as Redux       from 'redux';
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import SelCrit          from '../../shared/util/SelCrit';
+import SelCrit          from '../../shared/domain/SelCrit';
 
 import placebo  from './placeboReducer';
 import name     from './appState.editSelCrit.selCrit.name';

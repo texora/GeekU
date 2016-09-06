@@ -10,9 +10,9 @@ import moment             from 'moment';
 import {AC}               from '../actions';
 import selectors          from '../state';
 
-import subject            from '../../shared/model/subject';
-import term               from '../../shared/model/term';
-import itemTypes          from '../../shared/model/itemTypes';
+import subject            from '../../shared/domain/subject';
+import term               from '../../shared/domain/term';
+import itemTypes          from '../../shared/domain/itemTypes';
 const  myItemType         = itemTypes.student;
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';

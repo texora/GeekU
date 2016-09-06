@@ -8,8 +8,8 @@ import autobind            from 'autobind-decorator';
 
 import {AC}                from '../actions';
 import selectors           from '../state';
-import SelCrit             from '../../shared/util/SelCrit';
-import itemTypes           from '../../shared/model/itemTypes';
+import SelCrit             from '../../shared/domain/SelCrit';
+import itemTypes           from '../../shared/domain/itemTypes';
 
 import Confirm             from './Confirm';
 import EditSelCrit         from './EditSelCrit';

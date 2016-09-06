@@ -3,8 +3,8 @@
 import crc        from 'crc';
 import shortid    from 'shortid';
 import assert     from 'assert';
-import itemTypes  from '../model/itemTypes';
-import Log        from './Log';
+import itemTypes  from './itemTypes';
+import Log        from '../util/Log';
 
 const log = new Log('SelCrit');
 
