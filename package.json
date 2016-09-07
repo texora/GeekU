@@ -41,7 +41,6 @@
     "testUnit": "karma run -- --grep INTEGRATION --invert",
     "testAll:COMMENT": "reset test server to ALL tests",
     "testAll": "karma run",
-
     "lint:COMMENT": "lint our source code",
     "lint": "eslint --ext .js src",
     "TODO1": "lint process broken due to bug in dependency hell",
@@ -102,7 +101,9 @@
     "react-tap-event-plugin": "^0.2.2",
     "redux": "^3.5.2",
     "redux-batched-actions": "^0.1.2",
+    "redux-logic": "^0.9.3",
     "redux-thunk": "^2.1.0",
+    "rxjs": "^5.0.0-beta.11",
     "shortid": "^2.2.4"
   }
 }

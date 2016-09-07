@@ -9,6 +9,9 @@ import errorHandler       from './middleware/errorHandler';
 import thunkBatchHandler  from './middleware/thunkBatchHandler';
 import actionLogger       from './middleware/actionLogger';
 
+import { createLogicMiddleware } from 'redux-logic';
+import logic                     from '../logic';
+
 import Log                from '../../shared/util/Log';
 
 const log = new Log('startup.createAppStore');
@@ -36,12 +39,15 @@ export default function createAppStore() {
   const reduxDevToolsChromeExtension = window.devToolsExtension ? window.devToolsExtension() : NO_EXTENSION;
   log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension !== NO_EXTENSION ? 'IS' : 'IS NOT'} PRESENT!`);
   
+  const logicMiddleware = createLogicMiddleware(logic); // ??? can I use dependancies (the optional 2nd arg)
+
   // define our Redux app-wide store, WITH our middleware registration
   const appStore = Redux.createStore(enableBatching(appState), // our app-wide redux reducer ... wrapped in a batch-capable reducer
                                      Redux.compose(Redux.applyMiddleware(errorHandler,      // ... inject FIRST to allow coverage of other middleware components
                                                                          thunkBatchHandler, // ... inject before actionLogger (minor: doesn't have a type)
-                                                                         actionLogger       // ... inject early to allow logging of other middleware components
-                                                                         /* thunk */),      // thunks NOW supported through our own thunkBatchHandler
+                                                                         actionLogger,      // ... inject early to allow logging of other middleware components
+                                                                         /* thunk, */       // thunks NOW supported through our own thunkBatchHandler
+                                                                         logicMiddleware),  // redux-logic middleware
                                                    reduxDevToolsChromeExtension)); // hook into optional Redux DevTools Chrome Extension
 
   return appStore;
