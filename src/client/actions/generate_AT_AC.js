@@ -35,14 +35,13 @@ export default function generate_AT_AC(genesis) {
     // machine generate our AC entries (Action Creator)
     AC[funcName] = function(...args) {
 
-      // interpret pre-defined action creators
-      if (genesis[funcName].ac) {
-        return genesis[funcName].ac(...args);
+      // verify/initialize params (when .verifyParams supplied)
+      if (genesis[funcName].verifyParams) {
+        args = genesis[funcName].verifyParams(...args);
       }
 
       // validate proper number of params passed in
       const paramNames = genesis[funcName].params;
-      // TODO: currently validation is disabled (NOT) till we provide a means of defining optional/defaulted params
       if (paramNames.length !== args.length) {
         // ex: ERROR: Action Creator AC.userMsg.display(msg) expecting 1 parameters, but received 2
         throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);

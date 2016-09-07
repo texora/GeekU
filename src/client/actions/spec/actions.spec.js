@@ -23,12 +23,12 @@ describe('action-creator tests: AC.userMsg', () => {
 
   it('test userMsg.display() ... missing msg param', () => {
     expect(()=>AC.userMsg.display())
-                 .toThrow("ERROR: Action Creator AC.userMsg.display('undefined') ... requires a msg string param");
+                 .toThrow("requires a msg string param");
   });
 
   it('test userMsg.display() ... non-string msg param', () => {
     expect(()=>AC.userMsg.display({}))
-                 .toThrow("ERROR: Action Creator AC.userMsg.display('[object Object]') ... requires a msg string param");
+                 .toThrow("requires a msg string param");
   });
 
   it('test userMsg.display(msg, userAction) ... success)', () => {
@@ -50,7 +50,7 @@ describe('action-creator tests: AC.userMsg', () => {
     //callback: () => {},
     };
     expect(()=>AC.userMsg.display("MyMsg", userAction))
-                 .toThrow("ERROR: Action Creator AC.userMsg.display('MyMsg', {}) ... userAction param requires a .txt string property");
+                 .toThrow("userAction param requires a .txt string property");
   });
 
   it('test userMsg.display(msg, userAction) ... non-string userAction.txt)', () => {
@@ -59,7 +59,7 @@ describe('action-creator tests: AC.userMsg', () => {
     //callback: () => {},
     };
     expect(()=>AC.userMsg.display("MyMsg", userAction))
-                 .toThrow("ERROR: Action Creator AC.userMsg.display('MyMsg', {\"txt\":123}) ... userAction param requires a .txt string property");
+                 .toThrow("userAction param requires a .txt string property");
   });
 
   it('test userMsg.display(msg, userAction) ... missing userAction.callback)', () => {
@@ -68,7 +68,7 @@ describe('action-creator tests: AC.userMsg', () => {
     //callback: () => {},
     };
     expect(()=>AC.userMsg.display("MyMsg", userAction))
-      .toThrow("ERROR: Action Creator AC.userMsg.display('MyMsg', {\"txt\":\"userAction\"}) ... userAction param requires a .callback function property");
+      .toThrow("userAction param requires a .callback function property");
   });
 
   it('test userMsg.display(msg, userAction) ... non-function userAction.callback)', () => {
@@ -77,7 +77,7 @@ describe('action-creator tests: AC.userMsg', () => {
       callback: 'poop',
     };
     expect(()=>AC.userMsg.display("MyMsg", userAction))
-      .toThrow("ERROR: Action Creator AC.userMsg.display('MyMsg', {\"txt\":\"userAction\",\"callback\":\"poop\"}) ... userAction param requires a .callback function property");
+      .toThrow("userAction param requires a .callback function property");
   });
 
 });

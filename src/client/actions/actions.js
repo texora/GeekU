@@ -1,12 +1,12 @@
 'use strict'
 
+import assert from 'assert';
+
 import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 import selCritSaveThunk        from './thunks/selCritSaveThunk';
 import itemsViewThunk          from './thunks/itemsViewThunk';
-                               
-import userMsgDisplayAC        from './creators/userMsgDisplayAC';
                                
 import generate_AT_AC          from './generate_AT_AC';
 
@@ -75,9 +75,34 @@ const genesis = {
   // *** display a user message via Material UI Snackbar
   // ***
   //       AC.userMsg.display(msg [,userAction])
-  //          ... see: userMsgDisplayAC.js for full documentation
-  'userMsg.display':           { params: ['msg', 'userAction'],       ac: userMsgDisplayAC },
-  'userMsg.close':             { params: [] },
+  //
+  //          NOTE: An alternate technique to activate a user message is through
+  //                the static UserMsg.display(msg [, userAction]) method.  This
+  //                may be preferred when:
+  //                  a) no other actions need to be 'batched' with the user
+  //                     message, and/or
+  //                  b) when you have NO access to the dispatcher.
+  //
+  //          @param {string} msg the message to display.
+  //          @param {Obj} userAction an optional structure defining a user click action:
+  //                         userAction: {  // optional action that can be activated by the user
+  //                           txt:      '',
+  //                           callback: function(event)
+  //                         }
+  'userMsg.display': { params: ['msg', 'userAction'], 
+                       verifyParams(msg, userAction) {
+                         const errPrefix = () => {
+                           const userActionStr = userAction ? `, ${JSON.stringify(userAction)}` : '';
+                           return `ERROR: Action Creator AC.userMsg.display('${msg}'${userActionStr}) ...`;
+                         };
+                         assert(typeof msg === 'string', `${errPrefix()} requires a msg string param`);
+                         if (userAction) {
+                           assert(typeof userAction.txt      === 'string',   `${errPrefix()} userAction param requires a .txt string property`);
+                           assert(typeof userAction.callback === 'function', `${errPrefix()} userAction param requires a .callback function property`);
+                         }
+                         return [msg, userAction];
+                       }},
+  'userMsg.close':   { params: [] },
 
 
   // ***
