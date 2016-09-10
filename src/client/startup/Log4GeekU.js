@@ -35,8 +35,8 @@ const logConfig = Log.config({
     'middleware.thunkBatchHandler': 'none',
     'middleware.actionLogger':      'none',
 
-    'actions':           ['none', ` <dl> <dt> INSPECT: </dt> <dd> see ENTER/EXIT of dispatched actions </dd>
-                                         <dt> DEBUG:   </dt> <dd> include action app logic (in thunks) </dd>
+    'actions':           ['none', ` <dl> <dt> INSPECT: </dt> <dd> see dispatched actions </dd>
+                                         <dt> DEBUG:   </dt> <dd> include action app logic (redux-logic) </dd>
                                          <dt> TRACE:   </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 

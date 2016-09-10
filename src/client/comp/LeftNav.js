@@ -108,9 +108,14 @@ export default class LeftNav extends React.Component {
     else if (typeof selCrit === 'string') {
       const itemType = selCrit;
       assert(itemTypes[itemType], `LeftNav.handleSelection() INVALID itemType-string: ${FMT(itemType)}`);
-      EditSelCrit.edit(itemType, (newSelCrit) => {
-        return AC.itemsView(itemType, newSelCrit, 'activate');
-      });
+
+      p.dispatch( AC.selCrit.edit(itemType) );
+      // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
+      // ? EditSelCrit.edit(itemType, (newSelCrit) => {
+      // ?   return AC.itemsView(itemType, newSelCrit, 'activate');
+      // ? });
+      // ??? currently acts correctly in LefNav Edit mode (does NOT activate it)
+      // ??? needs to activate/retrieve in LeftNav Select mode
     }
 
     // invalid param
@@ -132,12 +137,16 @@ export default class LeftNav extends React.Component {
     const p = this.props;
 
     // start an edit session with the supplied selCrit
-    EditSelCrit.edit(selCrit, selCrit => {
-      // on edit change ... SYNC view when using same selCrit
-      return selectors.isSelCritActiveInView(p.appState, selCrit)
-               ? AC.itemsView(selCrit.itemType, selCrit, 'no-activate')
-               : null;
-    });
+    p.dispatch( AC.selCrit.edit(selCrit) );
+    // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
+    // ? EditSelCrit.edit(selCrit, selCrit => {
+    // ?   // on edit change ... SYNC view when using same selCrit
+    // ?   return selectors.isSelCritActiveInView(p.appState, selCrit)
+    // ?            ? AC.itemsView(selCrit.itemType, selCrit, 'no-activate')
+    // ?            : null;
+    // ? });
+    // ??? currently acts correctly in LefNav Edit mode (refreshes when it is active, no refresh when not active, never takes down LeftNav)
+
   }
 
 
@@ -163,6 +172,8 @@ export default class LeftNav extends React.Component {
    * @param {SelCrit} selCrit the selCrit to duplicate.
    */
   handleDuplicate(selCrit) {
+    const p = this.props;
+
     // duplicate ths supplied selCrit
     const dupSelCrit = SelCrit.duplicate(selCrit);
 
@@ -170,9 +181,15 @@ export default class LeftNav extends React.Component {
     this.setState({open: false});
 
     // start an edit session with this selCrit
-    EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-      return AC.itemsView(changedDupSelCrit.itemType, changedDupSelCrit, 'activate');
-    });
+    p.dispatch( AC.selCrit.edit(dupSelCrit) );
+    // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
+    // ? EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
+    // ?   return AC.itemsView(changedDupSelCrit.itemType, changedDupSelCrit, 'activate');
+    // ? });
+    // ??? currently NOT correct in LefNav Edit mode
+    //     - should NOT take down LeftNav (? corrected from prior step - above)
+    //     - should NOT activate (it correctly doesn't)
+    //     - same bug where it doesn't retain when no changes because it doesn't think it has been modified)
   }
 
 

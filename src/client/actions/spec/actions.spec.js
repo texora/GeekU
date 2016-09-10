@@ -137,8 +137,8 @@ describe('insure AT/AC constants utilize federated namespace', () => {
 describe('test getActionLog(actionType)', () => {
 
   it('getActionLog() should work equally well with String vs. string', () => {
-    expect(getActionLog('selCrit.edit.close'))
-      .toBe(getActionLog(new String('selCrit.edit.close')));
+    expect(getActionLog('selCrit.edit.complete'))
+      .toBe(getActionLog(new String('selCrit.edit.complete')));
   });
 
 });

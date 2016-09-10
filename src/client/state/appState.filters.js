@@ -17,8 +17,8 @@ const reductionHandler = new ReductionHandler('appState.filters', {
     ];
   },
 
-  [AT.selCrit.edit.changed]:  sharedSync,
-  [AT.selCrit.save.complete]: sharedSync,
+  [AT.selCrit.changed]:  sharedSync,
+  [AT.selCrit.save.complete]: sharedSync, // ?? may be obsolete BECAUSE selCrit.changed will always be emitted
 
   [AT.selCrit.delete.complete](filters, action) {
     const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );

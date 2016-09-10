@@ -2,7 +2,6 @@
 
 import {createLogic}       from 'redux-logic';
 import getActionLog        from '../actions/getActionLog';
-import actionTypeAmplified from '../util/actionTypeAmplified';
 
 //***
 //*** logic point to log each dispatched action (INSPECT: action type, TRACE: action content too)
@@ -17,10 +16,10 @@ const actionLogger = createLogic({
     // log dispatched action
     const log = getActionLog(action.type);
     if (log.isTraceEnabled()) {
-      log.trace(()=> `Dispatched Action: ${actionTypeAmplified(action)}`, action);
+      log.trace(()=>   `Dispatched Action: ${FMT(action.type)} with content: ${FMT(action)}`);
     }
     else {
-      log.inspect(()=> `Dispatched Action: ${actionTypeAmplified(action)} (re-config to TRACE to see action details [CAUTION: can be LARGE])`);
+      log.inspect(()=> `Dispatched Action: ${FMT(action.type)}`);
     }
 
     // continue processing

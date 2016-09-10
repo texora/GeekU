@@ -62,11 +62,26 @@ appState: {
 
     extra: { // additional temporal structure streamlining various UI components
 
-      // field options, streamlining react-select
+      // controls whether edit dialog is always 'cancel-able'
+      selCritIsNew: boolean,
+
+      // the DB meta definition we are working for
+      meta: object,
+
+      // the total set of fieldOptions promoted to the user
+      fieldOptions: [ { value: fieldName, label: fieldLabel }, ...],
+
+      // the selected field options, streamlining react-select
       selectedFieldOptions: [ {fieldOption}, { value: 'firstName', label: 'First Name' }, ... ],
 
-      // sort options, streamlining react-select
+      // the total set of sortOptions promoted to the user
+      sortOptions: [ { value: fieldName, label: fieldLabel, ascDec: 1 }, ...],
+
+      // the selected sort options, streamlining react-select
       selectedSortOptions: [ {sortOption}, { value: 'gender', label: 'Gender', ascDec: -1 }, ... ],
+
+      // the starting curHash, providing the ability to determine when selCrit has changed (regardless of whether it is saved)
+      startingCurHash: "hash",
 
     }
   }

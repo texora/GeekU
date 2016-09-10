@@ -4,7 +4,7 @@ import promoteThunk          from './promoteThunk';
 import {AC}                  from '../actions';
 
 // import selectors             from '../../state';
-// ??? ABOVE import causes obsecure error in spec testing ... cannot import here BECAUSE NOT SURE WHY
+// ?? ABOVE import causes obsecure error in spec testing ... cannot import here BECAUSE NOT SURE WHY
 //     KJB: ONLY impacts spec testing UNSURE WHY
 //     PhantomJS 2.1.1 (Windows 7 0.0.0) ERROR
 //     TypeError: undefined is not an object (evaluating '_actions.AT.userMsg')
@@ -23,9 +23,9 @@ import handleUnexpectedError from '../../util/handleUnexpectedError';
 import assert                from 'assert';
 
 /**
- * AC.itemsView(retrieve, activate): retrieve and/or activate the Items View for the specified itemType.
+ * AC.itemsView(itemType, retrieve, activate): retrieve and/or activate the Items View for the specified itemType.
  *
- * @param {string} itemType the the itemType ... 'student'/'course'
+ * @param {string} itemType the desired itemType ... 'student'/'course'
  *
  * @param {SelCrit or string} retrieve the retrieval directive, one of:
  *   - null:      no retrieval at all (DEFAULT)
@@ -67,8 +67,8 @@ const [itemsViewThunk, thunkName, log] = promoteThunk('itemsView', (itemType,
 
 
     // interpret the retrieval directive
-    // ??? OLD: appState.itemsView[itemType].selCrit
-    // ??? NEW: selectors.getItemsViewSelCrit(appState, itemType) ??? can't do ... unsure why ... see selectors import (above)
+    // ?? OLD: appState.itemsView[itemType].selCrit
+    // ?? NEW: selectors.getItemsViewSelCrit(appState, itemType) ?? can't do ... unsure why ... see selectors import (above)
     const selCrit = (retrieve === 'refresh')
                       ? appState.itemsView[itemType].selCrit // refresh current view (can be null if never retrieved)
                       : SelCrit.isFullyEqual(retrieve, appState.itemsView[itemType].selCrit)

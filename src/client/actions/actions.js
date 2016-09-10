@@ -93,7 +93,7 @@ const genesis = {
                        verifyParams(msg, userAction) {
                          const errPrefix = () => {
                            const userActionStr = userAction ? `, ${JSON.stringify(userAction)}` : '';
-                           return `ERROR: Action Creator AC.userMsg.display('${msg}'${userActionStr}) ...`;
+                           return `ERROR: AC.userMsg.display('${msg}'${userActionStr}) ...`;
                          };
                          assert(typeof msg === 'string', `${errPrefix()} requires a msg string param`);
                          if (userAction) {
@@ -163,8 +163,8 @@ const genesis = {
   // ***
   // *** edit specified selCrit
   // ***
-  //       AC.selCrit.edit(selCrit) ... action emitted from: EditSelCrit.edit(selCrit)
-  //        * selCrit: the selCrit object to edit
+  //       AC.selCrit.edit(selCrit)
+  //        * selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
   'selCrit.edit':              { params: ['selCrit'] },
   'selCrit.edit.nameChange':   { params: ['name'] },
   'selCrit.edit.descChange':   { params: ['desc'] },
@@ -172,8 +172,13 @@ const genesis = {
   'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
   'selCrit.edit.filterChange': { params: ['newFilter'] },
   'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
-  'selCrit.edit.close':        { params: [] },          // close EditSelCrit dialog
-  'selCrit.edit.changed':      { params: ['selCrit'] }, // selCrit has changed with the app ... see EditSelCrit.js for full doc
+  'selCrit.edit.complete':     { params: ['completionType'], // edit complete, closing dialog
+                                 verifyParams(completionType) {
+                                   assert(['use','save','cancel'].includes(completionType),
+                                          `ERROR: AC.selCrit.edit.complete(${FMT(completionType)}) invalid completionType ... expecting 'use'/'save'/'cancel'`);
+                                   return [completionType];
+                                 }},
+  'selCrit.changed':           { params: ['selCrit'] }, // selCrit has changed
 
 
   // ***
@@ -182,7 +187,7 @@ const genesis = {
 
   'selCrit.save':          { params: ['selCrit'],    thunk: selCritSaveThunk },
   'selCrit.save.start':    { params: ['selCrit'] },
-  'selCrit.save.complete': { params: ['selCrit'] },
+  'selCrit.save.complete': { params: ['selCrit'] }, // ?? obsolete ... I think ... BECAUSE should monitor selCrit.changed which will always be emitted
   'selCrit.save.fail':     { params: ['selCrit', 'error'] },
 
 

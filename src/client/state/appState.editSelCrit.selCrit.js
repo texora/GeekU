@@ -44,14 +44,13 @@ const _selCrit = Redux.combineReducers({
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit', {
 
   [AT.selCrit.edit](selCrit, action) {
-    const nextSelCrit = action.selCrit;
     return [
-      nextSelCrit,
-      ()=>'set selCrit from action ... ' + FMT(nextSelCrit)
+      action.selCrit,
+      ()=>'set selCrit from action ... ' + FMT(action.selCrit)
     ];
   },
 
-  [AT.selCrit.edit.close](selCrit, action) {
+  [AT.selCrit.edit.complete](selCrit, action) {
     return [
       null,
       ()=>'set selCrit to null'
