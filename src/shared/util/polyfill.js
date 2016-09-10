@@ -18,15 +18,18 @@ import formatItem from './formatItem';
 
 const root = typeof(window) === 'undefined' ? global : window;
 
-// geekUFetch: a better fetch interpreting the specifics of GeekU Service API
-//  - is isomorphic (works BOTH in browser/node)
-//  - interprets the specific structure of the GeekU app
-//    ... returning the resp injected with our jsonized payload (resp.payload)
-//  - interprets errors with app-specific content
-//    ... By default fetch only throws errors (i.e. the catch() promise clause)
-//        in catastrophic cases (setup request, or network error, etc.).
-//    ... So if the service request completes, the then(resp) clause is invoked!
-//    ... We interpret this and throw appropriate errors filled with app specific details!
+
+//***
+//*** geekUFetch: a better fetch interpreting the specifics of GeekU Service API
+//***  - is isomorphic (works BOTH in browser/node)
+//***  - interprets the specific structure of the GeekU app
+//***    ... returning the resp injected with our jsonized payload (resp.payload)
+//***  - interprets errors with app-specific content
+//***    ... By default fetch only throws errors (i.e. the catch() promise clause)
+//***        in catastrophic cases (setup request, or network error, etc.).
+//***    ... So if the service request completes, the then(resp) clause is invoked!
+//***    ... We interpret this and throw appropriate errors filled with app specific details!
+//***
 
 if (!root.geekUFetch) {
   root.geekUFetch = function(...args) {
@@ -65,15 +68,22 @@ if (!root.geekUFetch) {
   };
 }
 
-// FMT(item): Format the supplied item, suitable for human comsumption.  A
-//            variety of different data types are supported.
-//            Convenient global alias of formatItem(item), because it is so heavly used.
+
+//***
+//*** FMT(item): Format the supplied item, suitable for human comsumption.  A
+//***            variety of different data types are supported.
+//***            Convenient global alias of formatItem(item), because it is so heavly used.
+//***
 
 if (!root.FMT) {
   root.FMT = formatItem;
 }
 
-// Array.prototype.prune(callback): return a new array, pruning elements where callback returns true.
+
+//***
+//*** Array.prototype.prune(callback): return a new array, pruning elements where callback returns true.
+//***
+
 if (!Array.prototype.prune) {
   Array.prototype.prune = function(callback) {
     return this.reduce( (retArr, item) => {
@@ -82,5 +92,45 @@ if (!Array.prototype.prune) {
       }
       return retArr;
     }, []);
+  };
+}
+
+
+
+//***
+//*** Array.prototype.includes(): Determines whether an array includes a certain element, returning true or false as appropriate.
+//***                             Part of ECMAScript 2016 (ECMA-262).
+//***                             FROM: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function(searchElement /*, fromIndex*/) {
+    'use strict';
+    if (this == null) {
+      throw new TypeError('Array.prototype.includes called on null or undefined');
+    }
+
+    var O = Object(this);
+    var len = parseInt(O.length, 10) || 0;
+    if (len === 0) {
+      return false;
+    }
+    var n = parseInt(arguments[1], 10) || 0;
+    var k;
+    if (n >= 0) {
+      k = n;
+    } else {
+      k = len + n;
+      if (k < 0) {k = 0;}
+    }
+    var currentElement;
+    while (k < len) {
+      currentElement = O[k];
+      if (searchElement === currentElement ||
+          (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
+            return true;
+      }
+      k++;
+    }
+    return false;
   };
 }

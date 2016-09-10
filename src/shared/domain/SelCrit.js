@@ -25,7 +25,7 @@ const SelCrit = {
    */
   new(itemType) {
 
-    assert(itemTypes.meta.allTypes.indexOf(itemType) !== -1,
+    assert(itemTypes.meta.allTypes.includes(itemType),
            `SelCrit.new() supplied itemType '${itemType}' is invalid, expecting one of ${itemTypes.meta.allTypes}`);
     
     const selCrit = {
@@ -131,7 +131,7 @@ const SelCrit = {
     // ... itemType
     if (!selCrit.itemType.trim())
       problems.push('itemType is required');
-    if (itemTypes.meta.allTypes.indexOf(selCrit.itemType) < 0)
+    if (!itemTypes.meta.allTypes.includes(selCrit.itemType))
       problems.push(`invalid itemType '${selCrit.itemType}' must be one of ${itemTypes.meta.allTypes}`);
 
     // ... userId
