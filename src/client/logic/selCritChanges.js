@@ -1,4 +1,5 @@
 'use strict';
+// ??? OBSOLETE ENTIRE MODULE
 
 import {createLogic}         from 'redux-logic';
 import getActionLog          from '../actions/getActionLog';
@@ -16,6 +17,8 @@ import itemTypes             from '../../shared/domain/itemTypes';
 //***
 
 
+// ??? interpretEditOfNewSelCrit
+// ??? injectAdditionalDataForEditSelCrit
 const monitor_selCrit_edit = createLogic({
 
   type: 'selCrit.edit',
@@ -145,7 +148,7 @@ const monitor_selCrit_edit_complete = createLogic({
 
 
 
-
+// ??? keep (seperate module)
 const syncViewWhenSelCritChanged = createLogic({
 
   type: 'selCrit.changed',
@@ -157,14 +160,14 @@ const syncViewWhenSelCritChanged = createLogic({
     const appState  = getState();
     const selCrit  = action.selCrit;
 
-    // when selCrit is active in our itemView, refresh it
+    // conditionally refresh view when based on this changed selCrit
     if (selectors.isSelCritActiveInView(appState, selCrit)) {
       log.debug(()=>`syncing view (issuing action: AC.itemsView) with changed selCrit: ${selCrit.name}`);
       dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') );
     }
-      else {
-        dispatch();
-      }
+    else {
+      dispatch();
+    }
 
   },
 

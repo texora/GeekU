@@ -2,7 +2,8 @@
 
 import { createLogic } from 'redux-logic';
 
-import actionLogger    from './actionLogger';
+import logDispatchedActions    from './logDispatchedActions';
+
 import selCritChanges  from './selCritChanges';
 
 
@@ -11,6 +12,6 @@ import selCritChanges  from './selCritChanges';
 //***
 
 export default [
-  actionLogger,
+  logDispatchedActions,
   ...selCritChanges
 ];
