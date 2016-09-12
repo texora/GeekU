@@ -39,9 +39,8 @@ const [logicName, logic] = promoteLogic('saveSelCrit', {
     })
     .catch( err => {
       // mark async operation FAILED (typically spinner)
-      dispatch( AC.selCrit.save.fail(selCrit, err), allowMore );
-      // report unexpected condition to user (logging details for tech reference) ?? handle with logic monitor
-      dispatch( handleUnexpectedError(err, `saving selCrit for key: ${selCrit.key}`) )
+      dispatch( AC.selCrit.save.fail(selCrit, 
+                                     err.defineAttemptingToMsg(`saving selCrit: ${selCrit.name}`)) );
     });
 
   },

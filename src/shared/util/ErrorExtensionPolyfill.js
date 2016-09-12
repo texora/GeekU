@@ -27,6 +27,29 @@ if (!Error.prototype.defineClientMsg) { // key off of one of several extension p
 
 
   /**
+   * Define a client-specific 'attempting to' message, that provides additional 
+   * details of what was being attempted.
+   *
+   * This message should be worded in such a way that makes sense when appended to 
+   * the error message ... for example: 'when retrieving students'
+   *
+   * @param {String} attemptingToMsg the client-specific 'attempting to' message
+   *
+   * @return {Error} self, supporting convenient Error method chaining.
+   *
+   * @api public
+   */
+  Error.prototype.defineAttemptingToMsg = function(attemptingToMsg) {
+    if (this.attemptingToMsg) // append when already exists, so as to not loose anything
+      this.attemptingToMsg += ' ... ' + attemptingToMsg;
+    else
+      this.attemptingToMsg = attemptingToMsg;
+    return this;
+  };
+  Error.prototype.attemptingToMsg = ""; // prototype provides the default
+
+
+  /**
    * Define an http status, allowing self to direct the status to be
    * defined to an http client.
    *

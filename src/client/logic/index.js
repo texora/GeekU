@@ -2,6 +2,7 @@
 
 import { createLogic } from 'redux-logic';
 
+import communicateUnexpectedError from './communicateUnexpectedError';
 import initializeSelCritEdit      from './initializeSelCritEdit';
 import logDispatchedActions       from './logDispatchedActions';
 import saveAndUseSelCritEdits     from './saveAndUseSelCritEdits';
@@ -16,6 +17,9 @@ import validateSelCritEdits       from './validateSelCritEdits';
 //***
 
 export default [
+  // general handler of unexpected errors (within the dispatch process) ...
+  communicateUnexpectedError,
+
   // general utility that logs all dispatched actions ...
   logDispatchedActions,
 

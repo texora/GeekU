@@ -1,3 +1,4 @@
+// ??? THIS MODULE IS OBSOLETE ??? HOWEVER, there is logic that detects recursive errors that may need to be considered elsewhere
 'use strict';
 
 import handleUnexpectedError from '../../util/handleUnexpectedError';
@@ -10,6 +11,17 @@ const log = new Log('middleware.errorHandler');
 /**
  * Our central error handler middleware component, reporting uncaught
  * exceptions.
+ *
+ * NOTE: This middleware component is utilized for a JS run-time error,
+ *       within the process of dispatching an action.
+ *
+ *       It is NOT activated within a catch block
+ *         - of either a try/catch
+ *           ... typically this would need to be invoked directly within the catch block
+ *         - or an async promise .then()/.catch()
+ *           ... typically this is CENTRALLY handled by a subsequent *.fail action
+ *               being dispatched (which is centrally monitored in our reactive
+ *               logic stream).
  */
 const errorHandler = store => next => action => {
   

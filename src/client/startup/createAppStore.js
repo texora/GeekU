@@ -4,10 +4,10 @@ import * as Redux         from 'redux';
 import {enableBatching}   from 'redux-batched-actions';
 import appState           from '../state/appState';
 
-//import thunk            from 'redux-thunk';// thunks NOW supported through our own thunkBatchHandler (we should remove the package)
-import errorHandler       from './middleware/errorHandler';
+//import thunk            from 'redux-thunk';// thunks NOW supported through our own thunkBatchHandler (??? remove this package too)
+//import errorHandler       from './middleware/errorHandler'; ??? NOW OBSOLETE ... remove module and usage stub (below)
 import thunkBatchHandler  from './middleware/thunkBatchHandler';
-import actionLogger       from './middleware/actionLogger';
+//import actionLogger       from './middleware/actionLogger'; ??? NOW OBSOLETE ... remove module and usage stub (below)
 
 import { createLogicMiddleware } from 'redux-logic';
 import logic                     from '../logic';
@@ -43,7 +43,7 @@ export default function createAppStore() {
 
   // define our Redux app-wide store, WITH our middleware registration
   const appStore = Redux.createStore(enableBatching(appState), // our app-wide redux reducer ... wrapped in a batch-capable reducer
-                                     Redux.compose(Redux.applyMiddleware(errorHandler,      // ... inject FIRST to allow coverage of other middleware components
+                                     Redux.compose(Redux.applyMiddleware(/*??errorHandler,*/      // ... inject FIRST to allow coverage of other middleware components
                                                                          thunkBatchHandler, // ... inject before actionLogger (minor: doesn't have a type)
                                                                     /*?? actionLogger, */   // ... inject early to allow logging of other middleware components
                                                                          /* thunk, */       // thunks NOW supported through our own thunkBatchHandler
