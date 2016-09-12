@@ -65,7 +65,7 @@ export default class SelCritDetail extends React.Component {
    */
   handleFilterChange(newFilter) {
     const p = this.props;
-    p.dispatch( AC.selCrit.edit.filterChange(newFilter) );
+    p.dispatch( AC.selCrit.edit.change.filter(newFilter) );
   }
 
 

@@ -51,7 +51,7 @@ export default class SortValue extends React.Component {
                : sortOp;
     });
 
-    p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
+    p.dispatch( AC.selCrit.edit.change.sort(selectedSortOptions) );
   }
   
 
@@ -70,7 +70,7 @@ export default class SortValue extends React.Component {
     selectedSortOptions[indxA] = p.selectedSortOptions[indxB];
     selectedSortOptions[indxB] = p.selectedSortOptions[indxA];
 
-    p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
+    p.dispatch( AC.selCrit.edit.change.sort(selectedSortOptions) );
   }
 
   
@@ -93,7 +93,7 @@ export default class SortValue extends React.Component {
         newOpts.push(moveOpt);
     }
 
-    p.dispatch( AC.selCrit.edit.sortChange(newOpts) );
+    p.dispatch( AC.selCrit.edit.change.sort(newOpts) );
   }
 
 
@@ -106,7 +106,7 @@ export default class SortValue extends React.Component {
     // adjust array copy (immutable)  by removing the specified entry
     const selectedSortOptions = p.selectedSortOptions.filter( (sortOp) => sortOp.value !== sortOption.value );
 
-    p.dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
+    p.dispatch( AC.selCrit.edit.change.sort(selectedSortOptions) );
   }
   
 

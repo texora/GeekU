@@ -41,7 +41,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra', {
     ];
   },
 
-  [AT.selCrit.edit.complete](extra, action) {
+  [AT.selCrit.edit.close](extra, action) {
     return [
       null,
       ()=>'set extra to null'

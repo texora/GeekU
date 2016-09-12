@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.name', {
 
-  [AT.selCrit.edit.nameChange](name, action) {
+  [AT.selCrit.edit.change.name](name, action) {
     return [
       action.name,
       ()=>`set name from action.name: ${action.name}`

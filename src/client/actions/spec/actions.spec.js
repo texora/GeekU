@@ -86,8 +86,7 @@ describe('insure AT/AC constants utilize federated namespace', () => {
 
   // NOTE: Utilize a AT/AC that has an intermediate placeholder node
   //       ... selCrit:                intermediate placeholder node
-  //           selCrit.save:           thunk
-  //           selCrit.save.start:     action-object
+  //           selCrit.save:           action-object
   //           selCrit.save.complete:  action-object
   //           selCrit.save.fail:      action-object
 
@@ -103,10 +102,10 @@ describe('insure AT/AC constants utilize federated namespace', () => {
              .toBeA('object');  // an intermediate node
   });
 
-  it("AC.selCrit.save same-as AC['selCrit.save'] (a thunk)", () => {
+  it("AC.selCrit.save same-as AC['selCrit.save'] (a function)", () => {
     expect(AC.selCrit.save)
              .toBe(AC['selCrit.save'])
-             .toBeA('function'); // a thunk
+             .toBeA('function'); // a function
   });
 
   it("AT.selCrit.save same-as AT['selCrit.save'] (a thunk)", () => {
@@ -115,8 +114,8 @@ describe('insure AT/AC constants utilize federated namespace', () => {
              .toBeA('object');
   });
 
-  // check ALL 3 of the bottom nodes
-  for (const node of ['start', 'complete', 'fail']) {
+  // check ALL 2 of the bottom nodes
+  for (const node of ['complete', 'fail']) {
     it(`AT.selCrit.save.${node} same-as AT['selCrit.save.${node}'] (an action-object)`, () => {
       expect(AT.selCrit.save[node])
                .toBe(AT[`selCrit.save.${node}`])

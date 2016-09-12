@@ -17,8 +17,26 @@ const reductionHandler = new ReductionHandler('appState.filters', {
     ];
   },
 
-  [AT.selCrit.changed]:  sharedSync,
-  [AT.selCrit.save.complete]: sharedSync, // ?? may be obsolete BECAUSE selCrit.changed will always be emitted
+  [AT.selCrit.changed](filters, action) {
+    const changedSelCrit = action.selCrit;
+    let   isNewEntry = true;
+    const newFilters = filters.map( (selCrit) => {
+      if (selCrit.key===changedSelCrit.key) {
+        isNewEntry = false;
+        return changedSelCrit;
+      }
+      else {
+        return selCrit;
+      }
+    });
+    if (isNewEntry) {
+      newFilters.push(changedSelCrit);
+    }
+    return [
+      newFilters,
+      ()=>`sync filters with changed action.selCrit: '${FMT(action.selCrit)}'`
+    ];
+  },
 
   [AT.selCrit.delete.complete](filters, action) {
     const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );
@@ -29,27 +47,6 @@ const reductionHandler = new ReductionHandler('appState.filters', {
   },
 
 });
-
-function sharedSync(filters, action) { // requires action.selCrit
-  const changedSelCrit = action.selCrit;
-  let   isNewEntry = true;
-  const newFilters = filters.map( (selCrit) => {
-    if (selCrit.key===changedSelCrit.key) {
-      isNewEntry = false;
-      return changedSelCrit;
-    }
-    else {
-      return selCrit;
-    }
-  });
-  if (isNewEntry) {
-    newFilters.push(changedSelCrit);
-  }
-  return [
-    newFilters,
-    ()=>`sync filters with changed action.selCrit: '${FMT(action.selCrit)}'`
-  ];
-}
 
 export default function filters(filters=[], action) {
 

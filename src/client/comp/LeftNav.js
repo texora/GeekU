@@ -157,12 +157,7 @@ export default class LeftNav extends React.Component {
    */
   handleSave(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(selCrit) ) // SAVE selCrit
-     .then( selCrit => {                   // SYNC view when using same selCrit
-       if (selectors.isSelCritActiveInView(p.appState, selCrit)) {
-         p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') )
-       }
-     });
+    p.dispatch( AC.selCrit.save(selCrit) );
   }
 
 

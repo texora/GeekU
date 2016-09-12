@@ -5,7 +5,6 @@ import assert from 'assert';
 import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
-import selCritSaveThunk        from './thunks/selCritSaveThunk';
 import itemsViewThunk          from './thunks/itemsViewThunk';
                                
 import generate_AT_AC          from './generate_AT_AC';
@@ -23,6 +22,25 @@ import generate_AT_AC          from './generate_AT_AC';
  *         A series of Strings, representing our Action Types
  *         (used internally by our reducers [injected into each action]).
  *         EX: AT.userMsg.display = "userMsg.display"
+ *
+ *
+ * IMPORTANT:
+ *
+ *   In order to gain an understanding of any reactive application, it
+ *   is imperative to fully understand it's emitted actions.  To that
+ *   end, the following hash-tags are documented with each action:
+ *
+ *     #byUser:    dispatched by user action      (i.e. initiated directly from UI)
+ *     #byLogic:   dispatched by app logic        (i.e. sourced from other actions)
+ *     #reducer:   of interest to reducer         (i.e. state should change as a result)
+ *     #noReducer: of NO real interest to reducer (i.e. used to stimulate logic)
+ *
+ *   As an example, the 'selCrit.edit.save' action is of no interest to
+ *   reducers (#noReducer) because app logic monitoring this action
+ *   will emit a more general action 'selCrit.changed' which provides
+ *   a more central opportunity to maintain our state (#byLogic,
+ *   #reducer).
+ *
  *
  * NOTES: 
  *
@@ -48,6 +66,7 @@ import generate_AT_AC          from './generate_AT_AC';
  *       * KEY: Because of this, you cannot rely on === semantics
  *         in compairing type strings.
  *         ... you can utilize === semantics with type.valueOf()
+ *
  *
  * INTERNAL NOTES: 
  *
@@ -157,38 +176,54 @@ const genesis = {
   'retrieveFilters':          { params: [],    thunk: retrieveFiltersThunk },
   'retrieveFilters.start':    { params: [] },
   'retrieveFilters.complete': { params: ['filters'] },
-  'retrieveFilters.fail':     { params: ['error'] },
+  'retrieveFilters.fail':     { params: ['err'] },
 
 
   // ***
-  // *** edit specified selCrit
+  // *** edit selCrit (in interactive dialog)
   // ***
-  //       AC.selCrit.edit(selCrit)
-  //        * selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
-  'selCrit.edit':              { params: ['selCrit'] },
-  'selCrit.edit.nameChange':   { params: ['name'] },
-  'selCrit.edit.descChange':   { params: ['desc'] },
-  'selCrit.edit.fieldsChange': { params: ['selectedFieldOptions'] },
-  'selCrit.edit.sortChange':   { params: ['selectedSortOptions'] },
-  'selCrit.edit.filterChange': { params: ['newFilter'] },
-  'selCrit.edit.distinguishMajorSortFieldChange': { params: ['value'] },
-  'selCrit.edit.complete':     { params: ['completionType'], // edit complete, closing dialog
-                                 verifyParams(completionType) {
-                                   assert(['use','save','cancel'].includes(completionType),
-                                          `ERROR: AC.selCrit.edit.complete(${FMT(completionType)}) invalid completionType ... expecting 'use'/'save'/'cancel'`);
-                                   return [completionType];
-                                 }},
-  'selCrit.changed':           { params: ['selCrit'] }, // selCrit has changed
+
+  // initiate an edit session
+  //   - selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
+  'selCrit.edit': { params: ['selCrit'] }, // ... #byUser, #reducer
+
+  // various selCrit attribute changes
+  // ... #byUser, #reducer
+  'selCrit.edit.change.name':   { params: ['name'] },
+  'selCrit.edit.change.desc':   { params: ['desc'] },
+  'selCrit.edit.change.fields': { params: ['selectedFieldOptions'] },
+  'selCrit.edit.change.sort':   { params: ['selectedSortOptions'] },
+  'selCrit.edit.change.filter': { params: ['newFilter'] },
+  'selCrit.edit.change.distinguishMajorSortField': { params: ['value'] },
+
+  // various ways to complete an edit session
+  // ... use selCrit in edit session without persisting to DB
+  //     (subject to validation)
+  'selCrit.edit.use':   { params: [] },         // ... #byUser,  #noReducer
+  // ... save/use selCrit in edit session
+  //     (subject to validation)
+  'selCrit.edit.save':  { params: [] },         // ... #byUser,  #noReducer
+  // ... close out edit session dialog
+  //     used BOTH to cancel edit session
+  //     -or- complete edit session from use/save
+  'selCrit.edit.close': { params: [] },         // ... #byUser, #byLogic, #reducer
+
+
+  // ***
+  // *** general notification of selCrit change completion
+  // ***
+
+  // emitted under any circumstance of completed/valid change (edit dialog completion, save, etc.)
+  'selCrit.changed': { params: ['selCrit'] }, // ... #byLogic, #reducer
 
 
   // ***
   // *** save specified selCrit
   // ***
 
-  'selCrit.save':          { params: ['selCrit'],    thunk: selCritSaveThunk },
-  'selCrit.save.start':    { params: ['selCrit'] },
-  'selCrit.save.complete': { params: ['selCrit'] }, // ?? obsolete ... I think ... BECAUSE should monitor selCrit.changed which will always be emitted
-  'selCrit.save.fail':     { params: ['selCrit', 'error'] },
+  'selCrit.save':          { params: ['selCrit'] },        // #byUser, #byLogic, #reducer(spinner only)
+  'selCrit.save.complete': { params: ['selCrit'] },        //          #byLogic, #reducer(spinner only - NOTE: monitor selCrit.changed for overall changes)
+  'selCrit.save.fail':     { params: ['selCrit', 'err'] }, //          #byLogic, #reducer(spinner only)
 
 
   // ***
@@ -198,7 +233,7 @@ const genesis = {
   'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
   'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },
   'selCrit.delete.complete': { params: ['selCrit', 'impactView'] },
-  'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'error'] },
+  'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'err'] },
 
 };
 

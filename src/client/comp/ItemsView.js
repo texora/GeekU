@@ -119,10 +119,7 @@ export default class ItemsView extends React.Component {
    */
   handleSaveSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
-     .then( savedSelCrit => {                // SYNC our view
-       p.dispatch( AC.itemsView(this.meta().itemType, savedSelCrit, 'no-activate') )
-     });
+    p.dispatch( AC.selCrit.save(p.selCrit) );
   }
 
 

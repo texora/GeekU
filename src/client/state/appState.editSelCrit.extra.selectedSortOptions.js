@@ -33,7 +33,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
     ];
   },
 
-  [AT.selCrit.edit.sortChange](selectedSortOptions, action) {
+  [AT.selCrit.edit.change.sort](selectedSortOptions, action) {
     return [
       action.selectedSortOptions,
       ()=>`set selectedSortOptions from action.selectedSortOptions: ${FMT(action.selectedSortOptions)}`

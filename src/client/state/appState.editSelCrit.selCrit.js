@@ -50,7 +50,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit', {
     ];
   },
 
-  [AT.selCrit.edit.complete](selCrit, action) {
+  [AT.selCrit.edit.close](selCrit, action) {
     return [
       null,
       ()=>'set selCrit to null'

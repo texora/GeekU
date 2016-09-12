@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.sort', {
 
-  [AT.selCrit.edit.sortChange](sort, action) {
+  [AT.selCrit.edit.change.sort](sort, action) {
     const selectedSortOptions = action.selectedSortOptions;
 
     // sync selCrit.sort from selectedSortOptions

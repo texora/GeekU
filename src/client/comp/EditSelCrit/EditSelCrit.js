@@ -44,23 +44,29 @@ import SelCritDetail  from './SelCritDetail'
   },
   (dispatch, ownProps) => { // mapDispatchToProps
     return {
-      handleEditComplete(completionType) { // completionType: 'use'/'save'/'cancel'
-        dispatch( AC.selCrit.edit.complete(completionType) );
+      handleEditUse() {
+        dispatch( AC.selCrit.edit.use() );
+      },
+      handleEditSave() {
+        dispatch( AC.selCrit.edit.save() );
+      },
+      handleEditClose() {
+        dispatch( AC.selCrit.edit.close() );
       },
       handleNameChange(event) {
-        dispatch( AC.selCrit.edit.nameChange(event.target.value) );
+        dispatch( AC.selCrit.edit.change.name(event.target.value) );
       },
       handleDescChange(event) {
-        dispatch( AC.selCrit.edit.descChange(event.target.value) );
+        dispatch( AC.selCrit.edit.change.desc(event.target.value) );
       },
       handleFieldsChange(selectedFieldOptions) { // selectedFieldOptions: Option[ {value, label}, ...]
-        dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
+        dispatch( AC.selCrit.edit.change.fields(selectedFieldOptions) );
       },
       handleSortChange(selectedSortOptions) { // selectedSortOptions: Option[ {value, label, ascDec}, ...]
-        dispatch( AC.selCrit.edit.sortChange(selectedSortOptions) );
+        dispatch( AC.selCrit.edit.change.sort(selectedSortOptions) );
       },
       handleDistinguishMajorSortFieldChange(event, value) {
-        dispatch( AC.selCrit.edit.distinguishMajorSortFieldChange(value) );
+        dispatch( AC.selCrit.edit.change.distinguishMajorSortField(value) );
       },
     };
   },
@@ -72,9 +78,6 @@ export default class EditSelCrit extends React.Component {
   static propTypes = { // expected component props
   }
 
-  /**
-   * render()
-   */
   render() {
     const p = this.props;
 
@@ -87,22 +90,22 @@ export default class EditSelCrit extends React.Component {
                    title={`${itemTypes.meta[p.selCrit.itemType].label.plural} Filter`}
                    open={true}
                    autoScrollBodyContent={true}
-                   onRequestClose={ (buttonClicked) => p.handleEditComplete('use')}
+                   onRequestClose={ (buttonClicked) => p.handleEditUse()}
                    actions={[
                      <FlatButton label="Use"
                                  primary={true}
                                  title="use this filter (without saving)"
-                                 onTouchTap={ (e) => p.handleEditComplete('use') }/>,
+                                 onTouchTap={ (e) => p.handleEditUse() }/>,
                      <FlatButton label="Save"
                                  primary={true}
                                  title={SelCrit.isCurrentContentSaved(p.selCrit) ? 'there are NO changes to save' : 'save and use changes'}
                                  disabled={SelCrit.isCurrentContentSaved(p.selCrit)}
-                                 onTouchTap={ (e) => p.handleEditComplete('save') }/>,
+                                 onTouchTap={ (e) => p.handleEditSave() }/>,
                      <FlatButton label="Cancel"
                                  primary={true}
                                  title={p.selCrit.curHash===p.startingCurHash ? 'there are NO changes to cancel' : 'cancel changes'}
                                  disabled={!p.selCritIsNew && p.selCrit.curHash===p.startingCurHash}
-                                 onTouchTap={ (e) => p.handleEditComplete('cancel') }/>,
+                                 onTouchTap={ (e) => p.handleEditClose() }/>,
                    ]}
                    contentStyle={{
                        width:         '90%',
