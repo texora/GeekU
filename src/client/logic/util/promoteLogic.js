@@ -20,3 +20,6 @@ export default function promoteLogic(logicName, logicDef) {
   // create the logic component, promoting our consolidated information
   return [ logicName, createLogic(logicDef) ];
 }
+
+// export various constants used in redux-logic modules
+export const allowMore = { allowMore: true };

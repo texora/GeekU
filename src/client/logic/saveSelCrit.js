@@ -1,9 +1,8 @@
 'use strict';
 
-import promoteLogic      from './util/promoteLogic';
-import getActionLogicLog from './util/getActionLogicLog';
-
-import {AC}                  from '../actions';
+import promoteLogic, * as LOGIC from './util/promoteLogic';
+import getActionLogicLog        from './util/getActionLogicLog';
+import {AC}                     from '../actions';
 
 
 /**
@@ -33,7 +32,7 @@ const [logicName, logic] = promoteLogic('saveSelCrit', {
       const savedSelCrit = res.payload;
       log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
       // mark async operation complete (typically spinner)
-      dispatch( AC.selCrit.save.complete(savedSelCrit), allowMore );
+      dispatch( AC.selCrit.save.complete(savedSelCrit), LOGIC.allowMore );
       // sync app with results
       dispatch( AC.selCrit.changed(savedSelCrit) );
     })
@@ -48,5 +47,3 @@ const [logicName, logic] = promoteLogic('saveSelCrit', {
 });
 
 export default logic;
-
-const allowMore = { allowMore: true };

@@ -1,10 +1,9 @@
 'use strict';
 
-import promoteLogic      from './util/promoteLogic';
-import getActionLogicLog from './util/getActionLogicLog';
-
-import {AC}              from '../actions';
-import selectors         from '../state';
+import promoteLogic, * as LOGIC from './util/promoteLogic';
+import getActionLogicLog        from './util/getActionLogicLog';
+import {AC}                     from '../actions';
+import selectors                from '../state';
 
 
 /**
@@ -25,7 +24,7 @@ const [logicName, logic] = promoteLogic('useSelCritEdits', {
     // emit changed notification when selCrit has actually changed
     if (selCrit.curHash !== startingCurHash) {
       log.debug(() => "emitting change notification (action: 'selCrit.changed') because selCrit has actually changed");
-      dispatch( AC.selCrit.changed(selCrit), allowMore );
+      dispatch( AC.selCrit.changed(selCrit), LOGIC.allowMore );
     }
 
     // close out our edit dialog
@@ -37,5 +36,3 @@ const [logicName, logic] = promoteLogic('useSelCritEdits', {
 });
 
 export default logic;
-
-const allowMore = { allowMore: true };
