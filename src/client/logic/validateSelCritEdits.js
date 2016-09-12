@@ -1,24 +1,22 @@
 'use strict';
 
-import promoteLogic      from './util/promoteLogic';
-import getActionLogicLog from './util/getActionLogicLog';
-
-import {AC}              from '../actions';
-import selectors         from '../state';
-import SelCrit           from '../../shared/domain/SelCrit';
+import * as LOGIC  from './LogicUtil';
+import {AC}        from '../actions';
+import selectors   from '../state';
+import SelCrit     from '../../shared/domain/SelCrit';
 
 
 /**
  * Validate selCrit edits on completion.
  */
-const [logicName, logic] = promoteLogic('validateSelCritEdits', {
+const [logicName, logic] = LOGIC.promoteLogic('validateSelCritEdits', {
 
   type: ['selCrit.edit.use',
          'selCrit.edit.save'],
 
   validate({getState, action}, allow, reject) {
 
-    const log = getActionLogicLog(action, logicName);
+    const log = LOGIC.getActionLog(action, logicName);
 
     const appState = getState();
     const selCrit  = selectors.getEditSelCrit(appState).selCrit;

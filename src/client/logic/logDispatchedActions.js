@@ -1,7 +1,6 @@
 'use strict';
 
-import promoteLogic      from './util/promoteLogic';
-import getActionLogicLog from './util/getActionLogicLog';
+import * as LOGIC  from './LogicUtil';
 
 /**
  * App logic which logs each dispatched action, using the following Log
@@ -10,14 +9,14 @@ import getActionLogicLog from './util/getActionLogicLog';
  *   - TRACE:   action content too
  */
 
-const [logicName, logic] = promoteLogic('logDispatchedActions', {
+const [logicName, logic] = LOGIC.promoteLogic('logDispatchedActions', {
 
   type: '*',
 
   transform({getState, action}, next) {
 
     // log dispatched action
-    const log = getActionLogicLog(action, logicName);
+    const log = LOGIC.getActionLog(action, logicName);
 
     if (log.isTraceEnabled()) {
       log.trace(()=>   `Dispatched Action: ${FMT(action.type)} with content: ${FMT(action)}`);

@@ -1,20 +1,19 @@
 'use strict';
 
-import promoteLogic, * as LOGIC from './util/promoteLogic';
-import getActionLogicLog        from './util/getActionLogicLog';
-import {AC}                     from '../actions';
+import * as LOGIC  from './LogicUtil';
+import {AC}        from '../actions';
 
 
 /**
  * App logic to save selCrit.
  */
-const [logicName, logic] = promoteLogic('saveSelCrit', {
+const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
 
   type: 'selCrit.save',
 
   process({getState, action}, dispatch) {
 
-    const log = getActionLogicLog(action, logicName);
+    const log = LOGIC.getActionLog(action, logicName);
 
     const selCrit = action.selCrit;
 

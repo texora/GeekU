@@ -1,7 +1,6 @@
 'use strict';
 
-import promoteLogic          from './util/promoteLogic';
-import getActionLogicLog     from './util/getActionLogicLog';
+import * as LOGIC            from './LogicUtil';
 import handleUnexpectedError from '../util/handleUnexpectedError';
 
 
@@ -11,7 +10,7 @@ import handleUnexpectedError from '../util/handleUnexpectedError';
  *    - communicating problem to the user
  *    - and logging the details (for tech support)
  */
-const [logicName, logic] = promoteLogic('communicateUnexpectedError', {
+const [logicName, logic] = LOGIC.promoteLogic('communicateUnexpectedError', {
 
   type: [/\.fail$/,                // ... from GeekU async '*.fail' actions
          'UNHANDLED_LOGIC_ERROR'], // ... from redux-logic error handler

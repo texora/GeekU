@@ -1,10 +1,8 @@
 'use strict';
 
-import promoteLogic      from './util/promoteLogic';
-import getActionLogicLog from './util/getActionLogicLog';
-
-import SelCrit           from '../../shared/domain/SelCrit';
-import itemTypes         from '../../shared/domain/itemTypes';
+import * as LOGIC  from './LogicUtil';
+import SelCrit     from '../../shared/domain/SelCrit';
+import itemTypes   from '../../shared/domain/itemTypes';
 
 
 /**
@@ -12,13 +10,13 @@ import itemTypes         from '../../shared/domain/itemTypes';
  *   - interpreting when to create new SelCrit
  *   - injecting additional information needed in action
  */
-const [logicName, logic] = promoteLogic('initializeSelCritEdit', {
+const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
 
   type: 'selCrit.edit',
 
   transform({ getState, action }, next) {
 
-    const log = getActionLogicLog(action, logicName);
+    const log = LOGIC.getActionLog(action, logicName);
 
     let selCrit = action.selCrit;
 

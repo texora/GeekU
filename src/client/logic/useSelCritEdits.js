@@ -1,21 +1,20 @@
 'use strict';
 
-import promoteLogic, * as LOGIC from './util/promoteLogic';
-import getActionLogicLog        from './util/getActionLogicLog';
-import {AC}                     from '../actions';
-import selectors                from '../state';
+import * as LOGIC  from './LogicUtil';
+import {AC}        from '../actions';
+import selectors   from '../state';
 
 
 /**
  * Use selCrit edits on completion.
  */
-const [logicName, logic] = promoteLogic('useSelCritEdits', {
+const [logicName, logic] = LOGIC.promoteLogic('useSelCritEdits', {
 
   type: 'selCrit.edit.use',
 
   process({getState, action}, dispatch) {
 
-    const log = getActionLogicLog(action, logicName);
+    const log = LOGIC.getActionLog(action, logicName);
 
     const appState = getState();
     const selCrit         = selectors.getEditSelCrit(appState).selCrit;
