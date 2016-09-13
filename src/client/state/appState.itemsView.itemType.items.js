@@ -16,7 +16,7 @@ export default function items(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.items`, {
 
-    [AT.itemsView.retrieveComplete](items, action) {
+    [AT.itemsView.retrieve.complete](items, action) {
       return [
         action.items,
         ()=>`set items from action: ${action.items.length} ${itemTypes.meta[action.itemType].label.plural}`

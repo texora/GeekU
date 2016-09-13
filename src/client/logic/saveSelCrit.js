@@ -37,6 +37,7 @@ const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
     })
     .catch( err => {
       // mark async operation FAILED (typically spinner)
+      // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
       dispatch( AC.selCrit.save.fail(selCrit, 
                                      err.defineAttemptingToMsg(`saving selCrit: ${selCrit.name}`)) );
     });

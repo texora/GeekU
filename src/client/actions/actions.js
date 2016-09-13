@@ -1,13 +1,14 @@
 'use strict'
 
-import assert from 'assert';
+import assert          from 'assert';
+import SelCrit         from '../../shared/domain/SelCrit';
+import itemTypes       from '../../shared/domain/itemTypes';
+import generate_AT_AC  from './generate_AT_AC';
 
+// ?? obsolete ALL THESE
 import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
-import itemsViewThunk          from './thunks/itemsViewThunk';
-                               
-import generate_AT_AC          from './generate_AT_AC';
 
 
 /**
@@ -125,23 +126,61 @@ const genesis = {
 
 
   // ***
-  // *** retrieve and/or activate the Items View for the specified itemType
+  // *** Items View related
   // ***
-  //       AC.itemsView(itemType, retrieve, activate)
-  //          ... see: itemsViewThunk.js for full documentation
-  //        * itemType:    the itemType ... 'student'/'course'
-  //        * retrieve:    the retrieval directive, one of:
-  //          - null:        no retrieval at all (DEFAULT)
-  //          - selCrit:     conditionally retrieve items when different from ItemsView selCrit (or out-of-date)
-  //          - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
-  //        * activate:    the activate directive, one of:
-  //          - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
-  //          - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
-  'itemsView':                  { params: ['itemType', 'retrieve', 'activate'], thunk: itemsViewThunk },
-  'itemsView.activate':         { params: ['itemType'] },
-  'itemsView.retrieveStart':    { params: ['itemType', 'selCrit'] },          // conditionally emitted when retrieval needed
-  'itemsView.retrieveComplete': { params: ['itemType', 'selCrit', 'items'] }, // ditto
-  'itemsView.retrieveFail':     { params: ['itemType', 'selCrit', 'error'] }, // ditto
+
+  // retrieve and/or activate the Items View for the specified itemType (use when you wish to do BOTH)
+  //   * itemType:    the itemType ... 'student'/'course'
+  //   * retrieve:    the retrieval directive, one of:
+  //     - null:        no retrieval at all (DEFAULT)
+  //     - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
+  //     - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+  //   * activate:    the activate directive, one of:
+  //     - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
+  //     - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
+  'itemsView': { params: ['itemType', 'retrieve', 'activate'], // ... #byUser, #noReducer
+                 verifyParams(itemType,
+                              retrieve=null,
+                              activate=retrieve!=='refresh' ? 'activate' : 'no-activate') {
+
+                   assert(itemTypes[itemType],
+                          `AC.itemsView() Invalid itemType param: ${FMT(itemType)}`);
+
+                   assert(retrieve === null      ||
+                          retrieve === 'refresh' ||
+                          SelCrit.isSelCrit(retrieve),
+                          `AC.itemsView() Invalid retrieve param: ${FMT(retrieve)}`);
+
+                   assert(activate === 'activate' ||
+                          activate === 'no-activate',
+                          `AC.itemsView() Invalid activate param: ${FMT(activate)}`);
+
+                   return [itemType, retrieve, activate];
+                 }},
+
+
+  // retrieve the Items View for the specified itemType
+  //   * selCrit:    the selCrit driving the retrieval, one of:
+  //     - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
+  //     - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+  'itemsView.retrieve': { params: ['itemType', 'selCrit'],  // ... #byUser, #byLogic, #reducer(spinner only)
+                          verifyParams(itemType, selCrit) {
+
+                            assert(itemTypes[itemType],
+                                   `AC.itemsView.retrieve() Invalid itemType param: ${FMT(itemType)}`);
+
+                            assert(selCrit === 'refresh' ||
+                                   SelCrit.isSelCrit(selCrit),
+                                   `AC.itemsView.retrieve() Invalid selCrit param: ${FMT(selCrit)}`);
+
+                            return [itemType, selCrit];
+                          }},
+  'itemsView.retrieve.complete': { params: ['itemType', 'selCrit', 'items'] }, // ... #byLogic, #reducer
+  'itemsView.retrieve.fail':     { params: ['itemType', 'selCrit', 'err'] },   // ... #byLogic, #reducer(spinner only)
+
+
+  // activate the Items View for the specified itemType
+  'itemsView.activate': { params: ['itemType'] }, // ... #byUser, #byLogic, #reducer
 
 
   // ***
@@ -184,7 +223,7 @@ const genesis = {
   // ***
 
   // initiate an edit session
-  //   - selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
+  //   * selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
   'selCrit.edit': { params: ['selCrit'] }, // ... #byUser, #reducer
 
   // various selCrit attribute changes

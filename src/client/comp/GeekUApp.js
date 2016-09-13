@@ -53,7 +53,7 @@ export default class GeekUApp extends React.Component {
 
   handleSelectedView(itemTypeAsPage) {
     const p = this.props;
-    p.dispatch( AC.itemsView(itemTypeAsPage, null, 'activate') );
+    p.dispatch( AC.itemsView.activate(itemTypeAsPage) );
   }
 
   tempAlert() {

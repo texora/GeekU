@@ -15,9 +15,9 @@ export default function inProgress(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.inProgress`, {
 
-    [AT.itemsView.retrieveStart]    (inProgress, action) { return addIn(inProgress, +1); },
-    [AT.itemsView.retrieveComplete] (inProgress, action) { return addIn(inProgress, -1); },
-    [AT.itemsView.retrieveFail]     (inProgress, action) { return addIn(inProgress, -1); },
+    [AT.itemsView.retrieve]          (inProgress, action) { return addIn(inProgress, +1); },
+    [AT.itemsView.retrieve.complete] (inProgress, action) { return addIn(inProgress, -1); },
+    [AT.itemsView.retrieve.fail]     (inProgress, action) { return addIn(inProgress, -1); },
     
   });
   

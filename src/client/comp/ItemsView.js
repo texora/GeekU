@@ -98,7 +98,7 @@ export default class ItemsView extends React.Component {
    */
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.itemsView(this.meta().itemType, 'refresh', 'no-activate') );
+    p.dispatch( AC.itemsView.retrieve(this.meta().itemType, 'refresh') );
   }
 
 

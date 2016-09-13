@@ -52,7 +52,7 @@ export function getActionLog(action, logicName) {
     // enhance log.log() to emit logicName in msgFn param
     const priorLogMeth = log.log.bind(log);
     log.log = (level, msgFn, obj) => {
-      const enhancedMsgFn = () => `Logic: ${logicName} ... ${msgFn()}`;
+      const enhancedMsgFn = () => `${msgFn()} (logic: ${logicName})`;
       priorLogMeth(level, enhancedMsgFn, obj);
     }
   }

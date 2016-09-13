@@ -5,6 +5,8 @@ import { createLogic } from 'redux-logic';
 import communicateUnexpectedError from './communicateUnexpectedError';
 import initializeSelCritEdit      from './initializeSelCritEdit';
 import logDispatchedActions       from './logDispatchedActions';
+import processItemsView           from './processItemsView';
+import processItemsViewRetrieve   from './processItemsViewRetrieve';
 import saveAndUseSelCritEdits     from './saveAndUseSelCritEdits';
 import saveSelCrit                from './saveSelCrit';
 import syncViewWhenSelCritChanged from './syncViewWhenSelCritChanged';
@@ -23,6 +25,11 @@ export default [
   // general utility that logs all dispatched actions ...
   logDispatchedActions,
 
+  // itemsView related ...
+  processItemsView,
+  processItemsViewRetrieve,
+  syncViewWhenSelCritChanged,
+
   // edit selCrit related ...
   initializeSelCritEdit,
   validateSelCritEdits,
@@ -31,7 +38,4 @@ export default [
 
   // save selCrit ...
   saveSelCrit,
-
-  // general monitoring of itemsView ...
-  syncViewWhenSelCritChanged,
 ];

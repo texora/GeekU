@@ -22,7 +22,7 @@ export default function selectedItem(_itemType) {
       ];
     },
   
-    [AT.itemsView.retrieveComplete] (selectedItem, action) {
+    [AT.itemsView.retrieve.complete] (selectedItem, action) {
       // TODO: we could keep the selected item, if it is contained in the new retrieval (action.items)
       return [
         null,

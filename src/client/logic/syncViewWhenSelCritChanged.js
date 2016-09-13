@@ -22,7 +22,7 @@ const [logicName, logic] = LOGIC.promoteLogic('syncViewWhenSelCritChanged', {
     // conditionally refresh view when based on this changed selCrit
     if (selectors.isSelCritActiveInView(appState, selCrit)) {
       log.debug(()=>`syncing view: ${selCrit.itemType}, because it is based on a selCrit that has changed: ${selCrit.name}`);
-      dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') );
+      dispatch( AC.itemsView.retrieve(selCrit.itemType, selCrit) );
     }
     else {
       dispatch();
