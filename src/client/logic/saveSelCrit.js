@@ -15,7 +15,8 @@ const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
 
     const log = LOGIC.getActionLog(action, logicName);
 
-    const selCrit = action.selCrit;
+    const selCrit       = action.selCrit;
+    const syncDirective = action.syncDirective;
 
     // perform async save of selCrit
     log.debug(()=>`initiating async save of selCrit key: ${selCrit.key}`);
@@ -33,7 +34,7 @@ const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
       // mark async operation complete (typically spinner)
       dispatch( AC.selCrit.save.complete(savedSelCrit), LOGIC.allowMore );
       // sync app with results
-      dispatch( AC.selCrit.changed(savedSelCrit) );
+      dispatch( AC.selCrit.changed(savedSelCrit, syncDirective) );
     })
     .catch( err => {
       // mark async operation FAILED (typically spinner)

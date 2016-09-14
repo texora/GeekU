@@ -7,7 +7,6 @@ import itemTypes   from '../../shared/domain/itemTypes';
 
 /**
  * Initialize process that edits supplied selCrit:
- *   - interpreting when to create new SelCrit
  *   - injecting additional information needed in action
  */
 const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
@@ -16,20 +15,8 @@ const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
 
   transform({ getState, action }, next) {
 
-    const log = LOGIC.getActionLog(action, logicName);
-
-    let selCrit = action.selCrit;
-
-    // interpret itemType string as new SelCrit
-    // ... injecting into action's real selCrit (new) and maintaining selCritIsNew indicator
-    if (typeof selCrit === 'string') {
-      log.debug(()=> `injecting new SelCrit of type: ${FMT(selCrit)}`);
-      action.selCrit = selCrit = SelCrit.new(selCrit);
-      action.selCritIsNew = true;
-    }
-    else {
-      action.selCritIsNew = false;
-    }
+    const log     = LOGIC.getActionLog(action, logicName);
+    const selCrit = action.selCrit;
 
     log.debug(()=> 'injecting additional information needed in action');
 

@@ -80,7 +80,7 @@ import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
  *        ... at least the number of parameters
  *        ... the parameter types are NOT validated, but the name gives a hint of expectations
  *        ... here is an example error that is thrown if number of params are incorrect:
- *            ERROR: Action Creator AC.selCrit.edit(selCrit) expecting 2 parameters, but received 1
+ *            ERROR: Action Creator AC.selCrit.edit(selCrit) expecting 3 parameters, but received 2
  *      * Correctly constructs the action every time
  *   
  *    - The Action Types (AT):
@@ -142,19 +142,15 @@ const genesis = {
                  verifyParams(itemType,
                               retrieve=null,
                               activate=retrieve!=='refresh' ? 'activate' : 'no-activate') {
-
                    assert(itemTypes[itemType],
                           `AC.itemsView() Invalid itemType param: ${FMT(itemType)}`);
-
                    assert(retrieve === null      ||
                           retrieve === 'refresh' ||
                           SelCrit.isSelCrit(retrieve),
                           `AC.itemsView() Invalid retrieve param: ${FMT(retrieve)}`);
-
                    assert(activate === 'activate' ||
                           activate === 'no-activate',
                           `AC.itemsView() Invalid activate param: ${FMT(activate)}`);
-
                    return [itemType, retrieve, activate];
                  }},
 
@@ -165,14 +161,11 @@ const genesis = {
   //     - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
   'itemsView.retrieve': { params: ['itemType', 'selCrit'],  // ... #byUser, #byLogic, #reducer(spinner only)
                           verifyParams(itemType, selCrit) {
-
                             assert(itemTypes[itemType],
                                    `AC.itemsView.retrieve() Invalid itemType param: ${FMT(itemType)}`);
-
                             assert(selCrit === 'refresh' ||
                                    SelCrit.isSelCrit(selCrit),
                                    `AC.itemsView.retrieve() Invalid selCrit param: ${FMT(selCrit)}`);
-
                             return [itemType, selCrit];
                           }},
   'itemsView.retrieve.complete': { params: ['itemType', 'selCrit', 'items'] }, // ... #byLogic, #reducer
@@ -223,8 +216,14 @@ const genesis = {
   // ***
 
   // initiate an edit session
-  //   * selCrit: the selCrit object to edit -OR- an itemType string to create a new selCrit
-  'selCrit.edit': { params: ['selCrit'] }, // ... #byUser, #reducer
+  'selCrit.edit': { params: ['selCrit', 'isNew', 'syncDirective'], // ... #byUser, #reducer
+                    verifyParams(selCrit, isNew=false, syncDirective=SelCrit.SyncDirective.default) {
+                      assert(SelCrit.isSelCrit(selCrit),
+                             `AC.selCrit.edit() Invalid selCrit param: ${FMT(selCrit)}`);
+                      assert(SelCrit.SyncDirective[syncDirective],
+                             `AC.selCrit.edit() Invalid syncDirective param: ${FMT(syncDirective)}`);
+                      return [selCrit, isNew, syncDirective];
+                    }},
 
   // various selCrit attribute changes
   // ... #byUser, #reducer
@@ -253,16 +252,30 @@ const genesis = {
   // ***
 
   // emitted under any circumstance of completed/valid change (edit dialog completion, save, etc.)
-  'selCrit.changed': { params: ['selCrit'] }, // ... #byLogic, #reducer
+  'selCrit.changed': { params: ['selCrit', 'syncDirective'], // ... #byLogic, #reducer
+                       verifyParams(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+                         assert(SelCrit.isSelCrit(selCrit),
+                                `AC.selCrit.changed() Invalid selCrit param: ${FMT(selCrit)}`);
+                         assert(SelCrit.SyncDirective[syncDirective],
+                                `AC.selCrit.changed() Invalid syncDirective param: ${FMT(syncDirective)}`);
+                         return [selCrit, syncDirective];
+                       }},
 
 
   // ***
   // *** save specified selCrit
   // ***
 
-  'selCrit.save':          { params: ['selCrit'] },        // #byUser, #byLogic, #reducer(spinner only)
-  'selCrit.save.complete': { params: ['selCrit'] },        //          #byLogic, #reducer(spinner only - NOTE: monitor selCrit.changed for overall changes)
-  'selCrit.save.fail':     { params: ['selCrit', 'err'] }, //          #byLogic, #reducer(spinner only)
+  'selCrit.save':          { params: ['selCrit', 'syncDirective'], // ... #byUser, #byLogic, #reducer(spinner only)
+                             verifyParams(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+                               assert(SelCrit.isSelCrit(selCrit),
+                                      `AC.selCrit.save() Invalid selCrit param: ${FMT(selCrit)}`);
+                               assert(SelCrit.SyncDirective[syncDirective],
+                                      `AC.selCrit.save() Invalid syncDirective param: ${FMT(syncDirective)}`);
+                               return [selCrit, syncDirective];
+                             }},
+  'selCrit.save.complete': { params: ['selCrit'] },        // ... #byLogic, #reducer(spinner only - NOTE: monitor selCrit.changed for overall changes)
+  'selCrit.save.fail':     { params: ['selCrit', 'err'] }, // ... #byLogic, #reducer(spinner only)
 
 
   // ***

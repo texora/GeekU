@@ -108,9 +108,6 @@ export default class ItemsView extends React.Component {
   handleEditSelCrit() {
     const p = this.props;
     p.dispatch( AC.selCrit.edit(p.selCrit) );
-    // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
-    // ? EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.itemsView(this.meta().itemType, changedSelCrit, 'no-activate'));
-    // ??? current logic WORKS: syncViewWhenSelCritChanged ... because it is the same selCrit.key
   }
 
 
@@ -129,12 +126,11 @@ export default class ItemsView extends React.Component {
   handleNewSelCrit() {
     const p = this.props;
 
-    // start an edit session requesting a new selCrit of specified itemType
-    p.dispatch( AC.selCrit.edit(this.meta().itemType) );
-    // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
-    // ? EditSelCrit.edit(this.meta().itemType, newSelCrit => AC.itemsView(this.meta().itemType, newSelCrit, 'no-activate'));
-    // ??? currently doesn't refresh view BECAUSE it is a diff selCrit.Key
-    //    ... we need an edit directive to retrieve (itemsView.retrieve(selCrit) ... NOTE it is already active
+    // start an edit session with a new selCrit of specified itemType
+    const selCrit = SelCrit.new(this.meta().itemType);
+    p.dispatch( AC.selCrit.edit(selCrit, 
+                                true, // isNew
+                                SelCrit.SyncDirective.reflect) );
   }
 
 
@@ -144,17 +140,11 @@ export default class ItemsView extends React.Component {
   handleDuplicateSelCrit() {
     const p = this.props;
 
-    // duplicate our selCrit
+    // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
-
-    // start an edit session with this dup selCrit
-    p.dispatch( AC.selCrit.edit(dupSelCrit) );
-    // ??? figure out how to handle the variation PREVIOUSLY accomplished in CB:
-    // ? EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.itemsView(this.meta().itemType, changedDupSelCrit, 'no-activate'));
-    // ??? currently doesn't refresh view BECAUSE it is a diff selCrit.Key
-    //    ... we need an edit directive to retrieve (itemsView.retrieve(selCrit) ... NOTE it is already active
-    // ??? ALSO a bug that drops it on the floor if NOT altered, as it thinks NO changes EVEN though it is NEW
-    // ??? MAY be a similar bug in the NEW (above) but we are forced to change it because the desc is blanked out (and it is required)
+    p.dispatch( AC.selCrit.edit(dupSelCrit, 
+                                true, // isNew
+                                SelCrit.SyncDirective.reflect) );
   }
 
 

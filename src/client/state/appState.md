@@ -62,8 +62,11 @@ appState: {
 
     extra: { // additional temporal structure streamlining various UI components
 
-      // controls whether edit dialog is always 'cancel-able'
-      selCritIsNew: boolean,
+      // a new selCrit controls whether edit dialog is always 'cancel-able'
+      isNew: boolean,
+
+      // how selCrit changes should be synced in selCrit-based views
+      syncDirective: SelCrit.SyncDirective,
 
       // the DB meta definition we are working for
       meta: object,

@@ -33,7 +33,7 @@ import SelCritDetail  from './SelCritDetail'
     const extra = selectors.getEditSelCrit(appState).extra || {};
     return {
       selCrit:              selectors.getEditSelCrit(appState).selCrit,
-      selCritIsNew:         extra.selCritIsNew,
+      isNew:                extra.isNew,
       meta:                 extra.meta,
       fieldOptions:         extra.fieldOptions,
       selectedFieldOptions: extra.selectedFieldOptions,
@@ -104,7 +104,7 @@ export default class EditSelCrit extends React.Component {
                      <FlatButton label="Cancel"
                                  primary={true}
                                  title={p.selCrit.curHash===p.startingCurHash ? 'there are NO changes to cancel' : 'cancel changes'}
-                                 disabled={!p.selCritIsNew && p.selCrit.curHash===p.startingCurHash}
+                                 disabled={!p.isNew && p.selCrit.curHash===p.startingCurHash}
                                  onTouchTap={ (e) => p.handleEditClose() }/>,
                    ]}
                    contentStyle={{

@@ -18,12 +18,21 @@ const [logicName, logic] = LOGIC.promoteLogic('useSelCritEdits', {
 
     const appState = getState();
     const selCrit         = selectors.getEditSelCrit(appState).selCrit;
-    const startingCurHash = selectors.getEditSelCrit(appState).extra.startingCurHash;
+    const extra           = selectors.getEditSelCrit(appState).extra;
+    const startingCurHash = extra.startingCurHash;
+    const isNew           = extra.isNew;
+    const syncDirective   = extra.syncDirective;
 
-    // emit changed notification when selCrit has actually changed
-    if (selCrit.curHash !== startingCurHash) {
-      log.debug(() => "emitting change notification (action: 'selCrit.changed') because selCrit has actually changed");
-      dispatch( AC.selCrit.changed(selCrit), LOGIC.allowMore );
+    // emit changed notification 
+    // ... when selCrit is new
+    if (isNew) {
+      log.debug(() => "emitting change notification (action: 'selCrit.changed') because selCrit is new");
+      dispatch( AC.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
+    }
+    // ... when existing selCrit has actually changed
+    else if (selCrit.curHash !== startingCurHash) {
+      log.debug(() => "emitting change notification (action: 'selCrit.changed') because existing selCrit has actually changed");
+      dispatch( AC.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
     }
 
     // close out our edit dialog

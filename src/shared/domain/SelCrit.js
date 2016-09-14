@@ -109,7 +109,7 @@ const SelCrit = {
    */
   isSelCrit(obj) {
     // ... cheap duck type checking
-    return obj.key && obj.itemType && obj.userId && obj.name && obj.desc;
+    return obj.key && obj.itemType && obj.userId && obj.name;
   },
 
   /**
@@ -281,6 +281,42 @@ const SelCrit = {
     LTE: '$lte',
     NE:  '$ne',
     IN:  '$in'
+  },
+
+
+  /**
+   * SelCrit.SyncDirective enumeration - a directive that indicates
+   * how selCrit changes should be synced in selCrit-based views.
+   */
+  SyncDirective: {
+
+    /**
+     * Use normal sync process (i.e. sync when view is based on the
+     * selCrit and the selCrit changes).
+     * ... typically used for EXISTING selCrit
+     * ... TYPICAL DEFAULT
+     */
+    default: 'default',
+
+    /**
+     * Unconditionally use in view WITHOUT activating the view.
+     * ... typically used for NEW selCrit
+     */
+    reflect: 'reflect',
+
+    /**
+     * Unconditionally use in view AND activate the view.
+     * ... typically used for NEW selCrit
+     */
+    activate: 'activate',
+
+    /**
+     * Do NOT sync at all.
+     * ... used for LeftNav in config mode - where new selCrit's are NOT reflected in view
+     * ... typically used for NEW selCrit
+     */
+    none: 'none',
+
   },
 
 }

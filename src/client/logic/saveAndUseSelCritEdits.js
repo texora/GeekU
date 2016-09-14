@@ -16,13 +16,14 @@ const [logicName, logic] = LOGIC.promoteLogic('saveAndUseSelCritEdits', {
 
     const log = LOGIC.getActionLog(action, logicName);
 
-    const appState = getState();
-    const selCrit         = selectors.getEditSelCrit(appState).selCrit;
+    const appState      = getState();
+    const selCrit       = selectors.getEditSelCrit(appState).selCrit;
+    const syncDirective = selectors.getEditSelCrit(appState).extra.syncDirective;
 
     // save our selCrit
     // ... NOTE: this action will emit a change notification (action: 'selCrit.changed')
     log.debug(() => "emitting action to save our selCrit (action: 'selCrit.save')");
-    dispatch( AC.selCrit.save(selCrit), LOGIC.allowMore );
+    dispatch( AC.selCrit.save(selCrit, syncDirective), LOGIC.allowMore );
 
     // close out our edit dialog
     log.debug(() => "emitting action to close our edit dialog (action: 'selCrit.edit.close')");
