@@ -3,6 +3,7 @@
 import * as LOGIC  from './LogicUtil';
 import SelCrit     from '../../shared/domain/SelCrit';
 import itemTypes   from '../../shared/domain/itemTypes';
+import {AT}        from '../actions';
 
 
 /**
@@ -11,7 +12,7 @@ import itemTypes   from '../../shared/domain/itemTypes';
  */
 const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
 
-  type: 'selCrit.edit',
+  type: AT.selCrit.edit.valueOf(),
 
   transform({ getState, action }, next) {
 

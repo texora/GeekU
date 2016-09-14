@@ -1,7 +1,7 @@
 'use strict';
 
 import * as LOGIC  from './LogicUtil';
-import {AC}        from '../actions';
+import {AT, AC}    from '../actions';
 
 
 /**
@@ -9,7 +9,7 @@ import {AC}        from '../actions';
  */
 const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
 
-  type: 'selCrit.save',
+  type: AT.selCrit.save.valueOf(),
 
   process({getState, action}, dispatch) {
 

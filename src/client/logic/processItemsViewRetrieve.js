@@ -1,7 +1,7 @@
 'use strict';
 
 import * as LOGIC            from './LogicUtil';
-import {AC}                  from '../actions';
+import {AT, AC}              from '../actions';
 import selectors             from '../state';
 import {encodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
 import SelCrit               from '../../shared/domain/SelCrit';
@@ -13,7 +13,7 @@ import itemTypes             from '../../shared/domain/itemTypes';
  */
 const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieve', {
 
-  type: 'itemsView.retrieve',
+  type: AT.itemsView.retrieve.valueOf(),
 
   // our stimulus:
   //  - action.itemType 

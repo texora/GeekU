@@ -1,7 +1,7 @@
 'use strict';
 
 import * as LOGIC  from './LogicUtil';
-import {AC}        from '../actions';
+import {AT, AC}    from '../actions';
 import selectors   from '../state';
 import SelCrit     from '../../shared/domain/SelCrit';
 
@@ -11,8 +11,8 @@ import SelCrit     from '../../shared/domain/SelCrit';
  */
 const [logicName, logic] = LOGIC.promoteLogic('validateSelCritEdits', {
 
-  type: ['selCrit.edit.use',
-         'selCrit.edit.save'],
+  type: [AT.selCrit.edit.use.valueOf(),
+         AT.selCrit.edit.save.valueOf()],
 
   validate({getState, action}, allow, reject) {
 

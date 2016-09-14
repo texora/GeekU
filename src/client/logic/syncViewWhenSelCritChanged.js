@@ -1,7 +1,7 @@
 'use strict';
 
 import * as LOGIC  from './LogicUtil';
-import {AC}        from '../actions';
+import {AT, AC}    from '../actions';
 import selectors   from '../state';
 import SelCrit     from '../../shared/domain/SelCrit';
 
@@ -11,7 +11,7 @@ import SelCrit     from '../../shared/domain/SelCrit';
  */
 const [logicName, logic] = LOGIC.promoteLogic('syncViewWhenSelCritChanged', {
 
-  type: 'selCrit.changed',
+  type: AT.selCrit.changed.valueOf(),
 
   process({getState, action}, dispatch) {
 

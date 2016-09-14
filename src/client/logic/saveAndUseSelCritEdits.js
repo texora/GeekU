@@ -1,7 +1,7 @@
 'use strict';
 
 import * as LOGIC  from './LogicUtil';
-import {AC}        from '../actions';
+import {AT, AC}    from '../actions';
 import selectors   from '../state';
 
 
@@ -10,7 +10,7 @@ import selectors   from '../state';
  */
 const [logicName, logic] = LOGIC.promoteLogic('saveAndUseSelCritEdits', {
 
-  type: 'selCrit.edit.save',
+  type: AT.selCrit.edit.save.valueOf(),
 
   process({getState, action}, dispatch) {
 
