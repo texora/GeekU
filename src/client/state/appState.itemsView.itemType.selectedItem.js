@@ -30,7 +30,7 @@ export default function selectedItem(_itemType) {
       ];
     },
   
-    [AT.detailItem.retrieveComplete](selectedItem, action) {
+    [AT.detailItem.retrieve.complete](selectedItem, action) {
       // NOTE: currently NO need to check if item retrieved is same (itemNum) as what is selected
       //       because activating the detailItem dialog also selects it
       return [

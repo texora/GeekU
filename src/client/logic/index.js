@@ -5,6 +5,7 @@ import { createLogic } from 'redux-logic';
 import communicateUnexpectedError from './communicateUnexpectedError';
 import initializeSelCritEdit      from './initializeSelCritEdit';
 import logDispatchedActions       from './logDispatchedActions';
+import processDetailItem          from './processDetailItem';
 import processFiltersRetrieve     from './processFiltersRetrieve';
 import processItemsView           from './processItemsView';
 import processItemsViewRetrieve   from './processItemsViewRetrieve';
@@ -14,7 +15,6 @@ import saveSelCrit                from './saveSelCrit';
 import syncViewWhenSelCritChanged from './syncViewWhenSelCritChanged';
 import useSelCritEdits            from './useSelCritEdits';
 import validateSelCritEdits       from './validateSelCritEdits';
-
 
 //***
 //*** accumulation of all app logic
@@ -34,6 +34,9 @@ export default [
   processItemsView,
   processItemsViewRetrieve,
   syncViewWhenSelCritChanged,
+
+  // detailItem related ...
+  processDetailItem,
 
   // edit selCrit related ...
   initializeSelCritEdit,

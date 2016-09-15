@@ -91,19 +91,19 @@ export default class StudentDialog extends React.Component {
 
   changeEditMode() {
     const p = this.props;
-    p.dispatch( AC.detailItem.changeEditMode(myItemType) );
+    p.dispatch( AC.detailItem.change.detailEditMode(myItemType) );
   }
 
   saveEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailItem.close(myItemType),
-                 AC.userMsg.display('TODO: Save Complete') ]);
+    p.dispatch( AC.detailItem.close(myItemType) );
+    p.dispatch( AC.userMsg.display('TODO: Save Complete') );
   }
 
   cancelEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailItem.close(myItemType),
-                 AC.userMsg.display('Edit Canceled') ]);
+    p.dispatch( AC.detailItem.close(myItemType) );
+    p.dispatch( AC.userMsg.display('Edit Canceled') );
   }
 
   render() {

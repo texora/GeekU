@@ -15,14 +15,14 @@ export default function detailEditMode(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.detailEditMode`, {
 
-    [AT.detailItem.retrieveComplete](detailEditMode, action) {
+    [AT.detailItem.retrieve.complete](detailEditMode, action) {
       return [
         action.editMode,
         ()=>`set detailEditMode from action.editMode ... ${action.editMode}`
       ];
     },
 
-    [AT.detailItem.changeEditMode](detailEditMode, action) {
+    [AT.detailItem.change.detailEditMode](detailEditMode, action) {
       return [
         true,
         ()=>'set detailEditMode to true'

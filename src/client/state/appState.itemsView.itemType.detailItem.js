@@ -15,7 +15,7 @@ export default function detailItem(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.detailItem`, {
 
-    [AT.detailItem.retrieveComplete](detailItem, action) {
+    [AT.detailItem.retrieve.complete](detailItem, action) {
       return [
         action.item,
         ()=>'set detailItem from action.item ... ' + FMT(action.item)

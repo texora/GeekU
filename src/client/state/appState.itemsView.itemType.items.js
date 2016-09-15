@@ -23,7 +23,7 @@ export default function items(_itemType) {
       ];
     },
 
-    [AT.detailItem.retrieveComplete](items, action) {
+    [AT.detailItem.retrieve.complete](items, action) {
       const keyField = itemTypes.meta[action.itemType].keyField;
       return [
         items.map( (item) => {

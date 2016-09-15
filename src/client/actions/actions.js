@@ -5,8 +5,6 @@ import SelCrit         from '../../shared/domain/SelCrit';
 import itemTypes       from '../../shared/domain/itemTypes';
 import generate_AT_AC  from './generate_AT_AC';
 
-import detailItemThunk         from './thunks/detailItemThunk';
-
 
 /**
  * Promote all actions used in our app ... both:
@@ -144,8 +142,8 @@ const genesis = {
   //     - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
   'itemsView': { traits: ['itemType', 'retrieve', 'activate'], // ... #byUser, #noReducer
                  ratify(itemType,
-                              retrieve=null,
-                              activate=retrieve!=='refresh' ? 'activate' : 'no-activate') {
+                        retrieve=null,
+                        activate=retrieve!=='refresh' ? 'activate' : 'no-activate') {
                    assert(itemTypes[itemType],
                           `AC.itemsView() Invalid itemType param: ${FMT(itemType)}`);
                    assert(retrieve === null      ||
@@ -192,17 +190,23 @@ const genesis = {
   // ***
   // *** detail item, after fresh retrieval, in a visual Dialog for either view/edit
   // ***
-  //       AC.detaiItem(itemNum, itemType, editMode)
-  //          ... see: detailItemThunk.js for full documentation
-  //        * itemNum:     the item key ... 'studentNum'/'courseNum'
-  //        * itemType:    the itemType ... 'student'/'course'
-  //        * editMode:    true: edit, false: view
-  'detailItem':                  { traits: ['itemType', 'itemNum', 'editMode'],  thunk: detailItemThunk },
-  'detailItem.retrieveStart':    { traits: ['itemType', 'itemNum', 'editMode'] },
-  'detailItem.retrieveComplete': { traits: ['itemType', 'item',    'editMode'] },
-  'detailItem.retrieveFail':     { traits: ['itemType', 'itemNum', 'editMode', 'err'] },
-  'detailItem.close':            { traits: ['itemType'] },
-  'detailItem.changeEditMode':   { traits: ['itemType'] },
+
+  /**
+   * AC.detailItem(itemType, itemNum, editMode): activate a dialog
+   * detailing (and/or editing) the supplied item.
+   *
+   * An up-to-date item image is retrieved prior to it's display.
+   *
+   * @param {string} itemType the itemType ('student'/'course').
+   * @param {string} itemNum the item number to detail (studentNum/courseNum).
+   * @param {boolean} editMode an indicator as to wheter the dialog
+   * starts out in read-only (false) or edit-mode (true).
+   */
+  'detailItem':                       { traits: ['itemType', 'itemNum', 'editMode'] },        // ... #byUser,           #reducer(spinner only)
+  'detailItem.retrieve.complete':     { traits: ['itemType', 'item',    'editMode'] },        // ...          #byLogic, #reducer
+  'detailItem.retrieve.fail':         { traits: ['itemType', 'itemNum', 'editMode', 'err'] }, // ...          #byLogic, #reducer(spinner only)
+  'detailItem.change.detailEditMode': { traits: ['itemType'] },                               // ... #byUser,           #reducer
+  'detailItem.close':                 { traits: ['itemType'] },                               // ... #byUser,           #reducer
 
 
   // ***
@@ -220,7 +224,9 @@ const genesis = {
 
   // initiate an edit session
   'selCrit.edit': { traits: ['selCrit', 'isNew', 'syncDirective'], // ... #byUser, #reducer
-                    ratify(selCrit, isNew=false, syncDirective=SelCrit.SyncDirective.default) {
+                    ratify(selCrit,
+                           isNew=false,
+                           syncDirective=SelCrit.SyncDirective.default) {
                       assert(SelCrit.isSelCrit(selCrit),
                              `AC.selCrit.edit() Invalid selCrit param: ${FMT(selCrit)}`);
                       assert(SelCrit.SyncDirective[syncDirective],
@@ -251,12 +257,24 @@ const genesis = {
 
 
   // ***
-  // *** general notification of selCrit change completion
+  // *** central notification of selCrit change completion
   // ***
 
-  // emitted under any circumstance of completed/valid change (edit dialog completion, save, etc.)
+  /**
+   * AC.selCrit.changed(selCrit, syncDirective): is a central notification that the supplied
+   * selCrit has changed (and is in a completed/valid state).
+   *
+   * This is emitted by various logic points under any circumstance of a completed/valid change
+   * (ex: edit dialog completion, save, etc.), and is of interest to reducers to to maintain 
+   * overall state.
+   * 
+   * @param {SelCrit} selCrit the selCrit that has changed.
+   * @param {SelCrit.SyncDirective} syncDirective a directive that indicates
+   * how selCrit changes should be synced in selCrit-based views.
+   */
   'selCrit.changed': { traits: ['selCrit', 'syncDirective'], // ... #byLogic, #reducer
-                       ratify(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+                       ratify(selCrit,
+                              syncDirective=SelCrit.SyncDirective.default) {
                          assert(SelCrit.isSelCrit(selCrit),
                                 `AC.selCrit.changed() Invalid selCrit param: ${FMT(selCrit)}`);
                          assert(SelCrit.SyncDirective[syncDirective],
@@ -270,7 +288,8 @@ const genesis = {
   // ***
 
   'selCrit.save': { traits: ['selCrit', 'syncDirective'], // ... #byUser, #byLogic, #reducer(spinner only)
-                    ratify(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+                    ratify(selCrit,
+                           syncDirective=SelCrit.SyncDirective.default) {
                       assert(SelCrit.isSelCrit(selCrit),
                              `AC.selCrit.save() Invalid selCrit param: ${FMT(selCrit)}`);
                       assert(SelCrit.SyncDirective[syncDirective],
@@ -285,7 +304,16 @@ const genesis = {
   // *** delete specified selCrit
   // ***
 
-  'selCrit.delete':          { traits: ['selCrit'] },               // ... #byUser, #byLogic, #reducer(spinner only)
+  /**
+   * AC.selCrit.delete(selCrit): delete the supplied selCrit, after obtaining
+   * a user confirmation.
+   * 
+   * Any view that is based on this selCrit is automatically updated (see impactView).
+   * 
+   * @param {SelCrit} selCrit the selCrit to delete.  This can either be a local in-memory
+   * representation -or- on persisted in the DB.
+   */
+  'selCrit.delete':          { traits: ['selCrit'] },               // ... #byUser,           #reducer(spinner only)
   'selCrit.delete.complete': { traits: ['selCrit', 'impactView'] }, // ...          #byLogic, #reducer ... impactView is the itemType of an impacted view if any (null indicates NO view was impacted)
   'selCrit.delete.fail':     { traits: ['selCrit', 'err'] },        // ...          #byLogic, #reducer(spinner only)
 
