@@ -35,13 +35,13 @@ export default function generate_AT_AC(genesis) {
     // machine generate our AC entries (Action Creator)
     AC[funcName] = function(...args) {
 
-      // verify/initialize params (when .verifyParams supplied)
-      if (genesis[funcName].verifyParams) {
-        args = genesis[funcName].verifyParams(...args);
+      // further validate/initialize params (when .ratify() function is supplied)
+      if (genesis[funcName].ratify) {
+        args = genesis[funcName].ratify(...args);
       }
 
       // validate proper number of params passed in
-      const paramNames = genesis[funcName].params;
+      const paramNames = genesis[funcName].traits;
       if (paramNames.length !== args.length) {
         // ex: ERROR: Action Creator AC.userMsg.display(msg) expecting 1 parameters, but received 2
         throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);

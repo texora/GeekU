@@ -5,7 +5,6 @@ import SelCrit         from '../../shared/domain/SelCrit';
 import itemTypes       from '../../shared/domain/itemTypes';
 import generate_AT_AC  from './generate_AT_AC';
 
-// ?? obsolete ALL THESE
 import detailItemThunk         from './thunks/detailItemThunk';
 import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
@@ -48,9 +47,16 @@ import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
  *   - To determine what Action Creators/Types are availble (AC/AT), simply interpret
  *     the genesis structure (below) as follows:
  *      * The genesis key is both the AC function name and the AT type
- *      * The genesis value.params array represents the expected AC function parameters
- *        and the AT action type state.
- *     EXAMPLE: AC.userMsg.display(msg): Action
+ *      * The genesis traits array represents both the AC function parameters
+ *        and the AT action properties.
+ *     EXAMPLE: 
+ *      * The Action Creator:
+ *          AC.userMsg.display(msg): Action
+ *      * Generates the following Action:
+ *          {
+ *             type: 'userMsg.display',
+ *             msg:  <supplied-param>
+ *          }
  *
  *   - AC/AT may contain dots ('.') ... i.e. a federated namespace.
  *     In this case you may use one of two reference techniques
@@ -76,11 +82,11 @@ import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
  *    - The Action Creators (AC) 
  *      * Concisely defines all the actions you can perform within the app
  *      * Promotes and validates the exact set of expected parameters
- *        TODO: currently validation is disabled till we provide a means of defining optional/defaulted params
- *        ... at least the number of parameters
- *        ... the parameter types are NOT validated, but the name gives a hint of expectations
- *        ... here is an example error that is thrown if number of params are incorrect:
- *            ERROR: Action Creator AC.selCrit.edit(selCrit) expecting 3 parameters, but received 2
+ *        - by default, the correct number of parameters are validated
+ *          ... here is an example error that is thrown if number of params are incorrect:
+ *              ERROR: Action Creator AC.selCrit.edit(selCrit, isNew, syncDirective) expecting 3 parameters, but received 2
+ *        - paramater types may be further validated/initialized through the 
+ *          ratify() function.
  *      * Correctly constructs the action every time
  *   
  *    - The Action Types (AT):
@@ -109,8 +115,8 @@ const genesis = {
   //                           txt:      '',
   //                           callback: function(event)
   //                         }
-  'userMsg.display': { params: ['msg', 'userAction'], 
-                       verifyParams(msg, userAction) {
+  'userMsg.display': { traits: ['msg', 'userAction'], 
+                       ratify(msg, userAction) {
                          const errPrefix = () => {
                            const userActionStr = userAction ? `, ${JSON.stringify(userAction)}` : '';
                            return `ERROR: AC.userMsg.display('${msg}'${userActionStr}) ...`;
@@ -122,7 +128,7 @@ const genesis = {
                          }
                          return [msg, userAction];
                        }},
-  'userMsg.close':   { params: [] },
+  'userMsg.close':   { traits: [] },
 
 
   // ***
@@ -138,8 +144,8 @@ const genesis = {
   //   * activate:    the activate directive, one of:
   //     - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
   //     - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
-  'itemsView': { params: ['itemType', 'retrieve', 'activate'], // ... #byUser, #noReducer
-                 verifyParams(itemType,
+  'itemsView': { traits: ['itemType', 'retrieve', 'activate'], // ... #byUser, #noReducer
+                 ratify(itemType,
                               retrieve=null,
                               activate=retrieve!=='refresh' ? 'activate' : 'no-activate') {
                    assert(itemTypes[itemType],
@@ -159,8 +165,8 @@ const genesis = {
   //   * selCrit:    the selCrit driving the retrieval, one of:
   //     - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
   //     - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
-  'itemsView.retrieve': { params: ['itemType', 'selCrit'],  // ... #byUser, #byLogic, #reducer(spinner only)
-                          verifyParams(itemType, selCrit) {
+  'itemsView.retrieve': { traits: ['itemType', 'selCrit'],  // ... #byUser, #byLogic, #reducer(spinner only)
+                          ratify(itemType, selCrit) {
                             assert(itemTypes[itemType],
                                    `AC.itemsView.retrieve() Invalid itemType param: ${FMT(itemType)}`);
                             assert(selCrit === 'refresh' ||
@@ -168,12 +174,12 @@ const genesis = {
                                    `AC.itemsView.retrieve() Invalid selCrit param: ${FMT(selCrit)}`);
                             return [itemType, selCrit];
                           }},
-  'itemsView.retrieve.complete': { params: ['itemType', 'selCrit', 'items'] }, // ... #byLogic, #reducer
-  'itemsView.retrieve.fail':     { params: ['itemType', 'selCrit', 'err'] },   // ... #byLogic, #reducer(spinner only)
+  'itemsView.retrieve.complete': { traits: ['itemType', 'selCrit', 'items'] }, // ... #byLogic, #reducer
+  'itemsView.retrieve.fail':     { traits: ['itemType', 'selCrit', 'err'] },   // ... #byLogic, #reducer(spinner only)
 
 
   // activate the Items View for the specified itemType
-  'itemsView.activate': { params: ['itemType'] }, // ... #byUser, #byLogic, #reducer
+  'itemsView.activate': { traits: ['itemType'] }, // ... #byUser, #byLogic, #reducer
 
 
   // ***
@@ -182,7 +188,7 @@ const genesis = {
   //       AC.selectItem(itemType, item)
   //        * itemType:    the itemType ... 'student'/'course'
   //        * item:        the item to select (null for de-select)
-  'selectItem': { params: ['itemType', 'item'] },
+  'selectItem': { traits: ['itemType', 'item'] },
 
 
   // ***
@@ -193,22 +199,22 @@ const genesis = {
   //        * itemNum:     the item key ... 'studentNum'/'courseNum'
   //        * itemType:    the itemType ... 'student'/'course'
   //        * editMode:    true: edit, false: view
-  'detailItem':                  { params: ['itemType', 'itemNum', 'editMode'],  thunk: detailItemThunk },
-  'detailItem.retrieveStart':    { params: ['itemType', 'itemNum', 'editMode'] },
-  'detailItem.retrieveComplete': { params: ['itemType', 'item',    'editMode'] },
-  'detailItem.retrieveFail':     { params: ['itemType', 'itemNum', 'editMode', 'err'] },
-  'detailItem.close':            { params: ['itemType'] },
-  'detailItem.changeEditMode':   { params: ['itemType'] },
+  'detailItem':                  { traits: ['itemType', 'itemNum', 'editMode'],  thunk: detailItemThunk },
+  'detailItem.retrieveStart':    { traits: ['itemType', 'itemNum', 'editMode'] },
+  'detailItem.retrieveComplete': { traits: ['itemType', 'item',    'editMode'] },
+  'detailItem.retrieveFail':     { traits: ['itemType', 'itemNum', 'editMode', 'err'] },
+  'detailItem.close':            { traits: ['itemType'] },
+  'detailItem.changeEditMode':   { traits: ['itemType'] },
 
 
   // ***
   // *** retrieve filters (i.e. list of selCrit)
   // ***
 
-  'retrieveFilters':          { params: [],    thunk: retrieveFiltersThunk },
-  'retrieveFilters.start':    { params: [] },
-  'retrieveFilters.complete': { params: ['filters'] },
-  'retrieveFilters.fail':     { params: ['err'] },
+  'retrieveFilters':          { traits: [],    thunk: retrieveFiltersThunk },
+  'retrieveFilters.start':    { traits: [] },
+  'retrieveFilters.complete': { traits: ['filters'] },
+  'retrieveFilters.fail':     { traits: ['err'] },
 
 
   // ***
@@ -216,8 +222,8 @@ const genesis = {
   // ***
 
   // initiate an edit session
-  'selCrit.edit': { params: ['selCrit', 'isNew', 'syncDirective'], // ... #byUser, #reducer
-                    verifyParams(selCrit, isNew=false, syncDirective=SelCrit.SyncDirective.default) {
+  'selCrit.edit': { traits: ['selCrit', 'isNew', 'syncDirective'], // ... #byUser, #reducer
+                    ratify(selCrit, isNew=false, syncDirective=SelCrit.SyncDirective.default) {
                       assert(SelCrit.isSelCrit(selCrit),
                              `AC.selCrit.edit() Invalid selCrit param: ${FMT(selCrit)}`);
                       assert(SelCrit.SyncDirective[syncDirective],
@@ -227,24 +233,24 @@ const genesis = {
 
   // various selCrit attribute changes
   // ... #byUser, #reducer
-  'selCrit.edit.change.name':   { params: ['name'] },
-  'selCrit.edit.change.desc':   { params: ['desc'] },
-  'selCrit.edit.change.fields': { params: ['selectedFieldOptions'] },
-  'selCrit.edit.change.sort':   { params: ['selectedSortOptions'] },
-  'selCrit.edit.change.filter': { params: ['newFilter'] },
-  'selCrit.edit.change.distinguishMajorSortField': { params: ['value'] },
+  'selCrit.edit.change.name':   { traits: ['name'] },
+  'selCrit.edit.change.desc':   { traits: ['desc'] },
+  'selCrit.edit.change.fields': { traits: ['selectedFieldOptions'] },
+  'selCrit.edit.change.sort':   { traits: ['selectedSortOptions'] },
+  'selCrit.edit.change.filter': { traits: ['newFilter'] },
+  'selCrit.edit.change.distinguishMajorSortField': { traits: ['value'] },
 
   // various ways to complete an edit session
   // ... use selCrit in edit session without persisting to DB
   //     (subject to validation)
-  'selCrit.edit.use':   { params: [] },         // ... #byUser,  #noReducer
+  'selCrit.edit.use':   { traits: [] },         // ... #byUser,  #noReducer
   // ... save/use selCrit in edit session
   //     (subject to validation)
-  'selCrit.edit.save':  { params: [] },         // ... #byUser,  #noReducer
+  'selCrit.edit.save':  { traits: [] },         // ... #byUser,  #noReducer
   // ... close out edit session dialog
   //     used BOTH to cancel edit session
   //     -or- complete edit session from use/save
-  'selCrit.edit.close': { params: [] },         // ... #byUser, #byLogic, #reducer
+  'selCrit.edit.close': { traits: [] },         // ... #byUser, #byLogic, #reducer
 
 
   // ***
@@ -252,8 +258,8 @@ const genesis = {
   // ***
 
   // emitted under any circumstance of completed/valid change (edit dialog completion, save, etc.)
-  'selCrit.changed': { params: ['selCrit', 'syncDirective'], // ... #byLogic, #reducer
-                       verifyParams(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+  'selCrit.changed': { traits: ['selCrit', 'syncDirective'], // ... #byLogic, #reducer
+                       ratify(selCrit, syncDirective=SelCrit.SyncDirective.default) {
                          assert(SelCrit.isSelCrit(selCrit),
                                 `AC.selCrit.changed() Invalid selCrit param: ${FMT(selCrit)}`);
                          assert(SelCrit.SyncDirective[syncDirective],
@@ -266,26 +272,26 @@ const genesis = {
   // *** save specified selCrit
   // ***
 
-  'selCrit.save':          { params: ['selCrit', 'syncDirective'], // ... #byUser, #byLogic, #reducer(spinner only)
-                             verifyParams(selCrit, syncDirective=SelCrit.SyncDirective.default) {
-                               assert(SelCrit.isSelCrit(selCrit),
-                                      `AC.selCrit.save() Invalid selCrit param: ${FMT(selCrit)}`);
-                               assert(SelCrit.SyncDirective[syncDirective],
-                                      `AC.selCrit.save() Invalid syncDirective param: ${FMT(syncDirective)}`);
-                               return [selCrit, syncDirective];
-                             }},
-  'selCrit.save.complete': { params: ['selCrit'] },        // ... #byLogic, #reducer(spinner only - NOTE: monitor selCrit.changed for overall changes)
-  'selCrit.save.fail':     { params: ['selCrit', 'err'] }, // ... #byLogic, #reducer(spinner only)
+  'selCrit.save': { traits: ['selCrit', 'syncDirective'], // ... #byUser, #byLogic, #reducer(spinner only)
+                    ratify(selCrit, syncDirective=SelCrit.SyncDirective.default) {
+                      assert(SelCrit.isSelCrit(selCrit),
+                             `AC.selCrit.save() Invalid selCrit param: ${FMT(selCrit)}`);
+                      assert(SelCrit.SyncDirective[syncDirective],
+                             `AC.selCrit.save() Invalid syncDirective param: ${FMT(syncDirective)}`);
+                      return [selCrit, syncDirective];
+                    }},
+  'selCrit.save.complete': { traits: ['selCrit'] },        // ... #byLogic, #reducer(spinner only - NOTE: monitor selCrit.changed for overall changes)
+  'selCrit.save.fail':     { traits: ['selCrit', 'err'] }, // ... #byLogic, #reducer(spinner only)
 
 
   // ***
   // *** delete specified selCrit
   // ***
 
-  'selCrit.delete':          { params: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
-  'selCrit.delete.start':    { params: ['selCrit', 'impactView'] },
-  'selCrit.delete.complete': { params: ['selCrit', 'impactView'] },
-  'selCrit.delete.fail':     { params: ['selCrit', 'impactView', 'err'] },
+  'selCrit.delete':          { traits: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
+  'selCrit.delete.start':    { traits: ['selCrit', 'impactView'] },
+  'selCrit.delete.complete': { traits: ['selCrit', 'impactView'] },
+  'selCrit.delete.fail':     { traits: ['selCrit', 'impactView', 'err'] },
 
 };
 
