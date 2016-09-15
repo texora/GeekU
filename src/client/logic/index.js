@@ -5,9 +5,10 @@ import { createLogic } from 'redux-logic';
 import communicateUnexpectedError from './communicateUnexpectedError';
 import initializeSelCritEdit      from './initializeSelCritEdit';
 import logDispatchedActions       from './logDispatchedActions';
-import processItemsView           from './processItemsView';
 import processFiltersRetrieve     from './processFiltersRetrieve';
+import processItemsView           from './processItemsView';
 import processItemsViewRetrieve   from './processItemsViewRetrieve';
+import processSelCritDelete       from './processSelCritDelete';
 import saveAndUseSelCritEdits     from './saveAndUseSelCritEdits';
 import saveSelCrit                from './saveSelCrit';
 import syncViewWhenSelCritChanged from './syncViewWhenSelCritChanged';
@@ -42,4 +43,8 @@ export default [
 
   // save selCrit ...
   saveSelCrit,
+
+  // delete selCrit ...
+  processSelCritDelete,
+
 ];

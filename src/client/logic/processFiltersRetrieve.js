@@ -23,7 +23,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieve', {
       // sync app with results
       const filters = res.payload;
       log.debug(()=>`successful retrieval ... ${filters.length} filters returned`);
-      dispatch( AC.filters.retrieve.complete(filters) ); // mark async operation complete (typically spinner)
+      dispatch( AC.filters.retrieve.complete(filters) );
     })
     .catch( err => {
       // mark async operation FAILED (typically spinner)

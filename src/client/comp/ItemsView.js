@@ -24,7 +24,6 @@ import TableRowColumn     from 'material-ui/lib/table/table-row-column';
 import colors             from 'material-ui/lib/styles/colors';
 
 import EditSelCrit        from './EditSelCrit';
-import Confirm            from './Confirm';
 
 
 
@@ -153,25 +152,7 @@ export default class ItemsView extends React.Component {
    */
   handleDeleteSelCrit() {
     const p = this.props;
-
-    Confirm.display({
-      title: 'Delete Filter',
-      msg:   `Please confirm deletion of filter: ${p.selCrit.name} -  ${p.selCrit.desc}`,
-      actions: [
-        { txt: 'Delete',
-          action: () => {
-            const impactView = this.meta().itemType;
-            if (SelCrit.isPersisted(p.selCrit)) { // is persised in DB
-              p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
-            }
-            else { // is an in-memory only representation
-              p.dispatch( AC.selCrit.delete.complete(p.selCrit, impactView) );
-            }
-          } },
-        { txt: 'Cancel' },
-      ]
-    });
-
+    p.dispatch( AC.selCrit.delete(p.selCrit) );
   }
 
 

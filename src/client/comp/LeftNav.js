@@ -11,7 +11,6 @@ import selectors           from '../state';
 import SelCrit             from '../../shared/domain/SelCrit';
 import itemTypes           from '../../shared/domain/itemTypes';
 
-import Confirm             from './Confirm';
 import EditSelCrit         from './EditSelCrit';
 
 import AppBar              from 'material-ui/lib/app-bar';
@@ -182,25 +181,7 @@ export default class LeftNav extends React.Component {
    */
   handleDelete(selCrit) {
     const p = this.props;
-
-    Confirm.display({
-      title: 'Delete Filter',
-      msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,
-      actions: [
-        { txt: 'Delete',
-          action: () => {
-            const impactView = selectors.isSelCritActiveInView(p.appState, selCrit) ? selCrit.itemType : null;
-            if (SelCrit.isPersisted(selCrit)) { // is persised in DB
-              p.dispatch( AC.selCrit.delete(selCrit, impactView) );
-            }
-            else { // is an in-memory only representation
-              p.dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
-            }
-          }
-        },
-        { txt: 'Cancel' },
-      ]
-    });
+    p.dispatch( AC.selCrit.delete(selCrit) );
   }
 
 

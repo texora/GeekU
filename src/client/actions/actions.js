@@ -6,7 +6,6 @@ import itemTypes       from '../../shared/domain/itemTypes';
 import generate_AT_AC  from './generate_AT_AC';
 
 import detailItemThunk         from './thunks/detailItemThunk';
-import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 
 
 /**
@@ -286,10 +285,9 @@ const genesis = {
   // *** delete specified selCrit
   // ***
 
-  'selCrit.delete':          { traits: ['selCrit', 'impactView'], thunk: selCritDeleteThunk }, // impactView: the itemType of our impacted view if any (null indicates NO view was impacted) ... 'student'/'course'/null
-  'selCrit.delete.start':    { traits: ['selCrit', 'impactView'] },
-  'selCrit.delete.complete': { traits: ['selCrit', 'impactView'] },
-  'selCrit.delete.fail':     { traits: ['selCrit', 'impactView', 'err'] },
+  'selCrit.delete':          { traits: ['selCrit'] },               // ... #byUser, #byLogic, #reducer(spinner only)
+  'selCrit.delete.complete': { traits: ['selCrit', 'impactView'] }, // ...          #byLogic, #reducer ... impactView is the itemType of an impacted view if any (null indicates NO view was impacted)
+  'selCrit.delete.fail':     { traits: ['selCrit', 'err'] },        // ...          #byLogic, #reducer(spinner only)
 
 };
 
