@@ -6,7 +6,6 @@ import itemTypes       from '../../shared/domain/itemTypes';
 import generate_AT_AC  from './generate_AT_AC';
 
 import detailItemThunk         from './thunks/detailItemThunk';
-import retrieveFiltersThunk    from './thunks/retrieveFiltersThunk';
 import selCritDeleteThunk      from './thunks/selCritDeleteThunk';
 
 
@@ -208,13 +207,12 @@ const genesis = {
 
 
   // ***
-  // *** retrieve filters (i.e. list of selCrit)
+  // *** retrieve filters (a list of selCrit objects)
   // ***
 
-  'retrieveFilters':          { traits: [],    thunk: retrieveFiltersThunk },
-  'retrieveFilters.start':    { traits: [] },
-  'retrieveFilters.complete': { traits: ['filters'] },
-  'retrieveFilters.fail':     { traits: ['err'] },
+  'filters.retrieve':          { traits: [] },          // ... #byLogic, #reducer(spinner only)
+  'filters.retrieve.complete': { traits: ['filters'] }, // ... #byLogic, #reducer
+  'filters.retrieve.fail':     { traits: ['err'] },     // ... #byLogic, #reducer(spinner only)
 
 
   // ***

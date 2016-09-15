@@ -48,7 +48,7 @@ class ReductionHandler {
    * 
    * For example:
    *   {
-   *     [AT.retrieveFilters.complete](filters, action) {
+   *     [AT.filters.retrieve.complete](filters, action) {
    *       return [
    *         action.filters,
    *         ()=>`set filters from action.filters: '${action.filters}'`

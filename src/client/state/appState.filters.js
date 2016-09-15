@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.filters', {
 
-  [AT.retrieveFilters.complete](filters, action) {
+  [AT.filters.retrieve.complete](filters, action) {
     return [
       action.filters,
       ()=>`set filters from action.filters: '${action.filters}'`

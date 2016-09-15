@@ -6,6 +6,7 @@ import communicateUnexpectedError from './communicateUnexpectedError';
 import initializeSelCritEdit      from './initializeSelCritEdit';
 import logDispatchedActions       from './logDispatchedActions';
 import processItemsView           from './processItemsView';
+import processFiltersRetrieve     from './processFiltersRetrieve';
 import processItemsViewRetrieve   from './processItemsViewRetrieve';
 import saveAndUseSelCritEdits     from './saveAndUseSelCritEdits';
 import saveSelCrit                from './saveSelCrit';
@@ -24,6 +25,9 @@ export default [
 
   // general utility that logs all dispatched actions ...
   logDispatchedActions,
+
+  // retrieve filters (a list of selCrit objects) ...
+  processFiltersRetrieve,
 
   // itemsView related ...
   processItemsView,
