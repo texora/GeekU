@@ -21,7 +21,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritSaveAction', {
     // perform async save of selCrit
     log.debug(()=>`initiating async save of selCrit key: ${selCrit.key}`);
 
-    geekUFetch('/api/selCrit', { // ?? consider api utility
+    geekUFetch('/api/selCrit', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

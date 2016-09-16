@@ -69,7 +69,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
     log.debug(()=>`initiating ${itemsLabel} retrieval using selCrit: ${selCrit.name}`);
 
     const url = `/api/${meta.apiNode}?${encodeJsonQueryStr('selCrit', selCrit, log)}`;
-    geekUFetch(url) // ?? consider api utility
+    geekUFetch(url)
     .then( res => {
       // sync app with results
       const items = res.payload;
