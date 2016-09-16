@@ -23,9 +23,9 @@ import SelCritDetail  from './SelCritDetail'
  * an interactive modal dialog.  Because the selCrit is a generic
  * object, any SelCrit is supported (itemType of 'student','course', etc).
  *
- * NOTE: Yes I know this can be a functional component, however I much
- *       prefer the redux-connect property injection via decorators 
- *       (which requires a class).
+ * NOTE: Yes I know this can be a stateless functional component, 
+ *       however I much prefer the redux-connect property injection
+ *       via decorators (which requires a class).
  */
 
 @ReactRedux.connect(
