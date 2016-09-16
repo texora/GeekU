@@ -6,7 +6,7 @@ import selectors   from '../state';
 
 
 /**
- * Save and use selCrit edits on completion.
+ * Commit (i.e. use) selCrit changes BY saving them upon completion.
  */
 const [logicName, logic] = LOGIC.promoteLogic('commitSelCritChangesBySaving', {
 

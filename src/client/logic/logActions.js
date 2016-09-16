@@ -3,8 +3,7 @@
 import * as LOGIC  from './LogicUtil';
 
 /**
- * App logic which logs each dispatched action, using the following Log
- * levels:
+ * Log each dispatched action, using the following Log levels:
  *   - INSPECT: action type only
  *   - TRACE:   action content too
  */

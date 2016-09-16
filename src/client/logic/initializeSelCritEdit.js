@@ -7,8 +7,8 @@ import {AT}        from '../actions';
 
 
 /**
- * Initialize process that edits supplied selCrit:
- *   - injecting additional information needed in action
+ * Initialize the AT.selCrit.edit action, which edits the supplied selCrit,
+ * injecting additional information needed in action.
  */
 const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
 
