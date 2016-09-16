@@ -98,7 +98,8 @@ export default class GeekUApp extends React.Component {
 
   tempSampleMultiMsg() {
     const p = this.props;
-    p.dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]);
+    p.dispatch( AC.userMsg.display(`Sample Multi-Message 1`) );
+    p.dispatch( AC.userMsg.display(`Sample Multi-Message 2`) );
   }
 
   tempSampleMsgWithUserAction() {

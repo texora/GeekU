@@ -2,7 +2,7 @@
 
 import Log from '../util/Log';
 
-const log = new Log('term');
+const log = new Log('domain.term');
 
 /**
  * Promotes valid GeekU Terms: the enrollment time period (i.e. term) 

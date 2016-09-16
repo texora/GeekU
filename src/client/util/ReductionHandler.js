@@ -1,7 +1,6 @@
 'use strict'
 
-import actionTypeAmplified from '../util/actionTypeAmplified';
-import Log                 from '../../shared/util/Log';
+import Log from '../../shared/util/Log';
 
 /**
  * A ReductionHandler object orchestrates redux state changes through
@@ -103,7 +102,7 @@ class ReductionHandler {
       const handlerMsg       = handler 
                                 ? `... handler: ${logMsgFn()}`
                                 : '';
-      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChangedMsg} ${handlerMsg}`;
+      return `Reducer: ${this.reducerName}, Action: '${action.type}' ${stateChangedMsg} ${handlerMsg}`;
     });
     
     // return our next state
@@ -126,7 +125,7 @@ class ReductionHandler {
       const stateChangedMsg  = stateChanged
                              ? '(STATE CHANGED)'
                              : '(*NO* state change)';
-      return `Reducer: ${this.reducerName}, Action: '${actionTypeAmplified(action)}' ${stateChangedMsg} ... ${msg}`;
+      return `Reducer: ${this.reducerName}, Action: '${action.type}' ${stateChangedMsg} ... ${msg}`;
     });
   }
 

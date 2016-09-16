@@ -28,13 +28,6 @@ const logConfig = Log.config({
     'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG: </dt> <dd> see entire Material-UI muiTheme </dd>
                                         </dl>`],
 
-    'middleware':             ['none', ` <dl> <dt> INSPECT: </dt> <dd> see ENTER/EXIT of redux middleware components </dd>
-                                              <dt> DEBUG:   </dt> <dd> include middleware logic </dd>
-                                         </dl> ... may apply lower (ex: 'middleware.thunkBatchHandler')`],
-    'middleware.errorHandler':      'none',
-    'middleware.thunkBatchHandler': 'none',
-    'middleware.actionLogger':      'none',
-
     'actions':           ['none', ` <dl> <dt> INSPECT: </dt> <dd> see dispatched actions </dd>
                                          <dt> DEBUG:   </dt> <dd> include action app logic (redux-logic) </dd>
                                          <dt> TRACE:   </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>

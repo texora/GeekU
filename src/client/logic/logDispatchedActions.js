@@ -19,7 +19,7 @@ const [logicName, logic] = LOGIC.promoteLogic('logDispatchedActions', {
     const log = LOGIC.getActionLog(action, logicName);
 
     if (log.isTraceEnabled()) {
-      log.trace(()=>   `Dispatched Action: ${FMT(action.type)} with content: ${FMT(action)}`);
+      log.trace(()=>   `Dispatched Action: ${FMT(action.type)} with content:\n${FMT(action)}`);
     }
     else {
       log.inspect(()=> `Dispatched Action: ${FMT(action.type)}`);
