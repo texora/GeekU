@@ -27,7 +27,20 @@ import colors              from 'material-ui/lib/styles/colors';
 
 
 /**
- * GeekU LeftNav component.
+ * The GeekU LeftNav component.
+ *
+ * NOTE: We maintain our own internal state for this LeftNav component
+ *       (open/editMode).  This is done for no definitive reason other
+ *       than to simplify our overall appState (with what could be
+ *       considered burdensome low-level information).  This is really
+ *       no different from using low-level 3rd party components (such as
+ *       react-select) that maintain their own state.  This heuristic could
+ *       easily be changed (if desired).
+ *
+ * NOTE: Because of our state management (see note above) the LeftNav is
+ *       a component class vs. a stateless functional component.  As a
+ *       result our handleXxx() functionality is implemented as methods
+ *       rather than injected function properties.
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
@@ -103,7 +116,7 @@ export default class LeftNav extends React.Component {
       p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'activate') );
     }
 
-    // for itemType-string ... create a new selCrit of the specified itemType and activate it (via SelCrit.SyncDirective)
+    // for itemType-string ... create a new selCrit of the specified itemType and edit/activate it
     else if (typeof selCrit === 'string') {
       const itemType = selCrit;
       assert(itemTypes[itemType], `LeftNav.handleSelection() INVALID itemType-string: ${FMT(itemType)}`);
@@ -136,8 +149,6 @@ export default class LeftNav extends React.Component {
    */
   handleEdit(selCrit) {
     const p = this.props;
-
-    // start an edit session with the supplied selCrit
     p.dispatch( AC.selCrit.edit(selCrit) );
   }
 
@@ -161,16 +172,16 @@ export default class LeftNav extends React.Component {
   handleDuplicate(selCrit) {
     const p = this.props;
 
-    // close our LeftNav, providing we are NOT in the edit mode
-    if (!this.state.editMode) {
-      this.setState({open: false});
-    }
-
     // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(selCrit);
     p.dispatch( AC.selCrit.edit(dupSelCrit, 
                                 true, // isNew
                                 SelCrit.SyncDirective.none ) );
+
+    // close our LeftNav, providing we are NOT in the edit mode
+    if (!this.state.editMode) {
+      this.setState({open: false});
+    }
   }
 
 
