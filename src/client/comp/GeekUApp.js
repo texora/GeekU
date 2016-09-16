@@ -51,9 +51,9 @@ export default class GeekUApp extends React.Component {
     super(props, context);
   }
 
-  handleSelectedView(itemTypeAsPage) {
+  activateView(itemType) {
     const p = this.props;
-    p.dispatch( AC.itemsView.activate(itemTypeAsPage) );
+    p.dispatch( AC.itemsView.activate(itemType) );
   }
 
   tempAlert() {
@@ -127,7 +127,7 @@ export default class GeekUApp extends React.Component {
                       <td><i>GeekU</i></td>
                       <td>
                         <Tabs value={p.activeView}
-                              onChange={this.handleSelectedView}>
+                              onChange={this.activateView}>
                           <Tab value={itemTypes.course}  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i>{selectedCourseNum}</i></span>}/>
                           <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
                         </Tabs>
