@@ -32,6 +32,8 @@ import colors             from 'material-ui/lib/styles/colors';
 import Confirm            from './Confirm';
 
 
+// TODO: Once functional, determine if this needs to utilize redux-logic and/or morph into a stateless functional component.
+
 /**
  * The CourseDialog component displays a dialog of the details of a given course.
  */

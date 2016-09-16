@@ -39,6 +39,8 @@ import colors             from 'material-ui/lib/styles/colors';
 
 import Alert              from './Alert';
 
+// TODO: Once functional, determine if this needs to utilize redux-logic and/or morph into a stateless functional component.
+
 /**
  * The StudentDialog component displays a dialog of the details of a given student.
  */
