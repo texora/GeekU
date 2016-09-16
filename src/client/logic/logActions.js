@@ -9,7 +9,7 @@ import * as LOGIC  from './LogicUtil';
  *   - TRACE:   action content too
  */
 
-const [logicName, logic] = LOGIC.promoteLogic('logDispatchedActions', {
+const [logicName, logic] = LOGIC.promoteLogic('logActions', {
 
   type: '*',
 

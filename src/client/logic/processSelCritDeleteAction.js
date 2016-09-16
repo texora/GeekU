@@ -8,9 +8,9 @@ import Confirm     from '../comp/Confirm'
 
 
 /**
- * Process (i.e. implement) the 'selCrit.delete' action.
+ * Process (i.e. implement) the AT.selCrit.delete action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processSelCritDelete', {
+const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
 
   type: AT.selCrit.delete.valueOf(),
 
@@ -21,7 +21,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDelete', {
 
     const selCrit = action.selCrit;
 
-    // obtain userconfirmation before we delete the selCrit
+    // obtain user confirmation before we delete the selCrit
     Confirm.display({
       title: 'Delete Filter',
       msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,

@@ -5,9 +5,9 @@ import {AT, AC}    from '../actions';
 
 
 /**
- * Process (i.e. implement) the 'itemsView' action.
+ * Process (i.e. implement) the AT.itemsView action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processItemsView', {
+const [logicName, logic] = LOGIC.promoteLogic('processItemsViewAction', {
 
   type: AT.itemsView.valueOf(),
 

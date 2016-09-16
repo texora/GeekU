@@ -2,52 +2,52 @@
 
 import { createLogic } from 'redux-logic';
 
-import communicateUnexpectedError from './communicateUnexpectedError';
-import initializeSelCritEdit      from './initializeSelCritEdit';
-import logDispatchedActions       from './logDispatchedActions';
-import processDetailItem          from './processDetailItem';
-import processFiltersRetrieve     from './processFiltersRetrieve';
-import processItemsView           from './processItemsView';
-import processItemsViewRetrieve   from './processItemsViewRetrieve';
-import processSelCritDelete       from './processSelCritDelete';
-import saveAndUseSelCritEdits     from './saveAndUseSelCritEdits';
-import saveSelCrit                from './saveSelCrit';
-import syncViewWhenSelCritChanged from './syncViewWhenSelCritChanged';
-import useSelCritEdits            from './useSelCritEdits';
-import validateSelCritEdits       from './validateSelCritEdits';
+import commitSelCritChanges            from './commitSelCritChanges';
+import commitSelCritChangesBySaving    from './commitSelCritChangesBySaving';
+import communicateUnexpectedErrors     from './communicateUnexpectedErrors';
+import initializeSelCritEdit           from './initializeSelCritEdit';
+import logActions                      from './logActions';
+import processDetailItemAction         from './processDetailItemAction';
+import processFiltersRetrieveAction    from './processFiltersRetrieveAction';
+import processItemsViewAction          from './processItemsViewAction';
+import processItemsViewRetrieveAction  from './processItemsViewRetrieveAction';
+import processSelCritDeleteAction      from './processSelCritDeleteAction';
+import processSelCritSaveAction        from './processSelCritSaveAction';
+import syncViewOnSelCritChanges        from './syncViewOnSelCritChanges';
+import validateSelCritChanges          from './validateSelCritChanges';
 
 //***
 //*** accumulation of all app logic
 //***
 
 export default [
-  // general handler of unexpected errors (within the dispatch process) ...
-  communicateUnexpectedError,
+  // handle dispatch-based unexpected errors ...
+  communicateUnexpectedErrors,
 
-  // general utility that logs all dispatched actions ...
-  logDispatchedActions,
+  // log all dispatched actions ...
+  logActions,
 
   // retrieve filters (a list of selCrit objects) ...
-  processFiltersRetrieve,
+  processFiltersRetrieveAction,
 
   // itemsView related ...
-  processItemsView,
-  processItemsViewRetrieve,
-  syncViewWhenSelCritChanged,
+  processItemsViewAction,
+  processItemsViewRetrieveAction,
+  syncViewOnSelCritChanges,
 
   // detailItem related ...
-  processDetailItem,
+  processDetailItemAction,
 
   // edit selCrit related ...
   initializeSelCritEdit,
-  validateSelCritEdits,
-  useSelCritEdits,
-  saveAndUseSelCritEdits,
+  validateSelCritChanges,
+  commitSelCritChanges,
+  commitSelCritChangesBySaving,
 
   // save selCrit ...
-  saveSelCrit,
+  processSelCritSaveAction,
 
   // delete selCrit ...
-  processSelCritDelete,
+  processSelCritDeleteAction,
 
 ];

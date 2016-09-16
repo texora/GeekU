@@ -10,7 +10,7 @@ import handleUnexpectedError from '../util/handleUnexpectedError';
  *    - communicating problem to the user
  *    - and logging the details (for tech support)
  */
-const [logicName, logic] = LOGIC.promoteLogic('communicateUnexpectedError', {
+const [logicName, logic] = LOGIC.promoteLogic('communicateUnexpectedErrors', {
 
   type: [/\.fail$/,                // ... from GeekU async '*.fail' actions
          'UNHANDLED_LOGIC_ERROR'], // ... from redux-logic error handler

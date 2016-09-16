@@ -8,7 +8,7 @@ import selectors   from '../state';
 /**
  * Use selCrit edits on completion.
  */
-const [logicName, logic] = LOGIC.promoteLogic('useSelCritEdits', {
+const [logicName, logic] = LOGIC.promoteLogic('commitSelCritChanges', {
 
   type: AT.selCrit.edit.use.valueOf(),
 

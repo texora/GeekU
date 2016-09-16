@@ -5,9 +5,9 @@ import {AT, AC}              from '../actions';
 
 
 /**
- * Process (i.e. implement) the 'filters.retrieve' action.
+ * Process (i.e. implement) the AT.filters.retrieve action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieve', {
+const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieveAction', {
 
   type: AT.filters.retrieve.valueOf(),
 

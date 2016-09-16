@@ -9,9 +9,9 @@ import itemTypes             from '../../shared/domain/itemTypes';
 
 
 /**
- * Process (i.e. implement) the 'itemsView.retrieve' action.
+ * Process (i.e. implement) the AT.itemsView.retrieve action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieve', {
+const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', {
 
   type: AT.itemsView.retrieve.valueOf(),
 

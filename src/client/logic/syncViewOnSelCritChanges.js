@@ -9,7 +9,7 @@ import SelCrit     from '../../shared/domain/SelCrit';
 /**
  * App logic that syncs appropriate view when it is based on a selCrit that has changed.
  */
-const [logicName, logic] = LOGIC.promoteLogic('syncViewWhenSelCritChanged', {
+const [logicName, logic] = LOGIC.promoteLogic('syncViewOnSelCritChanges', {
 
   type: AT.selCrit.changed.valueOf(),
 

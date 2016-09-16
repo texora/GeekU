@@ -6,9 +6,9 @@ import itemTypes   from '../../shared/domain/itemTypes';
 
 
 /**
- * Process (i.e. implement) the 'detailItem' action.
+ * Process (i.e. implement) the AT.detailItem action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processDetailItem', {
+const [logicName, logic] = LOGIC.promoteLogic('processDetailItemAction', {
 
   type: AT.detailItem.valueOf(),
 

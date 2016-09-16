@@ -9,7 +9,7 @@ import SelCrit     from '../../shared/domain/SelCrit';
 /**
  * Validate selCrit edits on completion.
  */
-const [logicName, logic] = LOGIC.promoteLogic('validateSelCritEdits', {
+const [logicName, logic] = LOGIC.promoteLogic('validateSelCritChanges', {
 
   type: [AT.selCrit.edit.use.valueOf(),
          AT.selCrit.edit.save.valueOf()],

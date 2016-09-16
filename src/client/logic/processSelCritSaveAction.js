@@ -5,9 +5,9 @@ import {AT, AC}    from '../actions';
 
 
 /**
- * App logic to save selCrit.
+ * Process (i.e. implement) the AT.selCrit.save action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('saveSelCrit', {
+const [logicName, logic] = LOGIC.promoteLogic('processSelCritSaveAction', {
 
   type: AT.selCrit.save.valueOf(),
 
