@@ -26,7 +26,6 @@ import colors             from 'material-ui/lib/styles/colors';
 import EditSelCrit        from './EditSelCrit';
 
 
-
 /**
  * The ItemsView base-class component implements the common features
  * of all view items display (i.e. students/courses).  
@@ -34,6 +33,12 @@ import EditSelCrit        from './EditSelCrit';
  * Because ItemsView is abstract, a concrete derivation must be
  * defined which provides the full implementation details for the
  * specific item type.  Please refer to DERIVATION-HOOK delimiter.
+ * 
+ * NOTE: We must utilize a React component class (vs. a stateless 
+ *       functional component) in order to tap into the  polymorphic
+ *       class hierarchy.  As a result our handleXxx() functionality
+ *       is implemented as methods (rather than injected function
+ *       properties).
  */
 
 @autobind
@@ -177,10 +182,8 @@ export default class ItemsView extends React.Component {
    * dialog should start out in edit-mode (true) or view-mode (false).
    */
   handleDetailItemDialog(item, editMode) {
-    const p = this.props;
-
-    const itemNum  = item[this.meta().keyField];
-
+    const p       = this.props;
+    const itemNum = item[this.meta().keyField];
     p.dispatch( AC.detailItem(this.meta().itemType, itemNum, editMode) );
   }
 
