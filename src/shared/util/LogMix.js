@@ -32,19 +32,19 @@ class LogMix extends Log {
    */
   static cache(...logs) {
 
-    // prune undefined entries
-    logs = logs.prune( log => !log );
+    const [filterNameKey, prunedLogs] = defineFilterNameKey(...logs);
 
-    // define our filterName key
-    // ex: 'actions.itemsView.retrieve||api.items.retrieveItems'
-    const filterNameKey = logs.reduce( (accum, log) => accum += (accum ? '||' : '') + log.filterName, '');
+    // if there is only one log supplied, just use it WITHOUT wrapping in LogMix
+    if (prunedLogs.length === 1) {
+      return prunedLogs[0];
+    }
 
     // pull from cache when seen before
     let logMix = _cache[filterNameKey];
 
     // lazily create/cache on first usage
     if (!logMix) {
-      logMix = _cache[filterNameKey] = new LogMix(...logs);
+      logMix = _cache[filterNameKey] = new LogMix(...prunedLogs);
     }
 
     return logMix;
@@ -62,15 +62,14 @@ class LogMix extends Log {
   constructor(...logs) {
     super('no-op');
 
-    // prune undefined entries
-    logs = logs.prune( log => !log );
+    const [filterNameKey, prunedLogs] = defineFilterNameKey(...logs);
 
     // retain logs in self
-    this.logs = logs;
+    this.logs = prunedLogs;
 
     // retain filterName which is an aggregate of all logs
     // ex: 'actions.itemsView.retrieve||api.items.retrieveItems'
-    this.filterName = this.logs.reduce( (accum, log) => accum += (accum ? '||' : '') + log.filterName, '');
+    this.filterName = filterNameKey;
   }
 
 
@@ -102,3 +101,27 @@ export default LogMix;
 
 // cached log entries
 const _cache = {}; // Key: '{filterName}', Value: LogMix instance
+
+
+/**
+ * Utility function to define the filterNameKey after pruning
+ * undefined log entries.
+ * 
+ * @param {Log[]} logs two or more log instances to accumulate (NOTE: undefined 
+ * entries are automatically pruned).
+ *
+ * @return {[filterNameKey, prunedLogs]}
+ * 
+ * @api private
+ */
+function defineFilterNameKey(...logs) {
+  // prune undefined entries
+  const prunedLogs = logs.prune( log => !log );
+
+  // define our filterName key
+  // ex: 'actions.itemsView.retrieve||api.items.retrieveItems'
+  const filterNameKey = prunedLogs.reduce( (accum, log) => accum += (accum ? '||' : '') + log.filterName, '');
+
+  return [filterNameKey, prunedLogs];
+}
+
