@@ -3,9 +3,8 @@
 import * as LOGIC            from './LogicUtil';
 import {AT, AC}              from '../actions';
 import selectors             from '../state';
-import {encodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
+import api                   from '../../shared/api';
 import SelCrit               from '../../shared/domain/SelCrit';
-import itemTypes             from '../../shared/domain/itemTypes';
 
 
 /**
@@ -58,29 +57,21 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
 
     const selCrit    = ctx.selCrit; // resolved in transform() ... above
     const itemType   = action.itemType;
-    const meta       = itemTypes.meta[itemType];
-    const itemsLabel = meta.label.plural;
 
 
     //***
     //*** at this point we know we must retrieve/refresh the items in our itemView
     //***
 
-    log.debug(()=>`initiating ${itemsLabel} retrieval using selCrit: ${selCrit.name}`);
-
-    const url = `/api/${meta.apiNode}?${encodeJsonQueryStr('selCrit', selCrit, log)}`;
-    geekUFetch(url)
-    .then( res => {
-      // sync app with results
-      const items = res.payload;
-      log.debug(()=>`successful retrieval ... ${items.length} ${itemsLabel} returned`);
-      dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
-    })
-    .catch( err => {
-      // mark async operation FAILED (typically spinner)
-      // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-      dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
-    });
+    api.items.retrieveItems(selCrit, log)
+       .then( items => {
+         dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
+       })
+       .catch( err => {
+         // mark async operation FAILED (typically spinner)
+         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+         dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
+       });
 
   },
 

@@ -2,6 +2,7 @@
 
 import * as LOGIC  from './LogicUtil';
 import {AT, AC}    from '../actions';
+import api         from '../../shared/api';
 
 
 /**
@@ -18,31 +19,19 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritSaveAction', {
     const selCrit       = action.selCrit;
     const syncDirective = action.syncDirective;
 
-    // perform async save of selCrit
-    log.debug(()=>`initiating async save of selCrit key: ${selCrit.key}`);
-
-    geekUFetch('/api/selCrit', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(selCrit)
-    })
-    .then( res => {
-      const savedSelCrit = res.payload;
-      log.debug(()=>`successful save of selCrit key: ${savedSelCrit.key}`);
-      // mark async operation complete (typically spinner)
-      dispatch( AC.selCrit.save.complete(savedSelCrit), LOGIC.allowMore );
-      // sync app with results
-      dispatch( AC.selCrit.changed(savedSelCrit, syncDirective) );
-    })
-    .catch( err => {
-      // mark async operation FAILED (typically spinner)
-      // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-      dispatch( AC.selCrit.save.fail(selCrit, 
-                                     err.defineAttemptingToMsg(`saving selCrit: ${selCrit.name}`)) );
-    });
-
+    api.filters.saveFilter(selCrit, log)
+       .then( savedSelCrit => {
+         // mark async operation complete (typically spinner)
+         dispatch( AC.selCrit.save.complete(savedSelCrit), LOGIC.allowMore );
+         // sync app with results
+         dispatch( AC.selCrit.changed(savedSelCrit, syncDirective) );
+       })
+       .catch( err => {
+         // mark async operation FAILED (typically spinner)
+         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+         dispatch( AC.selCrit.save.fail(selCrit, 
+                                        err.defineAttemptingToMsg(`saving selCrit: ${selCrit.name}`)) );
+       });
   },
 
 });

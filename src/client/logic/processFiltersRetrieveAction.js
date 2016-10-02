@@ -1,7 +1,8 @@
 'use strict';
 
-import * as LOGIC            from './LogicUtil';
-import {AT, AC}              from '../actions';
+import * as LOGIC  from './LogicUtil';
+import {AT, AC}    from '../actions';
+import api         from '../../shared/api';
 
 
 /**
@@ -12,25 +13,17 @@ const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieveAction', {
   type: AT.filters.retrieve.valueOf(),
 
   process({getState, action}, dispatch) {
-
     const log = LOGIC.getActionLog(action, logicName);
 
-    log.debug(()=>'retrieving our filters (a list of selCrit objects)');
-
-    const url = '/api/selCrit';
-    geekUFetch(url)
-    .then( res => {
-      // sync app with results
-      const filters = res.payload;
-      log.debug(()=>`successful retrieval ... ${filters.length} filters returned`);
-      dispatch( AC.filters.retrieve.complete(filters) );
-    })
-    .catch( err => {
-      // mark async operation FAILED (typically spinner)
-      // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-      dispatch( AC.filters.retrieve.fail(err) );
-    });
-
+    api.filters.retrieveFilters(undefined, log)
+       .then( filters => {
+         dispatch( AC.filters.retrieve.complete(filters) );
+       })
+       .catch( err => {
+         // mark async operation FAILED (typically spinner)
+         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+         dispatch( AC.filters.retrieve.fail(err) );
+       });
   },
 
 });
