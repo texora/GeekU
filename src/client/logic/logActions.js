@@ -4,8 +4,8 @@ import * as LOGIC  from './LogicUtil';
 
 /**
  * Log each dispatched action, using the following Log levels:
- *   - INSPECT: action type only
- *   - TRACE:   action content too
+ *   - TRACE:   see dispatched actions
+ *   - VERBOSE: see dispatched actions INCLUDING action content (CAUTION: action content can be BIG)
  */
 
 const [logicName, logic] = LOGIC.promoteLogic('logActions', {
@@ -17,11 +17,11 @@ const [logicName, logic] = LOGIC.promoteLogic('logActions', {
     // log dispatched action
     const log = LOGIC.getActionLog(action, logicName);
 
-    if (log.isTraceEnabled()) {
-      log.trace(()=>   `Dispatched Action: ${FMT(action.type)} with content:\n${FMT(action)}`);
+    if (log.isVerboseEnabled()) {
+      log.verbose(()=>   `Dispatched Action: ${FMT(action.type)} with content:\n${FMT(action)}`);
     }
     else {
-      log.inspect(()=> `Dispatched Action: ${FMT(action.type)}`);
+      log.trace(()=> `Dispatched Action: ${FMT(action.type)}`);
     }
 
     // continue processing

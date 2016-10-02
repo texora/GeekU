@@ -19,6 +19,7 @@ const logConfig = Log.config({
     'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
     'DEBUG',
     'TRACE',
+    'VERBOSE', // NON-Standard level (used in more sizable/frequent output)
   ],
   filter: {
     'root':               ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],
@@ -28,9 +29,9 @@ const logConfig = Log.config({
     'startup.muiTheme':      ['none', ` <dl> <dt> DEBUG: </dt> <dd> see entire Material-UI muiTheme </dd>
                                         </dl>`],
 
-    'actions':           ['none', ` <dl> <dt> INSPECT: </dt> <dd> see dispatched actions </dd>
-                                         <dt> DEBUG:   </dt> <dd> include action app logic (redux-logic) </dd>
-                                         <dt> TRACE:   </dt> <dd> include action content too<br/><i>CAUTION: actions with payload may be BIG</i> </dd>
+    'actions':           ['none', ` <dl> <dt> DEBUG:   </dt> <dd> include action app logic (redux-logic) </dd>
+                                         <dt> TRACE:   </dt> <dd> see dispatched actions </dd>
+                                         <dt> VERBOSE: </dt> <dd> see dispatched actions INCLUDING action content<br/><i>CAUTION: action content can be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
     'api':               ['none', 'NOTE: api.xxx probes may ALSO be enabled through the actions.xxx filters'],
