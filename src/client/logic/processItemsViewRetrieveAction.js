@@ -3,7 +3,6 @@
 import * as LOGIC            from './LogicUtil';
 import {AT, AC}              from '../actions';
 import selectors             from '../state';
-import api                   from '../../shared/api';
 import SelCrit               from '../../shared/domain/SelCrit';
 
 
@@ -51,7 +50,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
 
   },
 
-  process({getState, action, ctx}, dispatch) {
+  process({getState, action, ctx, geekU}, dispatch) {
 
     const log = LOGIC.getActionLog(action, logicName);
 
@@ -63,16 +62,15 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
     //*** at this point we know we must retrieve/refresh the items in our itemView
     //***
 
-    api.items.retrieveItems(selCrit, log)
-       .then( items => {
-         dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
-       })
-       .catch( err => {
-         // mark async operation FAILED (typically spinner)
-         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-         dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
-       });
-
+    geekU.api.items.retrieveItems(selCrit, log)
+         .then( items => {
+           dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
+         })
+         .catch( err => {
+           // mark async operation FAILED (typically spinner)
+           // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+           dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
+         });
   },
 
 });

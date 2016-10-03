@@ -4,7 +4,6 @@ import * as LOGIC  from './LogicUtil';
 import {AT, AC}    from '../actions';
 import selectors   from '../state';
 import SelCrit     from '../../shared/domain/SelCrit';
-import api         from '../../shared/api';
 import Confirm     from '../comp/Confirm'
 
 
@@ -48,7 +47,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
   },
 
 
-  process({getState, action}, dispatch) {
+  process({getState, action, geekU}, dispatch) {
     
     const log = LOGIC.getActionLog(action, logicName);
 
@@ -66,17 +65,17 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
 
     // for persistent DB selCrit deletion, issue issue the async API delete request
     else {
-      api.filters.deleteFilter(selCrit, log)
-         .then( () => {
-           // sync app with results
-           dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
-         })
-         .catch( err => {
-           // mark async operation FAILED (typically spinner)
-           // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-           dispatch( AC.selCrit.delete.fail(selCrit,
-                                            err.defineAttemptingToMsg(`deleting selCrit: ${selCrit.name}`)) );
-         });
+      geekU.api.filters.deleteFilter(selCrit, log)
+           .then( () => {
+             // sync app with results
+             dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
+           })
+           .catch( err => {
+             // mark async operation FAILED (typically spinner)
+             // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+             dispatch( AC.selCrit.delete.fail(selCrit,
+                                              err.defineAttemptingToMsg(`deleting selCrit: ${selCrit.name}`)) );
+           });
     }
 
   },

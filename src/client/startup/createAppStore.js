@@ -4,6 +4,7 @@ import * as Redux                from 'redux';
 import appState                  from '../state/appState';
 import { createLogicMiddleware } from 'redux-logic';
 import logic                     from '../logic';
+import api                       from '../../shared/api';
 import Log                       from '../../shared/util/Log';
 
 const log = new Log('startup.createAppStore');
@@ -32,7 +33,12 @@ export default function createAppStore() {
   log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension !== NO_EXTENSION ? 'IS' : 'IS NOT'} PRESENT!`);
   
   // accumulate all our logic modules (redux-logic)
-  const logicMiddleware = createLogicMiddleware(logic); // TODO: how can I use redux-logic dependancies (the optional 2nd arg)
+  const logicMiddleware = createLogicMiddleware(logic, 
+                                                { // injected dependancies
+                                                  geekU: {
+                                                    api
+                                                  }
+                                                });
 
   // define our Redux app-wide store, WITH our middleware registration
   const appStore = Redux.createStore(appState, // our app-wide redux reducer
