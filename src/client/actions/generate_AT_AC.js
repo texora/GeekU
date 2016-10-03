@@ -47,17 +47,6 @@ export default function generate_AT_AC(genesis) {
         throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);
       }
 
-      // interpret function-based action creators (interpreted by thunk middleware)
-      if (genesis[funcName].thunk) {
-        const thunk = genesis[funcName].thunk(...args);
-
-        // apply a 'type' property on our thunk, to consistently support any action having a type
-        // ... regardless if it is a normal action object, or a function
-        thunk.type = funcName;
-
-        return thunk;
-      }
-
       // interpret normal action creator, returning action object
       const action = { type: actionType }; // baseline our action with it's type
       for (let i=0; i<args.length; i++) {  // inject the arguments into our action
