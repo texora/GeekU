@@ -18,10 +18,10 @@ const [logicName, logic] = LOGIC.promoteLogic('logActions', {
     const log = LOGIC.getActionLog(action, logicName);
 
     if (log.isVerboseEnabled()) {
-      log.verbose(()=>   `Dispatched Action: ${FMT(action.type)} with content:\n${FMT(action)}`);
+      log.verbose(()=> `Dispatched Action: ${FMT(action.type)} with content:\n${FMT(action)}`);
     }
     else {
-      log.trace(()=> `Dispatched Action: ${FMT(action.type)}`);
+      log.trace(()=>   `Dispatched Action: ${FMT(action.type)}`);
     }
 
     // continue processing
