@@ -1,23 +1,21 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
-import selectors   from '../state';
-import SelCrit     from '../../shared/domain/SelCrit';
-import Confirm     from '../comp/Confirm'
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}   from '../actions';
+import selectors  from '../state';
+import SelCrit    from '../../shared/domain/SelCrit';
+import Confirm    from '../comp/Confirm'
 
 
 /**
  * Process (i.e. implement) the AT.selCrit.delete action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
+export default createNamedLogic('processSelCritDeleteAction', {
 
   type: AT.selCrit.delete.valueOf(),
 
 
-  transform({ getState, action }, next, reject) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  transform({ getState, action, log }, next, reject) {
 
     const selCrit = action.selCrit;
 
@@ -47,9 +45,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
   },
 
 
-  process({getState, action, geekU}, dispatch) {
-    
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log, geekU}, dispatch) {
 
     const selCrit      = action.selCrit;
     const appState     = getState();
@@ -65,6 +61,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
 
     // for persistent DB selCrit deletion, issue issue the async API delete request
     else {
+      log.debug(() => `issuing api.filters.deleteFilter(selCrit: ${selCrit.name})`);
       geekU.api.filters.deleteFilter(selCrit, log)
            .then( () => {
              // sync app with results
@@ -81,5 +78,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritDeleteAction', {
   },
 
 });
-
-export default logic;

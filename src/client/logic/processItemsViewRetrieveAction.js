@@ -1,15 +1,15 @@
 'use strict';
 
-import * as LOGIC            from './LogicUtil';
-import {AT, AC}              from '../actions';
-import selectors             from '../state';
-import SelCrit               from '../../shared/domain/SelCrit';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}   from '../actions';
+import selectors  from '../state';
+import SelCrit    from '../../shared/domain/SelCrit';
 
 
 /**
  * Process (i.e. implement) the AT.itemsView.retrieve action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', {
+export default createNamedLogic('processItemsViewRetrieveAction', {
 
   type: AT.itemsView.retrieve.valueOf(),
 
@@ -19,9 +19,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
   //     * SelCrit:   conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
   //     * 'refresh': unconditionally refresh ItemsView with latest items (using view's current selCrit)
 
-  transform({ getState, action, ctx }, next, reject) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  transform({ getState, action, ctx, log }, next, reject) {
 
     const appState         = getState();
     const itemType         = action.itemType;
@@ -36,12 +34,13 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
 
     // communicate any resolved selCrit to process() ... below
     if (selCrit) {
+      log.debug(() => `there IS an itemsView retrieval to issue for selCrit: ${selCrit.name}`);
       ctx.selCrit = selCrit;
       next(action);
     }
     // no-op when nothing to retrieve
     else {
-      log.debug(() => "NO itemsView retrieval to perform (either supplied action.selCrit was the same as current view, or a 'refresh' request was made for a view that has not-yet retrieved");
+      log.debug(() => "there is NO itemsView retrieval to issue (either supplied action.selCrit was the same as current view, or a 'refresh' request was made for a view that has not-yet retrieved");
       // NOTE: We DO NOT want to propogate this action
       //       - either to our reducers ... because we don't want to allow this action to start a spinner
       //       - or our process() ... because there is nothing to do
@@ -50,9 +49,7 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
 
   },
 
-  process({getState, action, ctx, geekU}, dispatch) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, ctx, log, geekU}, dispatch) {
 
     const selCrit    = ctx.selCrit; // resolved in transform() ... above
     const itemType   = action.itemType;
@@ -61,6 +58,8 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
     //***
     //*** at this point we know we must retrieve/refresh the items in our itemView
     //***
+
+    log.debug(() => `issuing api.items.retrieveItems(selCrit: ${selCrit.name})`);
 
     geekU.api.items.retrieveItems(selCrit, log)
          .then( items => {
@@ -74,5 +73,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewRetrieveAction', 
   },
 
 });
-
-export default logic;

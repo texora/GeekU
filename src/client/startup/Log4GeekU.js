@@ -31,7 +31,7 @@ const logConfig = Log.config({
 
     'actions':           ['none', ` <dl> <dt> DEBUG:   </dt> <dd> include action app logic (redux-logic) </dd>
                                          <dt> TRACE:   </dt> <dd> see dispatched actions </dd>
-                                         <dt> VERBOSE: </dt> <dd> see dispatched actions INCLUDING action content<br/><i>CAUTION: action content can be BIG</i> </dd>
+                                         <dt> VERBOSE: </dt> <dd> see dispatched actions INCLUDING action content AND redux-logic enter/exit probes <br/><i>CAUTION: action content can be BIG</i> </dd>
                                     </dl> ... may apply lower (ex: 'actions.userMsg')`],
 
     'api':               ['none', 'NOTE: api.xxx probes may ALSO be enabled through the actions.xxx filters'],

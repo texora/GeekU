@@ -1,22 +1,21 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import SelCrit     from '../../shared/domain/SelCrit';
-import itemTypes   from '../../shared/domain/itemTypes';
-import {AT}        from '../actions';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import SelCrit    from '../../shared/domain/SelCrit';
+import itemTypes  from '../../shared/domain/itemTypes';
+import {AT}       from '../actions';
 
 
 /**
  * Initialize the AT.selCrit.edit action, which edits the supplied selCrit,
  * injecting additional information needed in action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
+export default createNamedLogic('initializeSelCritEdit', {
 
   type: AT.selCrit.edit.valueOf(),
 
-  transform({ getState, action }, next) {
+  transform({ getState, action, log }, next) {
 
-    const log     = LOGIC.getActionLog(action, logicName);
     const selCrit = action.selCrit;
 
     log.debug(()=> 'injecting additional information needed in action');
@@ -49,5 +48,3 @@ const [logicName, logic] = LOGIC.promoteLogic('initializeSelCritEdit', {
   },
 
 });
-
-export default logic;

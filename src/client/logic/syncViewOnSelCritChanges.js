@@ -1,22 +1,20 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
-import selectors   from '../state';
-import SelCrit     from '../../shared/domain/SelCrit';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}   from '../actions';
+import selectors  from '../state';
+import SelCrit    from '../../shared/domain/SelCrit';
 
 
 /**
  * Sync (i.e. re-retrieve) the appropriate itemsView when it is 
  * based on a selCrit that has changed.
  */
-const [logicName, logic] = LOGIC.promoteLogic('syncViewOnSelCritChanges', {
+export default createNamedLogic('syncViewOnSelCritChanges', {
 
   type: AT.selCrit.changed.valueOf(),
 
-  process({getState, action}, dispatch) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log}, dispatch) {
 
     const appState      = getState();
     const selCrit       = action.selCrit;
@@ -53,5 +51,3 @@ const [logicName, logic] = LOGIC.promoteLogic('syncViewOnSelCritChanges', {
   },
 
 });
-
-export default logic;

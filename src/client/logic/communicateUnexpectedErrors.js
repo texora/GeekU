@@ -1,7 +1,7 @@
 'use strict';
 
-import * as LOGIC            from './LogicUtil';
-import handleUnexpectedError from '../util/handleUnexpectedError';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import handleUnexpectedError         from '../util/handleUnexpectedError';
 
 
 /**
@@ -10,12 +10,12 @@ import handleUnexpectedError from '../util/handleUnexpectedError';
  *    - communicating problem to the user
  *    - and logging the details (for tech support)
  */
-const [logicName, logic] = LOGIC.promoteLogic('communicateUnexpectedErrors', {
+export default createNamedLogic('communicateUnexpectedErrors', {
 
   type: [/\.fail$/,                // ... from GeekU async '*.fail' actions
          'UNHANDLED_LOGIC_ERROR'], // ... from redux-logic error handler
          
-  process({getState, action}, dispatch) {
+  process({getState, action, log}, dispatch) {
 
     const err = action.err ||   // ... from GeekU async '*.fail' actions
                 action.payload; // ... from redux-logic error handler
@@ -24,5 +24,3 @@ const [logicName, logic] = LOGIC.promoteLogic('communicateUnexpectedErrors', {
   },
 
 });
-
-export default logic;

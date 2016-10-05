@@ -1,20 +1,18 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
-import selectors   from '../state';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}   from '../actions';
+import selectors  from '../state';
 
 
 /**
  * Commit (i.e. use) selCrit changes upon completion.
  */
-const [logicName, logic] = LOGIC.promoteLogic('commitSelCritChanges', {
+export default createNamedLogic('commitSelCritChanges', {
 
   type: AT.selCrit.edit.use.valueOf(),
 
-  process({getState, action}, dispatch) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log}, dispatch) {
 
     const appState = getState();
     const selCrit         = selectors.getEditSelCrit(appState).selCrit;
@@ -42,5 +40,3 @@ const [logicName, logic] = LOGIC.promoteLogic('commitSelCritChanges', {
   },
 
 });
-
-export default logic;

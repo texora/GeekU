@@ -1,6 +1,7 @@
 'use strict';
 
 import '../../../shared/util/polyfill';
+import '../../startup/Log4GeekU'; // configure logs for GeekUApp (NOTE: include VERY early in our start-up process)
 import expect                  from 'expect';
 import processDetailItemAction from '../processDetailItemAction';
 import itemTypes               from '../../../shared/domain/itemTypes';

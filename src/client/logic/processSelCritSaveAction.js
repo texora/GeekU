@@ -1,22 +1,22 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}  from '../actions';
 
 
 /**
  * Process (i.e. implement) the AT.selCrit.save action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processSelCritSaveAction', {
+export default createNamedLogic('processSelCritSaveAction', {
 
   type: AT.selCrit.save.valueOf(),
 
-  process({getState, action, geekU}, dispatch) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log, geekU}, dispatch) {
 
     const selCrit       = action.selCrit;
     const syncDirective = action.syncDirective;
+
+    log.debug(() => `issuing api.filters.saveFilter(selCrit: ${selCrit.name})`);
 
     geekU.api.filters.saveFilter(selCrit, log)
          .then( savedSelCrit => {
@@ -34,5 +34,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processSelCritSaveAction', {
   },
 
 });
-
-export default logic;

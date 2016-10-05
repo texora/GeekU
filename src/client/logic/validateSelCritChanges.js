@@ -1,22 +1,20 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
-import selectors   from '../state';
-import SelCrit     from '../../shared/domain/SelCrit';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}   from '../actions';
+import selectors  from '../state';
+import SelCrit    from '../../shared/domain/SelCrit';
 
 
 /**
  * Validate selCrit edits on completion.
  */
-const [logicName, logic] = LOGIC.promoteLogic('validateSelCritChanges', {
+export default createNamedLogic('validateSelCritChanges', {
 
   type: [AT.selCrit.edit.use.valueOf(),
          AT.selCrit.edit.save.valueOf()],
 
-  validate({getState, action}, allow, reject) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  validate({getState, action, log}, allow, reject) {
 
     const appState = getState();
     const selCrit  = selectors.getEditSelCrit(appState).selCrit;
@@ -28,10 +26,9 @@ const [logicName, logic] = LOGIC.promoteLogic('validateSelCritChanges', {
       reject( AC.userMsg.display('Please resolve the highlighted validation errors.') );
     }
     else {
+      log.debug(()=> `validation passed - selCrit: ${selCrit.name} is valid`);
       allow( action );
     }
   },
 
 });
-
-export default logic;

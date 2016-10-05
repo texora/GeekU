@@ -1,18 +1,19 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}  from '../actions';
 
 
 /**
  * Process (i.e. implement) the AT.filters.retrieve action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieveAction', {
+export default createNamedLogic('processFiltersRetrieveAction', {
 
   type: AT.filters.retrieve.valueOf(),
 
-  process({getState, action, geekU}, dispatch) {
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log, geekU}, dispatch) {
+
+    log.debug(() => 'issuing api.filters.retrieveFilters()');
 
     geekU.api.filters.retrieveFilters(undefined, log)
          .then( filters => {
@@ -26,5 +27,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processFiltersRetrieveAction', {
   },
 
 });
-
-export default logic;

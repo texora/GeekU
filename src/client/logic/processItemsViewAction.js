@@ -1,19 +1,17 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}  from '../actions';
 
 
 /**
  * Process (i.e. implement) the AT.itemsView action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processItemsViewAction', {
+export default createNamedLogic('processItemsViewAction', {
 
   type: AT.itemsView.valueOf(),
 
-  process({getState, action}, dispatch) {
-
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log}, dispatch) {
 
     // interpret the retrieve directive
     if (action.retrieve) {
@@ -32,5 +30,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processItemsViewAction', {
   },
 
 });
-
-export default logic;

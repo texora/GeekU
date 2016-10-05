@@ -1,22 +1,23 @@
 'use strict';
 
-import * as LOGIC  from './LogicUtil';
-import {AT, AC}    from '../actions';
+import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
+import {AT, AC}  from '../actions';
 
 
 /**
  * Process (i.e. implement) the AT.detailItem action.
  */
-const [logicName, logic] = LOGIC.promoteLogic('processDetailItemAction', {
+export default createNamedLogic('processDetailItemAction', {
 
   type: AT.detailItem.valueOf(),
 
-  process({getState, action, geekU}, dispatch) {
-    const log = LOGIC.getActionLog(action, logicName);
+  process({getState, action, log, geekU}, dispatch) {
 
     const itemType = action.itemType;
     const itemNum  = action.itemNum;
     const editMode = action.editMode;
+
+    log.debug(() => `issuing api.items.retrieveItemDetail(${FMT(itemType)}, ${FMT(itemNum)})`);
 
     geekU.api.items.retrieveItemDetail(itemType, itemNum, log)
          .then( item => {
@@ -30,5 +31,3 @@ const [logicName, logic] = LOGIC.promoteLogic('processDetailItemAction', {
   },
 
 });
-
-export default logic;
