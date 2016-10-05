@@ -35,9 +35,7 @@ export default function createAppStore() {
   // accumulate all our logic modules (redux-logic)
   const logicMiddleware = createLogicMiddleware(logic, 
                                                 { // injected dependancies
-                                                  geekU: {
-                                                    api
-                                                  }
+                                                  api
                                                 });
 
   // define our Redux app-wide store, WITH our middleware registration

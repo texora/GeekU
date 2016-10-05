@@ -49,7 +49,7 @@ export default createNamedLogic('processItemsViewRetrieveAction', {
 
   },
 
-  process({getState, action, ctx, log, geekU}, dispatch) {
+  process({getState, action, ctx, log, api}, dispatch) {
 
     const selCrit    = ctx.selCrit; // resolved in transform() ... above
     const itemType   = action.itemType;
@@ -61,15 +61,15 @@ export default createNamedLogic('processItemsViewRetrieveAction', {
 
     log.debug(() => `issuing api.items.retrieveItems(selCrit: ${selCrit.name})`);
 
-    geekU.api.items.retrieveItems(selCrit, log)
-         .then( items => {
-           dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
-         })
-         .catch( err => {
-           // mark async operation FAILED (typically spinner)
-           // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-           dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
-         });
+    api.items.retrieveItems(selCrit, log)
+       .then( items => {
+         dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
+       })
+       .catch( err => {
+         // mark async operation FAILED (typically spinner)
+         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+         dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
+       });
   },
 
 });

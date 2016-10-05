@@ -45,7 +45,7 @@ export default createNamedLogic('processSelCritDeleteAction', {
   },
 
 
-  process({getState, action, log, geekU}, dispatch) {
+  process({getState, action, log, api}, dispatch) {
 
     const selCrit      = action.selCrit;
     const appState     = getState();
@@ -62,17 +62,17 @@ export default createNamedLogic('processSelCritDeleteAction', {
     // for persistent DB selCrit deletion, issue issue the async API delete request
     else {
       log.debug(() => `issuing api.filters.deleteFilter(selCrit: ${selCrit.name})`);
-      geekU.api.filters.deleteFilter(selCrit, log)
-           .then( () => {
-             // sync app with results
-             dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
-           })
-           .catch( err => {
-             // mark async operation FAILED (typically spinner)
-             // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-             dispatch( AC.selCrit.delete.fail(selCrit,
-                                              err.defineAttemptingToMsg(`deleting selCrit: ${selCrit.name}`)) );
-           });
+      api.filters.deleteFilter(selCrit, log)
+         .then( () => {
+           // sync app with results
+           dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
+         })
+         .catch( err => {
+           // mark async operation FAILED (typically spinner)
+           // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+           dispatch( AC.selCrit.delete.fail(selCrit,
+                                            err.defineAttemptingToMsg(`deleting selCrit: ${selCrit.name}`)) );
+         });
     }
 
   },

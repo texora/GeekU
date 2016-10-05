@@ -21,16 +21,14 @@ describe('logic processDetailItemAction', () => {
 
     beforeEach( (asyncDone) => {
       // mock out our api
-      const geekU = {
-        api: {
-          items: {
-            retrieveItemDetail(itemTypeParam, itemNumParam, logParam) {
-              expect(itemTypeParam).toBe(itemType);
-              expect(itemNumParam).toBe(itemNum);
-              return new Promise((resolve, reject) => {
-                resolve(testItem);
-              });
-            }
+      const api = {
+        items: {
+          retrieveItemDetail(itemTypeParam, itemNumParam, logParam) {
+            expect(itemTypeParam).toBe(itemType);
+            expect(itemNumParam).toBe(itemNum);
+            return new Promise((resolve, reject) => {
+              resolve(testItem);
+            });
           }
         }
       };
@@ -39,7 +37,7 @@ describe('logic processDetailItemAction', () => {
       dispatch = expect.createSpy().andCall(() => asyncDone());
 
       // invoke our logic module under test
-      processDetailItemAction.process( {action, geekU}, dispatch);
+      processDetailItemAction.process( {action, api}, dispatch);
     });
 
     it('dispatched action should be AT.detailItem.retrieve.complete with supplied action data', () => {
@@ -64,16 +62,14 @@ describe('logic processDetailItemAction', () => {
 
     beforeEach( (asyncDone) => {
       // mock out our api
-      const geekU = {
-        api: {
-          items: {
-            retrieveItemDetail(itemTypeParam, itemNumParam, logParam) {
-              expect(itemTypeParam).toBe(itemType);
-              expect(itemNumParam).toBe(itemNum);
-              return new Promise((resolve, reject) => {
-                reject(testErr);
-              });
-            }
+      const api = {
+        items: {
+          retrieveItemDetail(itemTypeParam, itemNumParam, logParam) {
+            expect(itemTypeParam).toBe(itemType);
+            expect(itemNumParam).toBe(itemNum);
+            return new Promise((resolve, reject) => {
+              reject(testErr);
+            });
           }
         }
       };
@@ -82,7 +78,7 @@ describe('logic processDetailItemAction', () => {
       dispatch = expect.createSpy().andCall(() => asyncDone());
 
       // invoke our logic module under test
-      processDetailItemAction.process( {action, geekU}, dispatch);
+      processDetailItemAction.process( {action, api}, dispatch);
     });
 
     it('dispatched action should be AT.detailItem.retrieve.fail with supplied action data', () => {

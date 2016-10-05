@@ -11,19 +11,19 @@ export default createNamedLogic('processFiltersRetrieveAction', {
 
   type: AT.filters.retrieve.valueOf(),
 
-  process({getState, action, log, geekU}, dispatch) {
+  process({getState, action, log, api}, dispatch) {
 
     log.debug(() => 'issuing api.filters.retrieveFilters()');
 
-    geekU.api.filters.retrieveFilters(undefined, log)
-         .then( filters => {
-           dispatch( AC.filters.retrieve.complete(filters) );
-         })
-         .catch( err => {
-           // mark async operation FAILED (typically spinner)
-           // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-           dispatch( AC.filters.retrieve.fail(err) );
-         });
+    api.filters.retrieveFilters(undefined, log)
+       .then( filters => {
+         dispatch( AC.filters.retrieve.complete(filters) );
+       })
+       .catch( err => {
+         // mark async operation FAILED (typically spinner)
+         // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
+         dispatch( AC.filters.retrieve.fail(err) );
+       });
   },
 
 });
