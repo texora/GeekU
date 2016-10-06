@@ -206,6 +206,21 @@ const genesis = {
 
 
   // ***
+  // *** hovered item ...
+  // ***
+
+  /**
+   * AC.hoverItem(itemType, item) ...
+   *
+   * The supplied item is being hovered over within an itemsView.
+   *
+   * @param {string} itemType the itemType ('student'/'course').
+   * @param {any}    item the item that is hovered (null for none)
+   */
+  'hoverItem': { traits: ['itemType', 'item'] }, // ... #byUser, #reducer
+
+
+  // ***
   // *** selected item ...
   // ***
 

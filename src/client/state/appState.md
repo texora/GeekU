@@ -30,6 +30,7 @@ appState: {
 
     student: {  // branch supporting StudentsView (i.e. items are Students)
 
+      hoveredItem:  null/item[below],
       selectedItem: null/item[below],
 
       detailItem:  null/item[below], // when supplied, the details of this item is displayed in a modal dialog

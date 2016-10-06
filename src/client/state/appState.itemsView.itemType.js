@@ -2,6 +2,7 @@
 
 import * as Redux from 'redux';
 
+import hoveredItem,    * as fromHoveredItem    from './appState.itemsView.itemType.hoveredItem';
 import selectedItem,   * as fromSelectedItem    from './appState.itemsView.itemType.selectedItem';
 import detailItem,     * as fromDetailedItem    from './appState.itemsView.itemType.detailItem';
 import detailEditMode, * as fromDetailEditMode  from './appState.itemsView.itemType.detailEditMode';
@@ -20,6 +21,7 @@ export default function itemType(_itemType) {
 
   const combineReducers = Redux.combineReducers({
 
+    hoveredItem:    hoveredItem(_itemType),
     selectedItem:   selectedItem(_itemType),
 
     detailItem:     detailItem(_itemType),
@@ -51,6 +53,7 @@ export default function itemType(_itemType) {
 //*** Selectors ...
 //***
 
+export const getItemsViewHoveredItem    = (itemType) => fromHoveredItem    .getItemsViewHoveredItem    (itemType.hoveredItem);
 export const getItemsViewSelectedItem   = (itemType) => fromSelectedItem   .getItemsViewSelectedItem   (itemType.selectedItem);
 export const getItemsViewDetailItem     = (itemType) => fromDetailedItem   .getItemsViewDetailItem     (itemType.detailItem);
 export const getItemsViewDetailEditMode = (itemType) => fromDetailEditMode .getItemsViewDetailEditMode (itemType.detailEditMode);

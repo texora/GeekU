@@ -51,6 +51,7 @@ export default class ItemsView extends React.Component {
 
     itemsViewShown:  React.PropTypes.bool.isRequired,
 
+    hoveredItem:     React.PropTypes.object.isRequired,
     selectedItem:    React.PropTypes.object.isRequired,
     detailItem:      React.PropTypes.object.isRequired,
 
@@ -62,11 +63,6 @@ export default class ItemsView extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-
-    // define our initial local component state
-    this.state = { 
-      hoveredItem: null,
-    };
   }
 
 
@@ -85,15 +81,8 @@ export default class ItemsView extends React.Component {
    * @param {Item} hoveredItem the item that is being hovered over (null for none).
    */
   handleHover(hoveredItem) {
-    // optimize the number of setState() invocations
-    // ... hover events happen in rapid succession
-    // ... setState() is NOT guaranteed to be synchronous
-    // ... utilize our own separate lastSetHoveredItem setting to:
-    //     - KEY: reduce the number of setState() invocations by 50%
-    if (hoveredItem !== this.lastSetHoveredItem) {
-      this.lastSetHoveredItem = hoveredItem;
-      this.setState({hoveredItem});
-    }
+    const p = this.props;
+    p.dispatch( AC.hoverItem(this.meta().itemType, hoveredItem) );
   }
 
 
@@ -349,7 +338,7 @@ export default class ItemsView extends React.Component {
                                        <i style={{
                                             cursor:     'pointer',
                                             // ... we explicitly use visibility to take space even when hidden, so as to NOT be "jumpy"
-                                            visibility: this.state.hoveredItem===item ? 'visible' : 'hidden',
+                                            visibility: p.hoveredItem===item ? 'visible' : 'hidden',
                                           }}>
                                          <FontIcon className="material-icons" color={colors.grey700} onClick={()=>this.handleDetailItemDialog(item, false)}>portrait</FontIcon>
                                          <FontIcon className="material-icons" color={colors.red900}  onClick={()=>this.handleDetailItemDialog(item, true)}>edit</FontIcon>

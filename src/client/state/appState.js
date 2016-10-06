@@ -26,6 +26,7 @@ export default appState;
 
 export const getActiveView              = (appState)           => fromItemsView.getActiveView              (appState.itemsView);
 
+export const getItemsViewHoveredItem    = (appState, itemType) => fromItemsView.getItemsViewHoveredItem    (appState.itemsView, itemType);
 export const getItemsViewSelectedItem   = (appState, itemType) => fromItemsView.getItemsViewSelectedItem   (appState.itemsView, itemType);
 export const getItemsViewDetailItem     = (appState, itemType) => fromItemsView.getItemsViewDetailItem     (appState.itemsView, itemType);
 export const getItemsViewDetailEditMode = (appState, itemType) => fromItemsView.getItemsViewDetailEditMode (appState.itemsView, itemType);
