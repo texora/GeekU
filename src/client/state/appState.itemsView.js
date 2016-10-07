@@ -31,7 +31,6 @@ export default itemsView;
 
 export const getActiveView              = (itemsView)           => fromActiveView .getActiveView              (itemsView.activeView);
 
-export const getItemsViewHoveredItem    = (itemsView, itemType) => fromItemType   .getItemsViewHoveredItem    (itemsView[itemType]);
 export const getItemsViewSelectedItem   = (itemsView, itemType) => fromItemType   .getItemsViewSelectedItem   (itemsView[itemType]);
 export const getItemsViewDetailItem     = (itemsView, itemType) => fromItemType   .getItemsViewDetailItem     (itemsView[itemType]);
 export const getItemsViewDetailEditMode = (itemsView, itemType) => fromItemType   .getItemsViewDetailEditMode (itemsView[itemType]);

@@ -2,7 +2,6 @@
 
 import {createLogic}  from 'redux-logic';
 import Log            from '../../../shared/util/Log';
-import {AT}           from '../../actions';
 
 
 /**
@@ -45,12 +44,8 @@ export default function createNamedLogic(logicName, logicDef) {
         const log = getActionLog(action, logicName);
         depObj.log = log;
 
-
-        // restrict enter/exit loggind probes for selected logic modules and action types
-        const logEnterExit = logicName   !== 'logActions' &&         // logAction  enter/exit logic module is a higher-order process
-                             action.type !== AT.hoverItem.valueOf(); // hover actions are just too prolific
-
         // invoke the original function, wrapped with enter/exit logging probes
+        const logEnterExit = logicName !== 'logActions'; // restrict enter/exit points for selected logic modules
         if (logEnterExit)   log.verbose(()=> `ENTER logic function: ${logicName}.${funcName}()`);
         priorFunc(...args);
         if (logEnterExit)   log.verbose(()=> `EXIT logic function: ${logicName}.${funcName}()`);

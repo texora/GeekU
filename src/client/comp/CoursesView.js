@@ -29,7 +29,6 @@ import CourseDialog       from './CourseDialog';
     // NOTE: some of thes properties may only be used by our base class (ItemsView)
     itemsViewShown:  selectors.getActiveView            (appState) === myItemType,
 
-    hoveredItem:     selectors.getItemsViewHoveredItem  (appState, myItemType),
     selectedItem:    selectors.getItemsViewSelectedItem (appState, myItemType),
     detailItem:      selectors.getItemsViewDetailItem   (appState, myItemType),
 

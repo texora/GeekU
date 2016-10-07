@@ -5,7 +5,6 @@ import { createLogic } from 'redux-logic';
 import commitSelCritChanges            from './commitSelCritChanges';
 import commitSelCritChangesBySaving    from './commitSelCritChangesBySaving';
 import communicateUnexpectedErrors     from './communicateUnexpectedErrors';
-import debounceHoverItem               from './debounceHoverItem';
 import initializeSelCritEdit           from './initializeSelCritEdit';
 import logActions                      from './logActions';
 import processDetailItemAction         from './processDetailItemAction';
@@ -35,7 +34,6 @@ export default [
   processItemsViewAction,
   processItemsViewRetrieveAction,
   syncViewOnSelCritChanges,
-  debounceHoverItem,
 
   // detailItem related ...
   processDetailItemAction,
