@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
 import {AC}               from '../actions'

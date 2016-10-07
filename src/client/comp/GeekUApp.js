@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import AppBar             from 'material-ui/lib/app-bar';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';

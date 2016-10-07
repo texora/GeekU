@@ -3,7 +3,7 @@
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
 
-import autobind from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 
 import {AC}               from '../actions';
 import selectors          from '../state';
