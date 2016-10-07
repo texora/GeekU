@@ -1,6 +1,7 @@
 'use strict';
 
 import React    from 'react';
+import { debounce } from 'core-decorators';
 import autobind from 'autobind-decorator';
 
 import SelCrit            from '../../shared/domain/SelCrit';
@@ -82,14 +83,33 @@ export default class ItemsView extends React.Component {
 
   /**
    * Handle changes to hoveredItem.
+   * 
+   *   Optimization Notes:
+   *   ==================
+   * 
+   *   Hover events happen in rapid succession (when the user moves
+   *   the mouse MANY events occur).  We minimize the overhead
+   *   associated with this method being invoked multiple times as
+   *   follows:
+   * 
+   *     - We are only interested in the latest event, over a period
+   *       of time.  Processing each event is an overkill, as there is
+   *       NO need to show the intermediate state, simply the last
+   *       one.  
+   *
+   *       This optomization is accomplished through the @debounce
+   *       decorator, which dramatically reduces the number of
+   *       refreshes (from the setState() invocation).
+   * 
+   *     - We no-op when our current state is the same as requested state.
+   *       NOTE: setState() is NOT guaranteed to be synchronous, therefore
+   *             we utilize internal lastSetHoveredItem to trigger processing
+   *             only when changed.
+   *
    * @param {Item} hoveredItem the item that is being hovered over (null for none).
    */
+  @debounce(200)
   handleHover(hoveredItem) {
-    // optimize the number of setState() invocations
-    // ... hover events happen in rapid succession
-    // ... setState() is NOT guaranteed to be synchronous
-    // ... utilize our own separate lastSetHoveredItem setting to:
-    //     - KEY: reduce the number of setState() invocations by 50%
     if (hoveredItem !== this.lastSetHoveredItem) {
       this.lastSetHoveredItem = hoveredItem;
       this.setState({hoveredItem});
