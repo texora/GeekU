@@ -28,10 +28,11 @@ export default function createNamedLogic(logicName, logicDef) {
   // ... enhance well-know functions: validate()/transform()/process()
   for (const funcName of ['validate', 'transform', 'process']) {
 
-    const priorFunc = logicDef[funcName];
+    const origFunc     = logicDef[funcName];
+    const logEnterExit = logicName !== 'logActions'; // restrict enter/exit points for selected logic modules
 
     // enhance/override any of the supplied functions
-    if (priorFunc) {
+    if (origFunc) {
       logicDef[funcName] = function(...args) {
 
         const depObj = args[0];
@@ -41,14 +42,13 @@ export default function createNamedLogic(logicName, logicDef) {
         // ... NOTE: because our log is based on action, we have to
         //           inject it at run-time (through this monkey-patch),
         //           rather than the standard redux-logic dependency injection
-        const log = getActionLog(action, logicName);
+        const log  = getActionLog(action, logicName);
         depObj.log = log;
 
         // invoke the original function, wrapped with enter/exit logging probes
-        const logEnterExit = logicName !== 'logActions'; // restrict enter/exit points for selected logic modules
-        if (logEnterExit)   log.verbose(()=> `ENTER logic function: ${logicName}.${funcName}()`);
-        priorFunc(...args);
-        if (logEnterExit)   log.verbose(()=> `EXIT logic function: ${logicName}.${funcName}()`);
+        if (logEnterExit)  log.verbose(()=> `ENTER logic function: ${logicName}.${funcName}()`);
+        origFunc(...args);
+        if (logEnterExit)  log.verbose(()=> `EXIT logic function: ${logicName}.${funcName}()`);
       };
     }
   }
@@ -83,10 +83,10 @@ function getActionLog(action, logicName) {
     log = _cache[key] = new Log(`actions.${action.type}`);
 
     // enhance log.log() to emit logicName in msgFn param
-    const priorLogMeth = log.log.bind(log);
+    const origLogMeth = log.log.bind(log);
     log.log = (level, msgFn, obj) => {
       const enhancedMsgFn = () => `${msgFn()} (logic: ${logicName})`;
-      priorLogMeth(level, enhancedMsgFn, obj);
+      origLogMeth(level, enhancedMsgFn, obj);
     }
   }
   return log;

@@ -32,6 +32,9 @@ export default createNamedLogic('commitSelCritChanges', {
       log.debug(() => "emitting change notification (action: 'selCrit.changed') because existing selCrit has actually changed");
       dispatch( AC.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
     }
+    else {
+      log.debug(() => "NO NEED to emit change notification (action: 'selCrit.changed') because either the selCrit has NOT changed or it is NOT new");
+    }
 
     // close out our edit dialog
     log.debug(() => "emitting action to close our edit dialog (action: 'selCrit.edit.close')");

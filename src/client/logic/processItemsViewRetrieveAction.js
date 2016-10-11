@@ -34,13 +34,13 @@ export default createNamedLogic('processItemsViewRetrieveAction', {
 
     // communicate any resolved selCrit to process() ... below
     if (selCrit) {
-      log.debug(() => `there IS an itemsView retrieval to issue for selCrit: ${selCrit.name}`);
+      log.debug(() => `the conditional itemsView retrieval IS NEEDED for selCrit: ${selCrit.name} ... either the supplied action.selCrit HAS changed from the view, or a 'refresh' request was made`);
       ctx.selCrit = selCrit;
       next(action);
     }
     // no-op when nothing to retrieve
     else {
-      log.debug(() => "there is NO itemsView retrieval to issue (either supplied action.selCrit was the same as current view, or a 'refresh' request was made for a view that has not-yet retrieved");
+      log.debug(() => `the conditional itemsView retrieval IS NOT NEEDED for selCrit: ${selCrit.name} ... either the supplied action.selCrit has NOT changed from the view, or a 'refresh' request was made for a view that has not-yet retrieved`);
       // NOTE: We DO NOT want to propogate this action
       //       - either to our reducers ... because we don't want to allow this action to start a spinner
       //       - or our process() ... because there is nothing to do
