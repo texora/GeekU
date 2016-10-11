@@ -23,6 +23,7 @@ export default createNamedLogic('processSelCritSaveAction', {
          // mark async operation complete (typically spinner)
          dispatch( AC.selCrit.save.complete(savedSelCrit), LOGIC.allowMore );
          // sync app with results
+         log.debug(() => `emitting change notification (action: 'selCrit.changed') because selCrit: ${selCrit.name} has been saved`);
          dispatch( AC.selCrit.changed(savedSelCrit, syncDirective) );
        })
        .catch( err => {
