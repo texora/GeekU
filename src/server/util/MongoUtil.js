@@ -2,7 +2,7 @@
 
 import Log                   from '../../shared/util/Log';
 import {decodeJsonQueryStr}  from '../../shared/util/QueryStrUtil';
-import SelCrit               from '../../shared/util/SelCrit';
+import SelCrit               from '../../shared/domain/SelCrit';
 
 const log = new Log('GeekU.ProcessFlow');
 

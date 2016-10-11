@@ -19,6 +19,7 @@ const logConfig = Log.config({
     'INSPECT', // NON-Standard level (providing more control between INFO/DEBUG)
     'DEBUG',
     'TRACE',
+    'VERBOSE', // NON-Standard level (used in more sizable/frequent output)
   ],
   filter: {
     'root':             ['INFO', 'The top-level root of ALL filters, referenced when a given filter has NOT been set.'],

@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.filter', {
 
-  [AT.selCrit.edit.filterChange](filter, action) {
+  [AT.selCrit.edit.change.filter](filter, action) {
 
     // sync selCrit.filter from action.newFilter
     const newFilter = action.newFilter===null || action.newFilter.length===0

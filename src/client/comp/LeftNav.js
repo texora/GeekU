@@ -4,14 +4,13 @@ import React               from 'react';
 import * as ReactRedux     from 'react-redux';
 
 import assert              from 'assert';
-import autobind            from 'autobind-decorator';
+import {autobind}          from 'core-decorators';
 
 import {AC}                from '../actions';
 import selectors           from '../state';
-import SelCrit             from '../../shared/util/SelCrit';
-import itemTypes           from '../../shared/model/itemTypes';
+import SelCrit             from '../../shared/domain/SelCrit';
+import itemTypes           from '../../shared/domain/itemTypes';
 
-import Confirm             from './Confirm';
 import EditSelCrit         from './EditSelCrit';
 
 import AppBar              from 'material-ui/lib/app-bar';
@@ -28,7 +27,20 @@ import colors              from 'material-ui/lib/styles/colors';
 
 
 /**
- * GeekU LeftNav component.
+ * The GeekU LeftNav component.
+ *
+ * NOTE: We maintain our own internal state for this LeftNav component
+ *       (open/editMode).  This is done for no definitive reason other
+ *       than to simplify our overall appState (with what could be
+ *       considered burdensome low-level information).  This is really
+ *       no different from using low-level 3rd party components (such as
+ *       react-select) that maintain their own state.  This heuristic could
+ *       easily be changed (if desired).
+ *
+ * NOTE: Because of our state management (see note above) the LeftNav is
+ *       a component class vs. a stateless functional component.  As a
+ *       result our handleXxx() functionality is implemented as methods
+ *       rather than injected function properties.
  */
 
 @ReactRedux.connect( (appState, ownProps) => {
@@ -99,18 +111,23 @@ export default class LeftNav extends React.Component {
   handleSelection(selCrit) {
     const p = this.props;
 
-    // for selCrit object ... select it
+    // for selCrit object ... activate it
     if (SelCrit.isSelCrit(selCrit)) {
       p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'activate') );
     }
 
-    // for itemType-string ... create a new selCrit of the specified itemType (via edit) and select it
+    // for itemType-string ... create a new selCrit of the specified itemType and edit/activate it
     else if (typeof selCrit === 'string') {
       const itemType = selCrit;
       assert(itemTypes[itemType], `LeftNav.handleSelection() INVALID itemType-string: ${FMT(itemType)}`);
-      EditSelCrit.edit(itemType, (newSelCrit) => {
-        return AC.itemsView(itemType, newSelCrit, 'activate');
-      });
+
+      // start an edit session with a new selCrit of specified itemType
+      const newSelCrit = SelCrit.new(itemType);
+      p.dispatch( AC.selCrit.edit(newSelCrit, 
+                                  true, // isNew
+                                  this.state.editMode
+                                    ? SelCrit.SyncDirective.none
+                                    : SelCrit.SyncDirective.activate ) );
     }
 
     // invalid param
@@ -118,8 +135,10 @@ export default class LeftNav extends React.Component {
       throw new TypeError(`LeftNav.handleSelection() INVALID selCrit param: ${FMT(selCrit)}`);
     }
 
-    // we always close our LeftNav
-    this.setState({open: false})
+    // close our LeftNav, providing we are NOT in the edit mode
+    if (!this.state.editMode) {
+      this.setState({open: false});
+    }
   }
 
 
@@ -130,14 +149,7 @@ export default class LeftNav extends React.Component {
    */
   handleEdit(selCrit) {
     const p = this.props;
-
-    // start an edit session with the supplied selCrit
-    EditSelCrit.edit(selCrit, selCrit => {
-      // on edit change ... SYNC view when using same selCrit
-      return selectors.isSelCritActiveInView(p.appState, selCrit)
-               ? AC.itemsView(selCrit.itemType, selCrit, 'no-activate')
-               : null;
-    });
+    p.dispatch( AC.selCrit.edit(selCrit) );
   }
 
 
@@ -148,12 +160,7 @@ export default class LeftNav extends React.Component {
    */
   handleSave(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(selCrit) ) // SAVE selCrit
-     .then( selCrit => {                   // SYNC view when using same selCrit
-       if (selectors.isSelCritActiveInView(p.appState, selCrit)) {
-         p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'no-activate') )
-       }
-     });
+    p.dispatch( AC.selCrit.save(selCrit) );
   }
 
 
@@ -163,16 +170,18 @@ export default class LeftNav extends React.Component {
    * @param {SelCrit} selCrit the selCrit to duplicate.
    */
   handleDuplicate(selCrit) {
-    // duplicate ths supplied selCrit
+    const p = this.props;
+
+    // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(selCrit);
+    p.dispatch( AC.selCrit.edit(dupSelCrit, 
+                                true, // isNew
+                                SelCrit.SyncDirective.none ) );
 
-    // close our LeftNav
-    this.setState({open: false});
-
-    // start an edit session with this selCrit
-    EditSelCrit.edit(dupSelCrit, (changedDupSelCrit) => {
-      return AC.itemsView(changedDupSelCrit.itemType, changedDupSelCrit, 'activate');
-    });
+    // close our LeftNav, providing we are NOT in the edit mode
+    if (!this.state.editMode) {
+      this.setState({open: false});
+    }
   }
 
 
@@ -183,25 +192,7 @@ export default class LeftNav extends React.Component {
    */
   handleDelete(selCrit) {
     const p = this.props;
-
-    Confirm.display({
-      title: 'Delete Filter',
-      msg:   `Please confirm deletion of filter: ${selCrit.name} -  ${selCrit.desc}`,
-      actions: [
-        { txt: 'Delete',
-          action: () => {
-            const impactView = selectors.isSelCritActiveInView(p.appState, selCrit) ? selCrit.itemType : null;
-            if (SelCrit.isPersisted(selCrit)) { // is persised in DB
-              p.dispatch( AC.selCrit.delete(selCrit, impactView) );
-            }
-            else { // is an in-memory only representation
-              p.dispatch( AC.selCrit.delete.complete(selCrit, impactView) );
-            }
-          }
-        },
-        { txt: 'Cancel' },
-      ]
-    });
+    p.dispatch( AC.selCrit.delete(selCrit) );
   }
 
 

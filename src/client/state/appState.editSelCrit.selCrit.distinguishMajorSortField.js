@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.distinguishMajorSortField', {
 
-  [AT.selCrit.edit.distinguishMajorSortFieldChange](distinguishMajorSortField, action) {
+  [AT.selCrit.edit.change.distinguishMajorSortField](distinguishMajorSortField, action) {
     return [
       action.value,
       ()=>`set name from action.value: ${action.value}`

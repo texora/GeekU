@@ -1,15 +1,11 @@
 'use strict';
 
-import * as Redux         from 'redux';
-import {enableBatching}   from 'redux-batched-actions';
-import appState           from '../state/appState';
-
-//import thunk            from 'redux-thunk';// thunks NOW supported through our own thunkBatchHandler (we should remove the package)
-import errorHandler       from './middleware/errorHandler';
-import thunkBatchHandler  from './middleware/thunkBatchHandler';
-import actionLogger       from './middleware/actionLogger';
-
-import Log                from '../../shared/util/Log';
+import * as Redux                from 'redux';
+import appState                  from '../state/appState';
+import { createLogicMiddleware } from 'redux-logic';
+import logic                     from '../logic';
+import api                       from '../../shared/api';
+import Log                       from '../../shared/util/Log';
 
 const log = new Log('startup.createAppStore');
 
@@ -36,13 +32,16 @@ export default function createAppStore() {
   const reduxDevToolsChromeExtension = window.devToolsExtension ? window.devToolsExtension() : NO_EXTENSION;
   log.info(()=> `the optional Redux DevTools Chrome Extension ${reduxDevToolsChromeExtension !== NO_EXTENSION ? 'IS' : 'IS NOT'} PRESENT!`);
   
+  // accumulate all our logic modules (redux-logic)
+  const logicMiddleware = createLogicMiddleware(logic, 
+                                                { // injected dependancies
+                                                  api
+                                                });
+
   // define our Redux app-wide store, WITH our middleware registration
-  const appStore = Redux.createStore(enableBatching(appState), // our app-wide redux reducer ... wrapped in a batch-capable reducer
-                                     Redux.compose(Redux.applyMiddleware(errorHandler,      // ... inject FIRST to allow coverage of other middleware components
-                                                                         thunkBatchHandler, // ... inject before actionLogger (minor: doesn't have a type)
-                                                                         actionLogger       // ... inject early to allow logging of other middleware components
-                                                                         /* thunk */),      // thunks NOW supported through our own thunkBatchHandler
-                                                   reduxDevToolsChromeExtension)); // hook into optional Redux DevTools Chrome Extension
+  const appStore = Redux.createStore(appState, // our app-wide redux reducer
+                                     Redux.compose(Redux.applyMiddleware(logicMiddleware), // redux-logic middleware
+                                                   reduxDevToolsChromeExtension));         // optional Redux DevTools Chrome Extension
 
   return appStore;
 }

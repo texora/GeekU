@@ -2,7 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/model/itemTypes';
+import itemTypes        from '../../shared/domain/itemTypes';
 
 // ***
 // *** appState.itemsView.itemType.selectedItem reducer (function wrapper)
@@ -22,7 +22,7 @@ export default function selectedItem(_itemType) {
       ];
     },
   
-    [AT.itemsView.retrieveComplete] (selectedItem, action) {
+    [AT.itemsView.retrieve.complete] (selectedItem, action) {
       // TODO: we could keep the selected item, if it is contained in the new retrieval (action.items)
       return [
         null,
@@ -30,7 +30,7 @@ export default function selectedItem(_itemType) {
       ];
     },
   
-    [AT.detailItem.retrieveComplete](selectedItem, action) {
+    [AT.detailItem.retrieve.complete](selectedItem, action) {
       // NOTE: currently NO need to check if item retrieved is same (itemNum) as what is selected
       //       because activating the detailItem dialog also selects it
       return [

@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
 import {AC}               from '../actions'
@@ -50,17 +50,16 @@ export default class UserMsg extends React.Component {
    * Display a user message programmatically.
    *
    * NOTE: An alternate technique to activate a user message is through
-   *       the Action Creator AC.userMsg.display(msg, userAction).  This 
-   *       may be preferred when:
-   *         a) additional actions need to be 'batched' with the user
-   *            message, and
-   *         b) when you have access to the dispatcher.
+   *       the Action Creator AC.userMsg.display(msg [,userAction]).  This 
+   *       may be preferred when you have access to the dispatcher.
    *
    * @param {string} msg the message to display.
    * @param {Obj} userAction an optional structure defining a user click action:
-   *                userAction: {  // optional action that can be activated by the user
-   *                  txt:      '',
-   *                  callback: function(event)
+   *                {
+   *                  txt:      'your-button-label-here',
+   *                  callback: function(event) {
+   *                    code-executed-on-button-click
+   *                  }
    *                }
    * @public
    */

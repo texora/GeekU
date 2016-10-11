@@ -1,7 +1,8 @@
 'use strict';
  
 import '../../../shared/util/polyfill';
-import expect from 'expect';
+import geekUFetch from '../../../shared/api/geekUFetch';
+import expect     from 'expect';
 
 // ***
 // *** all /api/courses tests ...
@@ -9,9 +10,8 @@ import expect from 'expect';
 
 // console.log('??? INFO: running async test with multiple sequential reliant steps!');
 
-describe('/api/courses tests', function() {
-
-  if (1===1) return; // ?? temporally disable IT tests until we can better govern their execution
+// ?? temporally skip IT tests until we can better govern their execution
+describe.skip('/api/courses tests', function() {
 
   let courses  = null;
   let asyncErr = null;
@@ -29,6 +29,7 @@ describe('/api/courses tests', function() {
         // console.log('geekUFETCH: res: ', res);
         // console.log(`geekUFETCH: res.headers.get('date'): ${res.headers.get('date')}`)
         courses = res.payload;
+        console.log(`returned ${courses.length} courses`);
         // console.log('geekUFETCH: received courses: ', courses);
         asyncComplete();
       })

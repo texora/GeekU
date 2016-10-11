@@ -22,22 +22,19 @@ const log = new Log('unexpectedError');
  *       in order for the user to visualize the error condition.
  *
  * @param {Error} err the error that is to be reported/logged.
- * @param {string} qualMsg an optional qualifying message that
- * provides additional context to the supplied err.  This message
- * should be worded in such a way that makes sense when appended to:
- * 'An unexpected error occurred' ... for example consider: 'when
- * retrieving students'.
  *
  * @return {Action} a redux action object that MUST BE dispatched to
  * report the error to the user.
  */
-export default function handleUnexpectedError(err, qualMsg='') {
+export default function handleUnexpectedError(err) {
+
+  const attemptingTo = err.attemptingToMsg ? `... ${err.attemptingToMsg}` : '';
 
   // stale data is NOT unexpected ... guide the user more delicately
   if (err.message.includes('Stale data detected')) {
 
     // log the details of the error (with traceback) for tech review
-    const userMsg = `Your data is "out of date" ... ${qualMsg}.`;
+    const userMsg = `Your data is "out of date" ${attemptingTo}`;
     log.error(()=> userMsg, err);
     
     // create/return action providing user communication
@@ -63,7 +60,7 @@ export default function handleUnexpectedError(err, qualMsg='') {
   else {
 
     // log the details of the error (with traceback) for tech review
-    const userMsg = `An unexpected error occurred ${qualMsg}.`;
+    const userMsg = `An unexpected error occurred ${attemptingTo}`;
     log.error(()=> userMsg, err);
     
     // create/return action providing user communication

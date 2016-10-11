@@ -2,7 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/model/itemTypes';
+import itemTypes        from '../../shared/domain/itemTypes';
 
 
 // ***
@@ -30,7 +30,7 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
     ];
   },
 
-  [AT.selCrit.edit.fieldsChange](selectedFieldOptions, action) {
+  [AT.selCrit.edit.change.fields](selectedFieldOptions, action) {
     return [
       action.selectedFieldOptions,
       ()=>`set selectedFieldOptions from action.selectedFieldOptions: ${FMT(action.selectedFieldOptions)}`

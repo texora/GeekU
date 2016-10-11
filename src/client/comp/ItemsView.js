@@ -1,31 +1,29 @@
 'use strict';
 
-import React    from 'react';
-import autobind from 'autobind-decorator';
+import React                from 'react';
+import {autobind, debounce} from 'core-decorators';
 
-import SelCrit            from '../../shared/util/SelCrit';
+import SelCrit              from '../../shared/domain/SelCrit';
 
-import {AC}               from '../actions';
+import {AC}                 from '../actions';
 
-import AppBar             from 'material-ui/lib/app-bar';
-import Divider            from 'material-ui/lib/divider';
-import FontIcon           from 'material-ui/lib/font-icon';
-import IconButton         from 'material-ui/lib/icon-button';
-import IconMenu           from 'material-ui/lib/menus/icon-menu';
-import MenuItem           from 'material-ui/lib/menus/menu-item';
-import MoreVertIcon       from 'material-ui/lib/svg-icons/navigation/more-vert';
-import Paper              from 'material-ui/lib/paper';
-import RefreshIndicator   from 'material-ui/lib/refresh-indicator';
-import Table              from 'material-ui/lib/table/table';
-import TableBody          from 'material-ui/lib/table/table-body';
-import TableRow           from 'material-ui/lib/table/table-row';
-import TableRowColumn     from 'material-ui/lib/table/table-row-column';
+import AppBar               from 'material-ui/lib/app-bar';
+import Divider              from 'material-ui/lib/divider';
+import FontIcon             from 'material-ui/lib/font-icon';
+import IconButton           from 'material-ui/lib/icon-button';
+import IconMenu             from 'material-ui/lib/menus/icon-menu';
+import MenuItem             from 'material-ui/lib/menus/menu-item';
+import MoreVertIcon         from 'material-ui/lib/svg-icons/navigation/more-vert';
+import Paper                from 'material-ui/lib/paper';
+import RefreshIndicator     from 'material-ui/lib/refresh-indicator';
+import Table                from 'material-ui/lib/table/table';
+import TableBody            from 'material-ui/lib/table/table-body';
+import TableRow             from 'material-ui/lib/table/table-row';
+import TableRowColumn       from 'material-ui/lib/table/table-row-column';
 
-import colors             from 'material-ui/lib/styles/colors';
+import colors               from 'material-ui/lib/styles/colors';
 
-import EditSelCrit        from './EditSelCrit';
-import Confirm            from './Confirm';
-
+import EditSelCrit          from './EditSelCrit';
 
 
 /**
@@ -35,6 +33,12 @@ import Confirm            from './Confirm';
  * Because ItemsView is abstract, a concrete derivation must be
  * defined which provides the full implementation details for the
  * specific item type.  Please refer to DERIVATION-HOOK delimiter.
+ * 
+ * NOTE: We must utilize a React component class (vs. a stateless 
+ *       functional component) in order to tap into the  polymorphic
+ *       class hierarchy.  As a result our handleXxx() functionality
+ *       is implemented as methods (rather than injected function
+ *       properties).
  */
 
 @autobind
@@ -78,14 +82,33 @@ export default class ItemsView extends React.Component {
 
   /**
    * Handle changes to hoveredItem.
+   * 
+   *   Optimization Notes:
+   *   ==================
+   * 
+   *   Hover events happen in rapid succession (when the user moves
+   *   the mouse MANY events occur).  We minimize the overhead
+   *   associated with this method being invoked multiple times as
+   *   follows:
+   * 
+   *     - We are only interested in the latest event, over a period
+   *       of time.  Processing each event is an overkill, as there is
+   *       NO need to show the intermediate state, simply the last
+   *       one.  
+   *
+   *       This optomization is accomplished through the @debounce
+   *       decorator, which dramatically reduces the number of
+   *       refreshes (from the setState() invocation).
+   * 
+   *     - We no-op when our current state is the same as requested state.
+   *       NOTE: setState() is NOT guaranteed to be synchronous, therefore
+   *             we utilize internal lastSetHoveredItem to trigger processing
+   *             only when changed.
+   *
    * @param {Item} hoveredItem the item that is being hovered over (null for none).
    */
+  @debounce(200)
   handleHover(hoveredItem) {
-    // optimize the number of setState() invocations
-    // ... hover events happen in rapid succession
-    // ... setState() is NOT guaranteed to be synchronous
-    // ... utilize our own separate lastSetHoveredItem setting to:
-    //     - KEY: reduce the number of setState() invocations by 50%
     if (hoveredItem !== this.lastSetHoveredItem) {
       this.lastSetHoveredItem = hoveredItem;
       this.setState({hoveredItem});
@@ -98,7 +121,7 @@ export default class ItemsView extends React.Component {
    */
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.itemsView(this.meta().itemType, 'refresh', 'no-activate') );
+    p.dispatch( AC.itemsView.retrieve(this.meta().itemType, 'refresh') );
   }
 
 
@@ -107,7 +130,7 @@ export default class ItemsView extends React.Component {
    */
   handleEditSelCrit() {
     const p = this.props;
-    EditSelCrit.edit(p.selCrit, (changedSelCrit) => AC.itemsView(this.meta().itemType, changedSelCrit, 'no-activate'));
+    p.dispatch( AC.selCrit.edit(p.selCrit) );
   }
 
 
@@ -116,10 +139,7 @@ export default class ItemsView extends React.Component {
    */
   handleSaveSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(p.selCrit) ) // SAVE selCrit
-     .then( savedSelCrit => {                // SYNC our view
-       p.dispatch( AC.itemsView(this.meta().itemType, savedSelCrit, 'no-activate') )
-     });
+    p.dispatch( AC.selCrit.save(p.selCrit) );
   }
 
 
@@ -127,8 +147,13 @@ export default class ItemsView extends React.Component {
    * Handle request to create/use a new selCrit.
    */
   handleNewSelCrit() {
-    // start an edit session requesting a new selCrit of specified itemType
-    EditSelCrit.edit(this.meta().itemType, newSelCrit => AC.itemsView(this.meta().itemType, newSelCrit, 'no-activate'));
+    const p = this.props;
+
+    // start an edit session with a new selCrit of specified itemType
+    const selCrit = SelCrit.new(this.meta().itemType);
+    p.dispatch( AC.selCrit.edit(selCrit, 
+                                true, // isNew
+                                SelCrit.SyncDirective.reflect) );
   }
 
 
@@ -138,11 +163,11 @@ export default class ItemsView extends React.Component {
   handleDuplicateSelCrit() {
     const p = this.props;
 
-    // duplicate our selCrit
+    // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
-
-    // start an edit session with this dup selCrit
-    EditSelCrit.edit(dupSelCrit, changedDupSelCrit => AC.itemsView(this.meta().itemType, changedDupSelCrit, 'no-activate'));
+    p.dispatch( AC.selCrit.edit(dupSelCrit, 
+                                true, // isNew
+                                SelCrit.SyncDirective.reflect) );
   }
 
 
@@ -151,25 +176,7 @@ export default class ItemsView extends React.Component {
    */
   handleDeleteSelCrit() {
     const p = this.props;
-
-    Confirm.display({
-      title: 'Delete Filter',
-      msg:   `Please confirm deletion of filter: ${p.selCrit.name} -  ${p.selCrit.desc}`,
-      actions: [
-        { txt: 'Delete',
-          action: () => {
-            const impactView = this.meta().itemType;
-            if (SelCrit.isPersisted(p.selCrit)) { // is persised in DB
-              p.dispatch( AC.selCrit.delete(p.selCrit, impactView) );
-            }
-            else { // is an in-memory only representation
-              p.dispatch( AC.selCrit.delete.complete(p.selCrit, impactView) );
-            }
-          } },
-        { txt: 'Cancel' },
-      ]
-    });
-
+    p.dispatch( AC.selCrit.delete(p.selCrit) );
   }
 
 
@@ -194,10 +201,8 @@ export default class ItemsView extends React.Component {
    * dialog should start out in edit-mode (true) or view-mode (false).
    */
   handleDetailItemDialog(item, editMode) {
-    const p = this.props;
-
-    const itemNum  = item[this.meta().keyField];
-
+    const p       = this.props;
+    const itemNum = item[this.meta().keyField];
     p.dispatch( AC.detailItem(this.meta().itemType, itemNum, editMode) );
   }
 

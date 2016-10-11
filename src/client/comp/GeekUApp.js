@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import AppBar             from 'material-ui/lib/app-bar';
 import IconButton         from 'material-ui/lib/icon-button';
 import IconMenu           from 'material-ui/lib/menus/icon-menu';
@@ -19,8 +19,8 @@ import {AC}               from '../actions';
 import selectors          from '../state';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
-import SelCrit            from '../../shared/util/SelCrit';
-import itemTypes          from '../../shared/model/itemTypes';
+import SelCrit            from '../../shared/domain/SelCrit';
+import itemTypes          from '../../shared/domain/itemTypes';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend        from 'react-dnd-html5-backend';
@@ -51,9 +51,9 @@ export default class GeekUApp extends React.Component {
     super(props, context);
   }
 
-  handleSelectedView(itemTypeAsPage) {
+  activateView(itemType) {
     const p = this.props;
-    p.dispatch( AC.itemsView(itemTypeAsPage, null, 'activate') );
+    p.dispatch( AC.itemsView.activate(itemType) );
   }
 
   tempAlert() {
@@ -98,7 +98,8 @@ export default class GeekUApp extends React.Component {
 
   tempSampleMultiMsg() {
     const p = this.props;
-    p.dispatch([ AC.userMsg.display(`Sample Multi-Message 1`), AC.userMsg.display(`Sample Multi-Message 2`)]);
+    p.dispatch( AC.userMsg.display(`Sample Multi-Message 1`) );
+    p.dispatch( AC.userMsg.display(`Sample Multi-Message 2`) );
   }
 
   tempSampleMsgWithUserAction() {
@@ -126,9 +127,9 @@ export default class GeekUApp extends React.Component {
                       <td><i>GeekU</i></td>
                       <td>
                         <Tabs value={p.activeView}
-                              onChange={this.handleSelectedView}>
-                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
+                              onChange={this.activateView}>
                           <Tab value={itemTypes.course}  style={{textTransform: 'none', width: '15em'}} label={<span>Courses  <i>{selectedCourseNum}</i></span>}/>
+                          <Tab value={itemTypes.student} style={{textTransform: 'none', width: '15em'}} label={<span>Students <i>{selectedStudentName}</i></span>}/>
                         </Tabs>
                       </td>
                     </tr>

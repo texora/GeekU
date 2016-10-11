@@ -4,7 +4,7 @@ import express        from 'express';
 import assert         from 'assert';
 import * as MongoUtil from '../util/MongoUtil';
 import Log            from '../../shared/util/Log';
-import SelCrit        from '../../shared/util/SelCrit';
+import SelCrit        from '../../shared/domain/SelCrit';
 
 const log = new Log('GeekU.selCrit');
 

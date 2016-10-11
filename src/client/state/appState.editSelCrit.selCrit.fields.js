@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.fields', {
 
-  [AT.selCrit.edit.fieldsChange](fields, action) {
+  [AT.selCrit.edit.change.fields](fields, action) {
     const selectedFieldOptions = action.selectedFieldOptions;
 
     // sync selCrit.fields from selectedFieldOptions

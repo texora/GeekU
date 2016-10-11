@@ -35,28 +35,16 @@ export default function generate_AT_AC(genesis) {
     // machine generate our AC entries (Action Creator)
     AC[funcName] = function(...args) {
 
-      // interpret pre-defined action creators
-      if (genesis[funcName].ac) {
-        return genesis[funcName].ac(...args);
+      // further validate/initialize params (when .ratify() function is supplied)
+      if (genesis[funcName].ratify) {
+        args = genesis[funcName].ratify(...args);
       }
 
       // validate proper number of params passed in
-      const paramNames = genesis[funcName].params;
-      // TODO: currently validation is disabled (NOT) till we provide a means of defining optional/defaulted params
+      const paramNames = genesis[funcName].traits;
       if (paramNames.length !== args.length) {
         // ex: ERROR: Action Creator AC.userMsg.display(msg) expecting 1 parameters, but received 2
         throw new Error(`ERROR: Action Creator AC.${funcName}(${paramNames.toString()}) expecting ${paramNames.length} parameters, but received ${args.length}`);
-      }
-
-      // interpret function-based action creators (interpreted by thunk middleware)
-      if (genesis[funcName].thunk) {
-        const thunk = genesis[funcName].thunk(...args);
-
-        // apply a 'type' property on our thunk, to consistently support any action having a type
-        // ... regardless if it is a normal action object, or a function
-        thunk.type = funcName;
-
-        return thunk;
       }
 
       // interpret normal action creator, returning action object

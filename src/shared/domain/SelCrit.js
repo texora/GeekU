@@ -3,10 +3,7 @@
 import crc        from 'crc';
 import shortid    from 'shortid';
 import assert     from 'assert';
-import itemTypes  from '../model/itemTypes';
-import Log        from './Log';
-
-const log = new Log('SelCrit');
+import itemTypes  from './itemTypes';
 
 /**
  * SelCrit provides a number of utilities in support of the selCrit
@@ -25,7 +22,7 @@ const SelCrit = {
    */
   new(itemType) {
 
-    assert(itemTypes.meta.allTypes.indexOf(itemType) !== -1,
+    assert(itemTypes.meta.allTypes.includes(itemType),
            `SelCrit.new() supplied itemType '${itemType}' is invalid, expecting one of ${itemTypes.meta.allTypes}`);
     
     const selCrit = {
@@ -109,7 +106,7 @@ const SelCrit = {
    */
   isSelCrit(obj) {
     // ... cheap duck type checking
-    return obj.key && obj.itemType && obj.userId && obj.name && obj.desc;
+    return obj.key && obj.itemType && obj.userId && obj.name;
   },
 
   /**
@@ -131,7 +128,7 @@ const SelCrit = {
     // ... itemType
     if (!selCrit.itemType.trim())
       problems.push('itemType is required');
-    if (itemTypes.meta.allTypes.indexOf(selCrit.itemType) < 0)
+    if (!itemTypes.meta.allTypes.includes(selCrit.itemType))
       problems.push(`invalid itemType '${selCrit.itemType}' must be one of ${itemTypes.meta.allTypes}`);
 
     // ... userId
@@ -281,6 +278,42 @@ const SelCrit = {
     LTE: '$lte',
     NE:  '$ne',
     IN:  '$in'
+  },
+
+
+  /**
+   * SelCrit.SyncDirective enumeration - a directive that indicates
+   * how selCrit changes should be synced in selCrit-based views.
+   */
+  SyncDirective: {
+
+    /**
+     * Use normal sync process (i.e. sync when view is based on the
+     * selCrit and the selCrit changes).
+     * ... typically used for EXISTING selCrit
+     * ... TYPICAL DEFAULT
+     */
+    default: 'default',
+
+    /**
+     * Unconditionally use in view WITHOUT activating the view.
+     * ... typically used for NEW selCrit
+     */
+    reflect: 'reflect',
+
+    /**
+     * Unconditionally use in view AND activate the view.
+     * ... typically used for NEW selCrit
+     */
+    activate: 'activate',
+
+    /**
+     * Do NOT sync at all.
+     * ... used for LeftNav in config mode - where new selCrit's are NOT reflected in view
+     * ... typically used for NEW selCrit
+     */
+    none: 'none',
+
   },
 
 }

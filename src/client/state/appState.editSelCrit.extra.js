@@ -4,8 +4,15 @@ import * as Redux       from 'redux';
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
 
+import isNew                from './appState.editSelCrit.extra.isNew';
+import meta                 from './appState.editSelCrit.extra.meta';
+import fieldOptions         from './appState.editSelCrit.extra.fieldOptions';
 import selectedFieldOptions from './appState.editSelCrit.extra.selectedFieldOptions';
+import sortOptions          from './appState.editSelCrit.extra.sortOptions';
 import selectedSortOptions  from './appState.editSelCrit.extra.selectedSortOptions';
+import startingCurHash      from './appState.editSelCrit.extra.startingCurHash';
+import syncDirective        from './appState.editSelCrit.extra.syncDirective';
+
 
 // ***
 // *** appState.editSelCrit.extra reducer
@@ -16,8 +23,14 @@ import selectedSortOptions  from './appState.editSelCrit.extra.selectedSortOptio
 //         2) the individual fields being edited
 
 const _extra = Redux.combineReducers({
+  isNew,
+  syncDirective,
+  meta,
+  fieldOptions,
   selectedFieldOptions,
+  sortOptions,
   selectedSortOptions,
+  startingCurHash,
 });
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.extra', {

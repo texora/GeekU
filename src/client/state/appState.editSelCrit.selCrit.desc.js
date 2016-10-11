@@ -10,7 +10,7 @@ import ReductionHandler from '../util/ReductionHandler';
 
 const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.desc', {
 
-  [AT.selCrit.edit.descChange](desc, action) {
+  [AT.selCrit.edit.change.desc](desc, action) {
     return [
       action.desc,
       ()=>`set desc from action.desc: ${action.desc}`

@@ -2,7 +2,7 @@
 
 import {AT}             from '../actions';
 import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/model/itemTypes';
+import itemTypes        from '../../shared/domain/itemTypes';
 
 
 // ***
@@ -16,14 +16,14 @@ export default function items(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.items`, {
 
-    [AT.itemsView.retrieveComplete](items, action) {
+    [AT.itemsView.retrieve.complete](items, action) {
       return [
         action.items,
         ()=>`set items from action: ${action.items.length} ${itemTypes.meta[action.itemType].label.plural}`
       ];
     },
 
-    [AT.detailItem.retrieveComplete](items, action) {
+    [AT.detailItem.retrieve.complete](items, action) {
       const keyField = itemTypes.meta[action.itemType].keyField;
       return [
         items.map( (item) => {

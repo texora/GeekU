@@ -3,16 +3,16 @@
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
 
-import autobind from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 
 import moment             from 'moment';
 
 import {AC}               from '../actions';
 import selectors          from '../state';
 
-import subject            from '../../shared/model/subject';
-import term               from '../../shared/model/term';
-import itemTypes          from '../../shared/model/itemTypes';
+import subject            from '../../shared/domain/subject';
+import term               from '../../shared/domain/term';
+import itemTypes          from '../../shared/domain/itemTypes';
 const  myItemType         = itemTypes.student;
 
 import ArrowBackIcon      from 'material-ui/lib/svg-icons/navigation/arrow-back';
@@ -38,6 +38,8 @@ import TextField          from 'material-ui/lib/text-field';
 import colors             from 'material-ui/lib/styles/colors';
 
 import Alert              from './Alert';
+
+// TODO: Once functional, determine if this needs to utilize redux-logic and/or morph into a stateless functional component.
 
 /**
  * The StudentDialog component displays a dialog of the details of a given student.
@@ -91,19 +93,19 @@ export default class StudentDialog extends React.Component {
 
   changeEditMode() {
     const p = this.props;
-    p.dispatch( AC.detailItem.changeEditMode(myItemType) );
+    p.dispatch( AC.detailItem.change.detailEditMode(myItemType) );
   }
 
   saveEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailItem.close(myItemType),
-                 AC.userMsg.display('TODO: Save Complete') ]);
+    p.dispatch( AC.detailItem.close(myItemType) );
+    p.dispatch( AC.userMsg.display('TODO: Save Complete') );
   }
 
   cancelEdit() {
     const p = this.props;
-    p.dispatch([ AC.detailItem.close(myItemType),
-                 AC.userMsg.display('Edit Canceled') ]);
+    p.dispatch( AC.detailItem.close(myItemType) );
+    p.dispatch( AC.userMsg.display('Edit Canceled') );
   }
 
   render() {

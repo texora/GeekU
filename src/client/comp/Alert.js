@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import assert             from 'assert';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import Dialog             from 'material-ui/lib/dialog';
 import FlatButton         from 'material-ui/lib/flat-button';
 

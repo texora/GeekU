@@ -15,7 +15,7 @@ export default function selCrit(_itemType) {
 
   const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.selCrit`, {
 
-    [AT.itemsView.retrieveComplete](selCrit, action) {
+    [AT.itemsView.retrieve.complete](selCrit, action) {
       return [
         action.selCrit,
         ()=>`set selCrit from action ... ${FMT(action.selCrit)}`

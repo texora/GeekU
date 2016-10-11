@@ -5,7 +5,7 @@ import * as Redux from 'redux';
 import activeView, * as fromActiveView from './appState.itemsView.activeView';
 import itemType,   * as fromItemType   from './appState.itemsView.itemType';
 
-import itemTypes   from '../../shared/model/itemTypes';
+import itemTypes   from '../../shared/domain/itemTypes';
 
 
 // ***

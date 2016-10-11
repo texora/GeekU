@@ -2,7 +2,7 @@
 
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import {AC}               from '../../actions';
 import selectors          from '../../state';
 
@@ -53,7 +53,7 @@ export default class FieldValue extends React.Component {
     selectedFieldOptions[indxA] = p.selectedFieldOptions[indxB];
     selectedFieldOptions[indxB] = p.selectedFieldOptions[indxA];
 
-    p.dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
+    p.dispatch( AC.selCrit.edit.change.fields(selectedFieldOptions) );
   }
 
   
@@ -76,7 +76,7 @@ export default class FieldValue extends React.Component {
         newOpts.push(moveOpt);
     }
 
-    p.dispatch( AC.selCrit.edit.fieldsChange(newOpts) );
+    p.dispatch( AC.selCrit.edit.change.fields(newOpts) );
   }
 
 
@@ -89,7 +89,7 @@ export default class FieldValue extends React.Component {
     // adjust array copy (immutable)  by removing the specified entry
     const selectedFieldOptions = p.selectedFieldOptions.filter( (fieldOp) => fieldOp.value !== fieldOption.value );
 
-    p.dispatch( AC.selCrit.edit.fieldsChange(selectedFieldOptions) );
+    p.dispatch( AC.selCrit.edit.change.fields(selectedFieldOptions) );
   }
   
 

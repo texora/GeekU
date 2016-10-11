@@ -35,4 +35,4 @@ ReactDOM.render(<Provider store={appStore}>
                 document.getElementById('app'));
 
 // initiate our start-up bootstrap retrievals
-appStore.dispatch( AC.retrieveFilters() );
+appStore.dispatch( AC.filters.retrieve() );

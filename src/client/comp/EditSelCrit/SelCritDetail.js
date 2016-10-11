@@ -3,7 +3,7 @@
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
 
-import autobind           from 'autobind-decorator';
+import {autobind}         from 'core-decorators';
 import assert             from 'assert';
 import {AC}               from '../../actions';
 import selectors          from '../../state';
@@ -65,7 +65,7 @@ export default class SelCritDetail extends React.Component {
    */
   handleFilterChange(newFilter) {
     const p = this.props;
-    p.dispatch( AC.selCrit.edit.filterChange(newFilter) );
+    p.dispatch( AC.selCrit.edit.change.filter(newFilter) );
   }
 
 
