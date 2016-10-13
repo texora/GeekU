@@ -28,6 +28,10 @@ export default function createNamedLogic(logicName, logicDef) {
   // ... enhance well-know functions: validate()/transform()/process()
   for (const funcName of ['validate', 'transform', 'process']) {
 
+    // promote our logicName into the well-known redux-logic name
+    // ... used in diagnostic/error reporting
+    logicDef.name = logicName;
+
     const origFunc     = logicDef[funcName];
     const logEnterExit = logicName !== 'logActions'; // restrict enter/exit points for selected logic modules
 
