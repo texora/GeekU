@@ -1,8 +1,7 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/domain/itemTypes';
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import itemTypes      from '../../shared/domain/itemTypes';
+import Log            from '../../shared/util/Log';
 
 
 // ***
@@ -14,7 +13,9 @@ import itemTypes        from '../../shared/domain/itemTypes';
 
 export default function items(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.items`, {
+  const log = new Log(`appState.itemsView.${_itemType}.items`);
+
+  return reducerHash.withLogging(log, {
 
     [AT.itemsView.retrieve.complete](items, action) {
       return [
@@ -42,7 +43,6 @@ export default function items(_itemType) {
         ];
       }
       // no-sync when our view is not impacted by selCrit deletion
-      // ?? test ... with enhacement to ReductionHandler, we can OMIT THIS
       else {
         return [
           items,
@@ -50,12 +50,8 @@ export default function items(_itemType) {
         ];
       }
     },
-    
-  });
-  
-  return function items(items=[], action) {
-    return reductionHandler.reduce(items, action);
-  }
+
+  }, []); // initialState
 
 }
 

@@ -1,15 +1,10 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.selCrit.sort');
 
-
-// ***
-// *** appState.editSelCrit.selCrit.sort reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.sort', {
-
+export default reducerHash.withLogging(log, {
   [AT.selCrit.edit.change.sort](sort, action) {
     const selectedSortOptions = action.selectedSortOptions;
 
@@ -17,14 +12,6 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.sort
     const newSort = selectedSortOptions===null || selectedSortOptions.length===0
                      ? null
                      : selectedSortOptions.map( sortOption => `${sortOption.ascDec === -1 ? '-' : ''}${sortOption.value}` );
-    return [
-      newSort,
-      ()=>`convert selectedSortOptions to selCrit.sort: ${FMT(newSort)}`
-    ];
+    return [newSort, ()=>`convert selectedSortOptions to selCrit.sort: ${FMT(newSort)}` ];
   },
-
-});
-
-export default function sort(sort=null, action) {
-  return reductionHandler.reduce(sort, action);
-}
+}, null); // initialState

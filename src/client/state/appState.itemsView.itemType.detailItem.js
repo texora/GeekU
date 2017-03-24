@@ -1,8 +1,6 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
 // ***
 // *** appState.itemsView.itemType.detailItem reducer (function wrapper)
@@ -13,27 +11,21 @@ import ReductionHandler from '../util/ReductionHandler';
 
 export default function detailItem(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.detailItem`, {
+  const log = new Log(`appState.itemsView.${_itemType}.detailItem`);
 
-    [AT.detailItem.retrieve.complete](detailItem, action) {
-      return [
+  return reducerHash.withLogging(log, {
+
+    [AT.detailItem.retrieve.complete]: (detailItem, action) => [
         action.item,
         ()=>'set detailItem from action.item ... ' + FMT(action.item)
-      ];
-    },
+    ],
 
-    [AT.detailItem.close](detailItem, action) {
-      return [
+    [AT.detailItem.close]: (detailItem, action) => [
         null,
         ()=>'clearing detailItem'
-      ];
-    },
-    
-  });
-  
-  return function detailItem(detailItem=null, action) {
-    return reductionHandler.reduce(detailItem, action);
-  }
+    ],
+
+  }, null); // initialState
 
 }
 

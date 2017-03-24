@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.sortOptions');
 
-
-// ***
-// *** appState.editSelCrit.extra.sortOptions reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.sortOptions', {
-
-  [AT.selCrit.edit](sortOptions, action) {
-    return [
-      action.sortOptions,
-      ()=>'set sortOptions from action'
-    ];
-  },
-
-});
-
-export default function sortOptions(sortOptions=[], action) {
-  return reductionHandler.reduce(sortOptions, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (sortOptions, action) => [action.sortOptions, ()=>'set sortOptions from action'],
+}, []); // initialState

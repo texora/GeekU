@@ -1,6 +1,6 @@
 'use strict';
 
-import '../../../shared/util/polyfill';
+import '../../startup/ClientSidePolyfill';
 import '../../startup/Log4GeekU'; // configure logs for GeekUApp (NOTE: include VERY early in our start-up process)
 import expect               from 'expect';
 import commitSelCritChanges from '../commitSelCritChanges';

@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.fieldOptions');
 
-
-// ***
-// *** appState.editSelCrit.extra.fieldOptions reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.fieldOptions', {
-
-  [AT.selCrit.edit](fieldOptions, action) {
-    return [
-      action.fieldOptions,
-      ()=>'set fieldOptions from action'
-    ];
-  },
-
-});
-
-export default function fieldOptions(fieldOptions=[], action) {
-  return reductionHandler.reduce(fieldOptions, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (fieldOptions, action) => [action.fieldOptions, ()=>'set fieldOptions from action.fieldOptions'],
+}, []); // initialState

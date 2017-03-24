@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.selCrit.desc');
 
-
-// ***
-// *** appState.editSelCrit.selCrit.desc reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.desc', {
-
-  [AT.selCrit.edit.change.desc](desc, action) {
-    return [
-      action.desc,
-      ()=>`set desc from action.desc: ${action.desc}`
-    ];
-  },
-
-});
-
-export default function desc(desc='', action) {
-  return reductionHandler.reduce(desc, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit.change.desc]: (desc, action) => [action.desc, ()=>`set desc from action.desc: ${action.desc}`],
+}, ''); // initialState

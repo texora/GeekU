@@ -1,8 +1,7 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/domain/itemTypes';
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import itemTypes      from '../../shared/domain/itemTypes';
+import Log            from '../../shared/util/Log';
 
 // ***
 // *** appState.itemsView.itemType.selectedItem reducer (function wrapper)
@@ -13,7 +12,9 @@ import itemTypes        from '../../shared/domain/itemTypes';
 
 export default function selectedItem(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.selectedItem`, {
+  const log = new Log(`appState.itemsView.${_itemType}.selectedItem`);
+
+  return reducerHash.withLogging(log, {
 
     [AT.selectItem](selectedItem, action) {
       return [
@@ -21,7 +22,7 @@ export default function selectedItem(_itemType) {
         ()=>`set selectedItem from action.item: ${FMT(action.item)}`
       ];
     },
-  
+    
     [AT.itemsView.retrieve.complete] (selectedItem, action) {
       // TODO: we could keep the selected item, if it is contained in the new retrieval (action.items)
       return [
@@ -29,7 +30,7 @@ export default function selectedItem(_itemType) {
         ()=>'de-selecting selectedItem on new retrieval'
       ];
     },
-  
+    
     [AT.detailItem.retrieve.complete](selectedItem, action) {
       // NOTE: currently NO need to check if item retrieved is same (itemNum) as what is selected
       //       because activating the detailItem dialog also selects it
@@ -38,7 +39,7 @@ export default function selectedItem(_itemType) {
         ()=>'sync selectedItem from action.item ... ' + FMT(action.item)
       ];
     },
-  
+    
     [AT.selCrit.delete.complete](selectedItem, action) {
       // sync when our view has been impacted by selCrit deletion
       if (action.impactView===_itemType) {
@@ -48,7 +49,6 @@ export default function selectedItem(_itemType) {
         ];
       }
       // no-sync when our view is not impacted by selCrit deletion
-      // ?? test ... with enhacement to ReductionHandler, we can OMIT THIS
       else {
         return [
           selectedItem,
@@ -56,12 +56,8 @@ export default function selectedItem(_itemType) {
         ];
       }
     },
-  
-  });
-  
-  return function selectedItem(selectedItem=null, action) {
-    return reductionHandler.reduce(selectedItem, action);
-  }
+
+  }, null); // initialState
 
 }
 

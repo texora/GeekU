@@ -1,73 +1,69 @@
-'use strict'
+import * as AstxRedux  from 'astx-redux-util';
+import {AT}            from '../actions';
+import Log             from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.filters');
 
 
-// ***
-// *** appState.filters reducer
-// ***
+export default AstxRedux.joinReducers(
+  // FIRST: maintain our filters
+  AstxRedux.reducerHash.withLogging(log, {
 
-const reductionHandler = new ReductionHandler('appState.filters', {
+    [AT.filters.retrieve.complete](filters, action) {
+      return [
+        action.filters,
+        ()=>`set filters from action.filters: '${action.filters}'`
+      ];
+    },
 
-  [AT.filters.retrieve.complete](filters, action) {
-    return [
-      action.filters,
-      ()=>`set filters from action.filters: '${action.filters}'`
-    ];
-  },
-
-  [AT.selCrit.changed](filters, action) {
-    const changedSelCrit = action.selCrit;
-    let   isNewEntry = true;
-    const newFilters = filters.map( (selCrit) => {
-      if (selCrit.key===changedSelCrit.key) {
-        isNewEntry = false;
-        return changedSelCrit;
+    [AT.selCrit.changed](filters, action) {
+      const changedSelCrit = action.selCrit;
+      let   isNewEntry = true;
+      const newFilters = filters.map( (selCrit) => {
+        if (selCrit.key===changedSelCrit.key) {
+          isNewEntry = false;
+          return changedSelCrit;
+        }
+        else {
+          return selCrit;
+        }
+      });
+      if (isNewEntry) {
+        newFilters.push(changedSelCrit);
       }
-      else {
-        return selCrit;
-      }
-    });
-    if (isNewEntry) {
-      newFilters.push(changedSelCrit);
+      return [
+        newFilters,
+        ()=>`sync filters with changed action.selCrit: '${FMT(action.selCrit)}'`
+      ];
+    },
+
+    [AT.selCrit.delete.complete](filters, action) {
+      const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );
+      return [
+        prunedFilters,
+        ()=>`pruned filters with action.selCrit.key: '${action.selCrit.key}'`
+      ];
+    },
+  }),
+
+  AstxRedux.conditionalReducer(
+    // SECOND: maintain filters sort order, WHENEVER filters change
+    (filters, action, originalReducerState) => originalReducerState !== filters,
+    (filters, action) => {
+      filters.sort( (sc1, sc2) => { // OK to mutate (because of changed instance)
+        return sc1.itemType.localeCompare(sc2.itemType) ||
+               sc1.name    .localeCompare(sc2.name)     ||
+               sc1.desc    .localeCompare(sc2.desc);
+      });
+
+      log.reducerProbe(action,
+                       true,   // stateChanged
+                       ()=>'maintain filters sort order (because filters changed)');
+
+      return filters;
     }
-    return [
-      newFilters,
-      ()=>`sync filters with changed action.selCrit: '${FMT(action.selCrit)}'`
-    ];
-  },
 
-  [AT.selCrit.delete.complete](filters, action) {
-    const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );
-    return [
-      prunedFilters,
-      ()=>`pruned filters with action.selCrit.key: '${action.selCrit.key}'`
-    ];
-  },
-
-});
-
-export default function filters(filters=[], action) {
-
-  // invoke our normal reducer
-  const nextState = reductionHandler.reduce(filters, action);
-
-  //***
-  //*** additional value-added logic follows ...
-  //***
-
-  // when our state has changed, maintain it's sort order
-  if (nextState !== filters) {
-    nextState.sort( (sc1, sc2) => {
-      return sc1.itemType.localeCompare(sc2.itemType) ||
-             sc1.name    .localeCompare(sc2.name)   ||
-             sc1.desc    .localeCompare(sc2.desc);
-    });
-  }
-
-  return nextState;
-}
+  ), []); // initialState
 
 
 //***

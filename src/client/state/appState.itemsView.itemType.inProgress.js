@@ -1,8 +1,6 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
 // ***
 // *** appState.itemsView.itemType.inProgress reducer (function wrapper)
@@ -13,17 +11,13 @@ import ReductionHandler from '../util/ReductionHandler';
 
 export default function inProgress(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.inProgress`, {
+  const log = new Log(`appState.itemsView.${_itemType}.inProgress`);
 
-    [AT.itemsView.retrieve]          (inProgress, action) { return addIn(inProgress, +1); },
-    [AT.itemsView.retrieve.complete] (inProgress, action) { return addIn(inProgress, -1); },
-    [AT.itemsView.retrieve.fail]     (inProgress, action) { return addIn(inProgress, -1); },
-    
-  });
-  
-  return function inProgress(inProgress=0, action) {
-    return reductionHandler.reduce(inProgress, action);
-  }
+  return reducerHash.withLogging(log, {
+    [AT.itemsView.retrieve]:          (inProgress, action) => addIn(inProgress, +1),
+    [AT.itemsView.retrieve.complete]: (inProgress, action) => addIn(inProgress, -1),
+    [AT.itemsView.retrieve.fail]:     (inProgress, action) => addIn(inProgress, -1),
+  }, 0); // initialState
 
 }
 

@@ -1,8 +1,6 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
 // ***
 // *** appState.itemsView.itemType.selCrit reducer (function wrapper)
@@ -13,7 +11,9 @@ import ReductionHandler from '../util/ReductionHandler';
 
 export default function selCrit(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.selCrit`, {
+  const log = new Log(`appState.itemsView.${_itemType}.selCrit`);
+
+  return reducerHash.withLogging(log, {
 
     [AT.itemsView.retrieve.complete](selCrit, action) {
       return [
@@ -31,20 +31,15 @@ export default function selCrit(_itemType) {
         ];
       }
       // no-sync when our view is not impacted by selCrit deletion
-      // ?? test ... with enhacement to ReductionHandler, we can OMIT THIS
       else {
         return [
           selCrit,
-          ()=>'no change to selCrit'
+          ()=>'no change to selCrit because our view is NOT based on deleted selCrit'
         ];
       }
     },
-    
-  });
-  
-  return function selCrit(selCrit=null, action) {
-    return reductionHandler.reduce(selCrit, action);
-  }
+
+  }, null); // initialState
 
 }
 

@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.selCrit.name');
 
-
-// ***
-// *** appState.editSelCrit.selCrit.name reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.name', {
-
-  [AT.selCrit.edit.change.name](name, action) {
-    return [
-      action.name,
-      ()=>`set name from action.name: ${action.name}`
-    ];
-  },
-
-});
-
-export default function name(name='', action) {
-  return reductionHandler.reduce(name, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit.change.name]: (name, action) => [action.name, ()=>`set name from action.name: ${action.name}`],
+}, ''); // initialState
