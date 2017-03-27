@@ -11,9 +11,9 @@ AstxReduxUtil.reducerHash.withLogging = (log, ...reducerHashArgs) => {
 
   // validate the supplied log parameter
   assert(log.reducerProbe,
-         `AstxReduxUtil.reducerHash.withLogging() requires a log parameter (that contains a log.reducerProbe() method.`);
+         'AstxReduxUtil.reducerHash.withLogging() requires a log parameter with a log.reducerProbe() method.');
 
-  // invoke the original reducerHash() ... an HOF: retaining it's reducerFn
+  // invoke the original reducerHash()
   const reducerFn = AstxReduxUtil.reducerHash(...reducerHashArgs);
 
   // expose actionHandlers ... used in additional logging characteristics
@@ -34,8 +34,8 @@ AstxReduxUtil.reducerHash.withLogging = (log, ...reducerHashArgs) => {
     const handlerInvolved = actionHandlers[action.type] ? true : false;
     const [nextState, logMsgFn] = handlerInvolved
                                    ? reducerResult
-                                   : [reducerResult, null]; // pass-throughs return the same state (i.e. NOT wrapped in array)
-
+                                   : [reducerResult, null]; // pass-throughs return the same state
+                                                            // (i.e. NOT wrapped in array)
     // emit our standardized reducer-based logging probe
     log.reducerProbe(action, state!==nextState, logMsgFn);
 
@@ -99,7 +99,5 @@ Log.prototype.reducerProbe = function(action, stateChanged, reducerMsgFn) {
     // ex: STATE CHANGED: appState.editSelCrit.extra.fieldOptions,  Action: 'selCrit.edit',  Reducer Msg: set fieldOptions from action
     return `${stateChangedMsg}: ${this.filterName},  Action: '${action.type}'${reducerMsg}`;
   });
-
-
 
 };
