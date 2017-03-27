@@ -1,30 +1,21 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.selCrit.fields');
 
-
-// ***
-// *** appState.editSelCrit.selCrit.fields reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.fields', {
+export default reducerHash.withLogging(log, {
 
   [AT.selCrit.edit.change.fields](fields, action) {
     const selectedFieldOptions = action.selectedFieldOptions;
 
     // sync selCrit.fields from selectedFieldOptions
     const newFields = selectedFieldOptions===null || selectedFieldOptions.length===0
-                        ? null
-                        : selectedFieldOptions.map( (fieldOption) => fieldOption.value );
+                    ? null
+                    : selectedFieldOptions.map( (fieldOption) => fieldOption.value );
     return [
       newFields,
       ()=>`convert selectedFieldOptions to selCrit.fields: ${FMT(newFields)}`
     ];
   },
-
-});
-
-export default function fields(fields=null, action) {
-  return reductionHandler.reduce(fields, action);
-}
+}, null); // initialState

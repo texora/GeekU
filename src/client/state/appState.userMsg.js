@@ -1,14 +1,10 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.userMsg');
 
-
-// ***
-// *** appState.userMsg reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.userMsg', {
+export default reducerHash.withLogging(log, {
 
   [AT.userMsg.display](userMsg, action) {
     return [
@@ -19,15 +15,11 @@ const reductionHandler = new ReductionHandler('appState.userMsg', {
 
   [AT.userMsg.close](userMsg, action) {
     return userMsg.length === 0 
-             ? userMsg
-             : [
-                 [...userMsg.slice(1)], // remove first element (of queue)
-                 ()=>`removing current msg: '${userMsg[0].msg}'`
-               ];
+         ? userMsg
+         : [
+           [...userMsg.slice(1)], // remove first element (of queue)
+           ()=>`removing current msg: '${userMsg[0].msg}'`
+         ];
   },
 
-});
-
-export default function userMsg(userMsg=[], action) {
-  return reductionHandler.reduce(userMsg, action);
-}
+}, []); // initialState

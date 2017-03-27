@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.isNew');
 
-
-// ***
-// *** appState.editSelCrit.extra.isNew reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.isNew', {
-
-  [AT.selCrit.edit](isNew, action) {
-    return [
-      action.isNew,
-      ()=>'set isNew from action'
-    ];
-  },
-
-});
-
-export default function isNew(isNew=false, action) {
-  return reductionHandler.reduce(isNew, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (isNew, action) => [action.isNew, ()=>'set isNew from action'],
+}, false); // initialState

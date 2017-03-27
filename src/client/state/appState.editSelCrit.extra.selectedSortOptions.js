@@ -1,15 +1,11 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import itemTypes      from '../../shared/domain/itemTypes';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-import itemTypes        from '../../shared/domain/itemTypes';
+const log = new Log('appState.editSelCrit.extra.selectedSortOptions');
 
-
-// ***
-// *** appState.editSelCrit.extra.selectedSortOptions reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.selectedSortOptions', {
+export default reducerHash.withLogging(log, {
 
   [AT.selCrit.edit](selectedSortOptions, action) {
 
@@ -39,9 +35,4 @@ const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.select
       ()=>`set selectedSortOptions from action.selectedSortOptions: ${FMT(action.selectedSortOptions)}`
     ];
   },
-
-});
-
-export default function selectedSortOptions(selectedSortOptions=[], action) {
-  return reductionHandler.reduce(selectedSortOptions, action);
-}
+}, []); // initialState

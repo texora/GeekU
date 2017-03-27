@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.meta');
 
-
-// ***
-// *** appState.editSelCrit.extra.meta reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.meta', {
-
-  [AT.selCrit.edit](meta, action) {
-    return [
-      action.meta,
-      ()=>'set meta from action'
-    ];
-  },
-
-});
-
-export default function meta(meta={}, action) {
-  return reductionHandler.reduce(meta, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (meta, action) => [action.meta, ()=>'set meta from action'],
+}, {}); // initialState

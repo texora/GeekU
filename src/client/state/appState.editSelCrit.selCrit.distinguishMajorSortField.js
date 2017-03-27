@@ -1,24 +1,12 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.selCrit.distinguishMajorSortField');
 
-
-// ***
-// *** appState.editSelCrit.selCrit.distinguishMajorSortField reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.selCrit.distinguishMajorSortField', {
-
-  [AT.selCrit.edit.change.distinguishMajorSortField](distinguishMajorSortField, action) {
-    return [
-      action.value,
-      ()=>`set name from action.value: ${action.value}`
-    ];
-  },
-
-});
-
-export default function distinguishMajorSortField(distinguishMajorSortField=null, action) {
-  return reductionHandler.reduce(distinguishMajorSortField, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit.change.distinguishMajorSortField]: (distinguishMajorSortField, action) => [
+    action.value,
+    ()=>`set name from action.value: ${action.value}`
+  ],
+}, null); // initialState

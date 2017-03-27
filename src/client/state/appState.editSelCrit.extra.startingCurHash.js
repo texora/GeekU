@@ -1,24 +1,10 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.startingCurHash');
 
-
-// ***
-// *** appState.editSelCrit.extra.startingCurHash reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.startingCurHash', {
-
-  [AT.selCrit.edit](startingCurHash, action) {
-    return [
-      action.selCrit.curHash,
-      ()=>'set startingCurHash from action.selCrit.curHash'
-    ];
-  },
-
-});
-
-export default function startingCurHash(startingCurHash=null, action) {
-  return reductionHandler.reduce(startingCurHash, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (startingCurHash, action) => [action.selCrit.curHash,
+                                                   ()=>'set startingCurHash from action.selCrit.curHash'],
+}, null); // initialState

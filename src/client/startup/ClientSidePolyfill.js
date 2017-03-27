@@ -1,6 +1,7 @@
 'use strict';
 
-import '../../shared/util/polyfill'; // our standarad polyfill (for both client/server)
+import '../../shared/util/polyfill';       // our standarad polyfill (for both client/server)
+import './astx-redux-util_loggerPolyfill'; // polyfill the astx-redux-util library .withLogging() extensions
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 

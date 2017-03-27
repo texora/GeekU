@@ -1,27 +1,13 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.itemsView.activeView');
 
-
-// ***
-// *** appState.itemsView.activeView reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.itemsView.activeView', {
-
-  [AT.itemsView.activate](activeView, action) {
-    return [
-      action.itemType,
-      ()=>`set activeView to action.itemType: '${action.itemType}'`
-    ];
-  },
-
-});
-
-export default function activeView(activeView='', action) {
-  return reductionHandler.reduce(activeView, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.itemsView.activate]: (activeView, action) => [action.itemType,
+                                                    ()=>`set activeView to action.itemType: '${action.itemType}'`],
+}, ''); // initialState
 
 
 //***

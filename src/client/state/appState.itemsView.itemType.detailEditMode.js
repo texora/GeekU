@@ -1,8 +1,6 @@
-'use strict'
-
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
-
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
 // ***
 // *** appState.itemsView.itemType.detailEditMode reducer (function wrapper)
@@ -13,30 +11,23 @@ import ReductionHandler from '../util/ReductionHandler';
 
 export default function detailEditMode(_itemType) {
 
-  const reductionHandler = new ReductionHandler(`appState.itemsView.${_itemType}.detailEditMode`, {
+  const log = new Log(`appState.itemsView.${_itemType}.detailEditMode`);
 
-    [AT.detailItem.retrieve.complete](detailEditMode, action) {
-      return [
-        action.editMode,
-        ()=>`set detailEditMode from action.editMode ... ${action.editMode}`
-      ];
-    },
+  return reducerHash.withLogging(log, {
 
-    [AT.detailItem.change.detailEditMode](detailEditMode, action) {
-      return [
-        true,
-        ()=>'set detailEditMode to true'
-      ];
-    },
-    
-  });
-  
-  return function detailEditMode(detailEditMode=false, action) {
-    return reductionHandler.reduce(detailEditMode, action);
-  }
+    [AT.detailItem.retrieve.complete]: (detailEditMode, action) => [
+      action.editMode,
+      ()=>`set detailEditMode from action.editMode ... ${action.editMode}`
+    ],
+
+    [AT.detailItem.change.detailEditMode]: (detailEditMode, action) => [
+      true,
+      ()=>'set detailEditMode to true'
+    ],
+
+  }, false); // initialState
 
 }
-
 
 //***
 //*** Selectors ...

@@ -1,24 +1,9 @@
-'use strict'
+import {AT}           from '../actions';
+import {reducerHash}  from 'astx-redux-util';
+import Log            from '../../shared/util/Log';
 
-import {AT}             from '../actions';
-import ReductionHandler from '../util/ReductionHandler';
+const log = new Log('appState.editSelCrit.extra.syncDirective');
 
-
-// ***
-// *** appState.editSelCrit.extra.syncDirective reducer
-// ***
-
-const reductionHandler = new ReductionHandler('appState.editSelCrit.extra.syncDirective', {
-
-  [AT.selCrit.edit](syncDirective, action) {
-    return [
-      action.syncDirective,
-      ()=>'set syncDirective from action'
-    ];
-  },
-
-});
-
-export default function syncDirective(syncDirective=false, action) {
-  return reductionHandler.reduce(syncDirective, action);
-}
+export default reducerHash.withLogging(log, {
+  [AT.selCrit.edit]: (syncDirective, action) => [action.syncDirective, ()=>'set syncDirective from action'],
+}, false); // initialState
