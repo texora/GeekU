@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import itemTypes      from '../../shared/domain/itemTypes';
 import Log            from '../../shared/util/Log';
@@ -17,14 +17,14 @@ export default function items(_itemType) {
 
   return reducerHash.withLogging(log, {
 
-    [AT.itemsView.retrieve.complete](items, action) {
+    [actions.itemsView.retrieve.complete](items, action) {
       return [
         action.items,
         ()=>`set items from action: ${action.items.length} ${itemTypes.meta[action.itemType].label.plural}`
       ];
     },
 
-    [AT.detailItem.retrieve.complete](items, action) {
+    [actions.detailItem.retrieve.complete](items, action) {
       const keyField = itemTypes.meta[action.itemType].keyField;
       return [
         items.map( (item) => {
@@ -34,7 +34,7 @@ export default function items(_itemType) {
       ];
     },
 
-    [AT.selCrit.delete.complete](items, action) {
+    [actions.selCrit.delete.complete](items, action) {
       // sync when our view has been impacted by selCrit deletion
       if (action.impactView===_itemType) {
         return [

@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import itemTypes      from '../../shared/domain/itemTypes';
 import Log            from '../../shared/util/Log';
@@ -16,14 +16,14 @@ export default function selectedItem(_itemType) {
 
   return reducerHash.withLogging(log, {
 
-    [AT.selectItem](selectedItem, action) {
+    [actions.selectItem](selectedItem, action) {
       return [
         action.item,
         ()=>`set selectedItem from action.item: ${FMT(action.item)}`
       ];
     },
     
-    [AT.itemsView.retrieve.complete] (selectedItem, action) {
+    [actions.itemsView.retrieve.complete] (selectedItem, action) {
       // TODO: we could keep the selected item, if it is contained in the new retrieval (action.items)
       return [
         null,
@@ -31,7 +31,7 @@ export default function selectedItem(_itemType) {
       ];
     },
     
-    [AT.detailItem.retrieve.complete](selectedItem, action) {
+    [actions.detailItem.retrieve.complete](selectedItem, action) {
       // NOTE: currently NO need to check if item retrieved is same (itemNum) as what is selected
       //       because activating the detailItem dialog also selects it
       return [
@@ -40,7 +40,7 @@ export default function selectedItem(_itemType) {
       ];
     },
     
-    [AT.selCrit.delete.complete](selectedItem, action) {
+    [actions.selCrit.delete.complete](selectedItem, action) {
       // sync when our view has been impacted by selCrit deletion
       if (action.impactView===_itemType) {
         return [

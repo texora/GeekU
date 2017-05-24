@@ -5,7 +5,7 @@ import * as ReactRedux    from 'react-redux';
 
 import {autobind}         from 'core-decorators';
 import assert             from 'assert';
-import {AC}               from '../../actions';
+import actions            from '../../actions';
 import selectors          from '../../state';
 
 import AddCircleOutlineIcon    from 'material-ui/lib/svg-icons/content/add-circle-outline';
@@ -65,7 +65,7 @@ export default class SelCritDetail extends React.Component {
    */
   handleFilterChange(newFilter) {
     const p = this.props;
-    p.dispatch( AC.selCrit.edit.change.filter(newFilter) );
+    p.dispatch( actions.selCrit.edit.change.filter(newFilter) );
   }
 
 

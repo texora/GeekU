@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -6,7 +6,7 @@ const log = new Log('appState.editSelCrit.selCrit.fields');
 
 export default reducerHash.withLogging(log, {
 
-  [AT.selCrit.edit.change.fields](fields, action) {
+  [actions.selCrit.edit.change.fields](fields, action) {
     const selectedFieldOptions = action.selectedFieldOptions;
 
     // sync selCrit.fields from selectedFieldOptions

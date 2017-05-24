@@ -3,7 +3,7 @@
 import React              from 'react';
 import * as ReactRedux    from 'react-redux';
 
-import {AC}               from '../../actions';
+import actions            from '../../actions';
 import selectors          from '../../state';
 import SelCrit            from '../../../shared/domain/SelCrit';
 import itemTypes          from '../../../shared/domain/itemTypes';
@@ -45,28 +45,28 @@ import SelCritDetail  from './SelCritDetail'
   (dispatch, ownProps) => { // mapDispatchToProps
     return {
       handleEditUse() {
-        dispatch( AC.selCrit.edit.use() );
+        dispatch( actions.selCrit.edit.use() );
       },
       handleEditSave() {
-        dispatch( AC.selCrit.edit.save() );
+        dispatch( actions.selCrit.edit.save() );
       },
       handleEditClose() {
-        dispatch( AC.selCrit.edit.close() );
+        dispatch( actions.selCrit.edit.close() );
       },
       handleNameChange(event) {
-        dispatch( AC.selCrit.edit.change.name(event.target.value) );
+        dispatch( actions.selCrit.edit.change.name(event.target.value) );
       },
       handleDescChange(event) {
-        dispatch( AC.selCrit.edit.change.desc(event.target.value) );
+        dispatch( actions.selCrit.edit.change.desc(event.target.value) );
       },
       handleFieldsChange(selectedFieldOptions) { // selectedFieldOptions: Option[ {value, label}, ...]
-        dispatch( AC.selCrit.edit.change.fields(selectedFieldOptions) );
+        dispatch( actions.selCrit.edit.change.fields(selectedFieldOptions) );
       },
       handleSortChange(selectedSortOptions) { // selectedSortOptions: Option[ {value, label, ascDec}, ...]
-        dispatch( AC.selCrit.edit.change.sort(selectedSortOptions) );
+        dispatch( actions.selCrit.edit.change.sort(selectedSortOptions) );
       },
       handleDistinguishMajorSortFieldChange(event, value) {
-        dispatch( AC.selCrit.edit.change.distinguishMajorSortField(value) );
+        dispatch( actions.selCrit.edit.change.distinguishMajorSortField(value) );
       },
     };
   },

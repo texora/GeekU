@@ -15,7 +15,7 @@ import CoursesView        from './CoursesView';
 import StudentsView       from './StudentsView';
 import UserMsg            from './UserMsg';
 import Alert              from './Alert';
-import {AC}               from '../actions';
+import actions            from '../actions';
 import selectors          from '../state';
 import LeftNav            from './LeftNav';
 import EditSelCrit        from './EditSelCrit';
@@ -53,7 +53,7 @@ export default class GeekUApp extends React.Component {
 
   activateView(itemType) {
     const p = this.props;
-    p.dispatch( AC.itemsView.activate(itemType) );
+    p.dispatch( actions.itemsView.activate(itemType) );
   }
 
   tempAlert() {
@@ -62,8 +62,8 @@ export default class GeekUApp extends React.Component {
       title: 'Test Alert 1',
       msg:   'This is a test of our Alert Dialog!',
       actions: [  
-        {txt: 'Option 1',  action: () => p.dispatch( AC.userMsg.display('User chose Option 1') ) },
-        {txt: 'Option 2',  action: () => p.dispatch( AC.userMsg.display('User chose Option 2') ) },
+        {txt: 'Option 1',  action: () => p.dispatch( actions.userMsg.display('User chose Option 1') ) },
+        {txt: 'Option 2',  action: () => p.dispatch( actions.userMsg.display('User chose Option 2') ) },
         {txt: 'Alert A', action: () => Alert.display(directiveA) },
         {txt: 'Cancel' },
       ]
@@ -72,8 +72,8 @@ export default class GeekUApp extends React.Component {
       title: 'Test Alert A',
       msg:   'This is a test of our Alert Dialog!',
       actions: [  
-        {txt: 'Option A', action: () => p.dispatch( AC.userMsg.display('User chose Option A') ) },
-        {txt: 'Option B', action: () => p.dispatch( AC.userMsg.display('User chose Option B') ) },
+        {txt: 'Option A', action: () => p.dispatch( actions.userMsg.display('User chose Option A') ) },
+        {txt: 'Option B', action: () => p.dispatch( actions.userMsg.display('User chose Option B') ) },
         {txt: 'Cancel' },
       ]
     };
@@ -81,8 +81,8 @@ export default class GeekUApp extends React.Component {
       title: 'Test Alert X',
       msg:   'This is a test of our Alert Dialog!',
       actions: [  
-        {txt: 'Option X', action: () => p.dispatch( AC.userMsg.display('User chose Option X') ) },
-        {txt: 'Option Y', action: () => p.dispatch( AC.userMsg.display('User chose Option Y') ) },
+        {txt: 'Option X', action: () => p.dispatch( actions.userMsg.display('User chose Option X') ) },
+        {txt: 'Option Y', action: () => p.dispatch( actions.userMsg.display('User chose Option Y') ) },
         {txt: 'Cancel' },
       ]
     };
@@ -93,18 +93,18 @@ export default class GeekUApp extends React.Component {
 
   tempSampleMsg() {
     const p = this.props;
-    p.dispatch( AC.userMsg.display(`Sample Message on ${new Date()}`) );
+    p.dispatch( actions.userMsg.display(`Sample Message on ${new Date()}`) );
   }
 
   tempSampleMultiMsg() {
     const p = this.props;
-    p.dispatch( AC.userMsg.display(`Sample Multi-Message 1`) );
-    p.dispatch( AC.userMsg.display(`Sample Multi-Message 2`) );
+    p.dispatch( actions.userMsg.display(`Sample Multi-Message 1`) );
+    p.dispatch( actions.userMsg.display(`Sample Multi-Message 2`) );
   }
 
   tempSampleMsgWithUserAction() {
     const p = this.props;
-    p.dispatch( AC.userMsg.display('Msg with User Action!', 
+    p.dispatch( actions.userMsg.display('Msg with User Action!', 
                                    {
                                      txt:      'details',
                                      callback: () => alert('here are the details: bla bla bla')

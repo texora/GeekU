@@ -1,0 +1,64 @@
+import {generateActions} from 'action-u';
+import assert            from 'assert';
+
+export default generateActions.root({
+
+  /**
+   * Actions rooted in 'userMsg' (User Notifications).
+   * @namespace 'userMsg'
+   */
+  userMsg: {
+
+    /**
+     * @function 'userMsg.display'
+     *
+     * @description
+     * Display a user message via Material UI Snackbar.
+     *
+     * NOTE: An alternate technique to activate a user message is through
+     *       the static UserMsg.display(msg [, userAction]) method.  This
+     *       may be preferred when you have no access to the dispatcher.
+     *
+     * @intent #byUser, #byLogic, #reducer
+     *
+     * @param {string} msg the message to display.
+     *
+     * @param {Obj} userAction an optional structure defining a user click action:
+     *                {
+     *                  txt:      'your-button-label-here',
+     *                  callback: function(event) {
+     *                    code-executed-on-button-click
+     *                  }
+     *                }
+     */
+    display: {
+               actionMeta: {
+                 traits: ['msg', 'userAction'],
+                 ratify(msg, userAction) {
+                   const errPrefix = () => {
+                     const userActionStr = userAction ? `, ${JSON.stringify(userAction)}` : '';
+                     return `ERROR: actions.userMsg.display('${msg}'${userActionStr}) ...`;
+                   };
+                   assert(typeof msg === 'string', `${errPrefix()} requires a msg string param`);
+                   if (userAction) {
+                     assert(typeof userAction.txt      === 'string',   `${errPrefix()} userAction param requires a .txt string property`);
+                     assert(typeof userAction.callback === 'function', `${errPrefix()} userAction param requires a .callback function property`);
+                   }
+                   return [msg, userAction];
+                 }
+               }
+    },
+
+    /**
+     * @function 'userMsg.close'
+     *
+     * @description
+     * Close the user message dialog.
+     *
+     * @intent #byLogic, #reducer
+     */
+    close: {
+             actionMeta: {}
+    }
+  }
+});

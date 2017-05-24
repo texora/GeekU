@@ -8,7 +8,6 @@ import {autobind}         from 'core-decorators';
 import itemTypes          from '../../shared/domain/itemTypes';
 const  myItemType         = itemTypes.student;
 
-import {AC}               from '../actions';
 import selectors          from '../state';
 
 import FontIcon           from 'material-ui/lib/font-icon';

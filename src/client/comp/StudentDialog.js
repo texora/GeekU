@@ -7,7 +7,7 @@ import {autobind}         from 'core-decorators';
 
 import moment             from 'moment';
 
-import {AC}               from '../actions';
+import actions            from '../actions';
 import selectors          from '../state';
 
 import subject            from '../../shared/domain/subject';
@@ -88,24 +88,24 @@ export default class StudentDialog extends React.Component {
   // unconditionally close self
   close() {
     const p = this.props;
-    p.dispatch( AC.detailItem.close(myItemType) );
+    p.dispatch( actions.detailItem.close(myItemType) );
   }
 
   changeEditMode() {
     const p = this.props;
-    p.dispatch( AC.detailItem.change.detailEditMode(myItemType) );
+    p.dispatch( actions.detailItem.change.detailEditMode(myItemType) );
   }
 
   saveEdit() {
     const p = this.props;
-    p.dispatch( AC.detailItem.close(myItemType) );
-    p.dispatch( AC.userMsg.display('TODO: Save Complete') );
+    p.dispatch( actions.detailItem.close(myItemType) );
+    p.dispatch( actions.userMsg.display('TODO: Save Complete') );
   }
 
   cancelEdit() {
     const p = this.props;
-    p.dispatch( AC.detailItem.close(myItemType) );
-    p.dispatch( AC.userMsg.display('Edit Canceled') );
+    p.dispatch( actions.detailItem.close(myItemType) );
+    p.dispatch( actions.userMsg.display('Edit Canceled') );
   }
 
   render() {

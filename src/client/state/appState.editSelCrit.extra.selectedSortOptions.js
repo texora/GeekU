@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import itemTypes      from '../../shared/domain/itemTypes';
 import Log            from '../../shared/util/Log';
@@ -7,7 +7,7 @@ const log = new Log('appState.editSelCrit.extra.selectedSortOptions');
 
 export default reducerHash.withLogging(log, {
 
-  [AT.selCrit.edit](selectedSortOptions, action) {
+  [actions.selCrit.edit](selectedSortOptions, action) {
 
     // convert selCrit.sort to selectedSortOptions
     const meta                   = itemTypes.meta[action.selCrit.itemType];
@@ -29,7 +29,7 @@ export default reducerHash.withLogging(log, {
     ];
   },
 
-  [AT.selCrit.edit.change.sort](selectedSortOptions, action) {
+  [actions.selCrit.edit.change.sort](selectedSortOptions, action) {
     return [
       action.selectedSortOptions,
       ()=>`set selectedSortOptions from action.selectedSortOptions: ${FMT(action.selectedSortOptions)}`

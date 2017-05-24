@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -14,9 +14,9 @@ export default function inProgress(_itemType) {
   const log = new Log(`appState.itemsView.${_itemType}.inProgress`);
 
   return reducerHash.withLogging(log, {
-    [AT.itemsView.retrieve]:          (inProgress, action) => addIn(inProgress, +1),
-    [AT.itemsView.retrieve.complete]: (inProgress, action) => addIn(inProgress, -1),
-    [AT.itemsView.retrieve.fail]:     (inProgress, action) => addIn(inProgress, -1),
+    [actions.itemsView.retrieve]:          (inProgress, action) => addIn(inProgress, +1),
+    [actions.itemsView.retrieve.complete]: (inProgress, action) => addIn(inProgress, -1),
+    [actions.itemsView.retrieve.fail]:     (inProgress, action) => addIn(inProgress, -1),
   }, 0); // initialState
 
 }

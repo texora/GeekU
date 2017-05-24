@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -15,12 +15,12 @@ export default function detailEditMode(_itemType) {
 
   return reducerHash.withLogging(log, {
 
-    [AT.detailItem.retrieve.complete]: (detailEditMode, action) => [
+    [actions.detailItem.retrieve.complete]: (detailEditMode, action) => [
       action.editMode,
       ()=>`set detailEditMode from action.editMode ... ${action.editMode}`
     ],
 
-    [AT.detailItem.change.detailEditMode]: (detailEditMode, action) => [
+    [actions.detailItem.change.detailEditMode]: (detailEditMode, action) => [
       true,
       ()=>'set detailEditMode to true'
     ],

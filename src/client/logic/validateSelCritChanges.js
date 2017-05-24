@@ -1,7 +1,7 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}   from '../actions';
+import actions    from '../actions';
 import selectors  from '../state';
 import SelCrit    from '../../shared/domain/SelCrit';
 
@@ -11,8 +11,8 @@ import SelCrit    from '../../shared/domain/SelCrit';
  */
 export default createNamedLogic('validateSelCritChanges', {
 
-  type: [AT.selCrit.edit.use.valueOf(),
-         AT.selCrit.edit.save.valueOf()],
+  type: [String(actions.selCrit.edit.use),
+         String(actions.selCrit.edit.save)],
 
   validate({getState, action, log}, allow, reject) {
 
@@ -23,7 +23,7 @@ export default createNamedLogic('validateSelCritChanges', {
     const invalidMsg = SelCrit.validate(selCrit);
     if (invalidMsg) {
       log.debug(()=> `rejecting action: ${FMT(action.type)} due to validation errors: ${invalidMsg}`);
-      reject( AC.userMsg.display('Please resolve the highlighted validation errors.') );
+      reject( actions.userMsg.display('Please resolve the highlighted validation errors.') );
     }
     else {
       log.debug(()=> `validation passed - selCrit: ${selCrit.name} is valid`);

@@ -1,7 +1,7 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}   from '../actions';
+import actions    from '../actions';
 import selectors  from '../state';
 import SelCrit    from '../../shared/domain/SelCrit';
 
@@ -12,7 +12,7 @@ import SelCrit    from '../../shared/domain/SelCrit';
  */
 export default createNamedLogic('syncViewOnSelCritChanges', {
 
-  type: AT.selCrit.changed.valueOf(),
+  type: String(actions.selCrit.changed),
 
   process({getState, action, log}, dispatch) {
 
@@ -28,19 +28,19 @@ export default createNamedLogic('syncViewOnSelCritChanges', {
     }
     // ... explicit sync and activate
     else if (syncDirective === SelCrit.SyncDirective.activate) {
-      log.debug(()=>`syncing ${selCrit.itemType} view (action: AT.itemsView) because of explicit syncDirective: ${syncDirective}`);
-      dispatch( AC.itemsView(selCrit.itemType, selCrit, 'activate') );
+      log.debug(()=>`syncing ${selCrit.itemType} view (action: actions.itemsView) because of explicit syncDirective: ${syncDirective}`);
+      dispatch( actions.itemsView(selCrit.itemType, selCrit, 'activate') );
     }
     // ... explicit sync with NO activate
     else if (syncDirective === SelCrit.SyncDirective.reflect) {
-      log.debug(()=>`syncing ${selCrit.itemType} view (action: AT.itemsView.retrieve) because of explicit syncDirective: ${syncDirective}`);
-      dispatch( AC.itemsView.retrieve(selCrit.itemType, selCrit) );
+      log.debug(()=>`syncing ${selCrit.itemType} view (action: actions.itemsView.retrieve) because of explicit syncDirective: ${syncDirective}`);
+      dispatch( actions.itemsView.retrieve(selCrit.itemType, selCrit) );
     }
     // OTHERWISE: conditionally refresh view when it is based on this changed selCrit
     //            NOTE: only remaining SelCrit.SyncDirective option === default
     else if (selectors.isSelCritActiveInView(appState, selCrit)) {
-      log.debug(()=>`syncing ${selCrit.itemType} view (action: AT.itemsView.retrieve) because it is based on a selCrit: ${selCrit.name} that has changed (syncDirective: ${syncDirective})`);
-      dispatch( AC.itemsView.retrieve(selCrit.itemType, selCrit) );
+      log.debug(()=>`syncing ${selCrit.itemType} view (action: actions.itemsView.retrieve) because it is based on a selCrit: ${selCrit.name} that has changed (syncDirective: ${syncDirective})`);
+      dispatch( actions.itemsView.retrieve(selCrit.itemType, selCrit) );
     }
     // ... no need for view sync
     else {

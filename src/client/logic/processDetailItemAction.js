@@ -1,15 +1,15 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}  from '../actions';
+import actions   from '../actions';
 
 
 /**
- * Process (i.e. implement) the AT.detailItem action.
+ * Process (i.e. implement) the actions.detailItem action.
  */
 export default createNamedLogic('processDetailItemAction', {
 
-  type: AT.detailItem.valueOf(),
+  type: String(actions.detailItem),
 
   process({getState, action, log, api}, dispatch) {
 
@@ -21,12 +21,12 @@ export default createNamedLogic('processDetailItemAction', {
 
     api.items.retrieveItemDetail(itemType, itemNum, log)
        .then( item => {
-         dispatch( AC.detailItem.retrieve.complete(itemType, item, editMode) );
+         dispatch( actions.detailItem.retrieve.complete(itemType, item, editMode) );
        })
        .catch( err => {
          // mark async operation FAILED (typically spinner)
          // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-         dispatch( AC.detailItem.retrieve.fail(itemType, itemNum, editMode, err) );
+         dispatch( actions.detailItem.retrieve.fail(itemType, itemNum, editMode, err) );
        });
   },
 

@@ -5,7 +5,7 @@ import '../../startup/Log4GeekU'; // configure logs for GeekUApp (NOTE: include 
 import expect                  from 'expect';
 import processDetailItemAction from '../processDetailItemAction';
 import itemTypes               from '../../../shared/domain/itemTypes';
-import {AC}                    from '../../../client/actions';
+import actions                 from '../../../client/actions';
 
 
 describe('logic processDetailItemAction', () => {
@@ -16,7 +16,7 @@ describe('logic processDetailItemAction', () => {
     const itemType = itemTypes.student;
     const itemNum  = 'itemNum';
     const editMode = true;
-    const action   = AC.detailItem(itemType, itemNum, editMode);
+    const action   = actions.detailItem(itemType, itemNum, editMode);
     const testItem = { myTestItem: 123 };
 
     beforeEach( (asyncDone) => {
@@ -40,10 +40,10 @@ describe('logic processDetailItemAction', () => {
       processDetailItemAction.process( {action, api}, dispatch);
     });
 
-    it('dispatched action should be AT.detailItem.retrieve.complete with supplied action data', () => {
+    it('dispatched action should be actions.detailItem.retrieve.complete with supplied action data', () => {
       expect(dispatch.calls.length).toBe(1);
       const dispatchArgs   = dispatch.calls[0].arguments;
-      const expectedAction = AC.detailItem.retrieve.complete(itemType, testItem, editMode);
+      const expectedAction = actions.detailItem.retrieve.complete(itemType, testItem, editMode);
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 
@@ -57,7 +57,7 @@ describe('logic processDetailItemAction', () => {
     const itemType = itemTypes.student;
     const itemNum  = 'itemNum';
     const editMode = true;
-    const action   = AC.detailItem(itemType, itemNum, editMode);
+    const action   = actions.detailItem(itemType, itemNum, editMode);
     const testErr  = new Error('Simulated error in retrieval');
 
     beforeEach( (asyncDone) => {
@@ -81,10 +81,10 @@ describe('logic processDetailItemAction', () => {
       processDetailItemAction.process( {action, api}, dispatch);
     });
 
-    it('dispatched action should be AT.detailItem.retrieve.fail with supplied action data', () => {
+    it('dispatched action should be actions.detailItem.retrieve.fail with supplied action data', () => {
       expect(dispatch.calls.length).toBe(1);
       const dispatchArgs   = dispatch.calls[0].arguments;
-      const expectedAction = AC.detailItem.retrieve.fail(itemType, itemNum, editMode, testErr);
+      const expectedAction = actions.detailItem.retrieve.fail(itemType, itemNum, editMode, testErr);
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 

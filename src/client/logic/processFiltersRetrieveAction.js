@@ -1,15 +1,15 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}  from '../actions';
+import actions   from '../actions';
 
 
 /**
- * Process (i.e. implement) the AT.filters.retrieve action.
+ * Process (i.e. implement) the actions.filters.retrieve action.
  */
 export default createNamedLogic('processFiltersRetrieveAction', {
 
-  type: AT.filters.retrieve.valueOf(),
+  type: String(actions.filters.retrieve),
 
   process({getState, action, log, api}, dispatch) {
 
@@ -17,12 +17,12 @@ export default createNamedLogic('processFiltersRetrieveAction', {
 
     api.filters.retrieveFilters(undefined, log)
        .then( filters => {
-         dispatch( AC.filters.retrieve.complete(filters) );
+         dispatch( actions.filters.retrieve.complete(filters) );
        })
        .catch( err => {
          // mark async operation FAILED (typically spinner)
          // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-         dispatch( AC.filters.retrieve.fail(err) );
+         dispatch( actions.filters.retrieve.fail(err) );
        });
   },
 

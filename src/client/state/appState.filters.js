@@ -1,5 +1,5 @@
 import * as AstxRedux  from 'astx-redux-util';
-import {AT}            from '../actions';
+import actions         from '../actions';
 import Log             from '../../shared/util/Log';
 
 const log = new Log('appState.filters');
@@ -9,14 +9,14 @@ export default AstxRedux.joinReducers(
   // FIRST: maintain our filters
   AstxRedux.reducerHash.withLogging(log, {
 
-    [AT.filters.retrieve.complete](filters, action) {
+    [actions.filters.retrieve.complete](filters, action) {
       return [
         action.filters,
         ()=>`set filters from action.filters: '${action.filters}'`
       ];
     },
 
-    [AT.selCrit.changed](filters, action) {
+    [actions.selCrit.changed](filters, action) {
       const changedSelCrit = action.selCrit;
       let   isNewEntry = true;
       const newFilters = filters.map( (selCrit) => {
@@ -37,7 +37,7 @@ export default AstxRedux.joinReducers(
       ];
     },
 
-    [AT.selCrit.delete.complete](filters, action) {
+    [actions.selCrit.delete.complete](filters, action) {
       const prunedFilters = filters.prune( selCrit => selCrit.key===action.selCrit.key );
       return [
         prunedFilters,

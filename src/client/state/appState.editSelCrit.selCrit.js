@@ -1,6 +1,6 @@
 import * as Redux       from 'redux';
 import * as AstxRedux   from 'astx-redux-util';
-import {AT}             from '../actions';
+import actions          from '../actions';
 import SelCrit          from '../../shared/domain/SelCrit';
 import Log              from '../../shared/util/Log';
 
@@ -18,8 +18,8 @@ const log4curHash = new Log('appState.editSelCrit.selCrit.curHash');
 export default AstxRedux.joinReducers(
   // FIRST: determine content shape (i.e. {} or null)
   AstxRedux.reducerHash.withLogging(log, {
-    [AT.selCrit.edit]:       (selCrit, action) => [action.selCrit, ()=>`set selCrit from action.selCrit: ${FMT(action.selCrit)}`],
-    [AT.selCrit.edit.close]: (selCrit, action) => [null,           ()=>'set selCrit to null'],
+    [actions.selCrit.edit]:       (selCrit, action) => [action.selCrit, ()=>`set selCrit from action.selCrit: ${FMT(action.selCrit)}`],
+    [actions.selCrit.edit.close]: (selCrit, action) => [null,           ()=>'set selCrit to null'],
   }),
   AstxRedux.conditionalReducer(
     // NEXT: maintain individual selCrit fields

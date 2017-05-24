@@ -5,7 +5,7 @@ import * as ReactRedux    from 'react-redux';
 import {autobind}         from 'core-decorators';
 import Snackbar           from 'material-ui/lib/snackbar';
 import assert             from 'assert';
-import {AC}               from '../actions'
+import actions            from '../actions'
 import selectors          from '../state'
 
 
@@ -50,7 +50,7 @@ export default class UserMsg extends React.Component {
    * Display a user message programmatically.
    *
    * NOTE: An alternate technique to activate a user message is through
-   *       the Action Creator AC.userMsg.display(msg [,userAction]).  This 
+   *       the Action Creator actions.userMsg.display(msg [,userAction]).  This 
    *       may be preferred when you have access to the dispatcher.
    *
    * @param {string} msg the message to display.
@@ -77,14 +77,14 @@ export default class UserMsg extends React.Component {
    */
   display(msg, userAction) {
     const p = this.props;
-    p.dispatch( AC.userMsg.display(msg, userAction) );
+    p.dispatch( actions.userMsg.display(msg, userAction) );
   }
 
 
   handleClose(reason) { // reason can be: 'timeout' or 'clickaway'
     const p = this.props;
     if (reason==='timeout')
-      p.dispatch( AC.userMsg.close() );
+      p.dispatch( actions.userMsg.close() );
   }
 
   render() {
