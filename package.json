@@ -78,6 +78,7 @@
     "webpack": "^1.12.14"
   },
   "dependencies": {
+    "action-u": "^0.1.0",
     "astx-redux-util": "^0.3.0",
     "body-parser": "^1.15.0",
     "cls-domains-promise": "^1.0.1",
