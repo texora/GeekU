@@ -2,8 +2,9 @@ import {generateActions} from 'action-u';
 import assert            from 'assert';
 
 /**
- * Actions rooted in 'filters' (i.e. selCrit objects).
- * @namespace 'filters'
+ * @constant {app-node} 'filters'
+ * @function
+ * @description Actions rooted in 'filters' (i.e. selCrit objects).
  */
 export default generateActions.root({
 
@@ -16,6 +17,12 @@ export default generateActions.root({
      * Retrieve filters ... a list of selCrit objects.
      *
      * @intent #byLogic, #reducer(spinner only)
+     *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
+     * @return {Action}
      */
     retrieve: {
                   actionMeta: {

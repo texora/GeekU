@@ -5,8 +5,9 @@ import itemTypes         from '../../shared/domain/itemTypes';
 
 
 /**
- * Actions rooted in 'itemsView' (Items in View).
- * @namespace 'itemsView'
+ * @constant {app-node} 'itemsView'
+ * @function
+ * @description Actions rooted in 'itemsView' (Items in View).
  */
 export default generateActions.root({
 
@@ -20,6 +21,10 @@ export default generateActions.root({
    *
    * @intent #byUser, #noReducer
    *
+   * **Note**: The **Action Type** is promoted through a string
+   * coercion of this action creator (it's toString() has been
+   * overloaded).
+   *
    * @param {string} itemType the itemType ('student'/'course').
    *
    * @param {any} retrieve the retrieval directive, one of:
@@ -30,6 +35,8 @@ export default generateActions.root({
    * @param {string} activate: an activate directive, one of:
    *   - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
    *   - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
+   * 
+   * @return {Action}
    */
   itemsView: {
                actionMeta: {
@@ -58,11 +65,17 @@ export default generateActions.root({
      *
      * @intent #byUser, #byLogic, #reducer(spinner only)
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {string} itemType the itemType ('student'/'course').
      *
      * @param {any} selCrit the selCrit driving the retrieval, one of:
      *   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
      *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+     * 
+     * @return {Action}
      */
     retrieve: {
                 actionMeta: {
@@ -85,6 +98,10 @@ export default generateActions.root({
        *
        * @intent #byLogic, #reducer
        *
+       * **Note**: The **Action Type** is promoted through a string
+       * coercion of this action creator (it's toString() has been
+       * overloaded).
+       *
        * @param {string} itemType the itemType ('student'/'course').
        *
        * @param {any} selCrit the selCrit driving the retrieval, one of:
@@ -92,6 +109,8 @@ export default generateActions.root({
        *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
        *
        * @param {Item[]} items the items retrieved.
+       * 
+       * @return {Action}
        */
       complete: {
                   actionMeta: {
@@ -107,6 +126,10 @@ export default generateActions.root({
        *
        * @intent #byLogic, #reducer(spinner only)
        *
+       * **Note**: The **Action Type** is promoted through a string
+       * coercion of this action creator (it's toString() has been
+       * overloaded).
+       *
        * @param {string} itemType the itemType ('student'/'course').
        *
        * @param {any} selCrit the selCrit driving the retrieval, one of:
@@ -114,6 +137,8 @@ export default generateActions.root({
        *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
        *
        * @param {Error} error the Error detailing the failure.
+       * 
+       * @return {Action}
        */
       fail: {
               actionMeta: {
@@ -131,7 +156,13 @@ export default generateActions.root({
      *
      * @intent #byUser, #byLogic, #reducer
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {string} itemType the itemType ('student'/'course').
+     * 
+     * @return {Action}
      */
     activate: {
                 actionMeta: {

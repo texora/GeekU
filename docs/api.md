@@ -1,33 +1,6 @@
 
 <br/><br/><br/>
 
-<a id="detailItem"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  detailItem : object</h5>
-Actions rooted in 'detailItem' (Item Detailed in visual dialog).
-
-
-<br/><br/><br/>
-
-<a id="filters"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  filters : object</h5>
-Actions rooted in 'filters' (i.e. selCrit objects).
-
-
-<br/><br/><br/>
-
-<a id="itemsView"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  itemsView : object</h5>
-Actions rooted in 'itemsView' (Items in View).
-
-
-<br/><br/><br/>
-
 <a id="selCrit"></a>
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
@@ -37,48 +10,12 @@ Actions rooted in 'selCrit' (Selection Criteria).
 
 <br/><br/><br/>
 
-<a id="selectItem"></a>
+<a id="itemsView"></a>
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  selectItem : object</h5>
-Actions rooted in 'selectItem' (the Selected Item).
+  itemsView() : app-node</h5>
+Actions rooted in 'itemsView' (Items in View).
 
-
-<br/><br/><br/>
-
-<a id="userMsg"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  userMsg : object</h5>
-Actions rooted in 'userMsg' (User Notifications).
-
-
-<br/><br/><br/>
-
-<a id="detailItem"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  detailItem(itemType, itemNum, editMode)</h5>
-Activate a dialog detailing (and/or editing) the supplied item.An up-to-date item image is retrieved prior to it's display.
-
-**Intent**: #byUser, #reducer(spinner only)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| itemType | string | the itemType ('student'/'course'). |
-| itemNum | string | the item number to detail (studentNum/courseNum). |
-| editMode | boolean | an indicator as to wheter the dialog starts out in read-only (false) or edit-mode (true). |
-
-
-<br/><br/><br/>
-
-<a id="filters_retrieve"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  filters.retrieve()</h5>
-Retrieve filters ... a list of selCrit objects.
-
-**Intent**: #byLogic, #reducer(spinner only)  
 
 <br/><br/><br/>
 
@@ -225,45 +162,3 @@ Delete the supplied selCrit, after obtaining a user confirmation.Any view that
 | --- | --- | --- |
 | selCrit | SelCrit | the selCrit to delete.  This can either be a local in-memory representation -or- on persisted in the DB. |
 
-
-<br/><br/><br/>
-
-<a id="selectItem"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  selectItem(itemType, item)</h5>
-Select an item within an itemsView.
-
-**Intent**: #byUser, #byLogic, #reducer  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| itemType | string | the itemType ('student'/'course'). |
-| item | any | the item to select (null for de-select) |
-
-
-<br/><br/><br/>
-
-<a id="userMsg_display"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  userMsg.display(msg, userAction)</h5>
-Display a user message via Material UI Snackbar.NOTE: An alternate technique to activate a user message is through      the static UserMsg.display(msg [, userAction]) method.  This      may be preferred when you have no access to the dispatcher.
-
-**Intent**: #byUser, #byLogic, #reducer  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | string | the message to display. |
-| userAction | Obj | an optional structure defining a user click action:                {                  txt:      'your-button-label-here',                  callback: function(event) {                    code-executed-on-button-click                  }                } |
-
-
-<br/><br/><br/>
-
-<a id="userMsg_close"></a>
-
-<h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  userMsg.close()</h5>
-Close the user message dialog.
-
-**Intent**: #byLogic, #reducer  

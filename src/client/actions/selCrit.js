@@ -3,8 +3,9 @@ import assert            from 'assert';
 import SelCrit           from '../../shared/domain/SelCrit';
 
 /**
- * Actions rooted in 'selCrit' (Selection Criteria).
- * @namespace 'selCrit'
+ * @constant {app-node} 'selCrit'
+ * @function
+ * @description Actions rooted in 'selCrit' (Selection Criteria).
  */
 export default generateActions.root({
 
@@ -18,6 +19,10 @@ export default generateActions.root({
      *
      * @intent #byUser, #reducer
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {SelCrit} selCrit the selCrit to edit.
      *
      * @param {boolean} isNew indicator as to whether the supplied selCrit
@@ -26,6 +31,8 @@ export default generateActions.root({
      * @param {SelCrit.SyncDirective} syncDirective a directive that indicates
      * how selCrit changes should be synced in selCrit-based views
      * ... DEFAULT: SelCrit.SyncDirective.default
+     * 
+     * @return {Action}
      */
     edit: {
             actionMeta: {
@@ -104,11 +111,17 @@ export default generateActions.root({
      *
      * @intent #byLogic, #reducer
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {SelCrit} selCrit the selCrit that has changed.
      *
      * @param {SelCrit.SyncDirective} syncDirective a directive that indicates
      * how selCrit changes should be synced in selCrit-based views.
      * ... DEFAULT: SelCrit.SyncDirective.default
+     * 
+     * @return {Action}
      */
     changed: {
                actionMeta: {
@@ -134,11 +147,17 @@ export default generateActions.root({
      *
      * @intent #byUser, #byLogic, #reducer(spinner only)
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {SelCrit} selCrit the selCrit to save.
      *
      * @param {SelCrit.SyncDirective} syncDirective a directive that indicates
      * how selCrit changes should be synced in selCrit-based views.
      * ... DEFAULT: SyncDirective.default
+     * 
+     * @return {Action}
      */
     save: {
             actionMeta: {
@@ -175,8 +194,14 @@ export default generateActions.root({
      *
      * @intent #byUser, #reducer(spinner only)
      *
+     * **Note**: The **Action Type** is promoted through a string
+     * coercion of this action creator (it's toString() has been
+     * overloaded).
+     *
      * @param {SelCrit} selCrit the selCrit to delete.  This can either be a local in-memory
      * representation -or- on persisted in the DB.
+     * 
+     * @return {Action}
      */
     delete: {
             actionMeta: {
