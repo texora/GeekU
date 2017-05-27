@@ -47,10 +47,11 @@ each action:
 #noReducer: of NO real interest to reducer (i.e. used to stimulate logic)
 ```
 
-As an example, the 'selCrit.edit.save' action is of no interest to
-reducers (#noReducer) because application logic monitoring this action
-will emit a more general action 'selCrit.changed' which provides a
-more central opportunity to maintain our state (#byLogic, #reducer).
+As an example, the [`selCrit.save`](apiActions.md#selCrit_save) action
+is of no interest to reducers (#noReducer) because application logic
+monitoring this action will emit a more general action
+'selCrit.changed' which provides a more central opportunity to
+maintain our state (#byLogic, #reducer).
 
 
 ## Top Level Action Sets
