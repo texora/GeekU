@@ -18,10 +18,6 @@ export default generateActions.root({
    *
    * @intent #byUser, #reducer(spinner only)
    *
-   * **Note**: The **Action Type** is promoted through a string
-   * coercion of this action creator (it's toString() has been
-   * overloaded).
-   *
    * @param {string} itemType the itemType ('student'/'course').
    * @param {string} itemNum the item number to detail (studentNum/courseNum).
    * @param {boolean} editMode an indicator as to wheter the dialog

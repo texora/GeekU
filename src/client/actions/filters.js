@@ -18,10 +18,6 @@ export default generateActions.root({
      *
      * @intent #byLogic, #reducer(spinner only)
      *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
-     *
      * @return {Action}
      */
     retrieve: {

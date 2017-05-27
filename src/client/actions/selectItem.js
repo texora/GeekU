@@ -16,10 +16,6 @@ export default generateActions.root({
    *
    * @intent #byUser, #byLogic, #reducer
    *
-   * **Note**: The **Action Type** is promoted through a string
-   * coercion of this action creator (it's toString() has been
-   * overloaded).
-   *
    * @param {string} itemType the itemType ('student'/'course').
    *
    * @param {any}    item the item to select (null for de-select)

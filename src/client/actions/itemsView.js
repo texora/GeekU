@@ -21,10 +21,6 @@ export default generateActions.root({
    *
    * @intent #byUser, #noReducer
    *
-   * **Note**: The **Action Type** is promoted through a string
-   * coercion of this action creator (it's toString() has been
-   * overloaded).
-   *
    * @param {string} itemType the itemType ('student'/'course').
    *
    * @param {any} retrieve the retrieval directive, one of:
@@ -65,10 +61,6 @@ export default generateActions.root({
      *
      * @intent #byUser, #byLogic, #reducer(spinner only)
      *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
-     *
      * @param {string} itemType the itemType ('student'/'course').
      *
      * @param {any} selCrit the selCrit driving the retrieval, one of:
@@ -98,10 +90,6 @@ export default generateActions.root({
        *
        * @intent #byLogic, #reducer
        *
-       * **Note**: The **Action Type** is promoted through a string
-       * coercion of this action creator (it's toString() has been
-       * overloaded).
-       *
        * @param {string} itemType the itemType ('student'/'course').
        *
        * @param {any} selCrit the selCrit driving the retrieval, one of:
@@ -125,10 +113,6 @@ export default generateActions.root({
        * Retrieval failed of items for the Items View.
        *
        * @intent #byLogic, #reducer(spinner only)
-       *
-       * **Note**: The **Action Type** is promoted through a string
-       * coercion of this action creator (it's toString() has been
-       * overloaded).
        *
        * @param {string} itemType the itemType ('student'/'course').
        *
@@ -155,10 +139,6 @@ export default generateActions.root({
      * Activate the Items View for the specified itemType.
      *
      * @intent #byUser, #byLogic, #reducer
-     *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
      *
      * @param {string} itemType the itemType ('student'/'course').
      * 

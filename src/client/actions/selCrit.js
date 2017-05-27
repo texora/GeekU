@@ -19,10 +19,6 @@ export default generateActions.root({
      *
      * @intent #byUser, #reducer
      *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
-     *
      * @param {SelCrit} selCrit the selCrit to edit.
      *
      * @param {boolean} isNew indicator as to whether the supplied selCrit
@@ -111,10 +107,6 @@ export default generateActions.root({
      *
      * @intent #byLogic, #reducer
      *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
-     *
      * @param {SelCrit} selCrit the selCrit that has changed.
      *
      * @param {SelCrit.SyncDirective} syncDirective a directive that indicates
@@ -146,10 +138,6 @@ export default generateActions.root({
      * Any view that is based on this selCrit is automatically updated.
      *
      * @intent #byUser, #byLogic, #reducer(spinner only)
-     *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
      *
      * @param {SelCrit} selCrit the selCrit to save.
      *
@@ -193,10 +181,6 @@ export default generateActions.root({
      * Any view that is based on this selCrit is automatically updated (see impactView).
      *
      * @intent #byUser, #reducer(spinner only)
-     *
-     * **Note**: The **Action Type** is promoted through a string
-     * coercion of this action creator (it's toString() has been
-     * overloaded).
      *
      * @param {SelCrit} selCrit the selCrit to delete.  This can either be a local in-memory
      * representation -or- on persisted in the DB.

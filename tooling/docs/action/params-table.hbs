@@ -1,0 +1,28 @@
+{{!-- 
+
+ORIGINAL: node_modules/dmd/partials/all-docs/docs/body/params/params-table.hbs
+========
+
+This templay mod is ONLY to be applied for redux action JSDoc
+
+GOALS:
+=====
+  - inject common notes specific to actions (action creators and types)
+--}}
+
+Note that the **Action Type** is promoted through a string coercion of the action creator itself *(i.e. it's toString() has been overloaded)*.
+
+{{#if params}}
+
+{{tableHead params "name|Traits" "type|Type" "defaultvalue|Default" "description|Description" ~}}
+
+{{#tableRow params "name" "type" "defaultvalue" "description" ~}}
+| {{#if @col1}}{{>param-table-name}} | {{/if~}}
+{{#if @col2}}{{>linked-type-list types=type.names delimiter=" \| " }} | {{/if~}}
+{{#if @col3}}{{>defaultvalue}} | {{/if~}}
+{{#if @col4}}{{{stripNewlines (inlineLinks description)}}} |{{/if}}
+{{/tableRow}}
+
+*The **Traits** column (above) represents both Action Creator function parameters **and** Action Properties.*
+
+{{/if}}
