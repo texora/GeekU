@@ -6,6 +6,9 @@ import selectors  from '../state';
 
 
 /**
+ * @function createNamedLogic
+ *
+ * @description
  * Commit (i.e. use) selCrit changes BY saving them upon completion.
  */
 export default createNamedLogic('commitSelCritChangesBySaving', {
