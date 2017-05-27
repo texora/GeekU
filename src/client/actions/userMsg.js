@@ -6,7 +6,7 @@ export default generateActions.root({
   /**
    * @constant {app-node} 'userMsg'
    * @function
-   * @description Actions rooted in 'userMsg' (User Notifications).
+   * @description Actions rooted in 'userMsg' (user notifications).
    */
   userMsg: {
 

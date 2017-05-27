@@ -4,7 +4,7 @@ import assert            from 'assert';
 /**
  * @constant {app-node} 'selectItem'
  * @function
- * @description Actions rooted in 'selectItem' (the Selected Item).
+ * @description Actions rooted in 'selectItem' (the selected item).
  */
 export default generateActions.root({
 

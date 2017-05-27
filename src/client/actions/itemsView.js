@@ -7,7 +7,7 @@ import itemTypes         from '../../shared/domain/itemTypes';
 /**
  * @constant {app-node} 'itemsView'
  * @function
- * @description Actions rooted in 'itemsView' (Items in View).
+ * @description Actions rooted in 'itemsView' (items in view).
  */
 export default generateActions.root({
 

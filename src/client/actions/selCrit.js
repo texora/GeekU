@@ -5,7 +5,7 @@ import SelCrit           from '../../shared/domain/SelCrit';
 /**
  * @constant {app-node} 'selCrit'
  * @function
- * @description Actions rooted in 'selCrit' (Selection Criteria).
+ * @description Actions rooted in 'selCrit' (selection criteria).
  */
 export default generateActions.root({
 

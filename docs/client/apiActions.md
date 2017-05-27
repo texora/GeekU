@@ -5,7 +5,7 @@
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
   detailItem() : app-node</h5>
-Actions rooted in 'detailItem' (Item Detailed in visual dialog).
+Actions rooted in 'detailItem' (item detailed in visual dialog).
 
 
 <br/><br/><br/>
@@ -50,7 +50,7 @@ Retrieve filters ... a list of selCrit objects.
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
   itemsView() : app-node</h5>
-Actions rooted in 'itemsView' (Items in View).
+Actions rooted in 'itemsView' (items in view).
 
 
 <br/><br/><br/>
@@ -141,7 +141,7 @@ Activate the Items View for the specified itemType.
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
   selCrit() : app-node</h5>
-Actions rooted in 'selCrit' (Selection Criteria).
+Actions rooted in 'selCrit' (selection criteria).
 
 
 <br/><br/><br/>
@@ -214,7 +214,7 @@ Delete the supplied selCrit, after obtaining a user confirmation.Any view that
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
   selectItem() : app-node</h5>
-Actions rooted in 'selectItem' (the Selected Item).
+Actions rooted in 'selectItem' (the selected item).
 
 
 <br/><br/><br/>
@@ -239,7 +239,7 @@ Select an item within an itemsView.
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
   userMsg() : app-node</h5>
-Actions rooted in 'userMsg' (User Notifications).
+Actions rooted in 'userMsg' (user notifications).
 
 
 <br/><br/><br/>

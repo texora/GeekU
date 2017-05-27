@@ -4,7 +4,7 @@ import assert            from 'assert';
 /**
  * @constant {app-node} 'detailItem'
  * @function
- * @description Actions rooted in 'detailItem' (Item Detailed in visual dialog).
+ * @description Actions rooted in 'detailItem' (item detailed in visual dialog).
  */
 export default generateActions.root({
 

@@ -44,7 +44,19 @@
     "api": {
       "ref":                    "[`API Reference`](/api.md)",
 
-      "TODO":                   "[`whaaa()`](/api.md#whaaa)"
+      "TODO":                   "[`whaaa()`](/api.md#whaaa)",
+
+      "client": {
+          "actions" : {
+              "detailItem":     "[`actions.detailItem`](/client/apiActions.md#detailItem)",
+              "filters":        "[`actions.filters`](/client/apiActions.md#filters)",
+              "itemsView":      "[`actions.itemsView`](/client/apiActions.md#itemsView)",
+              "selCrit":        "[`actions.selCrit`](/client/apiActions.md#selCrit)",
+              "selCrit":        "[`actions.selCrit`](/client/apiActions.md#selCrit)",
+              "selectItem":     "[`actions.selectItem`](/client/apiActions.md#selectItem)",
+              "userMsg":        "[`actions.userMsg`](/client/apiActions.md#userMsg)"
+          }
+      }
     },
 
     "ext": {
