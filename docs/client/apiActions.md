@@ -75,7 +75,7 @@ Note that the **Action Type** is promoted through a string coercion of the actio
 <a id="itemsView"></a>
 
 <h5 style="margin: 10px 0px; border-width: 5px 0px; padding: 5px; border-style: solid;">
-  itemsView(itemType, retrieve, activate:) ⇒ Action</h5>
+  itemsView(itemType, [retrieve], [activate]) ⇒ Action</h5>
 Retrieve and/or activate the itemsView for the specifieditemType.  Use this action when you wish to do BOTHretrieve/activate.
 
 **Intent**: #byUser, #noReducer  
@@ -83,11 +83,11 @@ Retrieve and/or activate the itemsView for the specifieditemType.  Use this act
 Note that the **Action Type** is promoted through a string coercion of the action creator itself *(i.e. it's toString() has been overloaded)*.
 
 
-| Traits | Type | Description |
-| --- | --- | --- |
-| itemType | string | the itemType ('student'/'course'). |
-| retrieve | any | the retrieval directive, one of:   - null:        no retrieval at all (DEFAULT)   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit) |
-| activate: | string | an activate directive, one of:   - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)   - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval) |
+| Traits | Type | Default | Description |
+| --- | --- | --- | --- |
+| itemType | string |  | the itemType ('student'/'course'). |
+| [retrieve] | any | <code>.null</code> | the retrieval directive, one of: <ul>   <li> null:        no retrieval at all (DEFAULT)</li>   <li> SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>   <li> 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li> </ul> |
+| [activate] | string | <code>&quot;see desc&quot;</code> | an activate directive, one of: <ul>   <li> 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)</li>   <li> 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)</li> </ul> |
 
 *The **Traits** column (above) represents both Action Creator function parameters **and** Action Properties.*
 
@@ -108,7 +108,7 @@ Note that the **Action Type** is promoted through a string coercion of the actio
 | Traits | Type | Description |
 | --- | --- | --- |
 | itemType | string | the itemType ('student'/'course'). |
-| selCrit | any | the selCrit driving the retrieval, one of:   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit) |
+| selCrit | any | the selCrit driving the retrieval, one of: <ul>   <li>SelCrit:   conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>   <li>'refresh': unconditionally refresh ItemsView with latest items (using view's current selCrit)</li> </ul> |
 
 *The **Traits** column (above) represents both Action Creator function parameters **and** Action Properties.*
 
@@ -129,7 +129,7 @@ Note that the **Action Type** is promoted through a string coercion of the actio
 | Traits | Type | Description |
 | --- | --- | --- |
 | itemType | string | the itemType ('student'/'course'). |
-| selCrit | any | the selCrit driving the retrieval, one of:   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit) |
+| selCrit | any | the selCrit driving the retrieval, one of: <ul>   <li>SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>   <li>'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li> </ul> |
 | items | Array.&lt;Item&gt; | the items retrieved. |
 
 *The **Traits** column (above) represents both Action Creator function parameters **and** Action Properties.*
@@ -151,7 +151,7 @@ Note that the **Action Type** is promoted through a string coercion of the actio
 | Traits | Type | Description |
 | --- | --- | --- |
 | itemType | string | the itemType ('student'/'course'). |
-| selCrit | any | the selCrit driving the retrieval, one of:   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit) |
+| selCrit | any | the selCrit driving the retrieval, one of: <ul>   <li>SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>   <li>'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li> </ul> |
 | error | Error | the Error detailing the failure. |
 
 *The **Traits** column (above) represents both Action Creator function parameters **and** Action Properties.*

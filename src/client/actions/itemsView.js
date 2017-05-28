@@ -23,14 +23,18 @@ export default generateActions.root({
    *
    * @param {string} itemType the itemType ('student'/'course').
    *
-   * @param {any} retrieve the retrieval directive, one of:
-   *   - null:        no retrieval at all (DEFAULT)
-   *   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
-   *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+   * @param {any} [retrieve=.null] the retrieval directive, one of:
+   * <ul>
+   *   <li> null:        no retrieval at all (DEFAULT)</li>
+   *   <li> SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>
+   *   <li> 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li>
+   * </ul>
    *
-   * @param {string} activate: an activate directive, one of:
-   *   - 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)
-   *   - 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)
+   * @param {string} [activate=see desc]: an activate directive, one of:
+   * <ul>
+   *   <li> 'activate':    activate/visualize this itemType ItemsView (DEFAULT for all but 'refresh' retrieval)</li>
+   *   <li> 'no-activate': DO NOT activate                            (DEFAULT for 'refresh' retrieval)</li>
+   * </ul>
    * 
    * @return {Action}
    */
@@ -64,8 +68,10 @@ export default generateActions.root({
      * @param {string} itemType the itemType ('student'/'course').
      *
      * @param {any} selCrit the selCrit driving the retrieval, one of:
-     *   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
-     *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+     * <ul>
+     *   <li>SelCrit:   conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>
+     *   <li>'refresh': unconditionally refresh ItemsView with latest items (using view's current selCrit)</li>
+     * </ul>
      * 
      * @return {Action}
      */
@@ -93,8 +99,10 @@ export default generateActions.root({
        * @param {string} itemType the itemType ('student'/'course').
        *
        * @param {any} selCrit the selCrit driving the retrieval, one of:
-       *   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
-       *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+       * <ul>
+       *   <li>SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>
+       *   <li>'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li>
+       * </ul>
        *
        * @param {Item[]} items the items retrieved.
        * 
@@ -117,8 +125,10 @@ export default generateActions.root({
        * @param {string} itemType the itemType ('student'/'course').
        *
        * @param {any} selCrit the selCrit driving the retrieval, one of:
-       *   - SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit
-       *   - 'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)
+       * <ul>
+       *   <li>SelCrit:     conditionally retrieve items when supplied selCrit is different (or out-of-date) from ItemsView selCrit</li>
+       *   <li>'refresh':   unconditionally refresh ItemsView with latest items (using view's current selCrit)</li>
+       * </ul>
        *
        * @param {Error} error the Error detailing the failure.
        * 
