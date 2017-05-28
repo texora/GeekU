@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import itemTypes      from '../../shared/domain/itemTypes';
 import Log            from '../../shared/util/Log';
@@ -7,7 +7,7 @@ const log = new Log('appState.editSelCrit.extra.selectedFieldOptions');
 
 export default reducerHash.withLogging(log, {
 
-  [AT.selCrit.edit](selectedFieldOptions, action) {
+  [actions.selCrit.edit](selectedFieldOptions, action) {
 
     // convert selCrit.fields to selectedFieldOptions
     const meta   = itemTypes.meta[action.selCrit.itemType];
@@ -26,7 +26,7 @@ export default reducerHash.withLogging(log, {
     ];
   },
 
-  [AT.selCrit.edit.change.fields](selectedFieldOptions, action) {
+  [actions.selCrit.edit.change.fields](selectedFieldOptions, action) {
     return [
       action.selectedFieldOptions,
       ()=>`set selectedFieldOptions from action.selectedFieldOptions: ${FMT(action.selectedFieldOptions)}`

@@ -1,17 +1,17 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}   from '../actions';
+import actions    from '../actions';
 import selectors  from '../state';
 import SelCrit    from '../../shared/domain/SelCrit';
 
 
 /**
- * Process (i.e. implement) the AT.itemsView.retrieve action.
+ * Process (i.e. implement) the actions.itemsView.retrieve action.
  */
 export default createNamedLogic('processItemsViewRetrieveAction', {
 
-  type: AT.itemsView.retrieve.valueOf(),
+  type: String(actions.itemsView.retrieve),
 
   // our stimulus:
   //  - action.itemType 
@@ -63,12 +63,12 @@ export default createNamedLogic('processItemsViewRetrieveAction', {
 
     api.items.retrieveItems(selCrit, log)
        .then( items => {
-         dispatch( AC.itemsView.retrieve.complete(itemType, selCrit, items) );
+         dispatch( actions.itemsView.retrieve.complete(itemType, selCrit, items) );
        })
        .catch( err => {
          // mark async operation FAILED (typically spinner)
          // ... NOTE: monitored '*.fail' logic will communicate to the user, and log details
-         dispatch( AC.itemsView.retrieve.fail(itemType, selCrit, err) );
+         dispatch( actions.itemsView.retrieve.fail(itemType, selCrit, err) );
        });
   },
 

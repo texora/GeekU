@@ -74,7 +74,7 @@ class HiddenCmd {
  *  - curMatchIndx: {int} - The running index matching the current keystrokes.
  *  - funct: {function} - The function to execute when the command is recognized.
  *
- * @type Cmd[] (see structure above)
+ * type Cmd[] (see structure above)
  */
 HiddenCmd.cmds = [];
 

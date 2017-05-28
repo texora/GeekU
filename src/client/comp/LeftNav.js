@@ -6,7 +6,7 @@ import * as ReactRedux     from 'react-redux';
 import assert              from 'assert';
 import {autobind}          from 'core-decorators';
 
-import {AC}                from '../actions';
+import actions             from '../actions';
 import selectors           from '../state';
 import SelCrit             from '../../shared/domain/SelCrit';
 import itemTypes           from '../../shared/domain/itemTypes';
@@ -113,7 +113,7 @@ export default class LeftNav extends React.Component {
 
     // for selCrit object ... activate it
     if (SelCrit.isSelCrit(selCrit)) {
-      p.dispatch( AC.itemsView(selCrit.itemType, selCrit, 'activate') );
+      p.dispatch( actions.itemsView(selCrit.itemType, selCrit, 'activate') );
     }
 
     // for itemType-string ... create a new selCrit of the specified itemType and edit/activate it
@@ -123,11 +123,11 @@ export default class LeftNav extends React.Component {
 
       // start an edit session with a new selCrit of specified itemType
       const newSelCrit = SelCrit.new(itemType);
-      p.dispatch( AC.selCrit.edit(newSelCrit, 
-                                  true, // isNew
-                                  this.state.editMode
-                                    ? SelCrit.SyncDirective.none
-                                    : SelCrit.SyncDirective.activate ) );
+      p.dispatch( actions.selCrit.edit(newSelCrit, 
+                                       true, // isNew
+                                       this.state.editMode
+                                         ? SelCrit.SyncDirective.none
+                                         : SelCrit.SyncDirective.activate ) );
     }
 
     // invalid param
@@ -149,7 +149,7 @@ export default class LeftNav extends React.Component {
    */
   handleEdit(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.edit(selCrit) );
+    p.dispatch( actions.selCrit.edit(selCrit) );
   }
 
 
@@ -160,7 +160,7 @@ export default class LeftNav extends React.Component {
    */
   handleSave(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(selCrit) );
+    p.dispatch( actions.selCrit.save(selCrit) );
   }
 
 
@@ -174,9 +174,9 @@ export default class LeftNav extends React.Component {
 
     // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(selCrit);
-    p.dispatch( AC.selCrit.edit(dupSelCrit, 
-                                true, // isNew
-                                SelCrit.SyncDirective.none ) );
+    p.dispatch( actions.selCrit.edit(dupSelCrit, 
+                                     true, // isNew
+                                     SelCrit.SyncDirective.none ) );
 
     // close our LeftNav, providing we are NOT in the edit mode
     if (!this.state.editMode) {
@@ -192,7 +192,7 @@ export default class LeftNav extends React.Component {
    */
   handleDelete(selCrit) {
     const p = this.props;
-    p.dispatch( AC.selCrit.delete(selCrit) );
+    p.dispatch( actions.selCrit.delete(selCrit) );
   }
 
 

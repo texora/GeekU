@@ -1,11 +1,11 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
 const log = new Log('appState.editSelCrit.selCrit.sort');
 
 export default reducerHash.withLogging(log, {
-  [AT.selCrit.edit.change.sort](sort, action) {
+  [actions.selCrit.edit.change.sort](sort, action) {
     const selectedSortOptions = action.selectedSortOptions;
 
     // sync selCrit.sort from selectedSortOptions

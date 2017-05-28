@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -6,14 +6,14 @@ const log = new Log('appState.userMsg');
 
 export default reducerHash.withLogging(log, {
 
-  [AT.userMsg.display](userMsg, action) {
+  [actions.userMsg.display](userMsg, action) {
     return [
       [...userMsg, {msg: action.msg, userAction: action.userAction}], // add new msg to end of queue
       ()=>`set msg from action: '${action.msg}'`
     ];
   },
 
-  [AT.userMsg.close](userMsg, action) {
+  [actions.userMsg.close](userMsg, action) {
     return userMsg.length === 0 
          ? userMsg
          : [

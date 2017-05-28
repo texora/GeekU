@@ -1,7 +1,7 @@
 'use strict';
 
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
-import {AT, AC}   from '../actions';
+import actions    from '../actions';
 import selectors  from '../state';
 
 
@@ -10,7 +10,7 @@ import selectors  from '../state';
  */
 export default createNamedLogic('commitSelCritChanges', {
 
-  type: AT.selCrit.edit.use.valueOf(),
+  type: String(actions.selCrit.edit.use),
 
   process({getState, action, log}, dispatch) {
 
@@ -25,12 +25,12 @@ export default createNamedLogic('commitSelCritChanges', {
     // ... when selCrit is new
     if (isNew) {
       log.debug(() => "emitting change notification (action: 'selCrit.changed') because selCrit is new");
-      dispatch( AC.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
+      dispatch( actions.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
     }
     // ... when existing selCrit has actually changed
     else if (selCrit.curHash !== startingCurHash) {
       log.debug(() => "emitting change notification (action: 'selCrit.changed') because existing selCrit has actually changed");
-      dispatch( AC.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
+      dispatch( actions.selCrit.changed(selCrit, syncDirective), LOGIC.allowMore );
     }
     else {
       log.debug(() => "NO NEED to emit change notification (action: 'selCrit.changed') because either the selCrit has NOT changed or it is NOT new");
@@ -38,7 +38,7 @@ export default createNamedLogic('commitSelCritChanges', {
 
     // close out our edit dialog
     log.debug(() => "emitting action to close our edit dialog (action: 'selCrit.edit.close')");
-    dispatch( AC.selCrit.edit.close() );
+    dispatch( actions.selCrit.edit.close() );
 
   },
 

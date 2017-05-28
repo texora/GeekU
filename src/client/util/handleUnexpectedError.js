@@ -2,7 +2,7 @@
 
 import React      from 'react';
 import Log        from '../../shared/util/Log';
-import {AC}       from '../actions';
+import actions    from '../actions';
 import Alert      from '../comp/Alert';
 
 const log = new Log('unexpectedError');
@@ -38,22 +38,22 @@ export default function handleUnexpectedError(err) {
     log.error(()=> userMsg, err);
     
     // create/return action providing user communication
-    return AC.userMsg.display('Your data is "out of date" ... refresh and try again.',
-                              {
-                                txt:      'details',
-                                callback: () => { // display more detail to user
-                                  Alert.display({
-                                    title: 'Stale Data',
-                                    msg:   <div>
-                                             {userMsg}
-                                             <br/><br/>
-                                             Someone has modified it since you last retrieved it.
-                                             <br/><br/>
-                                             Please refresh the data and try your operation again.
-                                           </div>
-                                  });
-                                }
-                              });
+    return actions.userMsg.display('Your data is "out of date" ... refresh and try again.',
+                                   {
+                                     txt:      'details',
+                                     callback: () => { // display more detail to user
+                                       Alert.display({
+                                         title: 'Stale Data',
+                                         msg:   <div>
+                                                  {userMsg}
+                                                  <br/><br/>
+                                                  Someone has modified it since you last retrieved it.
+                                                  <br/><br/>
+                                                  Please refresh the data and try your operation again.
+                                                </div>
+                                       });
+                                     }
+                                   });
   }
 
   // an unexpected error
@@ -64,23 +64,23 @@ export default function handleUnexpectedError(err) {
     log.error(()=> userMsg, err);
     
     // create/return action providing user communication
-    return AC.userMsg.display(userMsg, 
-                              {
-                                txt:      'details',
-                                callback: () => { // display more detail to user
-                                  Alert.display({
-                                    title: 'Unexpected Error',
-                                           // NOTE: err.message (below) containd applicable server logId (if any) to report to tech support
-                                    msg:   <div>
-                                             {userMsg}
-                                             <ul>
-                                               {err.clientMsg}<br/>
-                                               {err.message}
-                                             </ul>
-                                             If this problem persists, please contact your tech support.
-                                           </div>
-                                  });
-                                }
-                              });
+    return actions.userMsg.display(userMsg, 
+                                   {
+                                     txt:      'details',
+                                     callback: () => { // display more detail to user
+                                       Alert.display({
+                                         title: 'Unexpected Error',
+                                                // NOTE: err.message (below) containd applicable server logId (if any) to report to tech support
+                                         msg:   <div>
+                                                  {userMsg}
+                                                  <ul>
+                                                    {err.clientMsg}<br/>
+                                                    {err.message}
+                                                  </ul>
+                                                  If this problem persists, please contact your tech support.
+                                                </div>
+                                       });
+                                     }
+                                   });
   }
 }

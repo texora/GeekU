@@ -6,7 +6,7 @@ import expect               from 'expect';
 import commitSelCritChanges from '../commitSelCritChanges';
 import SelCrit              from '../../../shared/domain/SelCrit';
 import itemTypes            from '../../../shared/domain/itemTypes';
-import {AC, AT}             from '../../../client/actions';
+import actions              from '../../../client/actions';
 
 describe('logic commitSelCritChanges', () => {
 
@@ -23,7 +23,7 @@ describe('logic commitSelCritChanges', () => {
 
       // mock our action (only used action.type to obtain log entry)
       const action = {
-        type: AT.selCrit.edit.use.valueOf(),
+        type: String(actions.selCrit.edit.use),
       };
 
       // mock our appState
@@ -48,17 +48,17 @@ describe('logic commitSelCritChanges', () => {
       expect(dispatch.calls.length).toBe(2);
     });
 
-    it('first dispatch action should be AT.selCrit.changed with supplied syncDirective', () => {
+    it('first dispatch action should be actions.selCrit.changed with supplied syncDirective', () => {
       expect(dispatch.calls.length).toBe(2);
       const dispatchArgs = dispatch.calls[0].arguments;
-      const expectedAction = AC.selCrit.changed(selCrit, syncDirective);
+      const expectedAction = actions.selCrit.changed(selCrit, syncDirective);
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 
-    it('second dispatch action should be AT.selCrit.edit.close', () => {
+    it('second dispatch action should be actions.selCrit.edit.close', () => {
       expect(dispatch.calls.length).toBe(2);
       const dispatchArgs = dispatch.calls[1].arguments;
-      const expectedAction = AC.selCrit.edit.close();
+      const expectedAction = actions.selCrit.edit.close();
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 
@@ -79,7 +79,7 @@ describe('logic commitSelCritChanges', () => {
 
       // mock our action (only used action.type to obtain log entry)
       const action = {
-        type: AT.selCrit.edit.use.valueOf(),
+        type: String(actions.selCrit.edit.use),
       };
 
       // mock our appState
@@ -105,17 +105,17 @@ describe('logic commitSelCritChanges', () => {
       expect(dispatch.calls.length).toBe(2);
     });
 
-    it('first dispatch action should be AT.selCrit.changed with supplied syncDirective', () => {
+    it('first dispatch action should be actions.selCrit.changed with supplied syncDirective', () => {
       expect(dispatch.calls.length).toBe(2);
       const dispatchArgs = dispatch.calls[0].arguments;
-      const expectedAction = AC.selCrit.changed(selCrit, syncDirective);
+      const expectedAction = actions.selCrit.changed(selCrit, syncDirective);
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 
-    it('second dispatch action should be AT.selCrit.edit.close', () => {
+    it('second dispatch action should be actions.selCrit.edit.close', () => {
       expect(dispatch.calls.length).toBe(2);
       const dispatchArgs = dispatch.calls[1].arguments;
-      const expectedAction = AC.selCrit.edit.close();
+      const expectedAction = actions.selCrit.edit.close();
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
 
@@ -136,7 +136,7 @@ describe('logic commitSelCritChanges', () => {
 
       // mock our action (only used action.type to obtain log entry)
       const action = {
-        type: AT.selCrit.edit.use.valueOf(),
+        type: String(actions.selCrit.edit.use),
       };
 
       // mock our appState
@@ -162,10 +162,10 @@ describe('logic commitSelCritChanges', () => {
       expect(dispatch.calls.length).toBe(1);
     });
 
-    it('only dispatch action should be AT.selCrit.edit.close', () => {
+    it('only dispatch action should be actions.selCrit.edit.close', () => {
       expect(dispatch.calls.length).toBe(1);
       const dispatchArgs = dispatch.calls[0].arguments;
-      const expectedAction = AC.selCrit.edit.close();
+      const expectedAction = actions.selCrit.edit.close();
       expect(dispatchArgs[0]).toEqual(expectedAction);
     });
   });

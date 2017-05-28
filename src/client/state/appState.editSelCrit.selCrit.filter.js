@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -6,7 +6,7 @@ const log = new Log('appState.editSelCrit.selCrit.filter');
 
 export default reducerHash.withLogging(log, {
 
-  [AT.selCrit.edit.change.filter](filter, action) {
+  [actions.selCrit.edit.change.filter](filter, action) {
 
     // sync selCrit.filter from action.newFilter
     const newFilter = action.newFilter===null || action.newFilter.length===0

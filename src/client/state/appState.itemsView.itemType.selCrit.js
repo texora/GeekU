@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -15,14 +15,14 @@ export default function selCrit(_itemType) {
 
   return reducerHash.withLogging(log, {
 
-    [AT.itemsView.retrieve.complete](selCrit, action) {
+    [actions.itemsView.retrieve.complete](selCrit, action) {
       return [
         action.selCrit,
         ()=>`set selCrit from action ... ${FMT(action.selCrit)}`
       ];
     },
 
-    [AT.selCrit.delete.complete](selCrit, action) {
+    [actions.selCrit.delete.complete](selCrit, action) {
       // sync when our view has been impacted by selCrit deletion
       if (action.impactView===_itemType) {
         return [

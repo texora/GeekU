@@ -1,4 +1,4 @@
-import {AT}           from '../actions';
+import actions        from '../actions';
 import {reducerHash}  from 'astx-redux-util';
 import Log            from '../../shared/util/Log';
 
@@ -15,12 +15,12 @@ export default function detailItem(_itemType) {
 
   return reducerHash.withLogging(log, {
 
-    [AT.detailItem.retrieve.complete]: (detailItem, action) => [
+    [actions.detailItem.retrieve.complete]: (detailItem, action) => [
         action.item,
         ()=>'set detailItem from action.item ... ' + FMT(action.item)
     ],
 
-    [AT.detailItem.close]: (detailItem, action) => [
+    [actions.detailItem.close]: (detailItem, action) => [
         null,
         ()=>'clearing detailItem'
     ],

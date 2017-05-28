@@ -5,7 +5,7 @@ import {autobind, debounce} from 'core-decorators';
 
 import SelCrit              from '../../shared/domain/SelCrit';
 
-import {AC}                 from '../actions';
+import actions              from '../actions';
 
 import AppBar               from 'material-ui/lib/app-bar';
 import Divider              from 'material-ui/lib/divider';
@@ -121,7 +121,7 @@ export default class ItemsView extends React.Component {
    */
   handleRefresh() {
     const p = this.props;
-    p.dispatch( AC.itemsView.retrieve(this.meta().itemType, 'refresh') );
+    p.dispatch( actions.itemsView.retrieve(this.meta().itemType, 'refresh') );
   }
 
 
@@ -130,7 +130,7 @@ export default class ItemsView extends React.Component {
    */
   handleEditSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.edit(p.selCrit) );
+    p.dispatch( actions.selCrit.edit(p.selCrit) );
   }
 
 
@@ -139,7 +139,7 @@ export default class ItemsView extends React.Component {
    */
   handleSaveSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.save(p.selCrit) );
+    p.dispatch( actions.selCrit.save(p.selCrit) );
   }
 
 
@@ -151,9 +151,9 @@ export default class ItemsView extends React.Component {
 
     // start an edit session with a new selCrit of specified itemType
     const selCrit = SelCrit.new(this.meta().itemType);
-    p.dispatch( AC.selCrit.edit(selCrit, 
-                                true, // isNew
-                                SelCrit.SyncDirective.reflect) );
+    p.dispatch( actions.selCrit.edit(selCrit, 
+                                     true, // isNew
+                                     SelCrit.SyncDirective.reflect) );
   }
 
 
@@ -165,9 +165,9 @@ export default class ItemsView extends React.Component {
 
     // start an edit session with a duplicated (new) selCrit
     const dupSelCrit = SelCrit.duplicate(p.selCrit);
-    p.dispatch( AC.selCrit.edit(dupSelCrit, 
-                                true, // isNew
-                                SelCrit.SyncDirective.reflect) );
+    p.dispatch( actions.selCrit.edit(dupSelCrit, 
+                                     true, // isNew
+                                     SelCrit.SyncDirective.reflect) );
   }
 
 
@@ -176,7 +176,7 @@ export default class ItemsView extends React.Component {
    */
   handleDeleteSelCrit() {
     const p = this.props;
-    p.dispatch( AC.selCrit.delete(p.selCrit) );
+    p.dispatch( actions.selCrit.delete(p.selCrit) );
   }
 
 
@@ -188,7 +188,7 @@ export default class ItemsView extends React.Component {
   handleSelectItem(item) {
     const p = this.props;
     if (item) {
-      p.dispatch( AC.selectItem(this.meta().itemType, item) );
+      p.dispatch( actions.selectItem(this.meta().itemType, item) );
     }
   }
 
@@ -203,7 +203,7 @@ export default class ItemsView extends React.Component {
   handleDetailItemDialog(item, editMode) {
     const p       = this.props;
     const itemNum = item[this.meta().keyField];
-    p.dispatch( AC.detailItem(this.meta().itemType, itemNum, editMode) );
+    p.dispatch( actions.detailItem(this.meta().itemType, itemNum, editMode) );
   }
 
 

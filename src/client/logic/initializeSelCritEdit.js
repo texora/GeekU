@@ -3,16 +3,16 @@
 import createNamedLogic, * as LOGIC  from './util/createNamedLogic';
 import SelCrit    from '../../shared/domain/SelCrit';
 import itemTypes  from '../../shared/domain/itemTypes';
-import {AT}       from '../actions';
+import actions    from '../actions';
 
 
 /**
- * Initialize the AT.selCrit.edit action, which edits the supplied selCrit,
+ * Initialize the actions.selCrit.edit action, which edits the supplied selCrit,
  * injecting additional information needed in action.
  */
 export default createNamedLogic('initializeSelCritEdit', {
 
-  type: AT.selCrit.edit.valueOf(),
+  type: String(actions.selCrit.edit),
 
   transform({ getState, action, log }, next) {
 
