@@ -7,3 +7,4 @@ dist
 
 # documentation (machine generated from GitBook)
 /_book/
+.env
